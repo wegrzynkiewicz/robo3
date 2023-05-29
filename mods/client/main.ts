@@ -1,0 +1,135 @@
+import { assertNonNull } from "../common/asserts.ts";
+import { initGridProgram } from "./src/graphic/gridProgram.ts";
+import { ortho } from "./src/graphic/math.ts";
+import {
+  getUniformBlocksInfo,
+  getUniformInfo,
+} from "./src/graphic/utilities.ts";
+
+document.addEventListener("DOMContentLoaded", () => {
+});
+const canvas = document.querySelector("canvas")!;
+
+
+const gl = canvas.getContext("webgl2", {
+  premultipliedAlpha: false, // Ask for non-premultiplied alpha
+})!;
+
+gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+
+const texture = gl.createTexture();
+gl.activeTexture(gl.TEXTURE0 + 0);
+gl.bindTexture(gl.TEXTURE_2D, texture);
+const img = new Image();
+let updateTexture = () => { };
+const onLoadedImage = function () {
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  //   const ab2 = new Uint8Array(512 * 512 * 4);
+  //   for (let i = 0; i < 512 * 512 * 4; i++) {
+  //     ab2[i] = Math.random() * 256;
+  //   }
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+  //   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 512, 512, 0, gl.RGBA, gl.UNSIGNED_BYTE, ab2);
+  gl.generateMipmap(gl.TEXTURE_2D);
+}
+img.addEventListener("load", () => {
+  onLoadedImage();
+  //   updateTexture = onLoadedImage;
+});
+img.src = "2.png";
+
+{
+  const level = 0;
+  const internalFormat = gl.R8;
+  const width = 3;
+  const height = 2;
+  const border = 0;
+  const format = gl.RED;
+  const type = gl.UNSIGNED_BYTE;
+  const data = new Uint8Array([
+    128,
+    64,
+    128,
+    0,
+    192,
+    0,
+  ]);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+}
+
+const nearestSampler = gl.createSampler();
+assertNonNull(nearestSampler, 'cannot-create-nearest-sampler');
+gl.samplerParameteri(nearestSampler, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+gl.samplerParameteri(nearestSampler, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+gl.samplerParameteri(nearestSampler, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.samplerParameteri(nearestSampler, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+gl.bindSampler(0, nearestSampler);
+
+
+
+const ab = new ArrayBuffer(4 * 100);
+const dv = new DataView(ab);
+
+let n = 0;
+for (let y = 0; y < 10; y++) {
+  for (let x = 0; x < 10; x++) {
+    dv.setUint8(n + 0, y);
+    dv.setUint8(n + 1, x);
+    dv.setUint16(n + 2, Math.random() * 256, true);
+    n += 4;
+  }
+}
+
+const { glProgram, glVAOGrid, glBlockBuffer } = initGridProgram(gl);
+gl.bindBuffer(gl.ARRAY_BUFFER, glBlockBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, ab, gl.DYNAMIC_DRAW);
+gl.useProgram(glProgram);
+const projectionLoc1 = gl.getUniformLocation(glProgram, "u_Projection");
+const textureLoc1 = gl.getUniformLocation(glProgram, "u_texture");
+console.log(getUniformBlocksInfo(gl, glProgram));
+console.log(getUniformInfo(gl, glProgram));
+gl.bindVertexArray(glVAOGrid);
+
+const projection = new Float32Array(16);
+gl.uniformMatrix4fv(projectionLoc1, false, projection);
+gl.uniform1i(textureLoc1, 0);
+// gl.uniform1ui(toLoc, 50);
+gl.clearColor(0.0, 0.0, 0.0, 1.0);
+gl.enable(gl.BLEND);
+gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+const fpsElem = document.querySelector("#fps")!;
+
+const count = 2 ** 16;
+const ab1 = new ArrayBuffer(count);
+console.log(count);
+console.log(ab1);
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  ortho(projection, 0, canvas.width/2, 0, canvas.height/2, -10, 10);
+  gl.uniformMatrix4fv(projectionLoc1, false, projection);
+  gl.viewport(20, 20, canvas.width, canvas.height);
+  console.log(canvas.width, 'x', canvas.height);
+}
+// resize the canvas to fill browser window dynamically
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+let then = 0;
+function drawScene(now: number) {
+  now *= 0.001;                          // convert to seconds
+  const deltaTime = now - then;          // compute time since last frame
+  then = now;                            // remember time for next frame
+  const fps = 1 / deltaTime;             // compute frames per second
+  //   fpsElem.textContent = fps.toFixed(1);  // update fps display
+
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.drawElementsInstanced(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0, 4);
+  updateTexture();
+  requestAnimationFrame(drawScene);
+}
+
+drawScene(0);

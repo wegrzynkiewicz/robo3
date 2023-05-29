@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "deno.window",
+      "dom"
+    ]
+  },
+  "fmt": {
+    "indentWidth": 2,
+    "lineWidth": 120
+  }
+}

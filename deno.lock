@@ -1,0 +1,10 @@
+{
+  "version": "2",
+  "remote": {
+    "https://cdn.skypack.dev/-/gl-matrix@v3.4.3-OSmwlRYK5GW1unkuAQkN/dist=es2019,mode=imports/optimized/gl-matrix.js": "66b1471ca193b1fb95b19a1ebc750d83ba2c8d6b0f69f31da7d5374b00692d51",
+    "https://cdn.skypack.dev/-/gl-matrix@v3.4.3-OSmwlRYK5GW1unkuAQkN/dist=es2019,mode=types/index.d.ts": "a35f3e4f9fdaeb74cbd8b9bbf53e01dfc2b925b9f6a4882a3d4ddff710539990",
+    "https://cdn.skypack.dev/gl-matrix@v3.4.3?dts": "21765ddd1efbdcbdfabbd4c2bb04c6a2a32acab8a09e68aa96766b50a7d84216",
+    "https://esm.sh/gl-matrix@3.4.3": "2e4f6f9e0d1959da051740ad0a3336eac0d975f5409ef9821378e65ad278367c",
+    "https://esm.sh/v119/gl-matrix@3.4.3/deno/gl-matrix.mjs": "6a6789c9943e38abfed68315b2dc367badf0e02c8bd414fd8b016a5a1220dc16"
+  }
+}
