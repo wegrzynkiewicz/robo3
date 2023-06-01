@@ -1,13 +1,13 @@
-export const TEXTURE_SIZE = 512;
-export const SPRITE_SIZE = 32;
-export const SPRITES_COUNT_PER_AXIS = TEXTURE_SIZE / SPRITE_SIZE;
-export const SPRITE_STRIDE_NORMALIZED = SPRITE_SIZE / TEXTURE_SIZE;
+export const TILES_TEXTURE_SIZE = 1024;
+export const TILE_SIZE = 32;
+export const TILES_PER_TEXTURE_AXIS = Math.floor(TILES_TEXTURE_SIZE / TILE_SIZE);
+export const TILES_PER_TEXTURE = TILES_PER_TEXTURE_AXIS ** 2;
+export const TILE_STRIDE_NORMALIZED = TILE_SIZE / TILES_TEXTURE_SIZE;
 
 export const MAX_WORLD_TILES_PER_AXIS = 65536;
 export const MAX_WORLD_DEPTH = 256;
 
 export const BLOCKS_PER_CHUNK_AXIS = 16;
-
 
 // X,Y,Z,0 - 4
 // R,T,U   - 4
@@ -16,5 +16,3 @@ export const BLOCKS_PER_CHUNK_AXIS = 16;
 // u16 - pos
 // u16 - tex
 // u16 - alfa
-
-

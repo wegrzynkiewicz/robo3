@@ -1,11 +1,6 @@
 import { initGridProgram } from "./src/graphic/gridProgram.ts";
 import { ortho } from "./src/graphic/math.ts";
-import {
-  createProgram,
-  getUniformBlocksInfo,
-  getUniformInfo,
-  GL,
-} from "./src/graphic/utilities.ts";
+import { createProgram, getUniformBlocksInfo, getUniformInfo, GL } from "./src/graphic/utilities.ts";
 
 document.addEventListener("DOMContentLoaded", () => {
 });
@@ -18,9 +13,9 @@ const gl = canvas.getContext("webgl2", {
 })!;
 
 const TEXTURE_SIZE = 512;
-const SPRITE_SIZE = 32;
-const SPRITES_COUNT_PER_AXIS = TEXTURE_SIZE / SPRITE_SIZE;
-const SPRITE_STRIDE_NORMALIZED = SPRITE_SIZE / TEXTURE_SIZE;
+const TILE_SIZE = 32;
+const SPRITES_COUNT_PER_AXIS = TEXTURE_SIZE / TILE_SIZE;
+const TILE_STRIDE_NORMALIZED = TILE_SIZE / TEXTURE_SIZE;
 
 const vertexShader = `#version 300 es
 
@@ -37,7 +32,7 @@ uniform mat4 projection;
 uniform uint index;
 
 uint spritePerRow = uint(${SPRITES_COUNT_PER_AXIS});
-float spriteStrideNormalized = ${SPRITE_STRIDE_NORMALIZED};
+float spriteStrideNormalized = ${TILE_STRIDE_NORMALIZED};
 
 vec2 getValueByIndexFromTexture(vec2 texCoords, uint spriteIndex) {
   uint col = spriteIndex % spritePerRow;
@@ -122,12 +117,12 @@ const textureBuffer = new Float32Array(vertexBuffer, POS_VERTEX_BYTES + COLOR_VE
 textureBuffer.set([
   0,
   0,
-  SPRITE_STRIDE_NORMALIZED,
+  TILE_STRIDE_NORMALIZED,
   0,
-  SPRITE_STRIDE_NORMALIZED,
-  SPRITE_STRIDE_NORMALIZED,
+  TILE_STRIDE_NORMALIZED,
+  TILE_STRIDE_NORMALIZED,
   0,
-  SPRITE_STRIDE_NORMALIZED,
+  TILE_STRIDE_NORMALIZED,
 ]);
 
 console.log(textureBuffer);
@@ -256,7 +251,6 @@ img.src = "2.png";
 const projection = new Float32Array(16);
 ortho(projection, 0, 640 / 2, 0, 480 / 2, -10, 10);
 
-
 const { glProgram, glVAOGrid } = initGridProgram(gl);
 gl.useProgram(glProgram);
 const projectionLoc1 = gl.getUniformLocation(glProgram, "u_Projection");
@@ -264,13 +258,13 @@ const textureLoc1 = gl.getUniformLocation(program, "u_texture");
 gl.bindVertexArray(glVAOGrid);
 
 let width = 640;
-let height = 480; 
-document.addEventListener('mousemove', (event) => {
+let height = 480;
+document.addEventListener("mousemove", (event) => {
   width += event.movementX;
   height += event.movementY;
   ortho(projection, 0, width, 0, height, -10, 10);
   gl.uniformMatrix4fv(projectionLoc1, false, projection);
-})
+});
 
 gl.uniformMatrix4fv(projectionLoc1, false, projection);
 gl.uniform1i(textureLoc1, 0);

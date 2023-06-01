@@ -1,4 +1,5 @@
-import { assertNonNegativeNumber, assertObject, Breaker } from "../../../common/asserts.ts";
+import { assertObject, Breaker, isPositiveNumber } from "../../../common/asserts.ts";
+import { logger } from "../../../common/logger.ts";
 import { VertexAttribute } from "./attribute.ts";
 
 export type GL = WebGL2RenderingContext;
@@ -185,7 +186,10 @@ export function initVertexAttribute(
 ) {
   const { axes, divisor, glType, isInteger, name, normalize } = vertexAttribute;
   const location = gl.getAttribLocation(glProgram, name);
-  assertNonNegativeNumber(location, "attribute-location-not-found-in-shader", { vertexAttribute });
+  if (!isPositiveNumber(location)) {
+    logger.warn("attribute-location-not-found-in-shader", { vertexAttribute });
+    return;
+  }
   gl.enableVertexAttribArray(location);
   if (isInteger) {
     gl.vertexAttribIPointer(

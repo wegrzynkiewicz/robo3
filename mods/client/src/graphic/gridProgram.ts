@@ -1,93 +1,27 @@
 import { assertNonNull } from "../../../common/asserts.ts";
-import { SPRITE_STRIDE_NORMALIZED, SPRITES_COUNT_PER_AXIS } from "../vars.ts";
-import { toShaderLine, VertexAttribute } from "./attribute.ts";
+import { TILES_PER_TEXTURE, TILES_PER_TEXTURE_AXIS, TILE_STRIDE_NORMALIZED } from "../vars.ts";
+import { attribute, toShaderLine } from "./attribute.ts";
 import { createProgram, GL, initVertexAttribute } from "./utilities.ts";
 
-const vertexPosition: VertexAttribute = {
-  accessor: Float32Array,
-  axes: 2,
-  byteSize: 4,
-  divisor: 0,
-  glType: WebGL2RenderingContext.FLOAT,
-  isInteger: false,
-  isSigned: false,
-  location: 0,
-  name: "a_vertexPosition",
-  normalize: false,
-  shaderType: "vec2",
-  totalByteSize: 8,
-};
-
-const vertexTextureCoords: VertexAttribute = {
-  accessor: Float32Array,
-  axes: 2,
-  byteSize: 4,
-  divisor: 0,
-  glType: WebGL2RenderingContext.FLOAT,
-  isInteger: false,
-  isSigned: false,
-  location: 1,
-  name: "a_vertexTextureCoords",
-  normalize: false,
-  shaderType: "vec2",
-  totalByteSize: 8,
-};
-
-const blockPosition: VertexAttribute = {
-  accessor: Uint8Array,
-  axes: 2,
-  byteSize: 1,
-  divisor: 1,
-  glType: WebGL2RenderingContext.UNSIGNED_BYTE,
-  isInteger: true,
-  isSigned: false,
-  location: 2,
-  name: "a_blockPosition",
-  normalize: false,
-  shaderType: "uvec2",
-  totalByteSize: 2,
-};
-
-const blockTextureIndex: VertexAttribute = {
-  accessor: Uint16Array,
-  axes: 1,
-  byteSize: 2,
-  divisor: 1,
-  glType: WebGL2RenderingContext.UNSIGNED_SHORT,
-  isInteger: true,
-  isSigned: false,
-  location: 3,
-  name: "a_blockTextureIndex",
-  normalize: false,
-  shaderType: "uint",
-  totalByteSize: 2,
-};
-
-const blockTextureAtlas: VertexAttribute = {
-  accessor: Uint8Array,
-  axes: 1,
-  byteSize: 1,
-  divisor: 1,
-  glType: WebGL2RenderingContext.UNSIGNED_BYTE,
-  isInteger: true,
-  isSigned: false,
-  location: 4,
-  name: "a_blockTextureAtlas",
-  normalize: false,
-  shaderType: "uint",
-  totalByteSize: 1,
-};
+const vertexPosition = attribute("0:v2f4:a_vertexPosition:0");
+const vertexTextureCoords = attribute("1:v2f4:a_vertexTextureCoords:0");
+const tilePosition = attribute("2:v2f4:a_tilePosition:1");
+const tileTextureIndex = attribute("3:si4:a_tileTextureIndex:1");
+const tileTextureAtlas = attribute("4:su4:a_tileTextureAtlas:1");
+const tileAlpha = attribute("5:sf4:a_tileAlpha:1");
 
 const vertexShader = `#version 300 es
 
 ${toShaderLine(vertexPosition)}
 ${toShaderLine(vertexTextureCoords)}
-${toShaderLine(blockPosition)}
-${toShaderLine(blockTextureIndex)}
+${toShaderLine(tilePosition)}
+${toShaderLine(tileTextureIndex)}
+${toShaderLine(tileAlpha)}
 
-out vec2 v_texCoords;
-out vec2 v_color;
+out vec3 v_texCoords;
+out vec3 v_color;
 out vec2 v_color2;
+out float alpha;
 flat out ivec2 texture4;
 
 struct PerTile {
@@ -101,32 +35,38 @@ uniform instanced {
 
 uniform mat4 u_Projection;
 
-uint SPRITES_COUNT_PER_AXIS = uint(${SPRITES_COUNT_PER_AXIS});
-float SPRITE_STRIDE_NORMALIZED = ${SPRITE_STRIDE_NORMALIZED};
+float TILE_STRIDE_NORMALIZED = ${TILE_STRIDE_NORMALIZED};
 
-vec2 calcTextureCoords() {
-  uint col = a_blockTextureIndex % SPRITES_COUNT_PER_AXIS;
-  uint row = a_blockTextureIndex / SPRITES_COUNT_PER_AXIS;
-  return vec2(
-    a_vertexTextureCoords.x + SPRITE_STRIDE_NORMALIZED * float(col),
-    a_vertexTextureCoords.y + SPRITE_STRIDE_NORMALIZED * float(row)
-  );
+int TILES_PER_TEXTURE = ${TILES_PER_TEXTURE};
+int TILES_PER_TEXTURE_AXIS = ${TILES_PER_TEXTURE_AXIS};
+
+vec3 getTileTextureCoords(int index) {
+//   float z = float(index >> 10);
+//   float y = float(index % 1024 >> 5) * TILE_STRIDE_NORMALIZED;
+//   float x = float(index % 32) * TILE_STRIDE_NORMALIZED;
+
+  float z = float(index / TILES_PER_TEXTURE);
+  float y = float((index % TILES_PER_TEXTURE) / TILES_PER_TEXTURE_AXIS) * TILE_STRIDE_NORMALIZED;
+  float x = float(index % TILES_PER_TEXTURE_AXIS) * TILE_STRIDE_NORMALIZED;
+  return vec3(x, y, z);
 }
 
 void main(void) {
-    gl_Position = u_Projection * vec4(a_vertexPosition * 32.0 + float(gl_InstanceID) * 32.0, 0.0, 1.0);
-    v_texCoords = calcTextureCoords();
-    v_color = calcTextureCoords();
-    v_color2 = vec2(float(a_blockPosition), 0.0);
+    gl_Position = u_Projection * vec4(a_vertexPosition * 32.0 + a_tilePosition, 0.0, 1.0);
+    // gl_Position = u_Projection * vec4(a_vertexPosition * 32.0 + float(gl_InstanceID) * 32.0, 0.0, 1.0);
+    v_texCoords = vec3(a_vertexTextureCoords, 0.0) + getTileTextureCoords(a_tileTextureIndex);
+    v_color = vec3(1.0, 1.0, 0.0);
+    v_color2 = vec2(float(a_tilePosition.x), 0.0);
 }
 
 `;
 
 const fragmentShader = `#version 300 es
 
-in highp vec2 v_texCoords;
-in highp vec2 v_color;
+in highp vec3 v_texCoords;
+in highp vec3 v_color;
 in highp vec2 v_color2;
+in highp float alpha;
 flat in highp ivec2 texture4;
 
 out highp vec4 outputColor;
@@ -134,13 +74,13 @@ out highp vec4 outputColor;
 uniform sampler2D u_texture;
 
 void main(void) {
-  outputColor = vec4(texture(u_texture, v_texCoords).xyz, 1.0);
-//   outputColor = vec4(v_color, 0.0, 1.0);
+  outputColor = vec4(texture(u_texture, v_texCoords.xy));
+//   outputColor = vec4(v_texCoords, 1.0);
 }
 `;
 
 export function initGridProgram(gl: GL): {
-  glBlockBuffer: WebGLBuffer;
+  glTilesBuffer: WebGLBuffer;
   glIndicesBuffer: WebGLBuffer;
   glPerVertexBuffer: WebGLBuffer;
   glProgram: WebGLProgram;
@@ -172,12 +112,12 @@ export function initGridProgram(gl: GL): {
   textureAccessor.set([
     0,
     0,
-    SPRITE_STRIDE_NORMALIZED,
+    TILE_STRIDE_NORMALIZED,
     0,
-    SPRITE_STRIDE_NORMALIZED,
-    SPRITE_STRIDE_NORMALIZED,
+    TILE_STRIDE_NORMALIZED,
+    TILE_STRIDE_NORMALIZED,
     0,
-    SPRITE_STRIDE_NORMALIZED,
+    TILE_STRIDE_NORMALIZED,
   ]);
 
   const glPerVertexBuffer = gl.createBuffer();
@@ -200,49 +140,31 @@ export function initGridProgram(gl: GL): {
     vertexAttribute: vertexTextureCoords,
   });
 
-  const buffer = new ArrayBuffer(16);
+  const glTilesBuffer = gl.createBuffer();
+  assertNonNull(glTilesBuffer, "cannot-create-tile-buffer");
+  gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
 
-  const dv = new DataView(buffer);
-  let n = 0;
-  dv.setUint8(n + 0, 0);
-  dv.setUint8(n + 1, 0);
-  dv.setUint16(n + 2, 1, true);
-  n += 4;
-
-  dv.setUint8(n + 0, 1);
-  dv.setUint8(n + 1, 1);
-  dv.setUint16(n + 2, 2, true);
-  n += 4;
-
-  dv.setUint8(n + 0, 2);
-  dv.setUint8(n + 1, 2);
-  dv.setUint16(n + 2, 3, true);
-  n += 4;
-
-  dv.setUint8(n + 0, 3);
-  dv.setUint8(n + 1, 3);
-  dv.setUint16(n + 2, 4, true);
-  n += 4;
-
-  const glBlockBuffer = gl.createBuffer();
-  assertNonNull(glBlockBuffer, "cannot-create-block-buffer");
-  gl.bindBuffer(gl.ARRAY_BUFFER, glBlockBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, buffer, gl.DYNAMIC_DRAW);
-
-  const totalByteStride = blockPosition.totalByteSize + blockTextureIndex.totalByteSize;
+  const totalByteStride = tilePosition.totalByteSize + tileTextureIndex.totalByteSize + tileAlpha.totalByteSize;
   initVertexAttribute({
     byteOffset: 0,
     byteStride: totalByteStride,
     gl,
     glProgram,
-    vertexAttribute: blockPosition,
+    vertexAttribute: tilePosition,
   });
   initVertexAttribute({
-    byteOffset: blockPosition.totalByteSize,
+    byteOffset: tilePosition.totalByteSize,
     byteStride: totalByteStride,
     gl,
     glProgram,
-    vertexAttribute: blockTextureIndex,
+    vertexAttribute: tileTextureIndex,
+  });
+  initVertexAttribute({
+    byteOffset: tilePosition.totalByteSize + tileTextureAtlas.totalByteSize,
+    byteStride: totalByteStride,
+    gl,
+    glProgram,
+    vertexAttribute: tileAlpha,
   });
 
   const indicesBuffer = new Uint8Array([0, 1, 2, 0, 2, 3]);
@@ -253,11 +175,10 @@ export function initGridProgram(gl: GL): {
 
   gl.bindVertexArray(null);
 
-
   gl.uniformBlockBinding(
     glProgram,
-    gl.getUniformBlockIndex(glProgram, 'instanced'),
-    0
+    gl.getUniformBlockIndex(glProgram, "instanced"),
+    0,
   );
   const redMatUniformBlockBuffer = gl.createBuffer();
   gl.bindBuffer(gl.UNIFORM_BUFFER, redMatUniformBlockBuffer);
@@ -266,11 +187,11 @@ export function initGridProgram(gl: GL): {
   gl.bindBufferBase(
     gl.UNIFORM_BUFFER,
     0,
-    redMatUniformBlockBuffer
+    redMatUniformBlockBuffer,
   );
 
   return {
-    glBlockBuffer,
+    glTilesBuffer,
     glIndicesBuffer,
     glPerVertexBuffer,
     glProgram,

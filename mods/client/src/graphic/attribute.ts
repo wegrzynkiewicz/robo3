@@ -36,3 +36,88 @@ export function toShaderLine(va: VertexAttribute) {
   const { location, name, shaderType } = va;
   return `layout(location = ${location}) in ${shaderType} ${name};`;
 }
+
+const blockAlpha: VertexAttribute = {
+  accessor: Float32Array,
+  axes: 4,
+  byteSize: 4,
+  divisor: 1,
+  glType: WebGL2RenderingContext.FLOAT,
+  isInteger: false,
+  isSigned: false,
+  location: 5,
+  name: "a_blockAlpha",
+  normalize: false,
+  shaderType: "vec4",
+  totalByteSize: 16,
+};
+
+function resolveIntegerTypeByByte(byte: number): number {
+  switch (byte) {
+    case 1:
+      return WebGL2RenderingContext["BYTE"];
+    case 2:
+      return WebGL2RenderingContext["SHORT"];
+    case 4:
+      return WebGL2RenderingContext["INT"];
+    default:
+      return 0;
+  }
+}
+
+export function attribute(text: string): VertexAttribute {
+  const segments = text.split(":");
+  const [location, structure, name, divisor] = segments;
+  const chars = structure.split("");
+  const type = chars.shift();
+
+  let glType: AttributeType = WebGL2RenderingContext["FLOAT"];
+  let axes = 1;
+  let isInteger = false;
+  let isSigned = false;
+  let shaderType = "";
+  if (type === "v") {
+    axes = parseInt(chars.shift()!);
+  }
+  const scalar = chars.shift();
+  const byteSize = parseInt(chars.shift()!);
+  switch (scalar) {
+    case "b": {
+      glType = WebGL2RenderingContext["BOOL"];
+      shaderType = axes > 1 ? `bvec${axes}` : "bool";
+      break;
+    }
+    case "f": {
+      shaderType = axes > 1 ? `vec${axes}` : "float";
+      break;
+    }
+    case "i": {
+      isSigned = true;
+      isInteger = true;
+      glType = resolveIntegerTypeByByte(byteSize) as AttributeType;
+      shaderType = axes > 1 ? `ivec${axes}` : "int";
+      break;
+    }
+    case "u": {
+      isInteger = true;
+      glType = resolveIntegerTypeByByte(byteSize) + 1 as AttributeType;
+      shaderType = axes > 1 ? `uvec${axes}` : "uint";
+    }
+  }
+  const totalByteSize = byteSize * axes;
+
+  return {
+    accessor: Float32Array,
+    axes,
+    byteSize,
+    divisor: divisor ? parseInt(divisor) : 0,
+    glType,
+    isInteger,
+    isSigned,
+    location: parseInt(location),
+    name,
+    normalize: false,
+    shaderType,
+    totalByteSize,
+  };
+}

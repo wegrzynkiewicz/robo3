@@ -4,6 +4,7 @@ export interface ChunkLayerCommon {
 
 export const enum ChunkLayerType {
   GRID = "GRID",
+  LIST = "LIST",
   SINGLE = "SINGLE",
 }
 
@@ -17,12 +18,17 @@ export interface GridChunkLayer extends ChunkLayerCommon {
   type: ChunkLayerType.GRID;
 }
 
-export type ChunkLayer = SingleChunkLayer | GridChunkLayer;
+export interface ListChunkLayer extends ChunkLayerCommon {
+  accessor: Accessor;
+  type: ChunkLayerType.LIST;
+}
+
+export type ChunkLayer = GridChunkLayer | ListChunkLayer | SingleChunkLayer;
 
 export interface Chunk {
   chunkId: number;
   layers: Map<number, ChunkLayer>;
-  regionId: number;
+  worldId: number;
 }
 
 export type Serialized<T> = {
@@ -82,15 +88,15 @@ const layer2: SingleChunkLayer = {
   value: 0x0000eeee,
 };
 
-const layers1 = new Map<number, ChunkLayer>([
-  [3, layer1],
-  [4, layer2],
-]);
-
 const chunk: Chunk = {
   chunkId: 1,
-  regionId: 2,
-  layers: layers1,
+  worldId: 2,
+  layers: [
+    undefined,
+    undefined,
+    layer1,
+    layer2,
+  ],
 };
 
 function mapToArray(key: any, value: any) {
@@ -117,4 +123,3 @@ ar[2] = 0x3333;
 ar[3] = 0x4444;
 
 console.log(ab);
-

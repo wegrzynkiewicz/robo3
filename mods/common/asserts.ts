@@ -8,7 +8,7 @@ export class Breaker extends Error {
   constructor(message: string, data?: BreakerOptions) {
     const { error, cause, ...others } = data ?? {};
     super(message, { cause: cause ?? error });
-    this.name = "StateError";
+    this.name = "Breaker";
     this.options = data ?? {};
     const json = JSON.stringify(others);
     this.stack += `\n    with parameters ${json}.`;
@@ -26,6 +26,12 @@ type Data = Record<string, unknown>;
 
 function throws(message: string, data?: Data) {
   throw new Breaker(message, data);
+}
+
+export function assertTrue(value: unknown, message: string, data?: Data): asserts value is boolean {
+  if (value !== true) {
+    throws(message, data);
+  }
 }
 
 export function assertNonNull<T>(value: T, message: string, data?: Data): asserts value is Exclude<T, null> {
@@ -46,8 +52,12 @@ export function assertRequiredString(value: unknown, message: string, data?: Dat
   }
 }
 
-export function assertNonNegativeNumber(value: unknown, message: string, data?: Data): asserts value is number {
-  if (typeof value !== "number" || value < 0 || isNaN(value)) {
+export function isPositiveNumber(value: unknown): value is number {
+  return typeof value === "number" && value >= 0 && !isNaN(value);
+}
+
+export function assertPositiveNumber(value: unknown, message: string, data?: Data): asserts value is number {
+  if (!isPositiveNumber(value)) {
     throws(message, data);
   }
 }

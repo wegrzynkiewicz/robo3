@@ -1,0 +1,27 @@
+{
+  "columns": 8,
+  "image": "tileset.png",
+  "imageheight": 4256,
+  "imagewidth": 256,
+  "margin": 0,
+  "name": "[Base]BaseChip_pipo",
+  "spacing": 0,
+  "tilecount": 1064,
+  "tiledversion": "git",
+  "tileheight": 32,
+  "tiles": [
+    {
+      "id": 0,
+      "properties": [
+        {
+          "name": "robo3.tileType",
+          "type": "string",
+          "value": "grass"
+        }
+      ]
+    }
+  ],
+  "tilewidth": 32,
+  "type": "tileset",
+  "version": "1.10"
+}
