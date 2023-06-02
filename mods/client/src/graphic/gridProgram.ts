@@ -1,5 +1,5 @@
 import { assertNonNull } from "../../../common/asserts.ts";
-import { TILES_PER_TEXTURE, TILES_PER_TEXTURE_AXIS, TILE_STRIDE_NORMALIZED } from "../vars.ts";
+import { TILE_STRIDE_NORMALIZED, TILES_PER_TEXTURE, TILES_PER_TEXTURE_AXIS } from "../vars.ts";
 import { attribute, toShaderLine } from "./attribute.ts";
 import { createProgram, GL, initVertexAttribute } from "./utilities.ts";
 

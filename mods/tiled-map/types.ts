@@ -1,5 +1,6 @@
+import { generateHighContrastColor } from "../client/src/graphic/color.ts";
 import { coords2ImageRect, index2coords } from "../client/src/graphic/texture.ts";
-import { TILES_TEXTURE_SIZE, TILE_SIZE } from "../client/src/vars.ts";
+import { TILE_SIZE, TILES_TEXTURE_SIZE } from "../client/src/vars.ts";
 import {
   assertNonNull,
   assertObject,
@@ -113,7 +114,8 @@ async function processTileSet(data: unknown) {
     src: imageSrc.toString(),
     width: imagewidth,
   });
-  return loadTile(htmlImage);
+  const contexts = loadTiles({ tileAtlases: [{ image: htmlImage }] });
+  return contexts[0].getImageData(0, 0, TILES_TEXTURE_SIZE, TILES_TEXTURE_SIZE);
 }
 
 export async function processMap() {
@@ -148,7 +150,7 @@ export function* getTilesFromCanvasContext(context: CanvasRenderingContext2D): G
         y * TILE_SIZE,
         TILE_SIZE,
         TILE_SIZE,
-        { colorSpace: "display-p3" }
+        { colorSpace: "display-p3" },
       );
       yield tileImageData;
     }
@@ -158,50 +160,157 @@ export function* getTilesFromCanvasContext(context: CanvasRenderingContext2D): G
 export function createTextureTileHelper(r: number, g: number, b: number): ImageData {
   const tile = new ImageData(TILE_SIZE, TILE_SIZE);
   const buffer = tile.data;
-  let pixelStride = 0;
+  let pixelIndex = 0;
   for (let y = 0; y < TILE_SIZE; y++) {
     for (let x = 0; x < TILE_SIZE; x++) {
-      const paint = x % 2 === 0 || y % 2 === 0;
-      buffer[pixelStride + 0] = paint ? r : 0x00;
-      buffer[pixelStride + 1] = paint ? g : 0x00;
-      buffer[pixelStride + 2] = paint ? b : 0x00;
-      buffer[pixelStride + 3] = 0xFF;
-      pixelStride += 4;
+      const paint = x % 2 === 1 || y % 2 === 0;
+      buffer[pixelIndex + 0] = paint ? r : 0xFF;
+      buffer[pixelIndex + 1] = paint ? g : 0x00;
+      buffer[pixelIndex + 2] = paint ? b : 0xFF;
+      buffer[pixelIndex + 3] = 0xFF;
+      pixelIndex += 4;
     }
   }
   return tile;
 }
 
-function loadTile(image: HTMLImageElement): ImageData {
-  const sourceContext = createContext2D(image.width, image.height);
-  sourceContext.drawImage(image, 0, 0);
-  //   const imageData = sourceContext.getImageData(0, 34, 1, 1);
+interface TileAtlas {
+  image: HTMLImageElement;
+}
 
-  const targetContext = createContext2D(TILES_TEXTURE_SIZE, TILES_TEXTURE_SIZE);
-  const tiles = getTilesFromCanvasContext(sourceContext);
+// interface
 
-  const firstTile = createTextureTileHelper(0x00, 0xff, 0xff);
-  const [x, y] = index2coords(0);
-  const [s, t] = coords2ImageRect(x, y);
-  targetContext.putImageData(firstTile, s, t);
+// function* addFirstTile(
+//   startTextureIndex: number,
+//   generator: Generator<ImageData, void, unknown>
+// ): Generator<ImageData, void, number> {
+//   const firstTile = createTextureTileHelper(0x00, 0xff, 0xff);
+//   for (const tile of generator) {
+//     yield tile;
+//   }
+//   textureIndex
+// }
 
-  let textureIndex = 1;
-  for (const tileImage of tiles) {
-    const [x, y, z] = index2coords(textureIndex);
-    if (z === 1) {
-      break;
+class TilesTextureAllocator {
+  public readonly contexts: CanvasRenderingContext2D[] = [];
+  private textureIndex = 0;
+  private currentZ = -1;
+  private currentTargetContext!: CanvasRenderingContext2D;
+  public insert(image: ImageData): void {
+    let [x, y, z] = index2coords(this.textureIndex);
+    if (z !== this.currentZ) {
+      this.currentZ = z;
+      this.currentTargetContext = createContext2D(TILES_TEXTURE_SIZE, TILES_TEXTURE_SIZE);
+      this.contexts.push(this.currentTargetContext);
+      this.textureIndex++;
+      [x, y] = index2coords(this.textureIndex);
     }
     const [s, t] = coords2ImageRect(x, y);
-    targetContext.putImageData(tileImage, s, t);
-    textureIndex++;
+    this.currentTargetContext!.putImageData(image, s, t);
+    this.textureIndex++;
   }
 
-//   document.body.replaceChildren();
-  document.body.appendChild(targetContext.canvas);
-  const { height, width } = targetContext.canvas;
-  targetContext.getImageData(0, 0, width, height);
-  return targetContext.getImageData(0, 0, width, height);
+  public paintHelperTiles(): void {
+    const countOfContexts = this.contexts.length;
+    const [s, t] = coords2ImageRect(0, 0);
+    for (let z = 0; z < countOfContexts; z++) {
+      const context = this.contexts[z];
+      const [r, g, b] = generateHighContrastColor(z, countOfContexts);
+      const helperTile = createTextureTileHelper(r, g, b);
+      context.putImageData(helperTile, s, t);
+    }
+  }
 }
+
+function loadTiles(
+  { tileAtlases }: {
+    tileAtlases: TileAtlas[];
+  },
+): CanvasRenderingContext2D[] {
+  const tilesTextureAllocator = new TilesTextureAllocator();
+  for (const atlas of tileAtlases) {
+    const { image } = atlas;
+    const sourceContext = createContext2D(image.width, image.height);
+    sourceContext.drawImage(image, 0, 0);
+    const tiles = getTilesFromCanvasContext(sourceContext);
+    for (const tileImage of tiles) {
+      tilesTextureAllocator.insert(tileImage);
+    }
+  }
+  tilesTextureAllocator.paintHelperTiles();
+  tilesTextureAllocator.contexts.map((c) => document.body.appendChild(c.canvas));
+  return tilesTextureAllocator.contexts;
+}
+
+// function loadTiles(
+//   { tileAtlases }: {
+//     tileAtlases: TileAtlas[],
+//   },
+// ): CanvasRenderingContext2D[] {
+//   const firstTile = createTextureTileHelper(0x00, 0xff, 0xff);
+//   const contexts: CanvasRenderingContext2D[] = [];
+//   let memoryZ = -1;
+//   let textureIndex = 0;
+//   let currentTargetContext: CanvasRenderingContext2D;
+//   function resolveImageRect(): [number, number] {
+//     const [x, y, z] = index2coords(textureIndex);
+//     const [s, t] = coords2ImageRect(x, y);
+//     if (z !== memoryZ) {
+//       memoryZ = z;
+//       currentTargetContext = createContext2D(TILES_TEXTURE_SIZE, TILES_TEXTURE_SIZE);
+//       contexts.push(currentTargetContext);
+//       currentTargetContext.putImageData(firstTile, s, t);
+//       textureIndex++;
+//       const [x, y] = index2coords(textureIndex);
+//       return coords2ImageRect(x, y);
+//     }
+//     return [s, t];
+//   }
+//   for (const atlas of tileAtlases) {
+//     const { image } = atlas;
+//     const sourceContext = createContext2D(image.width, image.height);
+//     sourceContext.drawImage(image, 0, 0);
+//     const tiles = getTilesFromCanvasContext(sourceContext);
+//     for (const tileImage of tiles) {
+//       const [s, t] = resolveImageRect();
+//       currentTargetContext!.putImageData(tileImage, s, t);
+//       textureIndex++;
+//     }
+//   }
+//   contexts.map(c =>
+//     document.body.appendChild(c.canvas));
+//   return contexts
+// }
+
+// function loadTile(image: HTMLImageElement): ImageData {
+//   const sourceContext = createContext2D(image.width, image.height);
+//   sourceContext.drawImage(image, 0, 0);
+
+//   const targetContext = createContext2D(TILES_TEXTURE_SIZE, TILES_TEXTURE_SIZE);
+//   const tiles = getTilesFromCanvasContext(sourceContext);
+
+//   const firstTile = createTextureTileHelper(5, 5, 5);
+//   const [x, y] = index2coords(0);
+//   const [s, t] = coords2ImageRect(x, y);
+//   targetContext.putImageData(firstTile, s, t);
+
+//   let textureIndex = 1;
+//   for (const tileImage of tiles) {
+//     const [x, y, z] = index2coords(textureIndex);
+//     if (z === 1) {
+//       break;
+//     }
+//     const [s, t] = coords2ImageRect(x, y);
+//     targetContext.putImageData(tileImage, s, t);
+//     textureIndex++;
+//   }
+
+//   //   document.body.replaceChildren();
+//   //   document.body.appendChild(targetContext.canvas);
+//   const { height, width } = targetContext.canvas;
+//   targetContext.getImageData(0, 0, width, height);
+//   return targetContext.getImageData(0, 0, width, height);
+// }
 
 // const buffer = Deno.readFileSync('/home/lukasz/robo3/kafelki.tsj');
 // const textDecoder = new TextDecoder();

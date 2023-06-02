@@ -35,17 +35,16 @@ const onLoadedImage = function () {
   gl.generateMipmap(gl.TEXTURE_2D);
 };
 img.addEventListener("load", () => {
-//   onLoadedImage();
+  //   onLoadedImage();
   //   updateTexture = onLoadedImage;
 });
 img.src = "./assets/1.png";
-
 
 processMap().then((imageData) => {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
   gl.generateMipmap(gl.TEXTURE_2D);
-}) ;
+});
 
 {
   const level = 0;
@@ -85,7 +84,7 @@ function load() {
     for (let x = 0; x < 20; x++) {
       ta[n + 0] = x * 32.0;
       ta[n + 1] = y * 32.0;
-    //   ia[n + 2] = coords2index(1, 7, 0);
+      //   ia[n + 2] = coords2index(1, 7, 0);
       ia[n + 2] = 40;
       ta[n + 3] = 1;
       n += 4;
@@ -131,7 +130,7 @@ const projection = new Float32Array(16);
 gl.uniformMatrix4fv(projectionLoc1, false, projection);
 gl.uniform1i(textureLoc1, 0);
 // gl.uniform1ui(toLoc, 50);
-gl.clearColor(1.0, 0.0, 1.0, 1.0);
+gl.clearColor(0.0, 0.0, 0.0, 1.0);
 gl.enable(gl.BLEND);
 
 const datas: [string, number][] = [

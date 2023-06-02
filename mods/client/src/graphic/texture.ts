@@ -1,4 +1,4 @@
-import { TILES_PER_TEXTURE, TILES_PER_TEXTURE_AXIS, TILE_SIZE } from "../vars.ts";
+import { TILE_SIZE, TILES_PER_TEXTURE, TILES_PER_TEXTURE_AXIS } from "../vars.ts";
 
 export function coords2index(x: number, y: number, z: number): number {
   return (z * TILES_PER_TEXTURE) + (y * TILES_PER_TEXTURE_AXIS) + x;
@@ -27,4 +27,3 @@ export function coords2ImageRect(x: number, y: number): [number, number] {
 //   const x = index % 32;
 //   return [x, y, z];
 // }
-

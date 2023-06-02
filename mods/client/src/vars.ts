@@ -1,4 +1,4 @@
-export const TILES_TEXTURE_SIZE = 1024;
+export const TILES_TEXTURE_SIZE = 256;
 export const TILE_SIZE = 32;
 export const TILES_PER_TEXTURE_AXIS = Math.floor(TILES_TEXTURE_SIZE / TILE_SIZE);
 export const TILES_PER_TEXTURE = TILES_PER_TEXTURE_AXIS ** 2;

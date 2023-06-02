@@ -49,9 +49,53 @@ function assertPositiveNumber(value, message, data) {
         __throws(message, data);
     }
 }
-const TILES_PER_TEXTURE_AXIS = Math.floor(1024 / 32);
+function generateHighContrastColor(index, maxIndex) {
+    const hue = Math.floor(index / maxIndex * 360);
+    const rgb = hslToRgb(hue, 100, 50);
+    return rgb;
+}
+function hueToRgb(p, q, t) {
+    if (t < 0) {
+        t += 1;
+    }
+    if (t > 1) {
+        t -= 1;
+    }
+    if (t < 1 / 6) {
+        return p + (q - p) * 6 * t;
+    }
+    if (t < 1 / 2) {
+        return q;
+    }
+    if (t < 2 / 3) {
+        return p + (q - p) * (2 / 3 - t) * 6;
+    }
+    return p;
+}
+function hslToRgb(h, s, l) {
+    h /= 360;
+    s /= 100;
+    l /= 100;
+    let r, g, b;
+    if (s === 0) {
+        r = g = b = l;
+    } else {
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = Math.round(hueToRgb(p, q, h + 1 / 3) * 255);
+        g = Math.round(hueToRgb(p, q, h) * 255);
+        b = Math.round(hueToRgb(p, q, h - 1 / 3) * 255);
+    }
+    return [
+        r,
+        g,
+        b
+    ];
+}
+const TILES_TEXTURE_SIZE = 256;
+const TILES_PER_TEXTURE_AXIS = Math.floor(256 / 32);
 const TILES_PER_TEXTURE = TILES_PER_TEXTURE_AXIS ** 2;
-const TILE_STRIDE_NORMALIZED = 32 / 1024;
+const TILE_STRIDE_NORMALIZED = 32 / 256;
 function coords2index(x, y, z) {
     return z * TILES_PER_TEXTURE + y * TILES_PER_TEXTURE_AXIS + x;
 }
@@ -163,7 +207,14 @@ async function processTileSet(data) {
         src: imageSrc.toString(),
         width: imagewidth
     });
-    return loadTile(htmlImage);
+    const contexts = loadTiles({
+        tileAtlases: [
+            {
+                image: htmlImage
+            }
+        ]
+    });
+    return contexts[0].getImageData(0, 0, 256, 256);
 }
 async function processMap() {
     const request = await fetch("./assets/kafelki.tsj");
@@ -204,42 +255,62 @@ function* getTilesFromCanvasContext(context) {
 function createTextureTileHelper(r, g, b) {
     const tile = new ImageData(32, 32);
     const buffer = tile.data;
-    let pixelStride = 0;
+    let pixelIndex = 0;
     for(let y = 0; y < 32; y++){
         for(let x = 0; x < 32; x++){
-            const paint = x % 2 === 0 || y % 2 === 0;
-            buffer[pixelStride + 0] = paint ? r : 0x00;
-            buffer[pixelStride + 1] = paint ? g : 0x00;
-            buffer[pixelStride + 2] = paint ? b : 0x00;
-            buffer[pixelStride + 3] = 0xFF;
-            pixelStride += 4;
+            const paint = x % 2 === 1 || y % 2 === 0;
+            buffer[pixelIndex + 0] = paint ? r : 0xFF;
+            buffer[pixelIndex + 1] = paint ? g : 0x00;
+            buffer[pixelIndex + 2] = paint ? b : 0xFF;
+            buffer[pixelIndex + 3] = 0xFF;
+            pixelIndex += 4;
         }
     }
     return tile;
 }
-function loadTile(image) {
-    const sourceContext = createContext2D(image.width, image.height);
-    sourceContext.drawImage(image, 0, 0);
-    const targetContext = createContext2D(1024, 1024);
-    const tiles = getTilesFromCanvasContext(sourceContext);
-    const firstTile = createTextureTileHelper(0x00, 0xff, 0xff);
-    const [x, y] = index2coords(0);
-    const [s, t] = coords2ImageRect(x, y);
-    targetContext.putImageData(firstTile, s, t);
-    let textureIndex = 1;
-    for (const tileImage of tiles){
-        const [x, y, z] = index2coords(textureIndex);
-        if (z === 1) {
-            break;
+class TilesTextureAllocator {
+    contexts = [];
+    textureIndex = 0;
+    currentZ = -1;
+    currentTargetContext;
+    insert(image) {
+        let [x, y, z] = index2coords(this.textureIndex);
+        if (z !== this.currentZ) {
+            this.currentZ = z;
+            this.currentTargetContext = createContext2D(TILES_TEXTURE_SIZE, TILES_TEXTURE_SIZE);
+            this.contexts.push(this.currentTargetContext);
+            this.textureIndex++;
+            [x, y] = index2coords(this.textureIndex);
         }
         const [s, t] = coords2ImageRect(x, y);
-        targetContext.putImageData(tileImage, s, t);
-        textureIndex++;
+        this.currentTargetContext.putImageData(image, s, t);
+        this.textureIndex++;
     }
-    document.body.appendChild(targetContext.canvas);
-    const { height , width  } = targetContext.canvas;
-    targetContext.getImageData(0, 0, width, height);
-    return targetContext.getImageData(0, 0, width, height);
+    paintHelperTiles() {
+        const countOfContexts = this.contexts.length;
+        const [s, t] = coords2ImageRect(0, 0);
+        for(let z = 0; z < countOfContexts; z++){
+            const context = this.contexts[z];
+            const [r, g, b] = generateHighContrastColor(z, countOfContexts);
+            const helperTile = createTextureTileHelper(r, g, b);
+            context.putImageData(helperTile, s, t);
+        }
+    }
+}
+function loadTiles({ tileAtlases  }) {
+    const tilesTextureAllocator = new TilesTextureAllocator();
+    for (const atlas of tileAtlases){
+        const { image  } = atlas;
+        const sourceContext = createContext2D(image.width, image.height);
+        sourceContext.drawImage(image, 0, 0);
+        const tiles = getTilesFromCanvasContext(sourceContext);
+        for (const tileImage of tiles){
+            tilesTextureAllocator.insert(tileImage);
+        }
+    }
+    tilesTextureAllocator.paintHelperTiles();
+    tilesTextureAllocator.contexts.map((c)=>document.body.appendChild(c.canvas));
+    return tilesTextureAllocator.contexts;
 }
 function toShaderLine(va) {
     const { location , name , shaderType  } = va;
@@ -781,7 +852,7 @@ gl.bindVertexArray(glVAOGrid);
 const projection = new Float32Array(16);
 gl.uniformMatrix4fv(projectionLoc1, false, projection);
 gl.uniform1i(textureLoc1, 0);
-gl.clearColor(1.0, 0.0, 1.0, 1.0);
+gl.clearColor(0.0, 0.0, 0.0, 1.0);
 gl.enable(gl.BLEND);
 const datas = [
     [
