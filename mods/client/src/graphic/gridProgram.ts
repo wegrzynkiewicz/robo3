@@ -1,5 +1,5 @@
 import { assertNonNull } from "../../../common/asserts.ts";
-import { TILE_STRIDE_NORMALIZED, TILES_PER_TEXTURE, TILES_PER_TEXTURE_AXIS } from "../vars.ts";
+import { TILES_PER_TEXTURE, TILES_PER_TEXTURE_AXIS, TILE_STRIDE_NORMALIZED } from "../../../core/vars.ts";
 import { attribute, toShaderLine } from "./attribute.ts";
 import { createProgram, GL, initVertexAttribute } from "./utilities.ts";
 
@@ -35,7 +35,7 @@ uniform instanced {
 
 uniform mat4 u_Projection;
 
-float TILE_STRIDE_NORMALIZED = ${TILE_STRIDE_NORMALIZED};
+float TILE_STRIDE_NORMALIZED = ${TILE_STRIDE_NORMALIZED.toFixed(8)};
 
 int TILES_PER_TEXTURE = ${TILES_PER_TEXTURE};
 int TILES_PER_TEXTURE_AXIS = ${TILES_PER_TEXTURE_AXIS};

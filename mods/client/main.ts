@@ -1,10 +1,9 @@
 import { assertNonNull, assertObject } from "../common/asserts.ts";
+import { coords2index } from "../core/texture.ts";
 import { processMap } from "../tiled-map/types.ts";
 import { initGridProgram } from "./src/graphic/gridProgram.ts";
 import { ortho } from "./src/graphic/math.ts";
-import { coords2index } from "./src/graphic/texture.ts";
 import { getUniformBlocksInfo, getUniformInfo } from "./src/graphic/utilities.ts";
-import { TILE_STRIDE_NORMALIZED } from "./src/vars.ts";
 
 document.addEventListener("DOMContentLoaded", () => {
 });

@@ -10,7 +10,7 @@ export function color2hex(u8R: number, u8G: number, u8B: number): string {
 
 export function generateHighContrastColor(index: number, maxIndex: number): U8RBG {
   const hue = Math.floor(index / maxIndex * 360);
-  const saturation = 100;
+  const saturation = 70;
   const lightness = 50;
 
   const rgb = hslToRgb(hue, saturation, lightness);

@@ -1,3 +1,11 @@
 {
-  "deno.enable": true
+  "deno.enable": true,
+  "cSpell.words": [
+    "firstgid",
+    "imageheight",
+    "imagewidth",
+    "tilecount",
+    "tileheight",
+    "tilewidth"
+]
 }
