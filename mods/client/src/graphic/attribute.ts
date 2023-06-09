@@ -37,21 +37,6 @@ export function toShaderLine(va: VertexAttribute) {
   return `layout(location = ${location}) in ${shaderType} ${name};`;
 }
 
-const blockAlpha: VertexAttribute = {
-  accessor: Float32Array,
-  axes: 4,
-  byteSize: 4,
-  divisor: 1,
-  glType: WebGL2RenderingContext.FLOAT,
-  isInteger: false,
-  isSigned: false,
-  location: 5,
-  name: "a_blockAlpha",
-  normalize: false,
-  shaderType: "vec4",
-  totalByteSize: 16,
-};
-
 function resolveIntegerTypeByByte(byte: number): number {
   switch (byte) {
     case 1:

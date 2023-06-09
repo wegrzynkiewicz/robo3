@@ -4,8 +4,13 @@
     "firstgid",
     "imageheight",
     "imagewidth",
+    "objectalignment",
+    "offsetx",
     "tilecount",
+    "tiledversion",
     "tileheight",
+    "tilelayer",
+    "Tileset",
     "tilewidth"
-]
+  ]
 }

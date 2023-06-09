@@ -1,14 +1,14 @@
 import { createCanvas } from "https://deno.land/x/canvas@v1.4.1/mod.ts";
 import type { ImageData } from "https://deno.land/x/canvas@v1.4.1/mod.ts";
 
-const canvas = createCanvas(64,64);
-const context = canvas.getContext('2d');
+const canvas = createCanvas(64, 64);
+const context = canvas.getContext("2d");
 
 const TILE_SIZE = 32;
 
 export function createTextureTileHelper(r: number, g: number, b: number): ImageData {
-//   const tile = new ImageData(TILE_SIZE, TILE_SIZE);
-const tile = context.createImageData(TILE_SIZE, TILE_SIZE);
+  //   const tile = new ImageData(TILE_SIZE, TILE_SIZE);
+  const tile = context.createImageData(TILE_SIZE, TILE_SIZE);
   const buffer = tile.data;
   let pixelIndex = 0;
   for (let y = 0; y < TILE_SIZE; y++) {

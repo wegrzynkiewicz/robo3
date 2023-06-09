@@ -61,3 +61,9 @@ export function assertPositiveNumber(value: unknown, message: string, data?: Dat
     throws(message, data);
   }
 }
+
+export function assertArray<T>(value: unknown, message: string, data?: Data): asserts value is T[] {
+  if (Array.isArray(value) === false) {
+    throws(message, data);
+  }
+}

@@ -1,7 +1,7 @@
 import { generateHighContrastColor } from "../client/src/graphic/color.ts";
-import { assertTrue, assertNonNull } from "../common/asserts.ts";
-import { index2coords,coords2ImageRect } from "./texture.ts";
-import { TILE_SIZE,TILES_TEXTURE_SIZE } from "./vars.ts";
+import { assertNonNull, assertTrue } from "../common/asserts.ts";
+import { coords2ImageRect, index2coords } from "./numbers.ts";
+import { TILE_SIZE, TILES_TEXTURE_SIZE } from "./vars.ts";
 
 export interface Tile {
   tileId: string;
@@ -33,6 +33,23 @@ export function createTextureTileHelper(r: number, g: number, b: number): ImageD
       buffer[pixelIndex + 1] = paint ? g : 0x00;
       buffer[pixelIndex + 2] = paint ? b : 0xFF;
       buffer[pixelIndex + 3] = 0xFF;
+      pixelIndex += 4;
+    }
+  }
+  return tile;
+}
+
+export function createFocusTileHelper(): ImageData {
+  const tile = new ImageData(TILE_SIZE, TILE_SIZE);
+  const buffer = tile.data;
+  let pixelIndex = 0;
+  for (let y = 0; y < TILE_SIZE; y++) {
+    for (let x = 0; x < TILE_SIZE; x++) {
+      const paint = x % (TILE_SIZE - 1) === 0 || y % (TILE_SIZE - 1) === 0;
+      buffer[pixelIndex + 0] = 0x00;
+      buffer[pixelIndex + 1] = 0x00;
+      buffer[pixelIndex + 2] = 0x00;
+      buffer[pixelIndex + 3] = paint ? 0x22 : 0x00;
       pixelIndex += 4;
     }
   }
@@ -80,7 +97,7 @@ export class TilesTextureAllocator {
     this.currentTargetContext!.putImageData(image, s, t);
     const tileTexture = {
       spriteIndex: this.spriteIndex,
-    }
+    };
     this.spriteIndex++;
     return tileTexture;
   }
@@ -93,10 +110,11 @@ export class TilesTextureAllocator {
       const [r, g, b] = generateHighContrastColor(z, countOfContexts);
       const helperTile = createTextureTileHelper(r, g, b);
       context.putImageData(helperTile, s, t);
+      const focus = createFocusTileHelper();
+      context.putImageData(focus, s, t);
     }
   }
 }
 
 export class TileManager {
-
 }

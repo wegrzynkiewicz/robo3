@@ -36,7 +36,7 @@ export function hueToRgb(p: number, q: number, t: number) {
   return p;
 }
 
-export function hslToRgb(h: number, s: number, l: number): U8RBG{
+export function hslToRgb(h: number, s: number, l: number): U8RBG {
   h /= 360;
   s /= 100;
   l /= 100;

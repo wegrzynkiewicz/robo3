@@ -1,2 +1,2 @@
 *.log
-dist/*.js
+**/dist/*.js

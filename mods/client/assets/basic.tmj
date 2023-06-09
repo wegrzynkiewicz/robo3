@@ -70,7 +70,7 @@
          "starty":0,
          "type":"tilelayer",
          "visible":true,
-         "width":32,
+         "width":16,
          "x":0,
          "y":0
         }],
