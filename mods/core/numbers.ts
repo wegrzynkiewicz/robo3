@@ -1,9 +1,9 @@
 import { TILE_SIZE, TILES_PER_TEXTURE_AXIS } from "./vars.ts";
 
 export interface Dimension {
-  depth: number;
-  height: number;
-  width: number;
+  d: number;
+  h: number;
+  w: number;
 }
 
 export interface Position {

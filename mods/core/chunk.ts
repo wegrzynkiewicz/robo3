@@ -31,9 +31,9 @@ export interface TileInstance {
 
 export interface Chunk {
   chunkId: GlobalId;
-  dimensionId: GlobalId;
-  extendedTiles: TileInstance[];
+  egos: TileInstance[];
   layers: ChunkLayer[];
   position: Position;
   positionIndex: number;
+  spaceId: GlobalId;
 }

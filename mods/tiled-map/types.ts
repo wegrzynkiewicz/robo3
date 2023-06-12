@@ -1,4 +1,5 @@
 import {
+  Breaker,
   assertArray,
   assertObject,
   assertPositiveNumber,
@@ -45,7 +46,7 @@ interface TiledLayer {
   height: number;
   id: number;
   //   image?: string;
-  //   layers?: Layer[];
+  layers: TiledLayer[];
   //   locked?: boolean;
   //   name: string;
   //   objects?: any[]; // typ obiektów należy dostosować
@@ -110,9 +111,9 @@ class LoadingContext {
 }
 
 export class ChunkManager {
-  public binaries: Uint16Array[] = []; 
+  public binaries: Uint16Array[] = [];
   createChunk(
-    {binary}: {
+    { binary }: {
       binary: Uint16Array;
     }
   ) {
@@ -161,18 +162,51 @@ export async function processMap() {
   await processTileSet(ctx, json);
 
   ctx.tilesTextureAllocator.paintHelperTiles();
-  ctx.tilesTextureAllocator.contexts.map((c) => document.body.appendChild(c.canvas));
+  //   ctx.tilesTextureAllocator.contexts.map((c) => document.body.appendChild(c.canvas));
   const dataSource = ctx.tilesTextureAllocator.contexts[0].getImageData(0, 0, TILES_TEXTURE_SIZE, TILES_TEXTURE_SIZE);
   return dataSource;
 }
 
 export async function processMap1() {
   const ctx = new LoadingContext();
-  const request = await fetch("./assets/basic.tmj");
+  const request = await fetch("./assets/test2.tmj");
   const json = await request.json();
 
   await processMap2(ctx, json);
   return ctx.chunkManager;
+}
+
+async function processLayer(ctx: LoadingContext, layer: unknown) {
+  assertObject<TiledLayer>(layer, "invalid-tiled-map-structure");
+  const { chunks, id: layerId, type, layers } = layer;
+  switch (type) {
+    case 'group':
+      assertArray(layers, "tiled-layers-of-layers-should-be-array", { layerId });
+      for (const layer of layers) {
+        await processLayer(ctx, layer);
+      }
+      break;
+    case 'tilelayer':
+      assertTrue(type === "tilelayer", `tiled-layer-type-should-be-tilelayer`, { layerId });
+      assertArray(chunks, "tiled-chunks-should-be-array", { layerId });
+      assertTrue(chunks.length >= 1, "tiled-chunks-length-should-be-greater-than-or-equal--1", { layerId });
+      for (const [chunkIndex, tiledChunk] of Object.entries(chunks)) {
+        assertObject<TiledChunk>(tiledChunk, "invalid-tiled-chunk-structure");
+        const { data, height, width, x, y } = tiledChunk;
+        const size = TILES_PER_CHUNK_AXIS;
+        const area = TILES_PER_CHUNK;
+        assertTrue(width === size, `tiled-chunk-width-should-be-${size}`, { chunkIndex, layerId, width, });
+        assertTrue(height === size, `tiled-chunk-height-should-be-${size}`, { chunkIndex, layerId, height, });
+        assertArray(data, "tiled-chunks-data-should-be-array", { chunkIndex, layerId });
+        assertTrue(data.length > 1, `tiled-chunks-data-length-should-be-${area}`, { chunkIndex, layerId });
+        const binary = new Uint16Array(TILES_PER_CHUNK);
+        binary.set(data.map(e => (e ?? 1)));
+        ctx.chunkManager.createChunk({ binary });
+      }
+      break;
+    default:
+      throw new Breaker('tiled-layer-type-in-not-supported', { layerId, type })
+  }
 }
 
 async function processMap2(ctx: LoadingContext, data: unknown) {
@@ -186,26 +220,8 @@ async function processMap2(ctx: LoadingContext, data: unknown) {
   assertArray(layers, "tiled-layers-should-be-array");
   assertTrue(layers.length > 1, "tiled-layers-length-should-be-greater-than-1");
 
-  for (const [layerIndex, layer] of Object.entries(layers)) {
-    assertObject<TiledLayer>(layer, "invalid-tiled-map-structure");
-    const { chunks, type } = layer;
-    assertTrue(type === "tilelayer", `tiled-layer-type-should-be-tilelayer`, { layerIndex });
-    assertArray(chunks, "tiled-chunks-should-be-array", { layerIndex });
-    assertTrue(chunks.length >= 1, "tiled-chunks-length-should-be-greater-than-or-equal--1", { layerIndex });
-
-    for (const [chunkIndex, tiledChunk] of Object.entries(chunks)) {
-      assertObject<TiledChunk>(tiledChunk, "invalid-tiled-chunk-structure");
-      const { data, height, width, x, y } = tiledChunk;
-      const size = TILES_PER_CHUNK_AXIS;
-      const area = TILES_PER_CHUNK;
-      assertTrue(width === size, `tiled-chunk-width-should-be-${size}`, { chunkIndex, layerIndex, width, });
-      assertTrue(height === size, `tiled-chunk-height-should-be-${size}`, { chunkIndex, layerIndex, height, });
-      assertArray(data, "tiled-chunks-data-should-be-array", { chunkIndex, layerIndex });
-      assertTrue(data.length > 1, `tiled-chunks-data-length-should-be-${area}`, { chunkIndex, layerIndex });
-      const binary = new Uint16Array(TILES_PER_CHUNK);
-      binary.set(data.map(e => (e ?? 1)));
-      ctx.chunkManager.createChunk({binary});
-    }
+  for (const layer of layers) {
+    await processLayer(ctx, layer);
   }
 }
 

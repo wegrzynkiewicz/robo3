@@ -12,13 +12,9 @@ export interface World {
 export interface Space {
   chunks: {
     count: number;
-    dimension: Dimension;
+    dim: Dimension;
   };
   description: string;
   spaceId: GlobalId;
-  tiles: {
-    count: number;
-    dimension: Dimension;
-  };
   worldId: GlobalId;
 }

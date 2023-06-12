@@ -5,9 +5,15 @@ import { processMap, processMap1 } from "../tiled-map/types.ts";
 import { initGridProgram } from "./src/graphic/gridProgram.ts";
 import { ortho } from "./src/graphic/math.ts";
 import { getUniformBlocksInfo, getUniformInfo } from "./src/graphic/utilities.ts";
+import './src/else/wss.ts';
+
 
 document.addEventListener("DOMContentLoaded", () => {
+  documentHeight();
 });
+
+
+
 const canvas = document.getElementById("primary-canvas") as HTMLCanvasElement;
 assertNonNull(canvas, "cannot-find-primary-canvas");
 
@@ -15,6 +21,14 @@ const gl = canvas.getContext("webgl2", {
   premultipliedAlpha: true, // Ask for non-premultiplied alpha
   alpha: false,
 })!;
+const documentHeight = () => {
+  document.documentElement.style.setProperty('--doc-height', `${window.innerHeight * 0.01}px`);
+  document.documentElement.style.height = `${window.innerHeight}px`;
+  document.body.style.height = `${window.innerHeight}px`;
+  canvas.height = window.innerHeight;
+}
+globalThis.addEventListener(`resize`, documentHeight)
+documentHeight()
 
 gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
@@ -213,13 +227,13 @@ function resizeCanvas() {
   canvas.height = window.innerHeight;
   ortho(projection, 0, canvas.width / 2, 0, canvas.height / 2, -10, 10);
   gl.uniformMatrix4fv(projectionLoc1, false, projection);
-  gl.viewport(20, 20, canvas.width, canvas.height);
+  gl.viewport(0, 0, canvas.width, canvas.height);
   console.log(canvas.width, "x", canvas.height);
 }
 // resize the canvas to fill browser window dynamically
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
-
+documentHeight();
 let then = 0;
 function drawScene(now: number) {
   now *= 0.001; // convert to seconds
@@ -229,7 +243,7 @@ function drawScene(now: number) {
   //   fpsElem.textContent = fps.toFixed(1);  // update fps display
   //   load();
   gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawElementsInstanced(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0, 560);
+  gl.drawElementsInstanced(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0, 8000);
   updateTexture();
   requestAnimationFrame(drawScene);
 }
