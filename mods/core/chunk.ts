@@ -1,39 +1,35 @@
 import { Accessor } from "./binary.ts";
 import { Position } from "./numbers.ts";
-import { GlobalId } from "./world.ts";
 
-export interface ChunkLayerCommon {
-  depth: number;
-  layerId: number;
+export const enum ChunkLayerType {
+  SINGLE = 1,
+  LIST = 2,
+  GRID = 3,
 }
 
-export const enum ChunkLayerSetup {
-  GRID = "GRID",
-  SINGLE = "SINGLE",
-}
-
-export interface SingleChunkLayer extends ChunkLayerCommon {
-  setup: ChunkLayerSetup.SINGLE;
+export interface SingleChunkLayer {
+  type: ChunkLayerType.SINGLE;
   value: number;
 }
 
-export interface GridChunkLayer extends ChunkLayerCommon {
+export interface GridChunkLayer {
   accessor: Accessor;
-  setup: ChunkLayerSetup.GRID;
+  type: ChunkLayerType.GRID;
 }
 
 export type ChunkLayer = GridChunkLayer | SingleChunkLayer;
 
-export interface TileInstance {
-  pos: number;
-  sid: number;
+export interface ComplexGOInstance {
+  m: string;
+  t: number;
+  p: number;
 }
 
 export interface Chunk {
-  chunkId: GlobalId;
-  egos: TileInstance[];
+  chunkId: string;
+  sgos: ComplexGOInstance[];
   layers: ChunkLayer[];
-  position: Position;
-  positionIndex: number;
-  spaceId: GlobalId;
+  pos: Position;
+  p: number;
+  spaceId: string;
 }

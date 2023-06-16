@@ -1,12 +1,12 @@
 export const enum AccessorType {
-  U08 = "U08",
-  U16 = "U16",
-  U32 = "U32",
-  S08 = "S08",
-  S16 = "S16",
-  S32 = "S32",
-  F32 = "F32",
-  F64 = "F64",
+  U08 = 0x11,
+  U16 = 0x12,
+  U32 = 0x14,
+  S08 = 0x21,
+  S16 = 0x22,
+  S32 = 0x24,
+  F32 = 0x44,
+  F64 = 0x48,
 }
 
 export type MappingAccessorType = {
@@ -30,4 +30,8 @@ export interface Accessor {
 export interface Binary {
   binaryId: number;
   buffer: ArrayBuffer;
+}
+
+export class BinaryManager {
+  public readonly binaries = new Map<number, ArrayBuffer>();
 }

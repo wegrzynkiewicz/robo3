@@ -46,6 +46,10 @@ export function assertObject<T>(value: unknown, message: string, data?: Data): a
   }
 }
 
+export function isRequiredString(value: unknown): value is string {
+  return typeof value === "string" && value !== "";
+}
+
 export function assertRequiredString(value: unknown, message: string, data?: Data): asserts value is string {
   if (typeof value !== "string" || value === "") {
     throws(message, data);

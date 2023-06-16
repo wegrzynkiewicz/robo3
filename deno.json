@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "deno.window",
+      "dom"
+    ]
+  },
+  "fmt": {
+    "lineWidth": 160
+  },
+  "tasks": {
+    "bundle": "deno bundle --watch ./mods/client/main.ts ./mods/client/dist/main.js",
+    "serve": "serve ./mods/client"
+  }
+}

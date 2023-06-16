@@ -7,8 +7,11 @@ export const TILE_STRIDE_NORMALIZED = TILE_SIZE / TILES_TEXTURE_SIZE;
 export const MAX_WORLD_TILES_PER_AXIS = 65536;
 export const MAX_WORLD_DEPTH = 256;
 
-export const TILES_PER_CHUNK_AXIS = 64;
+export const TILES_PER_CHUNK_AXIS = 32;
 export const TILES_PER_CHUNK = TILES_PER_CHUNK_AXIS ** 2;
+
+export const DEFAULT_GAME_OBJECT_SPRITE_INDEX = 1;
+export const UNDEFINED_GAME_OBJECT_SPRITE_INDEX = 2;
 
 // X,Y,Z,0 - 4
 // R,T,U   - 4

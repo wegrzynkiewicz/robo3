@@ -13,7 +13,7 @@ export class Registry<T> {
   public register(entry: T): void {
     const key = this.resolveKey(entry);
     if (this.entities.has(key)) {
-      throw new Breaker('entry-with-key-already-exists', { key });
+      throw new Breaker("entry-with-key-already-exists", { key });
     }
     this.entities.set(key, entry);
   }

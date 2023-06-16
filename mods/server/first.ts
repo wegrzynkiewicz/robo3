@@ -1,32 +1,31 @@
-import { Application, Router, Request, } from "https://deno.land/x/oak@v12.5.0/mod.ts";
+import { Application, Request, Router } from "https://deno.land/x/oak@v12.5.0/mod.ts";
 const app = new Application({ logErrors: false });
 const router = new Router();
 router.get("/hello", (ctx) => {
-  ctx.response.type = 'json';
-  ctx.response.body = JSON.stringify({ hello: 'world!' });
+  ctx.response.type = "json";
+  ctx.response.body = JSON.stringify({ hello: "world!" });
 });
 
 router.post("/login", (ctx) => {
-  ctx.response.type = 'json'
+  ctx.response.type = "json";
   ctx.response.body = JSON.stringify({
-    token: '123',
-  })
+    token: "123",
+  });
 });
 
 class WSManager {
-
 }
 
 Deno.addSignalListener(
   "SIGTERM",
   () => {
-    console.log("SIGTERM!")
-  }
+    console.log("SIGTERM!");
+  },
 );
 
 router.get("/wss", (ctx) => {
   if (!ctx.isUpgradable) {
-    ctx.throw(501, 'lol');
+    ctx.throw(501, "lol");
   }
 
   console.log(ctx);
@@ -48,8 +47,8 @@ router.get("/wss", (ctx) => {
     "SIGINT",
     () => {
       ws.close();
-      console.log("SIGINT!")
-    }
+      console.log("SIGINT!");
+    },
   );
 
   const internal = setInterval(() => {
@@ -57,7 +56,7 @@ router.get("/wss", (ctx) => {
   }, 2000);
 
   ws.onclose = () => {
-    console.log("Disconncted from client")
+    console.log("Disconncted from client");
     clearInterval(internal);
   };
 });

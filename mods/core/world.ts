@@ -1,12 +1,10 @@
 import { Dimension } from "./numbers.ts";
 
-export type GlobalId = number;
-
 export interface World {
   spaces: {
     count: number;
   };
-  worldId: GlobalId;
+  worldId: string;
 }
 
 export interface Space {
@@ -15,6 +13,6 @@ export interface Space {
     dim: Dimension;
   };
   description: string;
-  spaceId: GlobalId;
-  worldId: GlobalId;
+  spaceId: string;
+  worldId: string;
 }

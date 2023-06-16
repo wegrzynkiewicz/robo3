@@ -5,14 +5,15 @@ import { processMap, processMap1 } from "../tiled-map/types.ts";
 import { initGridProgram } from "./src/graphic/gridProgram.ts";
 import { ortho } from "./src/graphic/math.ts";
 import { getUniformBlocksInfo, getUniformInfo } from "./src/graphic/utilities.ts";
-import './src/else/wss.ts';
-
+import "./src/else/wss.ts";
+import "../core/bootstrap.ts";
+import { cgotdRegistry, ComplexGameObjectResolver, sgotdRegistry, SimpleGameObjectResolver } from "../core/game-object/defining.ts";
+import { resolveSpriteAtlases, resolveSprites } from "./src/sprite/foundation.ts";
+import { spriteAtlasRegistry, spriteRegistry } from "../core/sprite/defining.ts";
 
 document.addEventListener("DOMContentLoaded", () => {
   documentHeight();
 });
-
-
 
 const canvas = document.getElementById("primary-canvas") as HTMLCanvasElement;
 assertNonNull(canvas, "cannot-find-primary-canvas");
@@ -247,5 +248,19 @@ function drawScene(now: number) {
   updateTexture();
   requestAnimationFrame(drawScene);
 }
+
+const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
+s.resolveGameObjectTypes();
+console.log(s);
+
+const c = new ComplexGameObjectResolver({ registry: cgotdRegistry });
+c.resolveGameObjectTypes();
+console.log(c);
+
+(async function () {
+  const atlases = await resolveSpriteAtlases(spriteAtlasRegistry);
+  const sprites = resolveSprites({ atlases, spriteRegistry });
+  console.log(sprites);
+})();
 
 drawScene(0);
