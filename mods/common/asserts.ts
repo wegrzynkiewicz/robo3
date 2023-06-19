@@ -24,7 +24,7 @@ export type Insecurity<T> = {
 
 type Data = Record<string, unknown>;
 
-function throws(message: string, data?: Data) {
+export function throws(message: string, data?: Data): never {
   throw new Breaker(message, data);
 }
 
