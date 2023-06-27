@@ -1,6 +1,5 @@
-import { assertNonNull, assertObject } from "../common/asserts.ts";
-import { coords2index } from "../core/numbers.ts";
-import { SPRITES_PER_CHUNK, SPRITES_PER_CHUNK_AXIS } from "../core/vars.ts";
+import { assertNonNull, throws } from "../common/asserts.ts";
+import { SPRITES_PER_CHUNK_AXIS } from "../core/vars.ts";
 import { processMap, processMap1 } from "../tiled-map/types.ts";
 import { initGridProgram } from "./src/graphic/gridProgram.ts";
 import { ortho } from "./src/graphic/math.ts";
@@ -252,11 +251,9 @@ function drawScene(now: number) {
 
 const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
 const sgoMap = s.resolveGameObjectTypes();
-console.log(s);
 
 const c = new ComplexGameObjectResolver({ registry: cgotdRegistry });
 c.resolveGameObjectTypes();
-console.log(c);
 
 (async function () {
   const atlases = await resolveSpriteAtlases(spriteAtlasRegistry);
@@ -266,7 +263,16 @@ console.log(c);
   for (const context of res.contexts) {
     document.body.appendChild(context.canvas);
   }
-  console.log(res);
+
+  for (const sgo of sgoMap.values()) {
+    const { gotKey, spriteKey } = sgo;
+    const sprite = sprites.get(sgo.spriteKey);
+    if (sprite === undefined) {
+      throws("sgo-refer-to-no-exists-sprite", { gotKey, spriteKey });
+    }
+    sgo.spriteIndex = sprite.spriteIndex;
+    sgo.properties.spriteIndex = sprite.spriteIndex;
+  }
 })();
 
 drawScene(0);

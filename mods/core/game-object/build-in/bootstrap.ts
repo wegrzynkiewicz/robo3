@@ -1,6 +1,27 @@
+import { defineSprite } from "../../sprite/defining.ts";
 import { defineSimpleGameObjectType } from "../defining.ts";
 
 import "./usable/door.ts";
 
-defineSimpleGameObjectType({ gotKey: "core/floor/grass.sgo", spriteKey: "core/floor/grass.spr" });
-defineSimpleGameObjectType({ gotKey: "core/floor/dirt.sgo", spriteKey: "core/floor/dirt.spr" });
+function define(
+  { key, x, y }: {
+    key: string;
+    x: number;
+    y: number;
+  }
+) {
+  const spriteKey = `${key}.spr`;
+  defineSprite({
+    spriteAtlasKey: 'test1',
+    spriteKey,
+    x,
+    y,
+  })
+  defineSimpleGameObjectType({
+    gotKey: `${key}.sgo`,
+    spriteKey,
+  })
+}
+
+define({ key: "core/floor/grass", x: 0, y: 0 });
+define({ key: "core/floor/dirt", x: 6 * 32, y: 0 });

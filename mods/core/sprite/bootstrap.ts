@@ -1,5 +1,5 @@
 import { DEFAULT_GAME_OBJECT_SPRITE_INDEX, ERROR_GAME_OBJECT_SPRITE_INDEX, UNDEFINED_GAME_OBJECT_SPRITE_INDEX } from "../vars.ts";
-import { defineSprite, defineSpriteAtlas, defineSpritesFromAtlas } from "./defining.ts";
+import { defineSprite, defineSpriteAtlas } from "./defining.ts";
 
 const spriteAtlasKey = "core/special.sat";
 
@@ -44,5 +44,3 @@ defineSpriteAtlas({
   },
   spriteAtlasKey: 'test1',
 });
-
-defineSpritesFromAtlas({spriteAtlasKey: 'test1'});

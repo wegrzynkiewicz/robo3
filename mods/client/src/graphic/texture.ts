@@ -12,10 +12,9 @@ export function allocateSpritesInCanvas(
   const contexts: CanvasRenderingContext2D[] = [];
   let currentTargetContext!: CanvasRenderingContext2D;
   let currentZ = -1;
-  let spriteIndex = 0;
 
-  function insert(image: ImageData) {
-    const [x, y, z] = index2coords(spriteIndex);
+  function insert(index: number, image: ImageData) {
+    const [x, y, z] = index2coords(index);
     if (z !== currentZ) {
       currentZ = z;
       currentTargetContext = createContext2D(SPRITES_TEXTURE_SIZE, SPRITES_TEXTURE_SIZE);
@@ -26,22 +25,25 @@ export function allocateSpritesInCanvas(
   }
 
   for (const sprite of sprites) {
-    const { spriteIndex } = sprite;
-    if (spriteIndex !== -1) {
-      targets[spriteIndex] = sprite;
+    const { predefinedSpriteIndex } = sprite.definition;
+    if (predefinedSpriteIndex !== undefined) {
+      targets[predefinedSpriteIndex] = sprite;
     }
   }
-
+  let spriteIndex = 0;
   for (const sprite of sprites) {
-    if (targets[spriteIndex] === undefined) {
-      insert(sprite.image);
-      sprite.spriteIndex = spriteIndex;
+    const { predefinedSpriteIndex } = sprite.definition;
+    if (predefinedSpriteIndex === undefined) {
+      while (targets[spriteIndex] !== undefined) {
+        spriteIndex++;
+      }
       targets[spriteIndex] = sprite;
-    } else {
-      insert(targets[spriteIndex].image);
     }
-    spriteIndex++;
   }
-
-  return {contexts, targets};
+  for (let index = 0; index < targets.length; index++) {
+    const sprite = targets[index];
+    insert(index, sprite.image);
+    sprite.spriteIndex = index;
+  }
+  return { contexts, targets };
 }

@@ -5,6 +5,7 @@ import { loadImage, createContext2D } from "../helpers/image-processing.ts";
 
 export interface Sprite {
   atlas: SpriteAtlas;
+  definition: SpriteDefinition,
   height: number;
   image: ImageData;
   spriteIndex: number;
@@ -58,13 +59,13 @@ export function resolveSprites(
   }
   const sprites = new Map<string, Sprite>();
   const spritesDefinitions = [...spriteRegistry.entities.values()];
-  for (const spriteDefinition of spritesDefinitions) {
-    let { height, spriteAtlasKey, spriteKey, predefinedSpriteIndex, width, x, y } = spriteDefinition;
+  for (const definition of spritesDefinitions) {
+    let { height, spriteAtlasKey, spriteKey, width, x, y } = definition;
     const atlas = atlases.get(spriteAtlasKey);
     if (atlas === undefined) {
       throws("cannot-find-sprite-atlas-by-key", {
         spriteAtlasKey,
-        spriteDefinition,
+        definition,
       });
     }
     width = width ?? 32;
@@ -72,16 +73,17 @@ export function resolveSprites(
     const canvas = contexts.get(atlas)!;
     const image = canvas.getImageData(x, y, width, height);
     if (image === undefined) {
-      throws("cannot-fetch-image-data-from-atlas-by-position-index", { atlas, spriteDefinition });
+      throws("cannot-fetch-image-data-from-atlas-by-position-index", { atlas, definition });
     }
     if (image.height !== height || image.width !== width) {
-      throws("invalid-image-dimensions", { spriteDefinition });
+      throws("invalid-image-dimensions", { definition });
     }
     const sprite: Sprite = {
       atlas,
+      definition,
       height,
       image,
-      spriteIndex: predefinedSpriteIndex ?? -1,
+      spriteIndex: 0,
       spriteKey,
       width,
     };
