@@ -1,10 +1,13 @@
 import { Registry } from "../../common/registry.ts";
 
 export interface SpriteDefinition {
-  spriteKey: string;
-  spriteAtlasKey: string;
-  positionIndex: number;
+  height?: number;
   predefinedSpriteIndex?: number;
+  spriteAtlasKey: string;
+  spriteKey: string;
+  width?: number;
+  x: number;
+  y: number;
 }
 
 export const spriteRegistry = new Registry<SpriteDefinition>((e) => e.spriteKey);

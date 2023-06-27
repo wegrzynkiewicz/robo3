@@ -1,14 +1,16 @@
 import { throws } from "../../../common/asserts.ts";
 import { Registry } from "../../../common/registry.ts";
 import { SpriteAtlasDefinition, SpriteDefinition } from "../../../core/sprite/defining.ts";
-import { createContext2D, getTilesFromCanvasContext } from "./helpers.ts";
+import { createContext2D } from "./helpers.ts";
 import { loadImage } from "./load-image.ts";
 
 export interface Sprite {
   atlas: SpriteAtlas;
-  spriteKey: string;
-  spriteIndex: number;
+  height: number;
   image: ImageData;
+  spriteIndex: number;
+  spriteKey: string;
+  width: number;
 }
 
 export interface SpriteAtlas {
@@ -47,20 +49,18 @@ export function resolveSprites(
     spriteRegistry: Registry<SpriteDefinition>;
   },
 ): Map<string, Sprite> {
-  const imageDataByAtlas = new WeakMap<SpriteAtlas, ImageData[]>();
+  const contexts = new WeakMap<SpriteAtlas, CanvasRenderingContext2D>();
   for (const atlas of atlases.values()) {
     const { image } = atlas;
     const { height, width } = image;
     const sourceContext = createContext2D(width, height);
     sourceContext.drawImage(image, 0, 0);
-    const imageGenerator = getTilesFromCanvasContext(sourceContext);
-    const imagesData = [...imageGenerator];
-    imageDataByAtlas.set(atlas, imagesData);
+    contexts.set(atlas, sourceContext);
   }
   const sprites = new Map<string, Sprite>();
   const spritesDefinitions = [...spriteRegistry.entities.values()];
   for (const spriteDefinition of spritesDefinitions) {
-    const { positionIndex, spriteAtlasKey, spriteKey, predefinedSpriteIndex } = spriteDefinition;
+    let { height, spriteAtlasKey, spriteKey, predefinedSpriteIndex, width, x, y } = spriteDefinition;
     const atlas = atlases.get(spriteAtlasKey);
     if (atlas === undefined) {
       throws("cannot-find-sprite-atlas-by-key", {
@@ -68,39 +68,25 @@ export function resolveSprites(
         spriteDefinition,
       });
     }
-    const imagesData = imageDataByAtlas.get(atlas)!;
-    const image = imagesData[positionIndex];
+    width = width ?? 32;
+    height = height ?? 32;
+    const canvas = contexts.get(atlas)!;
+    const image = canvas.getImageData(x, y, width, height);
     if (image === undefined) {
       throws("cannot-fetch-image-data-from-atlas-by-position-index", {
         atlas,
-        positionIndex,
         spriteDefinition,
       });
     }
     const sprite: Sprite = {
       atlas,
+      height,
       image,
       spriteIndex: predefinedSpriteIndex ?? 0,
       spriteKey,
+      width,
     };
     sprites.set(spriteKey, sprite);
   }
   return sprites;
 }
-
-// const url = new URL(`${window.location}assets/${imagePath}`);
-// const resource = await imageManager.loadImage({
-//   height: imageheight,
-//   imageId: url.toString(),
-//   src: url.toString(),
-//   width: imagewidth,
-// });
-
-// const { image } = resource;
-// const sourceContext = createContext2D(image.width, image.height);
-// sourceContext.drawImage(image, 0, 0);
-// const tiles = getTilesFromCanvasContext(sourceContext);
-// let currentTileIndex = 0;
-// for (const tileImageData of tiles) {
-//   const { spriteIndex } = tilesTextureAllocator.insert(tileImageData);
-// }

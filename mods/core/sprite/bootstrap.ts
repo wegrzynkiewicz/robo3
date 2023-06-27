@@ -13,8 +13,9 @@ defineSpriteAtlas({
 });
 
 defineSprite({
-  positionIndex: 1,
   predefinedSpriteIndex: DEFAULT_GAME_OBJECT_SPRITE_INDEX,
   spriteAtlasKey,
   spriteKey: "core/special/default.spr",
+  x: 0,
+  y: 0,
 });
