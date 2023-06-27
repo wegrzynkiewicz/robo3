@@ -73,10 +73,10 @@ export function resolveSprites(
     const canvas = contexts.get(atlas)!;
     const image = canvas.getImageData(x, y, width, height);
     if (image === undefined) {
-      throws("cannot-fetch-image-data-from-atlas-by-position-index", {
-        atlas,
-        spriteDefinition,
-      });
+      throws("cannot-fetch-image-data-from-atlas-by-position-index", { atlas, spriteDefinition });
+    }
+    if (image.height !== height || image.width !== width) {
+      throws("invalid-image-dimensions", { spriteDefinition });
     }
     const sprite: Sprite = {
       atlas,

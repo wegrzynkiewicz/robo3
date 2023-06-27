@@ -1,7 +1,8 @@
 import { assertArray, assertObject, isRequiredString, throws } from "../../common/asserts.ts";
 import { Registry } from "../../common/registry.ts";
 import { deepClone } from "../../common/useful.ts";
-import { ComplexGameObjectType, GameObjectCreator, GameObjectTypeCommon, SimpleGameObjectType } from "./foundation.ts";
+import { ComplexGameObjectType, GameObjectTypeCommon, SimpleGameObjectType } from "./foundation.ts";
+import { GameObjectProcessorConstructor } from "./processor.ts";
 import { defaultGameObjectProperties, GameObjectProperties } from "./properties.ts";
 
 export interface GameObjectTypeDefinitionCommon {
@@ -19,21 +20,21 @@ export const sgotdRegistry = new Registry<SimpleGameObjectTypeDefinition>((e) =>
 export const defineSimpleGameObjectType = sgotdRegistry.register.bind(sgotdRegistry);
 
 export interface ComplexGameObjectTypeDefinition extends GameObjectTypeDefinitionCommon {
-  goCreator?: string;
-  goCreatorOptions?: Record<string, unknown>;
+  goProcessor?: string;
+  goProcessorOptions?: Record<string, unknown>;
   spriteKeys?: Record<string, string>;
 }
 
 export const cgotdRegistry = new Registry<ComplexGameObjectTypeDefinition>((e) => e.gotKey);
 export const defineComplexGameObjectType = cgotdRegistry.register.bind(cgotdRegistry);
 
-export interface GameObjectCreatorDefinition {
+export interface GameObjectProcessorDefinition {
   gocKey: string;
-  creator: GameObjectCreator;
+  processor: GameObjectProcessorConstructor;
 }
 
-export const gocRegister = new Registry<GameObjectCreatorDefinition>((e) => e.gocKey);
-export const defineGameObjectCreator = gocRegister.register.bind(gocRegister);
+export const gocRegister = new Registry<GameObjectProcessorDefinition>((e) => e.gocKey);
+export const defineGameObjectProcessor = gocRegister.register.bind(gocRegister);
 
 export abstract class GameTypeResolver<
   TGameObjectTypeDefinition extends GameObjectTypeDefinitionCommon,
@@ -139,8 +140,8 @@ export class ComplexGameObjectResolver extends GameTypeResolver<
   protected resolve(cgotd: ComplexGameObjectTypeDefinition): ComplexGameObjectType {
     const { gotKey } = cgotd;
     const cgot: ComplexGameObjectType = {
-      goCreator: this.resolveCreator(cgotd),
-      goCreatorOptions: this.resolveOptions(cgotd),
+      goProcessor: this.resolveProcessor(cgotd),
+      goProcessorOptions: this.resolveOptions(cgotd),
       gotKey,
       properties: this.resolveProperties(cgotd),
       spriteIndexes: {},
@@ -149,15 +150,15 @@ export class ComplexGameObjectResolver extends GameTypeResolver<
     return cgot;
   }
 
-  protected resolveCreator(cgotd: ComplexGameObjectTypeDefinition): GameObjectCreator {
-    const { inherit, goCreator } = cgotd;
-    if (isRequiredString(goCreator)) {
-      const definition = gocRegister.entities.get(goCreator);
-      assertObject(definition, "go-creator-with-key-not-found", {
-        goCreator,
+  protected resolveProcessor(cgotd: ComplexGameObjectTypeDefinition): GameObjectProcessorConstructor {
+    const { inherit, goProcessor } = cgotd;
+    if (isRequiredString(goProcessor)) {
+      const definition = gocRegister.entities.get(goProcessor);
+      assertObject(definition, "go-processor-with-key-not-found", {
+        goProcessor,
         cgotd,
       });
-      return definition.creator;
+      return definition.processor;
     }
     if (inherit) {
       const parent = this.gotMap.get(inherit);
@@ -165,16 +166,16 @@ export class ComplexGameObjectResolver extends GameTypeResolver<
         inherit,
         cgotd,
       });
-      return parent.goCreator;
+      return parent.goProcessor;
     }
-    throws("cannot-resolve-go-creator", { cgotd });
+    throws("cannot-resolve-go-processor", { cgotd });
   }
 
   protected resolveOptions(cgotd: ComplexGameObjectTypeDefinition): Record<string, unknown> {
-    const { inherit, goCreatorOptions } = cgotd;
+    const { inherit, goProcessorOptions } = cgotd;
     const parent = this.gotMap.get(inherit!);
-    const parentOptions = parent ? parent.goCreatorOptions : {};
-    const definedOptions = goCreatorOptions ?? {};
+    const parentOptions = parent ? parent.goProcessorOptions : {};
+    const definedOptions = goProcessorOptions ?? {};
     const resolvedOptions = deepClone({
       ...parentOptions,
       ...definedOptions,

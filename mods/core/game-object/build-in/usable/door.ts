@@ -1,12 +1,12 @@
 import { UNDEFINED_GAME_OBJECT_SPRITE_INDEX } from "../../../vars.ts";
-import { defineComplexGameObjectType, defineGameObjectCreator } from "../../defining.ts";
-import { GameObject } from "../../foundation.ts";
+import { defineComplexGameObjectType, defineGameObjectProcessor } from "../../defining.ts";
+import { GameObjectProcessor } from "../../processor.ts";
 
 export interface DoorState {
   open: boolean;
 }
 
-export class Door extends GameObject<DoorState> {
+export class Door extends GameObjectProcessor<DoorState> {
   public updateProperties(): void {
     const { properties, state, type } = this;
     if (state.open) {
@@ -19,13 +19,13 @@ export class Door extends GameObject<DoorState> {
   }
 }
 
-defineGameObjectCreator({
-  gocKey: "core/usable/door.crt",
-  creator: Door,
+defineGameObjectProcessor({
+  gocKey: "core/usable/door.prc",
+  processor: Door,
 });
 
 defineComplexGameObjectType({
   gotKey: "core/usable/door.cgo",
-  goCreator: "core/usable/door.crt",
+  goProcessor: "core/usable/door.prc",
   spriteKey: "core/usable/door.spr",
 });
