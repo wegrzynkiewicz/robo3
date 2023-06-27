@@ -1,4 +1,4 @@
-import { TILE_SIZE, TILES_PER_TEXTURE_AXIS } from "./vars.ts";
+import { SPRITE_SIZE, SPRITES_PER_TEXTURE_AXIS } from "./vars.ts";
 
 export interface Dimension {
   d: number;
@@ -33,11 +33,11 @@ export function createCoordinatesCalculator(
   };
 }
 
-export const coords2index = createIndexCalculator(TILES_PER_TEXTURE_AXIS, TILES_PER_TEXTURE_AXIS);
-export const index2coords = createCoordinatesCalculator(TILES_PER_TEXTURE_AXIS, TILES_PER_TEXTURE_AXIS);
+export const coords2index = createIndexCalculator(SPRITES_PER_TEXTURE_AXIS, SPRITES_PER_TEXTURE_AXIS);
+export const index2coords = createCoordinatesCalculator(SPRITES_PER_TEXTURE_AXIS, SPRITES_PER_TEXTURE_AXIS);
 
 export function coords2ImageRect(x: number, y: number): [number, number] {
-  const s = x * TILE_SIZE;
-  const t = (TILES_PER_TEXTURE_AXIS - y - 1) * TILE_SIZE;
+  const s = x * SPRITE_SIZE;
+  const t = (SPRITES_PER_TEXTURE_AXIS - y - 1) * SPRITE_SIZE;
   return [s, t];
 }

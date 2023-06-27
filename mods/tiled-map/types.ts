@@ -1,7 +1,7 @@
 import { assertArray, assertObject, assertPositiveNumber, assertRequiredString, assertTrue, Breaker } from "../common/asserts.ts";
 import { BrowserImageManager } from "../core/image.ts";
 import { createContext2D, getTilesFromCanvasContext, Tile, TilesTextureAllocator } from "../core/tile.ts";
-import { TILE_SIZE, TILES_PER_CHUNK, TILES_PER_CHUNK_AXIS, TILES_TEXTURE_SIZE } from "../core/vars.ts";
+import { SPRITE_SIZE, SPRITES_PER_CHUNK, SPRITES_PER_CHUNK_AXIS, SPRITES_TEXTURE_SIZE } from "../core/vars.ts";
 
 interface TiledMap {
   //   backgroundcolor?: string;
@@ -123,8 +123,8 @@ async function processTileSet(ctx: LoadingContext, data: unknown) {
   assertPositiveNumber(imagewidth, "tile-set-image-width-should-be-positive-number", { data, imagewidth });
   assertPositiveNumber(imageheight, "tile-set-image-height-should-be-positive-number", { data, imageheight });
   assertPositiveNumber(tilecount, "tile-set-tile-count-should-be-positive-number", { data, tilecount });
-  assertTrue(tilewidth === TILE_SIZE, `tile-set-tile-width-should-be-${TILE_SIZE}`, { data, tilewidth });
-  assertTrue(tileheight === TILE_SIZE, `tile-set-tile-height-should-be-${TILE_SIZE}`, { data, tileheight });
+  assertTrue(tilewidth === SPRITE_SIZE, `tile-set-tile-width-should-be-${SPRITE_SIZE}`, { data, tilewidth });
+  assertTrue(tileheight === SPRITE_SIZE, `tile-set-tile-height-should-be-${SPRITE_SIZE}`, { data, tileheight });
   assertTrue(spacing === 0, "tile-set-spacing-should-be-0", { data, spacing });
   assertTrue(margin === 0, "tile-set-margin-should-be-0", { data, margin });
   assertTrue(version === "1.10", "tile-set-version-should-be-1-10", { data, version });
@@ -155,7 +155,7 @@ export async function processMap() {
 
   ctx.tilesTextureAllocator.paintHelperTiles();
   //   ctx.tilesTextureAllocator.contexts.map((c) => document.body.appendChild(c.canvas));
-  const dataSource = ctx.tilesTextureAllocator.contexts[0].getImageData(0, 0, TILES_TEXTURE_SIZE, TILES_TEXTURE_SIZE);
+  const dataSource = ctx.tilesTextureAllocator.contexts[0].getImageData(0, 0, SPRITES_TEXTURE_SIZE, SPRITES_TEXTURE_SIZE);
   return dataSource;
 }
 
@@ -185,13 +185,13 @@ async function processLayer(ctx: LoadingContext, layer: unknown) {
       for (const [chunkIndex, tiledChunk] of Object.entries(chunks)) {
         assertObject<TiledChunk>(tiledChunk, "invalid-tiled-chunk-structure");
         const { data, height, width, x, y } = tiledChunk;
-        const size = TILES_PER_CHUNK_AXIS;
-        const area = TILES_PER_CHUNK;
+        const size = SPRITES_PER_CHUNK_AXIS;
+        const area = SPRITES_PER_CHUNK;
         assertTrue(width === size, `tiled-chunk-width-should-be-${size}`, { chunkIndex, layerId, width });
         assertTrue(height === size, `tiled-chunk-height-should-be-${size}`, { chunkIndex, layerId, height });
         assertArray(data, "tiled-chunks-data-should-be-array", { chunkIndex, layerId });
         assertTrue(data.length > 1, `tiled-chunks-data-length-should-be-${area}`, { chunkIndex, layerId });
-        const binary = new Uint16Array(TILES_PER_CHUNK);
+        const binary = new Uint16Array(SPRITES_PER_CHUNK);
         binary.set(data.map((e) => (e ?? 1)));
         ctx.chunkManager.createChunk({ binary });
       }
@@ -206,9 +206,9 @@ async function processMap2(ctx: LoadingContext, data: unknown) {
   const { infinite, orientation, tileheight, tilewidth, layers } = data;
   assertTrue(infinite, `tiled-map-should-be-infinite`);
   assertTrue(orientation === "orthogonal", `tiled-map-orientation-should-be-orthogonal`, { orientation });
-  assertTrue(tilewidth === TILE_SIZE, `tiled-map-tile-width-should-be-${TILE_SIZE}`, { tilewidth });
-  assertTrue(tileheight === TILE_SIZE, `tiled-map-tile-height-should-be-${TILE_SIZE}`, { tileheight });
-  assertTrue(tileheight === TILE_SIZE, `tiled-map-tile-height-should-be-${TILE_SIZE}`, { tileheight });
+  assertTrue(tilewidth === SPRITE_SIZE, `tiled-map-tile-width-should-be-${SPRITE_SIZE}`, { tilewidth });
+  assertTrue(tileheight === SPRITE_SIZE, `tiled-map-tile-height-should-be-${SPRITE_SIZE}`, { tileheight });
+  assertTrue(tileheight === SPRITE_SIZE, `tiled-map-tile-height-should-be-${SPRITE_SIZE}`, { tileheight });
   assertArray(layers, "tiled-layers-should-be-array");
   assertTrue(layers.length > 1, "tiled-layers-length-should-be-greater-than-1");
 
@@ -218,7 +218,7 @@ async function processMap2(ctx: LoadingContext, data: unknown) {
 }
 
 export function createChunkBinary() {
-  new Uint16Array(TILES_PER_CHUNK);
+  new Uint16Array(SPRITES_PER_CHUNK);
 }
 
 interface TileAtlas {
@@ -264,7 +264,7 @@ interface TileAtlas {
 //     const [s, t] = coords2ImageRect(x, y);
 //     if (z !== memoryZ) {
 //       memoryZ = z;
-//       currentTargetContext = createContext2D(TILES_TEXTURE_SIZE, TILES_TEXTURE_SIZE);
+//       currentTargetContext = createContext2D(SPRITES_TEXTURE_SIZE, SPRITES_TEXTURE_SIZE);
 //       contexts.push(currentTargetContext);
 //       currentTargetContext.putImageData(firstTile, s, t);
 //       textureIndex++;
@@ -293,7 +293,7 @@ interface TileAtlas {
 //   const sourceContext = createContext2D(image.width, image.height);
 //   sourceContext.drawImage(image, 0, 0);
 
-//   const targetContext = createContext2D(TILES_TEXTURE_SIZE, TILES_TEXTURE_SIZE);
+//   const targetContext = createContext2D(SPRITES_TEXTURE_SIZE, SPRITES_TEXTURE_SIZE);
 //   const tiles = getTilesFromCanvasContext(sourceContext);
 
 //   const firstTile = createTextureTileHelper(5, 5, 5);

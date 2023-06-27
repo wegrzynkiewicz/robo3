@@ -93,11 +93,13 @@ export abstract class GameTypeResolver<
     }
   }
 
-  public resolveGameObjectTypes() {
+  public resolveGameObjectTypes(): Map<string, TGameObjectType> {
     this.makeTree();
     const rootNodes = this.tree.get("");
     assertArray(rootNodes, "should-be-array");
     this.processGameObjectDefinitions(rootNodes);
+    this.tree.clear();
+    return this.gotMap;
   }
 }
 

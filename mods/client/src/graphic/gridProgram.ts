@@ -1,5 +1,5 @@
 import { assertNonNull } from "../../../common/asserts.ts";
-import { TILE_STRIDE_NORMALIZED, TILES_PER_TEXTURE, TILES_PER_TEXTURE_AXIS } from "../../../core/vars.ts";
+import { SPRITE_STRIDE_NORMALIZED, SPRITES_PER_TEXTURE, SPRITES_PER_TEXTURE_AXIS } from "../../../core/vars.ts";
 import { attribute, toShaderLine } from "./attribute.ts";
 import { createProgram, GL, initVertexAttribute } from "./utilities.ts";
 
@@ -35,19 +35,19 @@ uniform instanced {
 
 uniform mat4 u_Projection;
 
-float TILE_STRIDE_NORMALIZED = ${TILE_STRIDE_NORMALIZED.toFixed(8)};
+float SPRITE_STRIDE_NORMALIZED = ${SPRITE_STRIDE_NORMALIZED.toFixed(8)};
 
-int TILES_PER_TEXTURE = ${TILES_PER_TEXTURE};
-int TILES_PER_TEXTURE_AXIS = ${TILES_PER_TEXTURE_AXIS};
+int SPRITES_PER_TEXTURE = ${SPRITES_PER_TEXTURE};
+int SPRITES_PER_TEXTURE_AXIS = ${SPRITES_PER_TEXTURE_AXIS};
 
 vec3 getTileTextureCoords(int index) {
 //   float z = float(index >> 10);
-//   float y = float(index % 1024 >> 5) * TILE_STRIDE_NORMALIZED;
-//   float x = float(index % 32) * TILE_STRIDE_NORMALIZED;
+//   float y = float(index % 1024 >> 5) * SPRITE_STRIDE_NORMALIZED;
+//   float x = float(index % 32) * SPRITE_STRIDE_NORMALIZED;
 
-  float z = float(index / TILES_PER_TEXTURE);
-  float y = float((index % TILES_PER_TEXTURE) / TILES_PER_TEXTURE_AXIS) * TILE_STRIDE_NORMALIZED;
-  float x = float(index % TILES_PER_TEXTURE_AXIS) * TILE_STRIDE_NORMALIZED;
+  float z = float(index / SPRITES_PER_TEXTURE);
+  float y = float((index % SPRITES_PER_TEXTURE) / SPRITES_PER_TEXTURE_AXIS) * SPRITE_STRIDE_NORMALIZED;
+  float x = float(index % SPRITES_PER_TEXTURE_AXIS) * SPRITE_STRIDE_NORMALIZED;
   return vec3(x, y, z);
 }
 
@@ -112,12 +112,12 @@ export function initGridProgram(gl: GL): {
   textureAccessor.set([
     0,
     0,
-    TILE_STRIDE_NORMALIZED,
+    SPRITE_STRIDE_NORMALIZED,
     0,
-    TILE_STRIDE_NORMALIZED,
-    TILE_STRIDE_NORMALIZED,
+    SPRITE_STRIDE_NORMALIZED,
+    SPRITE_STRIDE_NORMALIZED,
     0,
-    TILE_STRIDE_NORMALIZED,
+    SPRITE_STRIDE_NORMALIZED,
   ]);
 
   const glPerVertexBuffer = gl.createBuffer();

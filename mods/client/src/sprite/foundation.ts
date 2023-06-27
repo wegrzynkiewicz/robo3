@@ -1,8 +1,7 @@
 import { throws } from "../../../common/asserts.ts";
 import { Registry } from "../../../common/registry.ts";
 import { SpriteAtlasDefinition, SpriteDefinition } from "../../../core/sprite/defining.ts";
-import { createContext2D } from "./helpers.ts";
-import { loadImage } from "./load-image.ts";
+import { loadImage, createContext2D } from "../helpers/image-processing.ts";
 
 export interface Sprite {
   atlas: SpriteAtlas;
@@ -82,7 +81,7 @@ export function resolveSprites(
       atlas,
       height,
       image,
-      spriteIndex: predefinedSpriteIndex ?? 0,
+      spriteIndex: predefinedSpriteIndex ?? -1,
       spriteKey,
       width,
     };

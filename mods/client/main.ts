@@ -1,6 +1,6 @@
 import { assertNonNull, assertObject } from "../common/asserts.ts";
 import { coords2index } from "../core/numbers.ts";
-import { TILES_PER_CHUNK, TILES_PER_CHUNK_AXIS } from "../core/vars.ts";
+import { SPRITES_PER_CHUNK, SPRITES_PER_CHUNK_AXIS } from "../core/vars.ts";
 import { processMap, processMap1 } from "../tiled-map/types.ts";
 import { initGridProgram } from "./src/graphic/gridProgram.ts";
 import { ortho } from "./src/graphic/math.ts";
@@ -10,6 +10,7 @@ import "../core/bootstrap.ts";
 import { cgotdRegistry, ComplexGameObjectResolver, sgotdRegistry, SimpleGameObjectResolver } from "../core/game-object/defining.ts";
 import { resolveSpriteAtlases, resolveSprites } from "./src/sprite/foundation.ts";
 import { spriteAtlasRegistry, spriteRegistry } from "../core/sprite/defining.ts";
+import { allocateSpritesInCanvas } from "./src/graphic/texture.ts";
 
 document.addEventListener("DOMContentLoaded", () => {
   documentHeight();
@@ -38,7 +39,7 @@ const texture = gl.createTexture();
 gl.activeTexture(gl.TEXTURE0 + 0);
 gl.bindTexture(gl.TEXTURE_2D, texture);
 const img = new Image();
-let updateTexture = () => {};
+let updateTexture = () => { };
 const onLoadedImage = function () {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   //   const ab2 = new Uint8Array(512 * 512 * 4);
@@ -136,8 +137,8 @@ processMap1().then((chunkManager) => {
   for (const texture of chunkManager.binaries) {
     console.log({ texture });
     let i = 0;
-    for (let y = TILES_PER_CHUNK_AXIS - 1; y >= 0; y--) {
-      for (let x = 0; x < TILES_PER_CHUNK_AXIS; x++) {
+    for (let y = SPRITES_PER_CHUNK_AXIS - 1; y >= 0; y--) {
+      for (let x = 0; x < SPRITES_PER_CHUNK_AXIS; x++) {
         const textureIndex = texture[i];
         i++;
         if (textureIndex === 0) {
@@ -250,7 +251,7 @@ function drawScene(now: number) {
 }
 
 const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
-s.resolveGameObjectTypes();
+const sgoMap = s.resolveGameObjectTypes();
 console.log(s);
 
 const c = new ComplexGameObjectResolver({ registry: cgotdRegistry });
@@ -260,7 +261,12 @@ console.log(c);
 (async function () {
   const atlases = await resolveSpriteAtlases(spriteAtlasRegistry);
   const sprites = resolveSprites({ atlases, spriteRegistry });
-  console.log(sprites);
+
+  const res = allocateSpritesInCanvas({ sprites: [...sprites.values()] });
+  for (const context of res.contexts) {
+    document.body.appendChild(context.canvas);
+  }
+  console.log(res);
 })();
 
 drawScene(0);

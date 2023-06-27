@@ -1,7 +1,7 @@
-import { DEFAULT_GAME_OBJECT_SPRITE_INDEX } from "../vars.ts";
-import { defineSprite, defineSpriteAtlas } from "./defining.ts";
+import { DEFAULT_GAME_OBJECT_SPRITE_INDEX, ERROR_GAME_OBJECT_SPRITE_INDEX, UNDEFINED_GAME_OBJECT_SPRITE_INDEX } from "../vars.ts";
+import { defineSprite, defineSpriteAtlas, defineSpritesFromAtlas } from "./defining.ts";
 
-const spriteAtlasKey = "core/atlas/special.sat";
+const spriteAtlasKey = "core/special.sat";
 
 defineSpriteAtlas({
   image: {
@@ -13,9 +13,36 @@ defineSpriteAtlas({
 });
 
 defineSprite({
-  predefinedSpriteIndex: DEFAULT_GAME_OBJECT_SPRITE_INDEX,
+  predefinedSpriteIndex: ERROR_GAME_OBJECT_SPRITE_INDEX,
   spriteAtlasKey,
-  spriteKey: "core/special/default.spr",
+  spriteKey: "core/special/error.spr",
   x: 0,
   y: 0,
 });
+
+defineSprite({
+  predefinedSpriteIndex: UNDEFINED_GAME_OBJECT_SPRITE_INDEX,
+  spriteAtlasKey,
+  spriteKey: "core/special/undefined.spr",
+  x: 32,
+  y: 0,
+});
+
+defineSprite({
+  predefinedSpriteIndex: DEFAULT_GAME_OBJECT_SPRITE_INDEX,
+  spriteAtlasKey,
+  spriteKey: "core/special/default.spr",
+  x: 64,
+  y: 0,
+});
+
+defineSpriteAtlas({
+  image: {
+    width: 256,
+    height: 4256,
+    source: "./assets/tileset.png",
+  },
+  spriteAtlasKey: 'test1',
+});
+
+defineSpritesFromAtlas({spriteAtlasKey: 'test1'});

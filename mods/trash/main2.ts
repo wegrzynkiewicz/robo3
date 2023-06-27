@@ -13,9 +13,9 @@ const gl = canvas.getContext("webgl2", {
 })!;
 
 const TEXTURE_SIZE = 512;
-const TILE_SIZE = 32;
-const SPRITES_COUNT_PER_AXIS = TEXTURE_SIZE / TILE_SIZE;
-const TILE_STRIDE_NORMALIZED = TILE_SIZE / TEXTURE_SIZE;
+const SPRITE_SIZE = 32;
+const SPRITES_COUNT_PER_AXIS = TEXTURE_SIZE / SPRITE_SIZE;
+const SPRITE_STRIDE_NORMALIZED = SPRITE_SIZE / TEXTURE_SIZE;
 
 const vertexShader = `#version 300 es
 
@@ -32,7 +32,7 @@ uniform mat4 projection;
 uniform uint index;
 
 uint spritePerRow = uint(${SPRITES_COUNT_PER_AXIS});
-float spriteStrideNormalized = ${TILE_STRIDE_NORMALIZED};
+float spriteStrideNormalized = ${SPRITE_STRIDE_NORMALIZED};
 
 vec2 getValueByIndexFromTexture(vec2 texCoords, uint spriteIndex) {
   uint col = spriteIndex % spritePerRow;
@@ -117,12 +117,12 @@ const textureBuffer = new Float32Array(vertexBuffer, POS_VERTEX_BYTES + COLOR_VE
 textureBuffer.set([
   0,
   0,
-  TILE_STRIDE_NORMALIZED,
+  SPRITE_STRIDE_NORMALIZED,
   0,
-  TILE_STRIDE_NORMALIZED,
-  TILE_STRIDE_NORMALIZED,
+  SPRITE_STRIDE_NORMALIZED,
+  SPRITE_STRIDE_NORMALIZED,
   0,
-  TILE_STRIDE_NORMALIZED,
+  SPRITE_STRIDE_NORMALIZED,
 ]);
 
 console.log(textureBuffer);
