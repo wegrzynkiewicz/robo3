@@ -1,11 +1,4 @@
-import {
-  Breaker,
-  assertArray,
-  assertObject,
-  assertPositiveNumber,
-  assertRequiredString,
-  assertTrue,
-} from "../common/asserts.ts";
+import { assertArray, assertObject, assertPositiveNumber, assertRequiredString, assertTrue, Breaker } from "../common/asserts.ts";
 import { BrowserImageManager } from "../core/image.ts";
 import { createContext2D, getTilesFromCanvasContext, Tile, TilesTextureAllocator } from "../core/tile.ts";
 import { TILE_SIZE, TILES_PER_CHUNK, TILES_PER_CHUNK_AXIS, TILES_TEXTURE_SIZE } from "../core/vars.ts";
@@ -115,7 +108,7 @@ export class ChunkManager {
   createChunk(
     { binary }: {
       binary: Uint16Array;
-    }
+    },
   ) {
     this.binaries.push(binary);
   }
@@ -125,8 +118,7 @@ async function processTileSet(ctx: LoadingContext, data: unknown) {
   const { imageManager, tilesTextureAllocator } = ctx;
 
   assertObject<TiledSet>(data, "invalid-tile-set-structure");
-  const { image: imagePath, imageheight, imagewidth, margin, tilecount, tileheight, tilewidth, spacing, version } =
-    data;
+  const { image: imagePath, imageheight, imagewidth, margin, tilecount, tileheight, tilewidth, spacing, version } = data;
   assertRequiredString(imagePath, "tile-set-image-should-be-required-string", { data, image: imagePath });
   assertPositiveNumber(imagewidth, "tile-set-image-width-should-be-positive-number", { data, imagewidth });
   assertPositiveNumber(imageheight, "tile-set-image-height-should-be-positive-number", { data, imageheight });
@@ -180,13 +172,13 @@ async function processLayer(ctx: LoadingContext, layer: unknown) {
   assertObject<TiledLayer>(layer, "invalid-tiled-map-structure");
   const { chunks, id: layerId, type, layers } = layer;
   switch (type) {
-    case 'group':
+    case "group":
       assertArray(layers, "tiled-layers-of-layers-should-be-array", { layerId });
       for (const layer of layers) {
         await processLayer(ctx, layer);
       }
       break;
-    case 'tilelayer':
+    case "tilelayer":
       assertTrue(type === "tilelayer", `tiled-layer-type-should-be-tilelayer`, { layerId });
       assertArray(chunks, "tiled-chunks-should-be-array", { layerId });
       assertTrue(chunks.length >= 1, "tiled-chunks-length-should-be-greater-than-or-equal--1", { layerId });
@@ -195,17 +187,17 @@ async function processLayer(ctx: LoadingContext, layer: unknown) {
         const { data, height, width, x, y } = tiledChunk;
         const size = TILES_PER_CHUNK_AXIS;
         const area = TILES_PER_CHUNK;
-        assertTrue(width === size, `tiled-chunk-width-should-be-${size}`, { chunkIndex, layerId, width, });
-        assertTrue(height === size, `tiled-chunk-height-should-be-${size}`, { chunkIndex, layerId, height, });
+        assertTrue(width === size, `tiled-chunk-width-should-be-${size}`, { chunkIndex, layerId, width });
+        assertTrue(height === size, `tiled-chunk-height-should-be-${size}`, { chunkIndex, layerId, height });
         assertArray(data, "tiled-chunks-data-should-be-array", { chunkIndex, layerId });
         assertTrue(data.length > 1, `tiled-chunks-data-length-should-be-${area}`, { chunkIndex, layerId });
         const binary = new Uint16Array(TILES_PER_CHUNK);
-        binary.set(data.map(e => (e ?? 1)));
+        binary.set(data.map((e) => (e ?? 1)));
         ctx.chunkManager.createChunk({ binary });
       }
       break;
     default:
-      throw new Breaker('tiled-layer-type-in-not-supported', { layerId, type })
+      throw new Breaker("tiled-layer-type-in-not-supported", { layerId, type });
   }
 }
 

@@ -23,13 +23,13 @@ const gl = canvas.getContext("webgl2", {
   alpha: false,
 })!;
 const documentHeight = () => {
-  document.documentElement.style.setProperty('--doc-height', `${window.innerHeight * 0.01}px`);
+  document.documentElement.style.setProperty("--doc-height", `${window.innerHeight * 0.01}px`);
   document.documentElement.style.height = `${window.innerHeight}px`;
   document.body.style.height = `${window.innerHeight}px`;
   canvas.height = window.innerHeight;
-}
-globalThis.addEventListener(`resize`, documentHeight)
-documentHeight()
+};
+globalThis.addEventListener(`resize`, documentHeight);
+documentHeight();
 
 gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
@@ -38,7 +38,7 @@ const texture = gl.createTexture();
 gl.activeTexture(gl.TEXTURE0 + 0);
 gl.bindTexture(gl.TEXTURE_2D, texture);
 const img = new Image();
-let updateTexture = () => { };
+let updateTexture = () => {};
 const onLoadedImage = function () {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   //   const ab2 = new Uint8Array(512 * 512 * 4);
