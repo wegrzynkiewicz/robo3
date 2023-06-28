@@ -8,12 +8,12 @@ export interface DoorState {
 
 export class Door extends GameObjectProcessor<DoorState> {
   public updateProperties(): void {
-    const { properties, state, type } = this;
+    const { entry, properties, state } = this;
     if (state.open) {
-      properties.spriteIndex = type.spriteIndexes["open"] ?? UNDEFINED_GAME_OBJECT_SPRITE_INDEX;
+      properties.spriteIndex = entry.binding.spriteIndexes["open"] ?? UNDEFINED_GAME_OBJECT_SPRITE_INDEX;
       properties.walkable = true;
     } else {
-      properties.spriteIndex = type.spriteIndexes["close"] ?? UNDEFINED_GAME_OBJECT_SPRITE_INDEX;
+      properties.spriteIndex = entry.binding.spriteIndexes["close"] ?? UNDEFINED_GAME_OBJECT_SPRITE_INDEX;
       properties.walkable = false;
     }
   }

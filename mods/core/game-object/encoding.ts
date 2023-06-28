@@ -1,7 +1,7 @@
 import { assertRequiredString, throws } from "../../common/asserts.ts";
 import { GameObjectType } from "./foundation.ts";
 
-export class GameObjectTEncodingTable {
+export class GameObjectTypeEncodingTable {
   protected nextIndex = 256;
   public readonly gotByKey = new Map<string, GameObjectType>();
   public readonly gotByIndex: GameObjectType[] = [];

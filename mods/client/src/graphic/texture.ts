@@ -1,49 +1,41 @@
 import { coords2ImageRect, index2coords } from "../../../core/numbers.ts";
+import { Sprite, SpriteAtlas } from "../../../core/sprite/foundation.ts";
 import { SPRITES_TEXTURE_SIZE } from "../../../core/vars.ts";
-import { createContext2D } from "../helpers/image-processing.ts";
-import { Sprite } from "../sprite/foundation.ts";
+import { createContext2D, loadImage } from "../helpers/image-processing.ts";
 
-export function allocateSpritesInCanvas(
+export async function allocateSpritesInCanvas(
   { sprites }: {
     sprites: Sprite[];
   }
-) {
-  const targets: Sprite[] = [];
-  const contexts: CanvasRenderingContext2D[] = [];
+): Promise<{ contexts: CanvasRenderingContext2D[]; }> {
+  const atlases = [...new Set(sprites.map(s => s.atlas))];
+  const sourceContexts = new WeakMap<SpriteAtlas, CanvasRenderingContext2D>();
+  const promises = atlases.map(async (atlas) => {
+    const { height, source, width } = atlas.image;
+    const image = await loadImage({ height, source, width });
+    const context = createContext2D(width, height);
+    context.drawImage(image, 0, 0);
+    sourceContexts.set(atlas, context);
+  });
+  await Promise.all(promises);
+  const targetContexts: CanvasRenderingContext2D[] = [];
   let currentTargetContext!: CanvasRenderingContext2D;
-  let currentZ = -1;
-
-  function insert(index: number, image: ImageData) {
-    const [x, y, z] = index2coords(index);
+  let currentZ = -1
+  for (let spriteIndex = 0; spriteIndex < sprites.length; spriteIndex++) {
+    const sprite = sprites[spriteIndex];
+    const { atlas, sourceRect: src } = sprite;
+    const canvas = sourceContexts.get(atlas)!;
+    const sourceImage = canvas.getImageData(src.x, src.y, src.w, src.h);
+    const [x, y, z] = index2coords(spriteIndex);
     if (z !== currentZ) {
       currentZ = z;
       currentTargetContext = createContext2D(SPRITES_TEXTURE_SIZE, SPRITES_TEXTURE_SIZE);
-      contexts.push(currentTargetContext);
+      targetContexts.push(currentTargetContext);
     }
     const [s, t] = coords2ImageRect(x, y);
-    currentTargetContext!.putImageData(image, s, t);
+    currentTargetContext!.putImageData(sourceImage, s, t);
   }
-
-  for (const sprite of sprites) {
-    const { predefinedSpriteIndex } = sprite.definition;
-    if (predefinedSpriteIndex !== undefined) {
-      targets[predefinedSpriteIndex] = sprite;
-    }
+  return {
+    contexts: targetContexts,
   }
-  let spriteIndex = 0;
-  for (const sprite of sprites) {
-    const { predefinedSpriteIndex } = sprite.definition;
-    if (predefinedSpriteIndex === undefined) {
-      while (targets[spriteIndex] !== undefined) {
-        spriteIndex++;
-      }
-      targets[spriteIndex] = sprite;
-    }
-  }
-  for (let index = 0; index < targets.length; index++) {
-    const sprite = targets[index];
-    insert(index, sprite.image);
-    sprite.spriteIndex = index;
-  }
-  return { contexts, targets };
 }

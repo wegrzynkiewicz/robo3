@@ -6,9 +6,11 @@ import { ortho } from "./src/graphic/math.ts";
 import { getUniformBlocksInfo, getUniformInfo } from "./src/graphic/utilities.ts";
 import "./src/else/wss.ts";
 import "../core/bootstrap.ts";
-import { cgotdRegistry, ComplexGameObjectResolver, sgotdRegistry, SimpleGameObjectResolver } from "../core/game-object/defining.ts";
-import { resolveSpriteAtlases, resolveSprites } from "./src/sprite/foundation.ts";
 import { spriteAtlasRegistry, spriteRegistry } from "../core/sprite/defining.ts";
+import { sgotdRegistry, cgotdRegistry } from "../core/game-object/defining.ts";
+import { SimpleGameObjectResolver, ComplexGameObjectResolver } from "../core/game-object/resolving.ts";
+import { resolveSpriteAtlases, resolveSprites } from "../core/sprite/resolving.ts";
+import { createSpriteIndexTable } from "../core/sprite/binding.ts";
 import { allocateSpritesInCanvas } from "./src/graphic/texture.ts";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -253,25 +255,16 @@ const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
 const sgoMap = s.resolveGameObjectTypes();
 
 const c = new ComplexGameObjectResolver({ registry: cgotdRegistry });
-c.resolveGameObjectTypes();
+const cgoMap = c.resolveGameObjectTypes();
 
 (async function () {
-  const atlases = await resolveSpriteAtlases(spriteAtlasRegistry);
-  const sprites = resolveSprites({ atlases, spriteRegistry });
+  const atlases = resolveSpriteAtlases(spriteAtlasRegistry);
+  const spritesMap = resolveSprites({ atlases, spriteRegistry });
+  const sprites = createSpriteIndexTable({ spritesMap });
 
-  const res = allocateSpritesInCanvas({ sprites: [...sprites.values()] });
+  const res = await allocateSpritesInCanvas({ sprites });
   for (const context of res.contexts) {
     document.body.appendChild(context.canvas);
-  }
-
-  for (const sgo of sgoMap.values()) {
-    const { gotKey, spriteKey } = sgo;
-    const sprite = sprites.get(sgo.spriteKey);
-    if (sprite === undefined) {
-      throws("sgo-refer-to-no-exists-sprite", { gotKey, spriteKey });
-    }
-    sgo.spriteIndex = sprite.spriteIndex;
-    sgo.properties.spriteIndex = sprite.spriteIndex;
   }
 })();
 

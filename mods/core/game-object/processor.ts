@@ -1,24 +1,21 @@
-import { ComplexGameObjectType } from "./foundation.ts";
+import { ComplexGameObjectEntry } from "./binding.ts";
 import { GameObjectProperties } from "./properties.ts";
 
 export type GameObjectProcessorConstructor = new (...args: any[]) => GameObjectProcessor<any, any>;
 
-export abstract class GameObjectProcessor<TState = undefined, TOptions = undefined> {
+export abstract class GameObjectProcessor<TState = undefined, TOptions = Record<string, unknown>> {
+  public readonly entry: ComplexGameObjectEntry<TOptions>;
   public readonly state: TState;
   public readonly properties: GameObjectProperties;
-  public readonly options: TOptions;
-  public readonly type: ComplexGameObjectType;
   public constructor(
-    { options, properties, state, type }: {
-      options: TOptions;
+    { entry, properties, state }: {
+      entry: ComplexGameObjectEntry<TOptions>;
       properties: GameObjectProperties;
       state: TState;
-      type: ComplexGameObjectType;
     },
   ) {
-    this.options = options;
+    this.entry = entry;
     this.properties = properties;
     this.state = state;
-    this.type = type;
   }
 }

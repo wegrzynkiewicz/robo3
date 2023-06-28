@@ -1,3 +1,4 @@
+import { ComplexGameObjectTypeDefinition, SimpleGameObjectTypeDefinition } from "./defining.ts";
 import { GameObjectProcessorConstructor } from "./processor.ts";
 import { GameObjectProperties } from "./properties.ts";
 
@@ -12,14 +13,14 @@ export interface GameObjectTypeCommon {
 }
 
 export interface SimpleGameObjectType extends GameObjectTypeCommon {
+  definition: SimpleGameObjectTypeDefinition;
   spriteKey: string;
-  spriteIndex: number;
 }
 
-export interface ComplexGameObjectType extends GameObjectTypeCommon {
+export interface ComplexGameObjectType<TOptions =  Record<string, unknown>> extends GameObjectTypeCommon {
+  definition: ComplexGameObjectTypeDefinition;
   goProcessor: GameObjectProcessorConstructor;
-  goProcessorOptions: Record<string, unknown>;
-  spriteIndexes: Record<string, number>;
+  goProcessorOptions: TOptions;
   spriteKeys: Record<string, string>;
 }
 

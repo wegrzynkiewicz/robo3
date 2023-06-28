@@ -12,10 +12,9 @@ function define(
 ) {
   const spriteKey = `${key}.spr`;
   defineSprite({
+    sourceRect: { x, y },
     spriteAtlasKey: 'test1',
     spriteKey,
-    x,
-    y,
   })
   defineSimpleGameObjectType({
     gotKey: `${key}.sgo`,

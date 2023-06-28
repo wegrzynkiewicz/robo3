@@ -16,24 +16,21 @@ defineSprite({
   predefinedSpriteIndex: ERROR_GAME_OBJECT_SPRITE_INDEX,
   spriteAtlasKey,
   spriteKey: "core/special/error.spr",
-  x: 0,
-  y: 0,
+  sourceRect: { x: 0, y: 0 },
 });
 
 defineSprite({
   predefinedSpriteIndex: UNDEFINED_GAME_OBJECT_SPRITE_INDEX,
   spriteAtlasKey,
   spriteKey: "core/special/undefined.spr",
-  x: 32,
-  y: 0,
+  sourceRect: { x: 32, y: 0 },
 });
 
 defineSprite({
   predefinedSpriteIndex: DEFAULT_GAME_OBJECT_SPRITE_INDEX,
   spriteAtlasKey,
   spriteKey: "core/special/default.spr",
-  x: 64,
-  y: 0,
+  sourceRect: { x: 64, y: 0 },
 });
 
 defineSpriteAtlas({

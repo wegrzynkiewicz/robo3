@@ -12,6 +12,13 @@ export interface Position {
   z: number;
 }
 
+export interface Rectangle {
+  h: number;
+  w: number;
+  x: number;
+  y: number;
+}
+
 export function createIndexCalculator(width: number, height: number): (x: number, y: number, z: number) => number {
   const area = width * height;
   return function (x: number, y: number, z: number): number {

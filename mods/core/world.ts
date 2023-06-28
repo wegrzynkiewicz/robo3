@@ -16,3 +16,6 @@ export interface Space {
   spaceId: string;
   worldId: string;
 }
+export function generateWorld() {
+  
+}
