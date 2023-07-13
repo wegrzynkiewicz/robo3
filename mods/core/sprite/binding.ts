@@ -8,7 +8,7 @@ export function createSpriteIndexTable(
   { spritesMap }: {
     spritesMap: Map<string, Sprite>;
   }
-) {
+): Sprite[] {
   const targets: Sprite[] = [];
   for (const sprite of spritesMap.values()) {
     const { predefinedSpriteIndex } = sprite.definition;
