@@ -1,6 +1,6 @@
 import { Breaker } from "../../common/asserts.ts";
 import { Container, injectIntoScopedContainer, registerService } from "../dependency/service.ts";
-import { GameActionRequest, GameActionNotification } from "./foundation.ts";
+import { GameActionNotification, GameActionRequest } from "./foundation.ts";
 import { loginGAHandler } from "./handlers/login.ts";
 
 export interface GameActionProcessor {
@@ -23,9 +23,9 @@ export class ClientGameActionProcessor implements GameActionProcessor {
   public constructor(
     { scopedContainer, notificationHandlers, requestHandlers }: {
       scopedContainer: Container;
-      notificationHandlers: Map<string, GameActionNotificationHandler>,
-      requestHandlers: Map<string, GameActionRequestHandler>,
-    }
+      notificationHandlers: Map<string, GameActionNotificationHandler>;
+      requestHandlers: Map<string, GameActionRequestHandler>;
+    },
   ) {
     this.notificationHandlers = notificationHandlers;
     this.requestHandlers = requestHandlers;
@@ -34,7 +34,7 @@ export class ClientGameActionProcessor implements GameActionProcessor {
   public async processRequest(action: GameActionRequest): Promise<Record<string, unknown>> {
     const handler = this.requestHandlers.get(action.request);
     if (handler === undefined) {
-      throw new Breaker('game-action-request-handler-not-found', { action });
+      throw new Breaker("game-action-request-handler-not-found", { action });
     }
     const params = await handler.handle();
     return params;
@@ -49,15 +49,15 @@ registerService({
   },
   provider: async (
     { scopedContainer }: {
-      scopedContainer: Container,
-    }
+      scopedContainer: Container;
+    },
   ) => {
     const notificationHandlers = new Map<string, GameActionNotificationHandler>();
     const requestHandlers = new Map<string, GameActionRequestHandler>();
 
     const processor = new ClientGameActionProcessor({ notificationHandlers, requestHandlers });
     return processor;
-  }
+  },
 });
 
 injectIntoScopedContainer({ clientGameActionProcessor });

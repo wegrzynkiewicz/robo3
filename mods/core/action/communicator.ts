@@ -1,6 +1,6 @@
 import { Breaker } from "../../common/asserts.ts";
 import { PendingPromiseCollector } from "../../common/useful.ts";
-import { GameActionResult,GameActionRequest,GameActionNotification,GameActionEnvelope,GameActionError,GameActionResponse } from "./foundation.ts";
+import { GameActionEnvelope, GameActionError, GameActionNotification, GameActionRequest, GameActionResponse, GameActionResult } from "./foundation.ts";
 import { RPCCodec } from "./rpc.ts";
 
 interface GameActionCommunicator {
@@ -10,7 +10,6 @@ interface GameActionCommunicator {
 }
 
 export class OnlineRPCGameActionCommunicator implements GameActionCommunicator {
-
   protected id = 1;
   protected readonly codec: RPCCodec;
   protected readonly collector = new PendingPromiseCollector<number, GameActionResult>();
@@ -19,7 +18,7 @@ export class OnlineRPCGameActionCommunicator implements GameActionCommunicator {
 
   public constructor(
     { codec, processor, ws }: {
-      codec: RPCCodec,
+      codec: RPCCodec;
       processor: GameActionProcessor;
       ws: WebSocket;
     },
@@ -96,7 +95,7 @@ export class OnlineRPCGameActionCommunicator implements GameActionCommunicator {
   protected async processRequest(action: GameActionRequest): Promise<void> {
     const { id, request } = action;
     try {
-      const params = await this.processor.processRequest(action)
+      const params = await this.processor.processRequest(action);
       const responseAction: GameActionResponse = {
         id,
         params,
@@ -108,7 +107,7 @@ export class OnlineRPCGameActionCommunicator implements GameActionCommunicator {
       const isBreaker = error instanceof Breaker;
       const errorAction: GameActionError = {
         id: id ?? 0,
-        error: isBreaker ? error.message : 'unknown',
+        error: isBreaker ? error.message : "unknown",
         params: isBreaker ? error.options : {},
         type: "err",
       };

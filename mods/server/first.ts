@@ -58,12 +58,12 @@ router.get("/wss/:token", (ctx) => {
       return Promise.resolve({ data: 123, tix: request.id });
     },
     processNotification: async function (notification: GameActionNotification): Promise<void> {
-    }
-  }
+    },
+  };
   const actionTranslation: EncodingTranslation<string> = {
     byIndex: ["error"],
-    byKey: new Map([['error', 0]]),
-  }
+    byKey: new Map([["error", 0]]),
+  };
   const codec = new TableEncodingRPCCodec({ actionTranslation });
   const communicator = new OnlineRPCGameActionCommunicator({ codec, processor, ws });
 
@@ -79,7 +79,7 @@ router.get("/wss/:token", (ctx) => {
   let i = 1;
   const internal = setInterval(() => {
     const counter = (i++).toString();
-    communicator.notify('tick', { counter });
+    communicator.notify("tick", { counter });
   }, 10000);
 
   ws.onclose = () => {

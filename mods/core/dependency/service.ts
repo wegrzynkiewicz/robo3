@@ -16,14 +16,14 @@ export type ServiceDef<
   dependencies: {
     [K in keyof TDependencies]: ServiceDef<ServiceProvider<TDependencies[K]>, TDependencies[K]>;
   };
-  namespaces: string[],
+  namespaces: string[];
   provider: TProvider;
-  singleton?: boolean
+  singleton?: boolean;
 };
 
 export function createContainer(): Container {
   const container: Container = {};
-  container['self'] = container;
+  container["self"] = container;
   container.get = (serviceKey: Key) => {
     return container[serviceKey];
   };
@@ -45,23 +45,23 @@ function createInjectorIntoContainer(map: Map<ServiceDefKey, UnknownServiceDef>)
   return function injectIntoContainer(services: ServicesDefs) {
     for (const [key, def] of Object.entries(services)) {
       if (map.has(key)) {
-        throw new Breaker('service-with-key-already-exists-into-container', { key });
+        throw new Breaker("service-with-key-already-exists-into-container", { key });
       }
       map.set(key, def);
     }
-  }
+  };
 }
 
-const staticServiceDefsMap = new Map<ServiceDefKey, UnknownServiceDef>()
+const staticServiceDefsMap = new Map<ServiceDefKey, UnknownServiceDef>();
 export const injectIntoStaticContainer = createInjectorIntoContainer(staticServiceDefsMap);
-const scopedServiceDefsMap = new Map<ServiceDefKey, UnknownServiceDef>()
+const scopedServiceDefsMap = new Map<ServiceDefKey, UnknownServiceDef>();
 export const injectIntoScopedContainer = createInjectorIntoContainer(scopedServiceDefsMap);
 
 export const scopedContainer = registerService({
   dependencies: {},
   namespaces: ["scoped", "static"],
   provider: async () => (createContainer()),
-})
+});
 injectIntoScopedContainer({ scopedContainer });
 
 export async function resolveServiceContainer(defs: ServiceDefMap): Promise<Container> {
@@ -85,7 +85,7 @@ export async function resolveServiceContainer(defs: ServiceDefMap): Promise<Cont
       const service = await def.provider(providerDeps);
       return service;
     } catch (error) {
-      throw new Breaker('error-when-resolving-service', { def, error })
+      throw new Breaker("error-when-resolving-service", { def, error });
     }
   }
 

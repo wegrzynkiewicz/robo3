@@ -1,4 +1,4 @@
-import { Deferred,deferred } from "../deps.ts";
+import { Deferred, deferred } from "../deps.ts";
 import { Breaker } from "./asserts.ts";
 
 export function deepClone<T>(object: T): T {

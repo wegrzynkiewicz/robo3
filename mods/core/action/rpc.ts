@@ -44,8 +44,8 @@ export class TableEncodingRPCCodec implements RPCCodec {
   public readonly actionTranslation: EncodingTranslation<string>;
   public constructor(
     { actionTranslation }: {
-      actionTranslation: EncodingTranslation<string>
-    }
+      actionTranslation: EncodingTranslation<string>;
+    },
   ) {
     this.actionTranslation = actionTranslation;
   }
@@ -60,7 +60,7 @@ export class TableEncodingRPCCodec implements RPCCodec {
       const id = dv.getInt32(0, true);
       const typeCode = dv.getInt32(4, true);
     }
-    throw new Breaker('TODO');
+    throw new Breaker("TODO");
   }
 
   public encode(envelope: GameActionEnvelope): string | Uint8Array {
@@ -68,6 +68,6 @@ export class TableEncodingRPCCodec implements RPCCodec {
     if (params.binary === undefined) {
       return JSON.stringify(envelope);
     }
-    throw new Breaker('TODO');
+    throw new Breaker("TODO");
   }
 }
