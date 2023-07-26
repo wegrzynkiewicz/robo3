@@ -9,6 +9,13 @@
     "indentWidth": 2,
     "lineWidth": 160
   },
+  "lint": {
+    "rules": {
+      "exclude": [
+        "require-await"
+      ]
+    }
+  },
   "tasks": {
     "bundle": "deno bundle --watch ./mods/client/main.ts ./mods/client/dist/main.js",
     "serve": "serve ./mods/client"

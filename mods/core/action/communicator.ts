@@ -1,47 +1,12 @@
 import { Breaker } from "../../common/asserts.ts";
 import { PendingPromiseCollector } from "../../common/useful.ts";
+import { GameActionResult,GameActionRequest,GameActionNotification,GameActionEnvelope,GameActionError,GameActionResponse } from "./foundation.ts";
 import { RPCCodec } from "./rpc.ts";
-
-export interface GameActionRequest {
-  id: number;
-  params: Record<string, unknown>;
-  request: string;
-  type: "req";
-}
-
-export interface GameActionNotification {
-  id: number;
-  notify: string;
-  params: Record<string, unknown>;
-  type: "not";
-}
-
-export interface GameActionError {
-  id: number;
-  error: string;
-  params: Record<string, unknown>;
-  type: "err";
-}
-
-export interface GameActionResponse {
-  id: number;
-  params: Record<string, unknown>;
-  response: string;
-  type: "res";
-}
-
-export type GameActionEnvelope = GameActionError | GameActionNotification | GameActionRequest | GameActionResponse;
-export type GameActionResult = GameActionResponse | GameActionError;
 
 interface GameActionCommunicator {
   receive(data: unknown): Promise<void>;
   request(request: string, params: Record<string, unknown>): Promise<GameActionResult>;
   notify(notify: string, params: Record<string, unknown>): void;
-}
-
-export interface GameActionProcessor {
-  processRequest(request: GameActionRequest): Promise<Record<string, unknown>>;
-  processNotification(notification: GameActionNotification): Promise<void>;
 }
 
 export class OnlineRPCGameActionCommunicator implements GameActionCommunicator {
