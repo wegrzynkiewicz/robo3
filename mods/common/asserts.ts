@@ -5,15 +5,15 @@ export interface BreakerOptions {
 
 export class Breaker extends Error {
   public readonly options: BreakerOptions;
-  constructor(message: string, data?: BreakerOptions) {
+  constructor(msg: string, data?: BreakerOptions) {
     const { error, cause, ...others } = data ?? {};
-    super(message, { cause: cause ?? error });
+    super(msg, { cause: cause ?? error });
     this.name = "Breaker";
     this.options = data ?? {};
     const json = JSON.stringify(others);
     this.stack += `\n    with parameters ${json}.`;
     if (error) {
-      this.stack += `\n    cause error ${error instanceof Error ? error.stack : error}.`;
+      this.stack += `\n    cause error:\n${error instanceof Error ? error.stack : error}.`;
     }
   }
 }
@@ -22,27 +22,39 @@ export type Insecurity<T> = {
   [K in keyof T]+?: T[K] extends (() => infer TResult) ? (() => TResult) : (null | undefined | Insecurity<T[K]>);
 };
 
-type Data = Record<string, unknown>;
+export type AssertData = Record<string, unknown>;
 
-export function throws(message: string, data?: Data): never {
-  throw new Breaker(message, data);
+export function throws(msg: string, data?: AssertData): never {
+  throw new Breaker(msg, data);
 }
 
-export function assertTrue(value: unknown, message: string, data?: Data): asserts value is boolean {
+export function assertTrue(value: unknown, msg: string, data?: AssertData): asserts value is boolean {
   if (value !== true) {
-    throws(message, data);
+    throws(msg, data);
   }
 }
 
-export function assertNonNull<T>(value: T, message: string, data?: Data): asserts value is Exclude<T, null> {
+export function assertEqual<TExpected>(value: unknown, expected: TExpected, msg: string, data?: AssertData): asserts value is TExpected {
+  if (value !== expected) {
+    throws(msg, data);
+  }
+}
+
+export function assertNonNull<T>(value: T, msg: string, data?: AssertData): asserts value is Exclude<T, null> {
   if (value === null) {
-    throws(message, data);
+    throws(msg, data);
   }
 }
 
-export function assertObject<T>(value: unknown, message: string, data?: Data): asserts value is Insecurity<T> {
+export function assertObject<T>(value: unknown, msg: string, data?: AssertData): asserts value is Insecurity<T> {
   if (typeof value !== "object" || value === null) {
-    throw new Breaker(message, data);
+    throw new Breaker(msg, data);
+  }
+}
+
+export function assertRecord(value: unknown, msg: string, data?: AssertData): asserts value is Record<string, unknown> {
+  if (typeof value !== "object" || value === null) {
+    throw new Breaker(msg, data);
   }
 }
 
@@ -50,9 +62,9 @@ export function isRequiredString(value: unknown): value is string {
   return typeof value === "string" && value !== "";
 }
 
-export function assertRequiredString(value: unknown, message: string, data?: Data): asserts value is string {
+export function assertRequiredString(value: unknown, msg: string, data?: AssertData): asserts value is string {
   if (typeof value !== "string" || value === "") {
-    throws(message, data);
+    throws(msg, data);
   }
 }
 
@@ -60,14 +72,14 @@ export function isPositiveNumber(value: unknown): value is number {
   return typeof value === "number" && value >= 0 && !isNaN(value);
 }
 
-export function assertPositiveNumber(value: unknown, message: string, data?: Data): asserts value is number {
+export function assertPositiveNumber(value: unknown, msg: string, data?: AssertData): asserts value is number {
   if (!isPositiveNumber(value)) {
-    throws(message, data);
+    throws(msg, data);
   }
 }
 
-export function assertArray<T>(value: unknown, message: string, data?: Data): asserts value is T[] {
+export function assertArray<T>(value: unknown, msg: string, data?: AssertData): asserts value is T[] {
   if (Array.isArray(value) === false) {
-    throws(message, data);
+    throws(msg, data);
   }
 }

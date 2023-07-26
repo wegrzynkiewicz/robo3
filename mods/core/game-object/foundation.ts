@@ -17,7 +17,7 @@ export interface SimpleGameObjectType extends GameObjectTypeCommon {
   spriteKey: string;
 }
 
-export interface ComplexGameObjectType<TOptions =  Record<string, unknown>> extends GameObjectTypeCommon {
+export interface ComplexGameObjectType<TOptions = Record<string, unknown>> extends GameObjectTypeCommon {
   definition: ComplexGameObjectTypeDefinition;
   goProcessor: GameObjectProcessorConstructor;
   goProcessorOptions: TOptions;

@@ -7,8 +7,8 @@ import { getUniformBlocksInfo, getUniformInfo } from "./src/graphic/utilities.ts
 import "./src/else/wss.ts";
 import "../core/bootstrap.ts";
 import { spriteAtlasRegistry, spriteRegistry } from "../core/sprite/defining.ts";
-import { sgotdRegistry, cgotdRegistry } from "../core/game-object/defining.ts";
-import { SimpleGameObjectResolver, ComplexGameObjectResolver } from "../core/game-object/resolving.ts";
+import { cgotdRegistry, sgotdRegistry } from "../core/game-object/defining.ts";
+import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../core/game-object/resolving.ts";
 import { resolveSpriteAtlases, resolveSprites } from "../core/sprite/resolving.ts";
 import { createSpriteIndexTable } from "../core/sprite/binding.ts";
 import { allocateSpritesInCanvas } from "./src/graphic/texture.ts";
@@ -40,7 +40,7 @@ const texture = gl.createTexture();
 gl.activeTexture(gl.TEXTURE0 + 0);
 gl.bindTexture(gl.TEXTURE_2D, texture);
 const img = new Image();
-let updateTexture = () => { };
+let updateTexture = () => {};
 const onLoadedImage = function () {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   //   const ab2 = new Uint8Array(512 * 512 * 4);
@@ -61,6 +61,7 @@ processMap().then((imageData) => {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
   gl.generateMipmap(gl.TEXTURE_2D);
+  drawScene(0);
 });
 
 {
@@ -160,6 +161,7 @@ processMap1().then((chunkManager) => {
   }
   gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, ab, gl.DYNAMIC_DRAW);
+  drawScene(0);
 });
 
 console.log({ ab });
@@ -248,7 +250,7 @@ function drawScene(now: number) {
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.drawElementsInstanced(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0, 8000);
   updateTexture();
-  requestAnimationFrame(drawScene);
+  //   requestAnimationFrame(drawScene);
 }
 
 const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });

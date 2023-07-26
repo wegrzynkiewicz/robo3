@@ -39,7 +39,7 @@ defineSpriteAtlas({
     height: 4256,
     source: "./assets/tileset.png",
   },
-  spriteAtlasKey: 'test1',
+  spriteAtlasKey: "test1",
 });
 
-defineSpritesFromAtlas({spriteAtlasKey: 'test1'});
+defineSpritesFromAtlas({ spriteAtlasKey: "test1" });

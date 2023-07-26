@@ -3,7 +3,7 @@ import { SpriteDefinition } from "./defining.ts";
 
 export interface Sprite {
   atlas: SpriteAtlas;
-  definition: SpriteDefinition,
+  definition: SpriteDefinition;
   spriteKey: string;
   sourceRect: Rectangle;
 }

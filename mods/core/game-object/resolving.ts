@@ -1,10 +1,10 @@
-import { throws, assertArray, assertObject, isRequiredString } from "../../common/asserts.ts";
+import { assertArray, assertObject, isRequiredString, throws } from "../../common/asserts.ts";
 import { Registry } from "../../common/registry.ts";
 import { deepClone } from "../../common/useful.ts";
-import { GameObjectTypeDefinitionCommon, SimpleGameObjectTypeDefinition, ComplexGameObjectTypeDefinition, gocRegister } from "./defining.ts";
-import { GameObjectTypeCommon, SimpleGameObjectType, ComplexGameObjectType } from "./foundation.ts";
+import { ComplexGameObjectTypeDefinition, GameObjectTypeDefinitionCommon, gocRegister, SimpleGameObjectTypeDefinition } from "./defining.ts";
+import { ComplexGameObjectType, GameObjectTypeCommon, SimpleGameObjectType } from "./foundation.ts";
 import { GameObjectProcessorConstructor } from "./processor.ts";
-import { GameObjectProperties, defaultGameObjectProperties } from "./properties.ts";
+import { defaultGameObjectProperties, GameObjectProperties } from "./properties.ts";
 
 export abstract class GameTypeResolver<
   TGameObjectTypeDefinition extends GameObjectTypeDefinitionCommon,

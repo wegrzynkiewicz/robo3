@@ -7,7 +7,7 @@ export interface SpriteBinding {
 export function createSpriteIndexTable(
   { spritesMap }: {
     spritesMap: Map<string, Sprite>;
-  }
+  },
 ): Sprite[] {
   const targets: Sprite[] = [];
   for (const sprite of spritesMap.values()) {

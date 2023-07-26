@@ -28,7 +28,7 @@ export const defineSpriteAtlas = spriteAtlasRegistry.register.bind(spriteAtlasRe
 export function defineSpritesFromAtlas(
   { spriteAtlasKey }: {
     spriteAtlasKey: string;
-  }
+  },
 ) {
   const atlas = spriteAtlasRegistry.entities.get(spriteAtlasKey);
   if (atlas === undefined) {

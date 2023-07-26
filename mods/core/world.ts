@@ -17,5 +17,4 @@ export interface Space {
   worldId: string;
 }
 export function generateWorld() {
-  
 }

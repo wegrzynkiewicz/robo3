@@ -8,18 +8,18 @@ function define(
     key: string;
     x: number;
     y: number;
-  }
+  },
 ) {
   const spriteKey = `${key}.spr`;
   defineSprite({
     sourceRect: { x, y },
-    spriteAtlasKey: 'test1',
+    spriteAtlasKey: "test1",
     spriteKey,
-  })
+  });
   defineSimpleGameObjectType({
     gotKey: `${key}.sgo`,
     spriteKey,
-  })
+  });
 }
 
 define({ key: "core/floor/grass", x: 0, y: 0 });

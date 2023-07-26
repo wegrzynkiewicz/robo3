@@ -24,7 +24,7 @@ export type GameObjectEntry = ComplexGameObjectEntry | SimpleGameObjectEntry;
 
 export function createGOTIndexTable(
   { gotMap }: {
-    gotMap: Map<string, GameObjectType>,
+    gotMap: Map<string, GameObjectType>;
   },
 ): GameObjectType[] {
   const gotByIndex: GameObjectType[] = [];

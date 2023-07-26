@@ -6,9 +6,9 @@ import { createContext2D, loadImage } from "../helpers/image-processing.ts";
 export async function allocateSpritesInCanvas(
   { sprites }: {
     sprites: Sprite[];
-  }
-): Promise<{ contexts: CanvasRenderingContext2D[]; }> {
-  const atlases = [...new Set(sprites.map(s => s.atlas))];
+  },
+): Promise<{ contexts: CanvasRenderingContext2D[] }> {
+  const atlases = [...new Set(sprites.map((s) => s.atlas))];
   const sourceContexts = new WeakMap<SpriteAtlas, CanvasRenderingContext2D>();
   const promises = atlases.map(async (atlas) => {
     const { height, source, width } = atlas.image;
@@ -20,7 +20,7 @@ export async function allocateSpritesInCanvas(
   await Promise.all(promises);
   const targetContexts: CanvasRenderingContext2D[] = [];
   let currentTargetContext!: CanvasRenderingContext2D;
-  let currentZ = -1
+  let currentZ = -1;
   for (let spriteIndex = 0; spriteIndex < sprites.length; spriteIndex++) {
     const sprite = sprites[spriteIndex];
     const { atlas, sourceRect: src } = sprite;
@@ -37,5 +37,5 @@ export async function allocateSpritesInCanvas(
   }
   return {
     contexts: targetContexts,
-  }
+  };
 }

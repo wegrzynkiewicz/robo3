@@ -1,7 +1,7 @@
 import { assertPositiveNumber, throws } from "../../common/asserts.ts";
 import { Registry } from "../../common/registry.ts";
 import { SpriteAtlasDefinition, SpriteDefinition } from "./defining.ts";
-import { SpriteAtlas, Sprite } from "./foundation.ts";
+import { Sprite, SpriteAtlas } from "./foundation.ts";
 
 export function resolveSpriteAtlas(
   spriteAtlasDefinition: SpriteAtlasDefinition,
@@ -56,7 +56,10 @@ export function resolveSprites(
       atlas,
       definition,
       sourceRect: {
-        h, w, x, y
+        h,
+        w,
+        x,
+        y,
       },
       spriteKey,
     };

@@ -1,4 +1,9 @@
-import { Application, Request, Router } from "https://deno.land/x/oak@v12.5.0/mod.ts";
+import { Application, Router } from "https://deno.land/x/oak@v12.5.0/mod.ts";
+import { assertRequiredString, Breaker } from "../common/asserts.ts";
+import { logger } from "../common/logger.ts";
+import { TableEncodingRPCCodec } from "../core/action/rpc.ts";
+import { EncodingTranslation } from "../common/useful.ts";
+import { GameActionNotification, GameActionProcessor, GameActionRequest, OnlineRPCGameActionCommunicator } from "../core/action/exchange.ts";
 const app = new Application({ logErrors: false });
 const router = new Router();
 router.get("/hello", (ctx) => {
@@ -23,37 +28,59 @@ Deno.addSignalListener(
   },
 );
 
-router.get("/wss", (ctx) => {
+interface WSSStrategy {
+  processMessage(message: MessageEvent<any>): Promise<void>;
+}
+
+const unauthorizeWSSStrategy: WSSStrategy = {
+  async processMessage(message: MessageEvent<unknown>): Promise<void> {
+    const { data } = message;
+    assertRequiredString(data, "invalid-authorize-message");
+    const request = JSON.parse(data);
+  },
+};
+
+router.get("/wss/:token", (ctx) => {
   if (!ctx.isUpgradable) {
     ctx.throw(501, "lol");
   }
 
-  console.log(ctx);
   ctx.request.headers;
-  console.log(ctx);
   const ws = ctx.upgrade();
 
   ws.onopen = (event) => {
-    console.log(event);
-    console.log("Connected to client");
-    ws.send("Hello from server!");
   };
 
-  ws.onmessage = (m) => {
-    console.log("Got message from client: ", m.data);
-    ws.send(m.data as string);
-  };
-  Deno.addSignalListener(
-    "SIGINT",
-    () => {
-      ws.close();
-      console.log("SIGINT!");
+  let strategy = unauthorizeWSSStrategy;
+
+  const processor: GameActionProcessor = {
+    processRequest: function (request: GameActionRequest): Promise<Record<string, unknown>> {
+      return Promise.resolve({ data: 123, tix: request.id });
     },
-  );
+    processNotification: async function (notification: GameActionNotification): Promise<void> {
+    }
+  }
+  const actionTranslation: EncodingTranslation<string> = {
+    byIndex: ["error"],
+    byKey: new Map([['error', 0]]),
+  }
+  const codec = new TableEncodingRPCCodec({ actionTranslation });
+  const communicator = new OnlineRPCGameActionCommunicator({ codec, processor, ws });
 
+  ws.onmessage = async (message) => {
+    try {
+      await communicator.receive(message.data);
+    } catch (error) {
+      logger.error("error-when-processing-wss-message", { error });
+      ws.close(1008, error instanceof Breaker ? error.message : "unknown-error");
+    }
+  };
+
+  let i = 1;
   const internal = setInterval(() => {
-    ws.send("Hi!");
-  }, 2000);
+    const counter = (i++).toString();
+    communicator.notify('tick', { counter });
+  }, 10000);
 
   ws.onclose = () => {
     console.log("Disconncted from client");
