@@ -1,6 +1,8 @@
 import { Deferred, deferred } from "../deps.ts";
 import { Breaker } from "./asserts.ts";
 
+export type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
 export function deepClone<T>(object: T): T {
   return JSON.parse(JSON.stringify(object)) as T;
 }

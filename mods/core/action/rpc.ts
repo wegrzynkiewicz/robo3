@@ -1,6 +1,6 @@
 import { assertObject, assertPositiveNumber, assertRequiredString, Breaker, isRequiredString } from "../../common/asserts.ts";
 import { EncodingTranslation } from "../../common/useful.ts";
-import { GameActionEnvelope } from "./exchange.ts";
+import { GameActionEnvelope } from "./foundation.ts";
 
 export interface RPCCodec {
   encode(envelope: GameActionEnvelope): string | Uint8Array;

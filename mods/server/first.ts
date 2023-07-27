@@ -3,7 +3,9 @@ import { assertRequiredString, Breaker } from "../common/asserts.ts";
 import { logger } from "../common/logger.ts";
 import { TableEncodingRPCCodec } from "../core/action/rpc.ts";
 import { EncodingTranslation } from "../common/useful.ts";
-import { GameActionNotification, GameActionProcessor, GameActionRequest, OnlineRPCGameActionCommunicator } from "../core/action/exchange.ts";
+import { OnlineRPCGameActionCommunicator } from "../core/action/communicator.ts";
+import { resolveService } from "../core/dependency/service.ts";
+import { serverGameActionProcessor } from "../core/action/handlers/server/bootstrap.ts";
 const app = new Application({ logErrors: false });
 const router = new Router();
 router.get("/hello", (ctx) => {
@@ -40,12 +42,17 @@ const unauthorizeWSSStrategy: WSSStrategy = {
   },
 };
 
-router.get("/wss/:token", (ctx) => {
+router.get("/wss/:token", async (ctx) => {
   if (!ctx.isUpgradable) {
     ctx.throw(501, "lol");
   }
 
   ctx.request.headers;
+
+  const processor = await resolveService(serverGameActionProcessor);
+  const processor2 = await resolveService(serverGameActionProcessor);
+  console.log(processor, processor2, processor2 === processor);
+
   const ws = ctx.upgrade();
 
   ws.onopen = (event) => {
@@ -53,13 +60,6 @@ router.get("/wss/:token", (ctx) => {
 
   let strategy = unauthorizeWSSStrategy;
 
-  const processor: GameActionProcessor = {
-    processRequest: function (request: GameActionRequest): Promise<Record<string, unknown>> {
-      return Promise.resolve({ data: 123, tix: request.id });
-    },
-    processNotification: async function (notification: GameActionNotification): Promise<void> {
-    },
-  };
   const actionTranslation: EncodingTranslation<string> = {
     byIndex: ["error"],
     byKey: new Map([["error", 0]]),

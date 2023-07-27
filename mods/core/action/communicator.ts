@@ -1,6 +1,7 @@
 import { Breaker } from "../../common/asserts.ts";
 import { PendingPromiseCollector } from "../../common/useful.ts";
 import { GameActionEnvelope, GameActionError, GameActionNotification, GameActionRequest, GameActionResponse, GameActionResult } from "./foundation.ts";
+import { GameActionProcessor } from "./processor.ts";
 import { RPCCodec } from "./rpc.ts";
 
 interface GameActionCommunicator {

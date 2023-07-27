@@ -1,7 +1,5 @@
 import { Breaker } from "../../common/asserts.ts";
-import { Container, injectIntoScopedContainer, registerService } from "../dependency/service.ts";
 import { GameActionNotification, GameActionRequest } from "./foundation.ts";
-import { loginGAHandler } from "./handlers/login.ts";
 
 export interface GameActionProcessor {
   processRequest(request: GameActionRequest): Promise<Record<string, unknown>>;
@@ -9,20 +7,19 @@ export interface GameActionProcessor {
 }
 
 export interface GameActionNotificationHandler {
-  handle: (scopedContainer: Container, request: GameActionNotification) => Promise<void>;
+  handle: (request: GameActionNotification) => Promise<void>;
 }
 
 export interface GameActionRequestHandler {
-  handle: (scopedContainer: Container, request: GameActionRequest) => Promise<Record<string, unknown>>;
+  handle: (request: GameActionRequest) => Promise<Record<string, unknown>>;
 }
 
-export class ClientGameActionProcessor implements GameActionProcessor {
+export class UniversalGameActionProcessor implements GameActionProcessor {
   protected readonly notificationHandlers: Map<string, GameActionNotificationHandler>;
   protected readonly requestHandlers: Map<string, GameActionRequestHandler>;
 
   public constructor(
-    { scopedContainer, notificationHandlers, requestHandlers }: {
-      scopedContainer: Container;
+    { notificationHandlers, requestHandlers }: {
       notificationHandlers: Map<string, GameActionNotificationHandler>;
       requestHandlers: Map<string, GameActionRequestHandler>;
     },
@@ -36,28 +33,10 @@ export class ClientGameActionProcessor implements GameActionProcessor {
     if (handler === undefined) {
       throw new Breaker("game-action-request-handler-not-found", { action });
     }
-    const params = await handler.handle();
+    const params = await handler.handle(action);
     return params;
   }
-  public processNotification(notification: GameActionNotification): Promise<void> {
+
+  public async processNotification(notification: GameActionNotification): Promise<void> {
   }
 }
-
-registerService({
-  dependencies: {
-    scopedContainer: 1,
-  },
-  provider: async (
-    { scopedContainer }: {
-      scopedContainer: Container;
-    },
-  ) => {
-    const notificationHandlers = new Map<string, GameActionNotificationHandler>();
-    const requestHandlers = new Map<string, GameActionRequestHandler>();
-
-    const processor = new ClientGameActionProcessor({ notificationHandlers, requestHandlers });
-    return processor;
-  },
-});
-
-injectIntoScopedContainer({ clientGameActionProcessor });
