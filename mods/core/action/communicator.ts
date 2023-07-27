@@ -10,24 +10,21 @@ interface GameActionCommunicator {
   notify(notify: string, params: Record<string, unknown>): void;
 }
 
-export class OnlineRPCGameActionCommunicator implements GameActionCommunicator {
+export abstract class AbstractGameActionCommunicator implements GameActionCommunicator {
   protected id = 1;
-  protected readonly codec: RPCCodec;
   protected readonly collector = new PendingPromiseCollector<number, GameActionResult>();
   protected readonly processor: GameActionProcessor;
-  protected readonly ws: WebSocket;
 
   public constructor(
-    { codec, processor, ws }: {
-      codec: RPCCodec;
+    { processor }: {
       processor: GameActionProcessor;
-      ws: WebSocket;
     },
   ) {
-    this.codec = codec;
     this.processor = processor;
-    this.ws = ws;
   }
+
+  public abstract receive(message: unknown): Promise<void>;
+  protected abstract sendData(action: GameActionEnvelope): void;
 
   public request(request: string, params: Record<string, unknown>): Promise<GameActionResult> {
     const action: GameActionRequest = {
@@ -49,11 +46,6 @@ export class OnlineRPCGameActionCommunicator implements GameActionCommunicator {
       type: "not",
     };
     this.sendData(action);
-  }
-
-  public async receive(message: unknown): Promise<void> {
-    const envelope = this.codec.decode(message);
-    await this.processEnvelope(envelope);
   }
 
   protected async processEnvelope(envelope: GameActionEnvelope): Promise<void> {
@@ -123,10 +115,42 @@ export class OnlineRPCGameActionCommunicator implements GameActionCommunicator {
       this.collector.resolve(id, response);
     }
   }
+}
+
+export class OnlineRPCGameActionCommunicator extends AbstractGameActionCommunicator {
+  protected readonly codec: RPCCodec;
+  protected readonly ws: WebSocket;
+
+  public constructor(
+    { codec, processor, ws }: {
+      codec: RPCCodec;
+      processor: GameActionProcessor;
+      ws: WebSocket;
+    },
+  ) {
+    super({ processor });
+    this.codec = codec;
+    this.ws = ws;
+  }
+
+  public async receive(message: unknown): Promise<void> {
+    const envelope = this.codec.decode(message);
+    await this.processEnvelope(envelope);
+  }
 
   protected sendData(action: GameActionEnvelope): void {
     const data = this.codec.encode(action);
     this.ws.send(data);
     // TODO: process WS
+  }
+}
+
+export class LoopbackGameActionCommunicator extends AbstractGameActionCommunicator {
+  public async receive(message: unknown): Promise<void> {
+    await this.processEnvelope(message as GameActionEnvelope);
+  }
+
+  protected sendData(action: GameActionEnvelope): void {
+    this.processEnvelope(action);
   }
 }
