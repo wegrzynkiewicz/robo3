@@ -40,7 +40,7 @@ const texture = gl.createTexture();
 gl.activeTexture(gl.TEXTURE0 + 0);
 gl.bindTexture(gl.TEXTURE_2D, texture);
 const img = new Image();
-let updateTexture = () => {};
+let updateTexture = () => { };
 const onLoadedImage = function () {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   //   const ab2 = new Uint8Array(512 * 512 * 4);
@@ -61,7 +61,7 @@ processMap().then((imageData) => {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
   gl.generateMipmap(gl.TEXTURE_2D);
-  drawScene(0);
+  draw();
 });
 
 {
@@ -161,7 +161,7 @@ processMap1().then((chunkManager) => {
   }
   gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, ab, gl.DYNAMIC_DRAW);
-  drawScene(0);
+  draw();
 });
 
 console.log({ ab });
@@ -220,13 +220,6 @@ document.addEventListener("keypress", (event) => {
 
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-const fpsElem = document.querySelector("#fps")!;
-
-const count = 2 ** 16;
-const ab1 = new ArrayBuffer(count);
-console.log(count);
-console.log(ab1);
-
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -239,19 +232,40 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 documentHeight();
+
 let then = 0;
-function drawScene(now: number) {
-  now *= 0.001; // convert to seconds
-  const deltaTime = now - then; // compute time since last frame
-  then = now; // remember time for next frame
-  const fps = 1 / deltaTime; // compute frames per second
-  //   fpsElem.textContent = fps.toFixed(1);  // update fps display
-  //   load();
+let frameCount = 0;
+let timeAccumulator = 0;
+
+function mainLoop(now: number) {
+  const deltaTime = now - then;
+  if (deltaTime > 0) {
+    timeAccumulator += deltaTime
+    if (frameCount === 9) {
+      const averageFrameTime = timeAccumulator / frameCount;
+      const fps = 1000 / averageFrameTime;
+      frameCount = 0;
+      timeAccumulator = 0;
+    }
+    updateLogic(deltaTime);
+    draw();
+    then = now;
+    frameCount++;
+  }
+  requestAnimationFrame(mainLoop);
+}
+
+function updateLogic(deltaTime: number) {
+}
+
+function draw() {
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.drawElementsInstanced(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0, 8000);
   updateTexture();
-  //   requestAnimationFrame(drawScene);
 }
+
+
+
 
 const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
 const sgoMap = s.resolveGameObjectTypes();
@@ -270,4 +284,4 @@ const cgoMap = c.resolveGameObjectTypes();
   }
 })();
 
-drawScene(0);
+mainLoop(0);
