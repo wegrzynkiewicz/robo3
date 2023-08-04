@@ -1,3 +1,4 @@
+import { Breaker } from "../../../common/asserts.ts";
 import { registerService } from "../../dependency/service.ts";
 import { GameActionEnvelope } from "../foundation.ts";
 import { GameActionProcessor } from "../processor.ts";
@@ -26,8 +27,13 @@ export class OnlineRPCGameActionCommunicator extends AbstractGameActionCommunica
   }
 
   protected sendData(action: GameActionEnvelope): void {
-    const data = this.codec.encode(action);
-    this.ws.send(data);
+    const { codec, ws } = this;
+    const { readyState } = ws;
+    const data = codec.encode(action);
+    if (readyState !== ws.OPEN) {
+      throw new Breaker('ws-not-open', { action, readyState });
+    }
+    ws.send(data);
     // TODO: process WS
   }
 }

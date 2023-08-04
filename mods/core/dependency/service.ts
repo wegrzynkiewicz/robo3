@@ -23,7 +23,7 @@ export function registerService<TProvider extends (...args: any) => any>(
   return {
     dependencies,
     provider,
-    singleton: singleton ?? true,
+    singleton: singleton ?? false,
   };
 }
 
