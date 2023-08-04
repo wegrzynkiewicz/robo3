@@ -1,55 +1,61 @@
 import { Breaker } from "../../common/asserts.ts";
 import { WithOptional } from "../../common/useful.ts";
 
-export type ServiceProvider<TInstance> = (...args: any) => Promise<TInstance>;
-export type ServiceKey = string | symbol;
-export type ServiceMap = Map<ServiceKey, Service<unknown>>;
-export type EmptyObject = Record<string | number | symbol, never>;
+type ServiceKey = string | symbol;
+type ServiceInstance<TProvider extends (...args: any) => any> = ReturnType<TProvider> extends Promise<infer TInstance> ? TInstance : never;
+type ServiceUnknown = Service<(...args: any) => any>
+type ServiceDependencies<TProvider extends (...args: any) => any> = Parameters<TProvider>[0];
+type ServiceProvider<TInstance> = (...args: any) => Promise<TInstance>;
+type ServiceOption<TProvider extends (...args: any) => any> = Parameters<TProvider>[1];
 
-export type Service<
-  TInstance,
-  TProvider extends ServiceProvider<TInstance> = ServiceProvider<TInstance>,
-  TDependencies = Parameters<TProvider>[0],
-> = {
-  dependencies: {
-    [K in keyof TDependencies]: Service<TDependencies[K]>;
-  };
+export type Service<TProvider extends (...args: any) => any> = {
+  dependencies?: {
+    [K in keyof ServiceDependencies<TProvider>]: Service<ServiceProvider<ServiceDependencies<TProvider>[K]>>;
+  }
   provider: TProvider;
   singleton: boolean;
 };
 
-export function registerService<TInstance>(service: WithOptional<Service<TInstance>, "dependencies" | "singleton">): Service<TInstance> {
-  const { dependencies, provider, singleton } = service;
+export function registerService<TProvider extends (...args: any) => any>(
+  service: WithOptional<Service<TProvider>, "singleton">,
+): Service<TProvider> {
+  const {dependencies, provider, singleton} = service;
   return {
-    dependencies: dependencies ?? {},
-    provider: provider!,
+    dependencies,
+    provider,
     singleton: singleton ?? true,
   };
 }
 
 export class ServiceResolver {
-  protected readonly promises = new WeakMap<Service<unknown>, Promise<unknown>>();
-  protected readonly singletonServiceMap = new WeakMap<Service<unknown>, unknown>();
+  protected readonly promises = new WeakMap<ServiceUnknown, Promise<unknown>>();
+  protected readonly singletonServiceMap = new WeakMap<ServiceUnknown, unknown>();
 
-  async resolve<TInstance>(service: Service<TInstance>): Promise<TInstance> {
+  async resolve<TProvider extends (...args: any) => any>(
+    service: Service<TProvider>,
+    options?: ServiceOption<TProvider>,
+  ): Promise<ServiceInstance<TProvider>> {
     const singletonService = this.singletonServiceMap.get(service);
     if (singletonService) {
-      return singletonService as TInstance;
+      return singletonService as ServiceInstance<TProvider>;
     }
     const existingPromise = this.promises.get(service);
     if (existingPromise === undefined) {
-      const promise = this.invokeProvider(service);
+      const promise = this.invokeProvider(service, options);
       this.promises.set(service, promise);
       return promise;
     }
-    return existingPromise as TInstance;
+    return existingPromise as ServiceInstance<TProvider>;
   }
 
-  async invokeProvider<TInstance>(service: Service<TInstance>): Promise<TInstance> {
+  async invokeProvider<TProvider extends (...args: any) => any>(
+    service: Service<TProvider>,
+    options?: ServiceOption<TProvider>,
+  ): Promise<ServiceInstance<TProvider>> {
     try {
       const { dependencies, provider, singleton } = service;
-      const args = await this.resolveDependencies(dependencies);
-      const instance = await provider(args);
+      const args = await this.resolveDependencies(dependencies, options);
+      const instance = await provider(args, options);
       if (singleton === true) {
         this.singletonServiceMap.set(service, instance);
       }
@@ -60,14 +66,17 @@ export class ServiceResolver {
     }
   }
 
-  async resolveDependencies(dependencies?: Record<ServiceKey, Service<unknown>>): Promise<unknown> {
+  async resolveDependencies<TProvider extends (...args: any) => any>(
+    dependencies?: Record<ServiceKey, ServiceUnknown>,
+    options?: ServiceOption<TProvider>,
+  ): Promise<unknown> {
     if (dependencies === undefined) {
       return {};
     }
     const instances: [ServiceKey, unknown][] = [];
     const entries = Object.entries(dependencies);
     const promises = entries.map(async ([key, service]) => {
-      const instance = await this.resolve(service);
+      const instance = await this.resolve(service, options);
       instances.push([key, instance]);
     });
     await Promise.all(promises);
@@ -77,6 +86,4 @@ export class ServiceResolver {
 }
 
 export const serviceResolver = new ServiceResolver();
-export function resolveService<TInstance>(service: Service<TInstance>): Promise<TInstance> {
-  return serviceResolver.resolve(service);
-}
+export const resolveService = serviceResolver.resolve.bind(serviceResolver);

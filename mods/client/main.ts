@@ -40,7 +40,7 @@ const texture = gl.createTexture();
 gl.activeTexture(gl.TEXTURE0 + 0);
 gl.bindTexture(gl.TEXTURE_2D, texture);
 const img = new Image();
-let updateTexture = () => { };
+let updateTexture = () => {};
 const onLoadedImage = function () {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   //   const ab2 = new Uint8Array(512 * 512 * 4);
@@ -240,7 +240,7 @@ let timeAccumulator = 0;
 function mainLoop(now: number) {
   const deltaTime = now - then;
   if (deltaTime > 0) {
-    timeAccumulator += deltaTime
+    timeAccumulator += deltaTime;
     if (frameCount === 9) {
       const averageFrameTime = timeAccumulator / frameCount;
       const fps = 1000 / averageFrameTime;
@@ -263,9 +263,6 @@ function draw() {
   gl.drawElementsInstanced(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0, 8000);
   updateTexture();
 }
-
-
-
 
 const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
 const sgoMap = s.resolveGameObjectTypes();

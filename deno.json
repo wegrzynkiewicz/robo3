@@ -18,6 +18,8 @@
   },
   "tasks": {
     "bundle": "deno bundle --watch ./mods/client/main.ts ./mods/client/dist/main.js",
-    "serve": "serve ./mods/client"
+    "serve": "serve ./mods/client",
+    "server": "deno run -A --watch ./mods/server/first.ts",
+    "db": "mongo -u root -p --authenticationDatabase admin"
   }
 }

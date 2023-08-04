@@ -25,7 +25,7 @@ export interface ListChunkLayer extends ChunkLayerCommon {
 
 export type ChunkLayer = GridChunkLayer | ListChunkLayer | SingleChunkLayer;
 
-export interface Chunk {
+interface Chunk {
   chunkId: number;
   layers: Map<number, ChunkLayer>;
   worldId: number;

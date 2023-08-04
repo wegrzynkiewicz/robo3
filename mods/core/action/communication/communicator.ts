@@ -1,8 +1,7 @@
-import { Breaker } from "../../common/asserts.ts";
-import { PendingPromiseCollector } from "../../common/useful.ts";
-import { GameActionEnvelope, GameActionError, GameActionNotification, GameActionRequest, GameActionResponse, GameActionResult } from "./foundation.ts";
-import { GameActionProcessor } from "./processor.ts";
-import { RPCCodec } from "./rpc.ts";
+import { Breaker } from "../../../common/asserts.ts";
+import { PendingPromiseCollector } from "../../../common/useful.ts";
+import { GameActionEnvelope, GameActionError, GameActionNotification, GameActionRequest, GameActionResponse, GameActionResult } from "../foundation.ts";
+import { GameActionProcessor } from "../processor.ts";
 
 interface GameActionCommunicator {
   receive(data: unknown): Promise<void>;
@@ -114,34 +113,6 @@ export abstract class AbstractGameActionCommunicator implements GameActionCommun
     if (id > 0) {
       this.collector.resolve(id, response);
     }
-  }
-}
-
-export class OnlineRPCGameActionCommunicator extends AbstractGameActionCommunicator {
-  protected readonly codec: RPCCodec;
-  protected readonly ws: WebSocket;
-
-  public constructor(
-    { codec, processor, ws }: {
-      codec: RPCCodec;
-      processor: GameActionProcessor;
-      ws: WebSocket;
-    },
-  ) {
-    super({ processor });
-    this.codec = codec;
-    this.ws = ws;
-  }
-
-  public async receive(message: unknown): Promise<void> {
-    const envelope = this.codec.decode(message);
-    await this.processEnvelope(envelope);
-  }
-
-  protected sendData(action: GameActionEnvelope): void {
-    const data = this.codec.encode(action);
-    this.ws.send(data);
-    // TODO: process WS
   }
 }
 

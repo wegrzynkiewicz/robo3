@@ -1,12 +1,10 @@
-import { Application, Router } from "https://deno.land/x/oak@v12.5.0/mod.ts";
 import { assertRequiredString, Breaker } from "../common/asserts.ts";
 import { logger } from "../common/logger.ts";
-import { TableEncodingRPCCodec } from "../core/action/rpc.ts";
-import { EncodingTranslation } from "../common/useful.ts";
-import { OnlineRPCGameActionCommunicator } from "../core/action/communicator.ts";
 import { resolveService } from "../core/dependency/service.ts";
-import { serverGameActionProcessor } from "../core/action/handlers/server/bootstrap.ts";
-import { MongoClient } from "./deps.ts";
+import { Application, MongoClient, Router } from "./deps.ts";
+import { ChunkDoc } from "../storage/chunk/chunk.ts";
+import { onlineRPCGameActionCommunicator } from "../core/action/communication/onlineCommunicator.ts";
+import { serverGameActionProcessor } from "../server-domain/action/bootstrap.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -40,18 +38,20 @@ const unauthorizeWSSStrategy: WSSStrategy = {
     const request = JSON.parse(data);
   },
 };
+
 (async () => {
+  const url = "mongodb://root:example@localhost:27017?authSource=admin";
+  const client = new MongoClient(url);
+  await client.connect();
 
-
-//   const url = 'mongodb://root:example@localhost:27017?authSource=admin';
-//   const client = new MongoClient(url);
-//   await client.connect();
-
-//   const db = client.db('app');
-//   const collection = db.collection('chunks');
-//   const data = await collection.find().toArray();
-//   console.dir(data[0]._id);
-
+  const db = client.db("app");
+  const collection = db.collection("chunks");
+  const data = await collection.find().toArray();
+  console.dir(data);
+  const chunk = data[0] as unknown as ChunkDoc;
+  for (const c of data) {
+    console.log(c._id);
+  }
 
   router.get("/wss/:token", async (ctx) => {
     if (!ctx.isUpgradable) {
@@ -60,23 +60,14 @@ const unauthorizeWSSStrategy: WSSStrategy = {
 
     ctx.request.headers;
 
-    const processor = await resolveService(serverGameActionProcessor);
-    const processor2 = await resolveService(serverGameActionProcessor);
-    console.log(processor, processor2, processor2 === processor);
-
     const ws = ctx.upgrade();
 
     ws.onopen = (event) => {
+      console.log('new client');
     };
 
-    let strategy = unauthorizeWSSStrategy;
-
-    const actionTranslation: EncodingTranslation<string> = {
-      byIndex: ["error"],
-      byKey: new Map([["error", 0]]),
-    };
-    const codec = new TableEncodingRPCCodec({ actionTranslation });
-    const communicator = new OnlineRPCGameActionCommunicator({ codec, processor, ws });
+    const processor = await resolveService(serverGameActionProcessor);
+    const communicator = await resolveService(onlineRPCGameActionCommunicator, { processor, ws });
 
     ws.onmessage = async (message) => {
       try {
@@ -102,5 +93,4 @@ const unauthorizeWSSStrategy: WSSStrategy = {
   app.use(router.routes());
   app.use(router.allowedMethods());
   app.listen({ port: 8000 });
-
 })();

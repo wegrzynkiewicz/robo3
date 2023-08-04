@@ -1,6 +1,6 @@
-import { registerService } from "../../../dependency/service.ts";
-import { GameActionNotificationHandler, GameActionRequestHandler, UniversalGameActionProcessor } from "../../processor.ts";
-import { loginGAHandler } from "./login.ts";
+import { GameActionNotificationHandler,GameActionRequestHandler,UniversalGameActionProcessor } from "../../core/action/processor.ts";
+import { registerService } from "../../core/dependency/service.ts";
+import { loginGAHandler } from "../login.ts";
 
 export const notificationHandlers = registerService({
   provider: async () => {

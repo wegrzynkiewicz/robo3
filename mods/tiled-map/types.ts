@@ -103,7 +103,7 @@ class LoadingContext {
   public readonly chunkManager = new ChunkManager();
 }
 
-export class ChunkManager {
+class ChunkManager {
   public binaries: Uint16Array[] = [];
   createChunk(
     { binary }: {

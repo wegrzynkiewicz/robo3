@@ -1,7 +1,7 @@
-import { assertRequiredString } from "../../../../common/asserts.ts";
-import { registerService } from "../../../dependency/service.ts";
-import { GameActionRequest } from "../../foundation.ts";
-import { GameActionRequestHandler } from "../../processor.ts";
+import { assertRequiredString } from "../common/asserts.ts";
+import { GameActionRequest } from "../core/action/foundation.ts";
+import { GameActionRequestHandler } from "../core/action/processor.ts";
+import { registerService } from "../core/dependency/service.ts";
 
 async function provider() {
   const loginGAHandler: GameActionRequestHandler = {

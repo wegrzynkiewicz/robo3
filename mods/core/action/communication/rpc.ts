@@ -1,6 +1,8 @@
-import { assertObject, assertPositiveNumber, assertRequiredString, Breaker, isRequiredString } from "../../common/asserts.ts";
-import { EncodingTranslation } from "../../common/useful.ts";
-import { GameActionEnvelope } from "./foundation.ts";
+import { assertObject, assertPositiveNumber, assertRequiredString, Breaker, isRequiredString } from "../../../common/asserts.ts";
+import { EncodingTranslation } from "../../../common/useful.ts";
+import { registerService } from "../../dependency/service.ts";
+import { GameActionEnvelope } from "../foundation.ts";
+import { actionTranslation } from "./actionTranslation.ts";
 
 export interface RPCCodec {
   encode(envelope: GameActionEnvelope): string | Uint8Array;
@@ -71,3 +73,16 @@ export class TableEncodingRPCCodec implements RPCCodec {
     throw new Breaker("TODO");
   }
 }
+
+export const tableEncodingRPCCodec = registerService({
+  dependencies: {
+    actionTranslation,
+  },
+  provider: async (
+    { actionTranslation }: {
+      actionTranslation: EncodingTranslation<string>;
+    },
+  ) => {
+    return new TableEncodingRPCCodec({ actionTranslation });
+  },
+});

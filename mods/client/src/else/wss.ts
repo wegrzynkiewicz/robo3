@@ -1,18 +1,11 @@
-import { EncodingTranslation } from "../../../common/useful.ts";
-import { OnlineRPCGameActionCommunicator } from "../../../core/action/communicator.ts";
-import { serverGameActionProcessor } from "../../../core/action/handlers/server/bootstrap.ts";
-import { TableEncodingRPCCodec } from "../../../core/action/rpc.ts";
+import { clientGameActionProcessor } from "../../../client-domain/action/bootstrap.ts";
+import { onlineRPCGameActionCommunicator } from "../../../core/action/communication/onlineCommunicator.ts";
 import { resolveService } from "../../../core/dependency/service.ts";
 
 (async function () {
   const ws = new WebSocket("ws://token:token@localhost:8000/wss/token");
-  const actionTranslation: EncodingTranslation<string> = {
-    byIndex: ["error"],
-    byKey: new Map([["error", 0]]),
-  };
-  const codec = new TableEncodingRPCCodec({ actionTranslation });
-  const processor = await resolveService(serverGameActionProcessor);
-  const communicator = new OnlineRPCGameActionCommunicator({ codec, processor, ws });
+  const processor = await resolveService(clientGameActionProcessor);
+  const communicator = await resolveService(onlineRPCGameActionCommunicator, { processor, ws });
 
   ws.addEventListener("open", (event) => {
     communicator.request("login", { token: "token" });
