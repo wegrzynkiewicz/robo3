@@ -37,6 +37,12 @@ export class UniversalGameActionProcessor implements GameActionProcessor {
     return params;
   }
 
-  public async processNotification(notification: GameActionNotification): Promise<void> {
+  public async processNotification(action: GameActionNotification): Promise<void> {
+    const handler = this.notificationHandlers.get(action.notify);
+    if (handler === undefined) {
+      throw new Breaker("game-action-notify-handler-not-found", { action });
+    }
+    const params = await handler.handle(action);
+    return params;
   }
 }

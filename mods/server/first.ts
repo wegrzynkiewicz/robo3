@@ -74,7 +74,7 @@ const unauthorizeWSSStrategy: WSSStrategy = {
         await communicator.receive(message.data);
       } catch (error) {
         logger.error("error-when-processing-wss-message", { error });
-        ws.close(1008, error instanceof Breaker ? error.message : "unknown-error");
+        ws.close(4001, error instanceof Breaker ? error.message : "unknown-error");
       }
     };
 
@@ -82,10 +82,10 @@ const unauthorizeWSSStrategy: WSSStrategy = {
     const internal = setInterval(() => {
       const counter = (i++).toString();
       communicator.notify("tick", { counter });
-    }, 10000);
+    }, 1000);
 
-    ws.onclose = () => {
-      console.log("Disconncted from client");
+    ws.onclose = (event) => {
+      console.log("Disconncted from client", { event });
       clearInterval(internal);
     };
   });

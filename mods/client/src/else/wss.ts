@@ -1,4 +1,5 @@
 import { clientGameActionProcessor } from "../../../client-domain/action/bootstrap.ts";
+import { logger } from "../../../common/logger.ts";
 import { onlineRPCGameActionCommunicator } from "../../../core/action/communication/onlineCommunicator.ts";
 import { resolveService } from "../../../core/dependency/service.ts";
 
@@ -16,7 +17,11 @@ import { resolveService } from "../../../core/dependency/service.ts";
 
   // Listen for messages
   ws.addEventListener("message", async (message) => {
-    await communicator.receive(message.data);
+    try {
+      await communicator.receive(message.data);
+    } catch (error) {
+      logger.error("error-when-processing-wss-message", { error });
+    }
   });
 
   ws.addEventListener("close", (event) => {
