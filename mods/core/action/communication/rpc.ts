@@ -1,52 +1,35 @@
 import { assertObject, assertPositiveNumber, assertRequiredString, Breaker, isRequiredString } from "../../../common/asserts.ts";
 import { EncodingTranslation } from "../../../common/useful.ts";
 import { registerService } from "../../dependency/service.ts";
-import { GameActionEnvelope } from "../foundation.ts";
+import { GameActionEnvelope, UnknownGameActionCodec } from "../foundation.ts";
 import { actionTranslation } from "./actionTranslation.ts";
 
 export interface RPCCodec {
-  encode(envelope: GameActionEnvelope): string | Uint8Array;
+  encode(envelope: GameActionEnvelope): string | ArrayBuffer;
   decode(data: unknown): GameActionEnvelope;
 }
+
+const allowedActionKinds = ["err", "not", "req", "res"];
 
 export function decodeJSONRPCMessage(data: string): GameActionEnvelope {
   const envelope = JSON.parse(data);
   assertObject<GameActionEnvelope>(envelope, "invalid-game-action-envelope");
-  const { id, params, type } = envelope;
+  const { code, id, params, kind } = envelope;
   assertPositiveNumber(id, "invalid-game-action-envelope-id");
   assertObject(params, "invalid-game-action-envelope-params");
-  switch (type) {
-    case "err": {
-      const { error } = envelope;
-      assertRequiredString(error, "invalid-game-action-error", { error });
-      return { id, error, params, type };
-    }
-    case "not": {
-      const { notify } = envelope;
-      assertRequiredString(notify, "invalid-game-action-notification", { notify });
-      return { id, notify, params, type };
-    }
-    case "req": {
-      const { request } = envelope;
-      assertRequiredString(request, "invalid-game-action-request", { request });
-      return { id, params, request, type };
-    }
-    case "res": {
-      const { response } = envelope;
-      assertRequiredString(response, "invalid-game-action-response", { response });
-      return { id, params, response, type };
-    }
-    default: {
-      throw new Breaker("invalid-game-action-envelope-type", { type });
-    }
+  assertRequiredString(code, "invalid-game-action-envelope-code");
+  assertRequiredString(kind, "invalid-game-action-envelope-kind");
+  if (!allowedActionKinds.includes(kind)) {
+    throw new Breaker("invalid-game-action-envelope-kind", { kind });
   }
+  return { code, id, kind, params };
 }
 
 export class TableEncodingRPCCodec implements RPCCodec {
-  public readonly actionTranslation: EncodingTranslation<string>;
+  public readonly actionTranslation: EncodingTranslation<UnknownGameActionCodec>;
   public constructor(
     { actionTranslation }: {
-      actionTranslation: EncodingTranslation<string>;
+      actionTranslation: EncodingTranslation<UnknownGameActionCodec>;
     },
   ) {
     this.actionTranslation = actionTranslation;
@@ -56,21 +39,26 @@ export class TableEncodingRPCCodec implements RPCCodec {
     if (isRequiredString(data)) {
       return decodeJSONRPCMessage(data);
     }
-    if (data instanceof Uint8Array) {
-      const { buffer, byteLength, byteOffset } = data;
-      const dv = new DataView(buffer, byteLength, byteOffset);
-      const id = dv.getInt32(0, true);
-      const typeCode = dv.getInt32(4, true);
+    if (data instanceof ArrayBuffer) {
     }
     throw new Breaker("TODO");
   }
 
-  public encode(envelope: GameActionEnvelope): string | Uint8Array {
-    const { id, params, type } = envelope;
-    if (params.binary === undefined) {
+  public encode(envelope: GameActionEnvelope): string | ArrayBuffer {
+    const { code, id, params, kind } = envelope;
+    const codec = this.actionTranslation.byKey.get(code);
+    if (codec === undefined) {
       return JSON.stringify(envelope);
     }
-    throw new Breaker("TODO");
+    const size = 9 + codec.calcBufferSize(params);
+    const actionIndex = codec.index;
+    const ab = new ArrayBuffer(size);
+    const dv = new DataView(ab, 0);
+    dv.setUint8(0, allowedActionKinds.indexOf(kind) + 1);
+    dv.setUint32(1, actionIndex, true);
+    dv.setUint32(5, id, true);
+    codec.encode(ab, 9, params);
+    return ab;
   }
 }
 
@@ -80,7 +68,7 @@ export const tableEncodingRPCCodec = registerService({
   },
   provider: async (
     { actionTranslation }: {
-      actionTranslation: EncodingTranslation<string>;
+      actionTranslation: EncodingTranslation<UnknownGameActionCodec>;
     },
   ) => {
     return new TableEncodingRPCCodec({ actionTranslation });

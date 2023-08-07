@@ -1,42 +1,52 @@
 import { Position } from "../numbers.ts";
 
-export interface DecodedChunkId {
-  position: Position;
-  spaceId: number;
-}
+export class ChunkId {
 
-const CHUNK_ID_BYTE_LENGTH = 10;
-const binary = new Uint8Array(CHUNK_ID_BYTE_LENGTH);
-const dv = new DataView(binary.buffer);
+  public static readonly BYTE_LENGTH = 10;
 
-export function decodeChunkId(chunkId: string): DecodedChunkId {
-  let j = 0;
-  for (let i = 0; i < CHUNK_ID_BYTE_LENGTH * 2; i += 2) {
-    const byteValue = parseInt(chunkId.substring(i, i + 2), 16);
-    binary[j++] = byteValue;
+  public readonly position: Position;
+
+  public constructor(
+    public readonly spaceId: number,
+    public readonly x: number,
+    public readonly y: number,
+    public readonly z: number,
+  ) {
+    this.position = { x, y, z };
   }
-  const spaceId = dv.getUint32(0);
-  const z = dv.getUint16(4);
-  const y = dv.getUint16(6);
-  const x = dv.getUint16(8);
-  const decodeChunkId: DecodedChunkId = {
-    position: { x, y, z },
-    spaceId,
-  };
-  return decodeChunkId;
-}
 
-export function encodeChunkId(decoded: DecodedChunkId): string {
-  const { position: { x, y, z }, spaceId } = decoded;
-  dv.setUint32(0, spaceId);
-  dv.setUint16(4, z);
-  dv.setUint16(6, y);
-  dv.setUint16(8, x);
-  const hexChars = [];
-  for (const byte of binary) {
-    const hexByte = byte.toString(16).padStart(2, "0");
-    hexChars.push(hexByte);
+  public toDataView(dv: DataView) {
+    const { spaceId, x, y, z } = this;
+    dv.setUint32(0, spaceId);
+    dv.setUint16(4, z);
+    dv.setUint16(6, y);
+    dv.setUint16(8, x);
   }
-  const chunkId = hexChars.join("");
-  return chunkId;
+
+  public toHex(): string {
+    const { spaceId, x, y, z } = this;
+    const parts = [
+      spaceId.toString(16).padStart(8, "0"),
+      z.toString(16).padStart(4, "0"),
+      y.toString(16).padStart(4, "0"),
+      x.toString(16).padStart(4, "0"),
+    ];
+    return parts.join('');
+  }
+
+  public static fromDataView(dv: DataView): ChunkId {
+    const spaceId = dv.getUint32(0);
+    const z = dv.getUint16(4);
+    const y = dv.getUint16(6);
+    const x = dv.getUint16(8);
+    return new ChunkId(spaceId, x, y, z);
+  }
+
+  public static fromHex(hex: string) {
+    const spaceId = parseInt(hex.substring(0, 8), 16);
+    const z = parseInt(hex.substring(8, 12), 16);
+    const y = parseInt(hex.substring(12, 16), 16);
+    const x = parseInt(hex.substring(16, 20), 16);
+    return new ChunkId(spaceId, x, y, z);
+  }
 }

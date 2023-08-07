@@ -1,4 +1,4 @@
-import { Binary, ObjectId } from "../deps.ts";
+import { Binary, ObjectId } from "./deps.ts";
 
 export interface ChunkComplexGameObjectDoc {
   gid: ObjectId;
@@ -10,6 +10,6 @@ export interface ChunkComplexGameObjectDoc {
 export interface ChunkDoc {
   _id: Binary;
   data: Binary;
-  extended: ChunkComplexGameObjectDoc;
+  extended: ChunkComplexGameObjectDoc[];
   tiles: number;
 }

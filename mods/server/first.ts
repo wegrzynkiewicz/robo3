@@ -1,10 +1,14 @@
 import { assertRequiredString, Breaker } from "../common/asserts.ts";
 import { logger } from "../common/logger.ts";
 import { resolveService } from "../core/dependency/service.ts";
-import { Application, MongoClient, Router } from "./deps.ts";
-import { ChunkDoc } from "../storage/chunk/chunk.ts";
+import { Application, Router } from "./deps.ts";
+import { ChunkDoc } from "../storage/chunk.ts";
 import { onlineRPCGameActionCommunicator } from "../core/action/communication/onlineCommunicator.ts";
 import { serverGameActionProcessor } from "../server-domain/action/bootstrap.ts";
+import { dbClient } from "./db.ts";
+import { Chunk } from "../core/chunk/chunk.ts";
+import { ChunkId } from "../core/chunk/chunkId.ts";
+import { Binary } from "../storage/deps.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -40,17 +44,25 @@ const unauthorizeWSSStrategy: WSSStrategy = {
 };
 
 (async () => {
-  const url = "mongodb://root:example@localhost:27017?authSource=admin";
-  const client = new MongoClient(url);
-  await client.connect();
-
+  const client = await resolveService(dbClient);
   const db = client.db("app");
   const collection = db.collection("chunks");
   const data = await collection.find().toArray();
-  console.dir(data);
-  const chunk = data[0] as unknown as ChunkDoc;
-  for (const c of data) {
-    console.log(c._id);
+  const dx = data as unknown as ChunkDoc[];
+
+  const chunks: Chunk[] = [];
+  const bf: { chunkId: ChunkId; data: Binary; }[] = [];
+  for (const c of dx) {
+    chunks.push({
+      chunkId: c._id.toString('hex'),
+      blockId: 1,
+      extended: [],
+      tiles: c.tiles,
+    });
+    bf.push({
+      chunkId: ChunkId.fromHex(c._id.toString('hex')),
+      data: c.data,
+    })
   }
 
   router.get("/wss/:token", async (ctx) => {
@@ -78,15 +90,24 @@ const unauthorizeWSSStrategy: WSSStrategy = {
       }
     };
 
-    let i = 1;
-    const internal = setInterval(() => {
-      const counter = (i++).toString();
-      communicator.notify("tick", { counter });
-    }, 1000);
+    setTimeout(() => {
+      communicator.notify("chunks-update", { chunks });
+      communicator.notify("chunks-update", { chunks: dx });
+      for (const c of bf) {
+        const binary = c.data.buffer;
+        communicator.notify("chunk-data-update", { chunkId: c.chunkId, binary });
+      }
+    }, 500);
+
+    // let i = 1;
+    // const internal = setInterval(() => {
+    //   const counter = (i++).toString();
+    //   communicator.notify("tick", { counter });
+    // }, 1000);
 
     ws.onclose = (event) => {
       console.log("Disconncted from client", { event });
-      clearInterval(internal);
+    //   clearInterval(internal);
     };
   });
 

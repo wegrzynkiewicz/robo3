@@ -1,5 +1,4 @@
-import { Position } from "../numbers.ts";
-import { decodeChunkId } from "./chunkId.ts";
+import { ChunkId } from "./chunkId.ts";
 
 export interface ChunkComplexGameObject {
   gid: string;
@@ -12,25 +11,23 @@ export interface Chunk {
   blockId: number;
   chunkId: string;
   tiles: number;
-  extended: ChunkComplexGameObject;
+  extended: ChunkComplexGameObject[];
 }
 
 export interface ChunkBinding {
   chunk: Chunk;
-  position: Position;
-  spaceId: number;
+  chunkId: ChunkId,
 }
 
 export class ChunkManager {
   protected readonly chunks = new Map<string, ChunkBinding>();
   public register(chunk: Chunk) {
-    const { chunkId } = chunk;
-    const { position, spaceId } = decodeChunkId(chunkId);
+    const { chunkId: hex } = chunk;
+    const chunkId = ChunkId.fromHex(hex);
     const chunkBinding: ChunkBinding = {
       chunk,
-      position,
-      spaceId,
+      chunkId,
     };
-    this.chunks.set(chunkId, chunkBinding);
+    this.chunks.set(hex, chunkBinding);
   }
 }

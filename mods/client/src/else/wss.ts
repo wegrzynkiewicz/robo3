@@ -5,6 +5,7 @@ import { resolveService } from "../../../core/dependency/service.ts";
 
 (async function () {
   const ws = new WebSocket("ws://token:token@localhost:8000/wss/token");
+  ws.binaryType = "arraybuffer";
   const processor = await resolveService(clientGameActionProcessor);
   const communicator = await resolveService(onlineRPCGameActionCommunicator, { processor, ws });
 

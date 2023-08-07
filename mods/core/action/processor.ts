@@ -29,7 +29,7 @@ export class UniversalGameActionProcessor implements GameActionProcessor {
   }
 
   public async processRequest(action: GameActionRequest): Promise<Record<string, unknown>> {
-    const handler = this.requestHandlers.get(action.request);
+    const handler = this.requestHandlers.get(action.code);
     if (handler === undefined) {
       throw new Breaker("game-action-request-handler-not-found", { action });
     }
@@ -38,7 +38,7 @@ export class UniversalGameActionProcessor implements GameActionProcessor {
   }
 
   public async processNotification(action: GameActionNotification): Promise<void> {
-    const handler = this.notificationHandlers.get(action.notify);
+    const handler = this.notificationHandlers.get(action.code);
     if (handler === undefined) {
       throw new Breaker("game-action-notify-handler-not-found", { action });
     }

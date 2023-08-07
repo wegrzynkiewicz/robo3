@@ -19,6 +19,15 @@ export interface Rectangle {
   y: number;
 }
 
+export interface Cube {
+  b: number;
+  f: number;
+  l: number;
+  n: number;
+  r: number;
+  t: number;
+}
+
 export function createIndexCalculator(width: number, height: number): (x: number, y: number, z: number) => number {
   const area = width * height;
   return function (x: number, y: number, z: number): number {

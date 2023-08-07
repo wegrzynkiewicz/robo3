@@ -25,7 +25,7 @@ export interface ComplexGOInstance {
   p: number;
 }
 
-export interface Chunk {
+interface Chunk {
   chunkId: string;
   sgos: ComplexGOInstance[];
   layers: ChunkLayer[];

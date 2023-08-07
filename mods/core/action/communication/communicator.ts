@@ -25,30 +25,30 @@ export abstract class AbstractGameActionCommunicator implements GameActionCommun
   public abstract receive(message: unknown): Promise<void>;
   protected abstract sendData(action: GameActionEnvelope): void;
 
-  public request(request: string, params: Record<string, unknown>): Promise<GameActionResult> {
+  public request(code: string, params: Record<string, unknown>): Promise<GameActionResult> {
     const action: GameActionRequest = {
+      code,
       id: this.id++,
+      kind: "req",
       params,
-      request,
-      type: "req",
     };
     const promise = this.collector.create(action.id);
     this.sendData(action);
     return promise;
   }
 
-  public notify(notify: string, params: Record<string, unknown>): void {
+  public notify(code: string, params: Record<string, unknown>): void {
     const action: GameActionNotification = {
+      code,
       id: this.id++,
+      kind: "not",
       params,
-      notify,
-      type: "not",
     };
     this.sendData(action);
   }
 
   protected async processEnvelope(envelope: GameActionEnvelope): Promise<void> {
-    switch (envelope.type) {
+    switch (envelope.kind) {
       case "err": {
         await this.processError(envelope);
         break;
@@ -85,23 +85,23 @@ export abstract class AbstractGameActionCommunicator implements GameActionCommun
   }
 
   protected async processRequest(action: GameActionRequest): Promise<void> {
-    const { id, request } = action;
+    const { code, id } = action;
     try {
       const params = await this.processor.processRequest(action);
       const responseAction: GameActionResponse = {
+        code,
         id,
         params,
-        response: request,
-        type: "res",
+        kind: "res",
       };
       this.sendData(responseAction);
     } catch (error) {
       const isBreaker = error instanceof Breaker;
       const errorAction: GameActionError = {
+        code: isBreaker ? error.message : "unknown",
         id: id ?? 0,
-        error: isBreaker ? error.message : "unknown",
+        kind: "err",
         params: isBreaker ? error.options : {},
-        type: "err",
       };
       this.sendData(errorAction);
       // TODO: log
