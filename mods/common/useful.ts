@@ -57,22 +57,6 @@ export class PendingPromiseCollector<TKey, TValue> {
   }
 }
 
-export function hex2Buffer(outputBuffer: Uint8Array, hex: string) {
-  const length = hex.length;
-  for (let i = 0, j = 0; i < length; i += 2, j++) {
-    outputBuffer[j] = parseInt(hex.substring(i, i + 2), 16);
-  }
-}
-
-export function buffer2hex(buffer: Uint8Array): string {
-  const hexChars = [];
-  for (const byte of buffer) {
-    const hexByte = byte.toString(16).padStart(2, "0");
-    hexChars.push(hexByte);
-  }
-  return hexChars.join("");
-}
-
 export function inflate(input: Uint8Array): Promise<ArrayBuffer> {
   const ds = new DecompressionStream("deflate");
   const writer = ds.writable.getWriter();

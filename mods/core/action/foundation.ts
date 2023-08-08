@@ -21,25 +21,11 @@ export interface GameActionResponse extends GameActionCommon {
 }
 
 export type GameActionEnvelope = GameActionError | GameActionNotification | GameActionRequest | GameActionResponse;
+export type GameActionEnvelopeKind = GameActionEnvelope["kind"];
 export type GameActionResult = GameActionResponse | GameActionError;
+export type GameActionCause = GameActionRequest | GameActionNotification;
 
-export interface GameActionCodec<TParams> {
-  calcBufferSize(params: TParams): number;
-  decode(buffer: ArrayBuffer, byteOffset: number): TParams;
-  encode(buffer: ArrayBuffer, byteOffset: number, params: TParams): void;
-  index: number;
-  key: string;
-}
-export type UnknownGameActionCodec = GameActionCodec<unknown>;
-
-let i = 1; // TODO: make registry
-
-export function registerGameActionCodec<TParams>(
-  codec: Omit<GameActionCodec<TParams>, 'index'>
-): GameActionCodec<TParams> {
-  const result = {
-    ...codec,
-    index: i++,
-  }
-  return result;
+export interface GameAction<TParam> {
+  readonly code: string;
+  readonly params: TParam;
 }

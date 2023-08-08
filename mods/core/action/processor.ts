@@ -33,16 +33,23 @@ export class UniversalGameActionProcessor implements GameActionProcessor {
     if (handler === undefined) {
       throw new Breaker("game-action-request-handler-not-found", { action });
     }
-    const params = await handler.handle(action);
-    return params;
+    try {
+      const params = await handler.handle(action);
+      return params === undefined ? {} : params;
+    } catch (error) {
+      throw new Breaker('error-inside-action-handler', { action, error });
+    }
   }
 
   public async processNotification(action: GameActionNotification): Promise<void> {
     const handler = this.notificationHandlers.get(action.code);
     if (handler === undefined) {
-      throw new Breaker("game-action-notify-handler-not-found", { action });
+      throw new Breaker("game-action-notification-handler-not-found", { action });
     }
-    const params = await handler.handle(action);
-    return params;
+    try {
+      await handler.handle(action);
+    } catch (error) {
+      throw new Breaker('error-inside-action-handler', { action, error });
+    }
   }
 }

@@ -3,15 +3,15 @@ import { registerService } from "../../dependency/service.ts";
 import { GameActionEnvelope } from "../foundation.ts";
 import { GameActionProcessor } from "../processor.ts";
 import { AbstractGameActionCommunicator } from "./communicator.ts";
-import { RPCCodec, TableEncodingRPCCodec, tableEncodingRPCCodec } from "./rpc.ts";
+import { GameActionEnvelopeCodec, gameActionEnvelopeCodec } from "./rpc.ts";
 
 export class OnlineRPCGameActionCommunicator extends AbstractGameActionCommunicator {
-  protected readonly codec: RPCCodec;
+  protected readonly codec: GameActionEnvelopeCodec;
   protected readonly ws: WebSocket;
 
   public constructor(
     { codec, processor, ws }: {
-      codec: RPCCodec;
+      codec: GameActionEnvelopeCodec;
       processor: GameActionProcessor;
       ws: WebSocket;
     },
@@ -40,11 +40,11 @@ export class OnlineRPCGameActionCommunicator extends AbstractGameActionCommunica
 
 export const onlineRPCGameActionCommunicator = registerService({
   dependencies: {
-    codec: tableEncodingRPCCodec,
+    codec: gameActionEnvelopeCodec,
   },
   provider: async (
     { codec }: {
-      codec: TableEncodingRPCCodec;
+      codec: GameActionEnvelopeCodec;
     },
     { processor, ws }: {
       processor: GameActionProcessor;

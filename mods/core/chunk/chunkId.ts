@@ -15,7 +15,7 @@ export class ChunkId {
     this.position = { x, y, z };
   }
 
-  public toDataView(dv: DataView) {
+  public toDataView(dv: DataView): void {
     const { spaceId, x, y, z } = this;
     dv.setUint32(0, spaceId);
     dv.setUint16(4, z);

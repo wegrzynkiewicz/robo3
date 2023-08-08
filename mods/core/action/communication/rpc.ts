@@ -1,15 +1,13 @@
 import { assertObject, assertPositiveNumber, assertRequiredString, Breaker, isRequiredString } from "../../../common/asserts.ts";
-import { EncodingTranslation } from "../../../common/useful.ts";
+import { BinarySerializable, fromArrayBuffer, toArrayBuffer } from "../../../common/binary.ts";
 import { registerService } from "../../dependency/service.ts";
-import { GameActionEnvelope, UnknownGameActionCodec } from "../foundation.ts";
-import { actionTranslation } from "./actionTranslation.ts";
+import { GameActionCodecManager, gameActionCodecManager } from "../codec.ts";
+import { GameActionEnvelope, GameActionEnvelopeKind } from "../foundation.ts";
 
-export interface RPCCodec {
+export interface GameActionEnvelopeCodec {
   encode(envelope: GameActionEnvelope): string | ArrayBuffer;
   decode(data: unknown): GameActionEnvelope;
 }
-
-const allowedActionKinds = ["err", "not", "req", "res"];
 
 export function decodeJSONRPCMessage(data: string): GameActionEnvelope {
   const envelope = JSON.parse(data);
@@ -25,52 +23,87 @@ export function decodeJSONRPCMessage(data: string): GameActionEnvelope {
   return { code, id, kind, params };
 }
 
-export class TableEncodingRPCCodec implements RPCCodec {
-  public readonly actionTranslation: EncodingTranslation<UnknownGameActionCodec>;
+const allowedActionKinds = ["err", "not", "req", "res"];
+
+export class GameActionEnvelopeBinaryHeader implements BinarySerializable {
+
+  public static readonly BYTE_LENGTH = 12;
+
   public constructor(
-    { actionTranslation }: {
-      actionTranslation: EncodingTranslation<UnknownGameActionCodec>;
-    },
+    public readonly kind: GameActionEnvelopeKind,
+    public readonly index: number,
+    public readonly id: number,
   ) {
-    this.actionTranslation = actionTranslation;
   }
 
-  public decode(data: unknown): GameActionEnvelope {
-    if (isRequiredString(data)) {
-      return decodeJSONRPCMessage(data);
-    }
-    if (data instanceof ArrayBuffer) {
-    }
-    throw new Breaker("TODO");
+  public toDataView(dv: DataView): void {
+    dv.setUint32(0, allowedActionKinds.indexOf(this.kind), true);
+    dv.setUint32(4, this.index, true);
+    dv.setUint32(8, this.id, true);
   }
 
-  public encode(envelope: GameActionEnvelope): string | ArrayBuffer {
-    const { code, id, params, kind } = envelope;
-    const codec = this.actionTranslation.byKey.get(code);
-    if (codec === undefined) {
-      return JSON.stringify(envelope);
-    }
-    const size = 9 + codec.calcBufferSize(params);
-    const actionIndex = codec.index;
-    const ab = new ArrayBuffer(size);
-    const dv = new DataView(ab, 0);
-    dv.setUint8(0, allowedActionKinds.indexOf(kind) + 1);
-    dv.setUint32(1, actionIndex, true);
-    dv.setUint32(5, id, true);
-    codec.encode(ab, 9, params);
-    return ab;
+  public static fromDataView(dv: DataView): GameActionEnvelopeBinaryHeader {
+    const kind = allowedActionKinds[dv.getUint32(0, true)];
+    assertPositiveNumber(kind, 'invalid-kind-of-serialized-game-action-envelope-binary-header');
+    const index = dv.getUint16(4, true);
+    const id = dv.getUint16(8, true);
+    return new GameActionEnvelopeBinaryHeader(kind, index, id);
   }
 }
 
-export const tableEncodingRPCCodec = registerService({
-  dependencies: {
-    actionTranslation,
+const byteOffset = GameActionEnvelopeBinaryHeader.BYTE_LENGTH;
+
+const provider = async (
+  { gameActionCodecManager }: {
+    gameActionCodecManager: GameActionCodecManager;
   },
-  provider: async (
-    { actionTranslation }: {
-      actionTranslation: EncodingTranslation<UnknownGameActionCodec>;
+) => {
+  const codec: GameActionEnvelopeCodec = {
+    decode(data: unknown): GameActionEnvelope {
+      if (isRequiredString(data)) {
+        return decodeJSONRPCMessage(data);
+      }
+      if (data instanceof ArrayBuffer) {
+        const buffer = data;
+        const header = fromArrayBuffer(buffer, 0, GameActionEnvelopeBinaryHeader);
+        const { index, id, kind } = header;
+        const binding = gameActionCodecManager.byIndex.get(index);
+        if (binding === undefined) {
+          throw new Breaker('cannot-decode-envelope-with-unknown-index', { header });
+        }
+        const { codec } = binding;
+        const params = codec.decode(buffer, byteOffset);
+        const envelope = {
+          code: codec.code, 
+          id,
+          kind,
+          params,
+        };
+        return envelope;
+      }
+      throw new Breaker("TODO");
     },
-  ) => {
-    return new TableEncodingRPCCodec({ actionTranslation });
+    encode(envelope: GameActionEnvelope): string | ArrayBuffer {
+      const { code, id, params, kind } = envelope;
+      const binding = gameActionCodecManager.byKey.get(code);
+      if (binding === undefined) {
+        return JSON.stringify(envelope);
+      }
+      const { codec, index } = binding;
+      const totalLength = byteOffset + codec.calcBufferSize(params);
+      const buffer = new ArrayBuffer(totalLength);
+      const header = new GameActionEnvelopeBinaryHeader(kind, index, id);
+      toArrayBuffer(buffer, 0, header);
+      codec.encode(buffer, byteOffset, params);
+      return buffer;
+    }
+  };
+  return codec;
+}
+
+export const gameActionEnvelopeCodec = registerService({
+  dependencies: {
+    gameActionCodecManager,
   },
+  provider,
 });
