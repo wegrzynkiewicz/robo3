@@ -1,27 +1,51 @@
+import { assertObject, assertRequiredString, assertArray, assertPositiveNumber } from "../../common/asserts.ts";
 import { ChunkId } from "./chunkId.ts";
 
-export interface ChunkComplexGameObject {
+export interface ChunkComplexGODTO {
   gid: string;
   lid: number;
   pos: number;
   typ: number;
 }
 
-export interface Chunk {
-  blockId: number;
+export function parseChunkComplexGODTO(data: unknown): ChunkComplexGODTO {
+  assertObject<ChunkComplexGODTO>(data, 'chunk-complex-go-must-be-object');
+  const { gid, lid, pos, typ } = data;
+  assertRequiredString(gid);
+  assertPositiveNumber(lid);
+  assertPositiveNumber(pos);
+  assertPositiveNumber(typ);
+  return { gid, lid, pos, typ };
+}
+
+export interface ChunkDTO {
   chunkId: string;
   tiles: number;
-  extended: ChunkComplexGameObject[];
+  extended: ChunkComplexGODTO[];
+}
+
+export function parseChunkDTO(data: unknown): ChunkDTO {
+  assertObject<ChunkDTO>(data, 'chunk-must-be-object');
+  const { chunkId, extended, tiles } = data;
+  assertRequiredString(chunkId, 'chunk-id-must-be-string');
+  assertArray(extended, 'chunk-extended-must-be-array');
+  const parsedExtended: ChunkComplexGODTO[] = [];
+  for (const probablyChunkComplexGODTO of extended) {
+    const chunkComplexGODTO = parseChunkComplexGODTO(probablyChunkComplexGODTO);
+    parsedExtended.push(chunkComplexGODTO);
+  }
+  assertPositiveNumber(tiles, 'chunk-tiles-must-be-number');
+  return { chunkId, extended: parsedExtended, tiles };
 }
 
 export interface ChunkBinding {
-  chunk: Chunk;
+  chunk: ChunkDTO;
   chunkId: ChunkId,
 }
 
 export class ChunkManager {
   protected readonly chunks = new Map<string, ChunkBinding>();
-  public register(chunk: Chunk) {
+  public register(chunk: ChunkDTO) {
     const { chunkId: hex } = chunk;
     const chunkId = ChunkId.fromHex(hex);
     const chunkBinding: ChunkBinding = {

@@ -1,17 +1,18 @@
-import { Breaker, isRequiredString } from "../../common/asserts.ts";
-import { fromArrayBuffer, toArrayBuffer } from "../../common/binary.ts";
-import { UnknownData, PendingPromiseCollector } from "../../common/useful.ts";
+import { isRequiredString, Breaker, assertEqual, assertObject } from "../../common/asserts.ts";
+import { fromArrayBuffer } from "../../common/binary.ts";
+import { Logger, logger } from "../../common/logger.ts";
+import { PendingPromiseCollector } from "../../common/useful.ts";
 import { registerService } from "../dependency/service.ts";
-import { GAConversation, GADefinition, GAEnvelope, GAError, GAKind, GAManager, GAMessageConfig, GANotification, GANotify, GARequest, GAResponse, GAResult } from "./foundation.ts";
+import { GABinaryHeader, decodeGAJsonEnvelope } from "./codec.ts";
+import { GAConversation, GANotification, GAEnvelope, GAManager, GAHeader, GADefinition, gaManager, GAKind } from "./foundation.ts";
 import { GAProcessor } from "./processor.ts";
-import { GAEnvelopeBinaryHeader, GAEnvelopeCodec, decodeGAEnvelope, gameActionEnvelopeCodec } from "./rpc.ts";
 
 export interface GACommunicator {
-  request<TRequest extends UnknownData, TResponse extends UnknownData>(
+  request<TRequest, TResponse>(
     definition: GAConversation<TRequest, TResponse>,
     params: TRequest
   ): Promise<TResponse>;
-  notify<TNotification extends UnknownData>(
+  notify<TNotification>(
     definition: GANotification<TNotification>,
     params: TNotification
   ): void;
@@ -20,136 +21,91 @@ export interface GACommunicator {
 
 export class OnlineGACommunicator implements GACommunicator {
   protected id = 1;
-  protected readonly collector = new PendingPromiseCollector<number, GAResult>();
-  protected readonly processor: GAProcessor;
-  protected readonly gaManager: GAManager;
-  protected readonly ws: WebSocket;
+  protected readonly collector = new PendingPromiseCollector<number, GAEnvelope<unknown>>();
 
   public constructor(
-    { gaManager, processor, ws }: {
-      gaManager: GAManager;
-      processor: GAProcessor;
-      ws: WebSocket;
-    },
+    public readonly gaManager: GAManager,
+    public readonly logger: Logger,
+    public readonly processor: GAProcessor,
+    public readonly ws: WebSocket,
   ) {
-    this.gaManager = gaManager;
-    this.processor = processor;
-    this.ws = ws;
   }
 
   public async receive(message: unknown): Promise<void> {
-    const envelope = this.decode(message);
-    await this.processEnvelope(envelope);
+    const [definition, envelope] = this.decode(message);
+    await this.processEnvelope(definition, envelope);
   }
 
-  public request<TRequest, TResponse>(
+  public async request<TRequest, TResponse>(
     definition: GAConversation<TRequest, TResponse>,
     params: TRequest
   ): Promise<TResponse> {
-    const data = this.encode({
-      config: definition.request,
-      definition,
-      kind: 'req',
-      params,
-    });
-    const promise = this.collector.create(this.id);
+    const { code, request } = definition;
+    const id = this.id++;
+    const header: GAHeader = { code, id, kind: 'req' };
+    const data = request.encode(definition, header, params);
+    const promise = this.collector.create(id);
     this.sendData(data);
-    return promise;
+    const response = await promise;
+    return response.params as TResponse;
   }
 
-  public notify<TNotification extends UnknownData>(
+  public notify<TNotification>(
     definition: GANotification<TNotification>,
     params: TNotification
   ): void {
-    const data = this.encode({
-      config: definition.notify,
-      definition,
-      kind: 'not',
-      params,
-    });
+    const { code, notify } = definition;
+    const id = this.id++;
+    const header: GAHeader = { code, id, kind: 'not' };
+    const data = notify.encode(definition, header, params);
     this.sendData(data);
   }
 
-  protected encode<TData>(
-    { config, definition, kind, params }: {
-      config: GAMessageConfig<TData>;
-      definition: GADefinition,
-      kind: GAKind,
-      params: TData;
-    }
-  ): string | ArrayBuffer {
-    const id = this.id++;
-    const { type, codec } = config;
-    const { code, index } = definition;
-    switch (type) {
-      case "binary": {
-        const byteOffset = GAEnvelopeBinaryHeader.BYTE_LENGTH;
-        const totalLength = byteOffset + codec.calcBufferSize(params);
-        const buffer = new ArrayBuffer(totalLength);
-        const header = new GAEnvelopeBinaryHeader(kind, index, id);
-        toArrayBuffer(buffer, 0, header);
-        codec.encode(buffer, byteOffset, params);
-        return buffer;
-      }
-      case "json": {
-        const envelope: GAEnvelope = {
-          code,
-          id,
-          kind,
-          params: {
-            ...(codec.encode?.(params) ?? params as Record<string, unknown>)
-          },
-        };
-        const json = JSON.stringify(envelope);
-        return json;
-      }
+  protected decode(data: unknown): [GADefinition, GAEnvelope<unknown>] {
+    const [definition, id, kind, body] = this.decodeEnvelope(data);
+    const header = { code: definition.code, id, kind };
+    const params = this.decodeEnvelopeParams(definition, header, body);
+    const envelope = { ...header, params };
+    return [definition, envelope];
+  }
+
+  protected decodeEnvelope(data: unknown): [GADefinition, number, GAKind, unknown] {
+    if (isRequiredString(data)) {
+      const decodedHeader = decodeGAJsonEnvelope(data);
+      const { code, id, kind, params } = decodedHeader;
+      const definition = this.gaManager.byCode.get(code);
+      assertObject(definition, 'cannot-decode-envelope-with-unknown-code', { definition, code });
+      return [definition, id, kind, params];
+    } else if (data instanceof ArrayBuffer) {
+      const decodedHeader = fromArrayBuffer(data, 0, GABinaryHeader);
+      const { id, index, kind } = decodedHeader;
+      const definition = this.gaManager.byIndex.get(index);
+      assertObject(definition, 'cannot-decode-envelope-with-unknown-index', { definition, index });
+      return [definition, id, kind, data];
+    } else {
+      throw new Breaker("unexpected-game-action-communication-message");
     }
   }
 
-  protected decode(data: unknown): GAEnvelope {
-    if (isRequiredString(data)) {
-      const envelope = decodeGAEnvelope(data);
+  protected decodeEnvelopeParams(definition: GADefinition, header: GAHeader, data: unknown): unknown {
+    const type = definition.type;
+    switch (header.kind) {
+      case "err": {
+        return data;
+      }
+      case "not": {
+        assertEqual(type, 'notification', 'cannot-match-ga-kind-with-def', { definition, header });
+        return definition.notify.decode(definition, header, data);
+      }
+      case "req": {
+        assertEqual(type, 'conversation', 'cannot-match-ga-kind-with-def', { definition, header });
+        return definition.request.decode(definition, header, data);
+      }
+      case "res": {
+        assertEqual(type, 'conversation', 'cannot-match-ga-kind-with-def', { definition, header });
+        return definition.response.decode(definition, header, data);
+      }
     }
-    if (data instanceof ArrayBuffer) {
-      const buffer = data;
-      const header = fromArrayBuffer(buffer, 0, GAEnvelopeBinaryHeader);
-      const { index, id, kind } = header;
-      const definition = this.gaManager.byIndex.get(index);
-      if (definition === undefined) {
-        throw new Breaker('cannot-decode-envelope-with-unknown-index', { header });
-      }
-      const { code, type } = definition;
-
-      const envelope: GAEnvelope = {
-        code,
-        id,
-        kind,
-        params,
-      }
-
-
-      switch (type) {
-        case "notification": {
-          if (kind !== 'not') {
-            throw new Breaker('not-match-envelope-kind-and-game-action-definition', { definition, header });
-          }
-
-          break;
-        }
-        default: {
-          throw new Breaker('cannot-decode-envelope-with-unexpected-kind', { header });
-        }
-      }
-      const params = definition.codec.decode(buffer, byteOffset);
-      const envelope = {
-        code: codec.code,
-        id,
-        kind,
-        params,
-      };
-      return envelope;
-    }
-    throw new Breaker("TODO");
   }
 
   protected sendData(data: string | ArrayBuffer): void {
@@ -162,88 +118,119 @@ export class OnlineGACommunicator implements GACommunicator {
     // TODO: process WS
   }
 
-  protected async processEnvelope(envelope: GAEnvelope): Promise<void> {
+  protected async processEnvelope(definition: GADefinition, envelope: GAEnvelope<unknown>): Promise<void> {
     switch (envelope.kind) {
       case "err": {
-        await this.processError(envelope);
-        break;
+        return this.processError(definition, envelope);
       }
       case "not": {
-        await this.processNotification(envelope);
-        break;
+        assertEqual(definition.type, 'notification', 'cannot-match-ga-kind-with-def', { definition });
+        return this.processNotification(definition, envelope);
       }
       case "req": {
-        await this.processRequest(envelope);
-        break;
+        assertEqual(definition.type, 'conversation', 'cannot-match-ga-kind-with-def', { definition });
+        return this.processRequest(definition, envelope);
       }
       case "res": {
-        await this.processResponse(envelope);
-        break;
+        assertEqual(definition.type, 'conversation', 'cannot-match-ga-kind-with-def', { definition });
+        return this.processResponse(definition, envelope);
       }
     }
   }
 
-  protected async processError(error: GAError): Promise<void> {
-    const { id } = error;
+  protected async processError(definition: GADefinition, envelope: GAEnvelope<unknown>): Promise<void> {
+    const { id } = envelope;
     if (id > 0) {
-      this.collector.resolve(id, error);
+      this.collector.resolve(id, envelope);
     }
   }
 
-  protected async processNotification(notification: GANotify): Promise<void> {
+  protected async processNotification(
+    definition: GANotification<unknown>,
+    envelope: GAEnvelope<unknown>
+  ): Promise<void> {
     try {
-      await this.processor.processNotification(notification);
+      await this.processor.notification.process(definition, envelope);
     } catch (error) {
-      throw error;
-      // TODO: log
-    }
-  }
-
-  protected async processRequest(action: GARequest): Promise<void> {
-    const { code, id } = action;
-    try {
-      const params = await this.processor.processRequest(action);
-      const responseAction: GAResponse = {
+      const { code, id } = envelope;
+      const isBreaker = error instanceof Breaker;
+      const result: GAEnvelope<unknown> = {
         code,
         id,
-        params,
-        kind: "res",
-      };
-      this.sendData(responseAction);
-    } catch (error) {
-      const isBreaker = error instanceof Breaker;
-      const errorAction: GAError = {
-        code: isBreaker ? error.message : "unknown",
-        id: id ?? 0,
         kind: "err",
-        params: isBreaker ? error.options : {},
+        params: {
+          message: isBreaker ? error.message : 'unknown-error',
+          options: isBreaker ? error.options : {},
+        },
       };
-      this.sendData(errorAction);
-      // TODO: log
+      this.logger.error('error-then-processing-game-notification', { definition, envelope });
+      const json = JSON.stringify(result);
+      this.sendData(json);
+      if (!isBreaker) {
+        throw new Breaker('unknown-error-then-processing-game-notification', { definition, envelope });
+      }
     }
   }
 
-  protected async processResponse(response: GAResponse): Promise<void> {
-    const { id } = response;
+  protected async processRequest(
+    definition: GAConversation<unknown, unknown>,
+    envelope: GAEnvelope<unknown>
+  ): Promise<void> {
+    const { code, id } = envelope;
+    try {
+      const params = await this.processor.request.process(definition, envelope);
+      const header: GAHeader = { code, id, kind: "res" };
+      const response = definition.response.encode(definition, header, params);
+      this.sendData(response);
+    } catch (error) {
+      const isBreaker = error instanceof Breaker;
+      const result: GAEnvelope<unknown> = {
+        code,
+        id,
+        kind: "err",
+        params: {
+          message: isBreaker ? error.message : 'unknown-error',
+          options: isBreaker ? error.options : {},
+        },
+      };
+      this.logger.error('error-then-processing-game-request', { definition, envelope });
+      const json = JSON.stringify(result);
+      this.sendData(json);
+      if (!isBreaker) {
+        throw new Breaker('unknown-error-then-processing-game-request', { definition, envelope });
+      }
+    }
+  }
+
+  protected async processResponse(
+    definition: GAConversation<unknown, unknown>,
+    envelope: GAEnvelope<unknown>
+  ): Promise<void> {
+    const { id } = envelope;
     if (id > 0) {
-      this.collector.resolve(id, response);
+      this.collector.resolve(id, envelope);
     }
   }
 }
 
 export const onlineGACommunicator = registerService({
   dependencies: {
-    codec: gameActionEnvelopeCodec,
+    gaManager,
   },
   provider: async (
-    { codec }: {
-      codec: GAEnvelopeCodec;
+    { gaManager }: {
+      gaManager: GAManager;
     },
     { processor, ws }: {
       processor: GAProcessor;
       ws: WebSocket;
     },
   ) => {
-    return new OnlineGACommunicator({ codec, processor, ws });
+    return new OnlineGACommunicator(
+      gaManager,
+      logger,
+      processor,
+      ws,
+    );
   },
 });

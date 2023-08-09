@@ -3,12 +3,13 @@ import { logger } from "../common/logger.ts";
 import { resolveService } from "../core/dependency/service.ts";
 import { Application, Router } from "./deps.ts";
 import { ChunkDoc } from "../storage/chunk.ts";
-import { onlineRPCGACommunicator } from "../core/action/communication/onlineCommunicator.ts";
-import { serverGAProcessor } from "../server-domain/action/bootstrap.ts";
 import { dbClient } from "./db.ts";
-import { Chunk } from "../core/chunk/chunk.ts";
 import { ChunkId } from "../core/chunk/chunkId.ts";
 import { Binary } from "../storage/deps.ts";
+import { onlineGACommunicator } from "../core/action/communication.ts";
+import { ChunkDTO } from "../core/chunk/chunk.ts";
+import { serverGAProcessor } from "../domain-server/serverGAProcessor.ts";
+import { chunksUpdateGADef } from "../domain/chunk/chunksUpdateGA.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -50,12 +51,11 @@ const unauthorizeWSSStrategy: WSSStrategy = {
   const data = await collection.find().toArray();
   const dx = data as unknown as ChunkDoc[];
 
-  const chunks: Chunk[] = [];
+  const chunks: ChunkDTO[] = [];
   const bf: { chunkId: ChunkId; data: Binary; }[] = [];
   for (const c of dx) {
     chunks.push({
       chunkId: c._id.toString('hex'),
-      blockId: 1,
       extended: [],
       tiles: c.tiles,
     });
@@ -79,7 +79,7 @@ const unauthorizeWSSStrategy: WSSStrategy = {
     };
 
     const processor = await resolveService(serverGAProcessor);
-    const communicator = await resolveService(onlineRPCGACommunicator, { processor, ws });
+    const communicator = await resolveService(onlineGACommunicator, { processor, ws });
 
     ws.onmessage = async (message) => {
       try {
@@ -91,11 +91,10 @@ const unauthorizeWSSStrategy: WSSStrategy = {
     };
 
     setTimeout(() => {
-      communicator.notify("chunks-update", { chunks });
-      communicator.notify("chunks-update", { chunks: dx });
+      communicator.notify(chunksUpdateGADef, { chunks });
       for (const c of bf) {
         const binary = c.data.buffer;
-        communicator.notify("chunk-data-update", { chunkId: c.chunkId, binary });
+        // communicator.notify("chunk-data-update", { chunkId: c.chunkId, binary });
       }
     }, 500);
 

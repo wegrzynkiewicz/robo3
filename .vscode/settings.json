@@ -6,6 +6,7 @@
     "cgot",
     "cgotd",
     "firstgid",
+    "GODTO",
     "gotd",
     "gots",
     "imageheight",
@@ -21,5 +22,5 @@
     "tilelayer",
     "Tileset",
     "tilewidth"
-  ]
+]
 }

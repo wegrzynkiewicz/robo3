@@ -1,46 +1,72 @@
 import { Breaker } from "../../common/asserts.ts";
-import { GAEnvelopeNotification, GAEnvelopeRequest } from "./foundation.ts";
+import { GAConversation, GADefinition, GAEnvelope, GANotification } from "./foundation.ts";
 
 export interface GANotificationHandler<TNotification> {
   handle: (notification: TNotification) => Promise<void>;
 }
-export type UnknownGANotificationHandler = GANotificationHandler<Record<string, unknown>>;
+export type UnknownGANotificationHandler = GANotificationHandler<unknown>;
+
+export class GANotificationProcessor {
+
+  public handlers = new WeakMap<GADefinition, UnknownGANotificationHandler>();
+
+  public registerHandler<TNotification>(
+    definition: GANotification<TNotification>,
+    handler: GANotificationHandler<TNotification>,
+  ) {
+    this.handlers.set(definition, handler as UnknownGANotificationHandler);
+  }
+
+  public async process<TNotification>(
+    definition: GANotification<TNotification>,
+    envelope: GAEnvelope<TNotification>,
+  ): Promise<void> {
+    const handler = this.handlers.get(definition);
+    if (!handler) {
+      throw new Breaker("game-action-notification-handler-not-found", { definition, envelope });
+    }
+    try {
+      await handler.handle(envelope.params);
+    } catch (error) {
+      throw new Breaker('error-inside-game-action-notification-handler', { definition, envelope, error });
+    }
+  }
+}
 
 export interface GARequestHandler<TRequest, TResponse> {
   handle: (request: TRequest) => Promise<TResponse>;
 }
-export type UnknownGARequestHandler = GARequestHandler<Record<string, unknown>, Record<string, unknown>>;
+export type UnknownGARequestHandler = GARequestHandler<unknown, unknown>;
 
-export class GAProcessor implements GAProcessor {
+export class GARequestProcessor {
 
-  public constructor(
-    public notificationHandlers: Map<string, UnknownGANotificationHandler>,
-    public requestHandlers: Map<string, UnknownGARequestHandler>,
+  public handlers = new WeakMap<GADefinition, UnknownGARequestHandler>();
+
+  public registerHandler<TRequest, TResponse>(
+    definition: GAConversation<TRequest, TResponse>,
+    handler: GARequestHandler<TRequest, TResponse>,
   ) {
+    this.handlers.set(definition, handler as UnknownGARequestHandler);
   }
 
-  public async processRequest(request: GAEnvelopeRequest): Promise<Record<string, unknown>> {
-    const handler = this.requestHandlers.get(request.code);
-    if (handler === undefined) {
-      throw new Breaker("game-action-request-handler-not-found", { request });
+  public async process<TRequest, TResponse>(
+    definition: GAConversation<TRequest, TResponse>,
+    envelope: GAEnvelope<TRequest>,
+  ): Promise<TResponse> {
+    const handler = this.handlers.get(definition);
+    if (!handler) {
+      throw new Breaker("game-action-request-handler-not-found", { definition, envelope });
     }
     try {
-      const params = await handler.handle(request.params);
-      return params === undefined ? {} : params;
+      const params = await handler.handle(envelope.params);
+      return params as TResponse;
     } catch (error) {
-      throw new Breaker('error-inside-action-handler', { request, error });
+      throw new Breaker('error-inside-game-action-request-handler', { definition, envelope, error });
     }
   }
+}
 
-  public async processNotification(notification: GAEnvelopeNotification): Promise<void> {
-    const handler = this.notificationHandlers.get(notification.code);
-    if (handler === undefined) {
-      throw new Breaker("game-action-notification-handler-not-found", { notification });
-    }
-    try {
-      await handler.handle(notification.params);
-    } catch (error) {
-      throw new Breaker('error-inside-action-handler', { notification, error });
-    }
-  }
+export class GAProcessor {
+  public readonly notification = new GANotificationProcessor();
+  public readonly request = new GARequestProcessor();
 }
