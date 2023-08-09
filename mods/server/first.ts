@@ -3,8 +3,8 @@ import { logger } from "../common/logger.ts";
 import { resolveService } from "../core/dependency/service.ts";
 import { Application, Router } from "./deps.ts";
 import { ChunkDoc } from "../storage/chunk.ts";
-import { onlineRPCGameActionCommunicator } from "../core/action/communication/onlineCommunicator.ts";
-import { serverGameActionProcessor } from "../server-domain/action/bootstrap.ts";
+import { onlineRPCGACommunicator } from "../core/action/communication/onlineCommunicator.ts";
+import { serverGAProcessor } from "../server-domain/action/bootstrap.ts";
 import { dbClient } from "./db.ts";
 import { Chunk } from "../core/chunk/chunk.ts";
 import { ChunkId } from "../core/chunk/chunkId.ts";
@@ -78,8 +78,8 @@ const unauthorizeWSSStrategy: WSSStrategy = {
       console.log('new client');
     };
 
-    const processor = await resolveService(serverGameActionProcessor);
-    const communicator = await resolveService(onlineRPCGameActionCommunicator, { processor, ws });
+    const processor = await resolveService(serverGAProcessor);
+    const communicator = await resolveService(onlineRPCGACommunicator, { processor, ws });
 
     ws.onmessage = async (message) => {
       try {

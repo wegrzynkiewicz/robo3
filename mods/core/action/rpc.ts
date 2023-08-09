@@ -1,17 +1,16 @@
-import { assertObject, assertPositiveNumber, assertRequiredString, Breaker, isRequiredString } from "../../../common/asserts.ts";
-import { BinarySerializable, fromArrayBuffer, toArrayBuffer } from "../../../common/binary.ts";
-import { registerService } from "../../dependency/service.ts";
-import { GameActionCodecManager, gameActionCodecManager } from "../codec.ts";
-import { GameActionEnvelope, GameActionEnvelopeKind } from "../foundation.ts";
+import { assertObject, assertPositiveNumber, assertRequiredString, Breaker, isRequiredString } from "../../common/asserts.ts";
+import { BinarySerializable, fromArrayBuffer, toArrayBuffer } from "../../common/binary.ts";
+import { registerService } from "../dependency/service.ts";
+import { GAEnvelope, GAKind, GAManager, GADefinition, gaManager } from "./foundation.ts";
 
-export interface GameActionEnvelopeCodec {
-  encode(envelope: GameActionEnvelope): string | ArrayBuffer;
-  decode(data: unknown): GameActionEnvelope;
+export interface GAEnvelopeCodec {
+  encode(envelope: GAEnvelope): string | ArrayBuffer;
+  decode(data: unknown): GAEnvelope;
 }
 
-export function decodeJSONRPCMessage(data: string): GameActionEnvelope {
+export function decodeGAEnvelope(data: string): GAEnvelope {
   const envelope = JSON.parse(data);
-  assertObject<GameActionEnvelope>(envelope, "invalid-game-action-envelope");
+  assertObject<GAEnvelope>(envelope, "invalid-game-action-envelope");
   const { code, id, params, kind } = envelope;
   assertPositiveNumber(id, "invalid-game-action-envelope-id");
   assertObject(params, "invalid-game-action-envelope-params");
@@ -25,12 +24,12 @@ export function decodeJSONRPCMessage(data: string): GameActionEnvelope {
 
 const allowedActionKinds = ["err", "not", "req", "res"];
 
-export class GameActionEnvelopeBinaryHeader implements BinarySerializable {
+export class GAEnvelopeBinaryHeader implements BinarySerializable {
 
   public static readonly BYTE_LENGTH = 12;
 
   public constructor(
-    public readonly kind: GameActionEnvelopeKind,
+    public readonly kind: GAKind,
     public readonly index: number,
     public readonly id: number,
   ) {
@@ -42,39 +41,40 @@ export class GameActionEnvelopeBinaryHeader implements BinarySerializable {
     dv.setUint32(8, this.id, true);
   }
 
-  public static fromDataView(dv: DataView): GameActionEnvelopeBinaryHeader {
+  public static fromDataView(dv: DataView): GAEnvelopeBinaryHeader {
     const kind = allowedActionKinds[dv.getUint32(0, true)];
     assertPositiveNumber(kind, 'invalid-kind-of-serialized-game-action-envelope-binary-header');
     const index = dv.getUint16(4, true);
     const id = dv.getUint16(8, true);
-    return new GameActionEnvelopeBinaryHeader(kind, index, id);
+    return new GAEnvelopeBinaryHeader(kind, index, id);
   }
 }
 
-const byteOffset = GameActionEnvelopeBinaryHeader.BYTE_LENGTH;
+const byteOffset = GAEnvelopeBinaryHeader.BYTE_LENGTH;
 
 const provider = async (
-  { gameActionCodecManager }: {
-    gameActionCodecManager: GameActionCodecManager;
+  { gaManager }: {
+    gaManager: GAManager;
   },
 ) => {
-  const codec: GameActionEnvelopeCodec = {
-    decode(data: unknown): GameActionEnvelope {
+  const codec: GAEnvelopeCodec = {
+    decode(data: ArrayBuffer): GAEnvelope {
       if (isRequiredString(data)) {
         return decodeJSONRPCMessage(data);
       }
       if (data instanceof ArrayBuffer) {
         const buffer = data;
-        const header = fromArrayBuffer(buffer, 0, GameActionEnvelopeBinaryHeader);
+        const header = fromArrayBuffer(buffer, 0, GAEnvelopeBinaryHeader);
         const { index, id, kind } = header;
-        const binding = gameActionCodecManager.byIndex.get(index);
+        const binding = gaManager.byIndex.get(index);
         if (binding === undefined) {
           throw new Breaker('cannot-decode-envelope-with-unknown-index', { header });
         }
-        const { codec } = binding;
-        const params = codec.decode(buffer, byteOffset);
+        const { definition } = binding;
+        definition.code
+        const params = definition.codec.decode(buffer, byteOffset);
         const envelope = {
-          code: codec.code, 
+          code: codec.code,
           id,
           kind,
           params,
@@ -83,16 +83,16 @@ const provider = async (
       }
       throw new Breaker("TODO");
     },
-    encode(envelope: GameActionEnvelope): string | ArrayBuffer {
+    encode(definition: GADefinition, envelope: GAEnvelope): string | ArrayBuffer {
       const { code, id, params, kind } = envelope;
-      const binding = gameActionCodecManager.byKey.get(code);
+      const binding = gaManager.byKey.get(code);
       if (binding === undefined) {
         return JSON.stringify(envelope);
       }
-      const { codec, index } = binding;
+      const { def, index } = binding;
       const totalLength = byteOffset + codec.calcBufferSize(params);
       const buffer = new ArrayBuffer(totalLength);
-      const header = new GameActionEnvelopeBinaryHeader(kind, index, id);
+      const header = new GAEnvelopeBinaryHeader(kind, index, id);
       toArrayBuffer(buffer, 0, header);
       codec.encode(buffer, byteOffset, params);
       return buffer;
@@ -103,7 +103,7 @@ const provider = async (
 
 export const gameActionEnvelopeCodec = registerService({
   dependencies: {
-    gameActionCodecManager,
+    gaManager,
   },
   provider,
 });

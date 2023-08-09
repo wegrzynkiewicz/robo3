@@ -1,4 +1,4 @@
-import { GameActionNotificationHandler, GameActionRequestHandler, UniversalGameActionProcessor } from "../../core/action/processor.ts";
+import { GANotificationHandler, GARequestHandler, UniversalGAProcessor } from "../../core/action/processor.ts";
 import { registerService } from "../../core/dependency/service.ts";
 import { chunksUpdateGAHandler } from "../chunk/chunks-update.ts";
 
@@ -8,10 +8,10 @@ export const notificationHandlers = registerService({
   },
   provider: async (
     { chunksUpdateGAHandler }: {
-      chunksUpdateGAHandler: GameActionNotificationHandler;
+      chunksUpdateGAHandler: GANotificationHandler;
     },
   ) => {
-    return new Map<string, GameActionNotificationHandler>([
+    return new Map<string, GANotificationHandler>([
       ["chunks-update", chunksUpdateGAHandler],
     ]);
   },
@@ -20,22 +20,22 @@ export const notificationHandlers = registerService({
 export const requestHandlers = registerService({
   dependencies: {},
   provider: async () => {
-    return new Map<string, GameActionRequestHandler>();
+    return new Map<string, GARequestHandler>();
   },
 });
 
-export const clientGameActionProcessor = registerService({
+export const clientGAProcessor = registerService({
   dependencies: {
     notificationHandlers,
     requestHandlers,
   },
   provider: async (
     { notificationHandlers, requestHandlers }: {
-      notificationHandlers: Map<string, GameActionNotificationHandler>;
-      requestHandlers: Map<string, GameActionRequestHandler>;
+      notificationHandlers: Map<string, GANotificationHandler>;
+      requestHandlers: Map<string, GARequestHandler>;
     },
   ) => {
-    const processor = new UniversalGameActionProcessor({ notificationHandlers, requestHandlers });
+    const processor = new UniversalGAProcessor({ notificationHandlers, requestHandlers });
     return processor;
   },
 });

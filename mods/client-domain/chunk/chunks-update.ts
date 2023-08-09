@@ -1,5 +1,5 @@
-import { GameActionNotification } from "../../core/action/foundation.ts";
-import { GameActionNotificationHandler } from "../../core/action/processor.ts";
+import { GANotification } from "../../core/action/foundation.ts";
+import { GANotificationHandler } from "../../core/action/processor.ts";
 import { ChunkManager } from "../../core/chunk/chunk.ts";
 import { registerService } from "../../core/dependency/service.ts";
 import { chunkManager } from "./chunk-manager.ts";
@@ -9,9 +9,9 @@ async function provider(
     chunkManager: ChunkManager;
   },
 ) {
-  const chunksUpdateGAHandler: GameActionNotificationHandler = {
-    async handle(notification: GameActionNotification): Promise<void> {
-    //   const { chunks } = notification.params as unknown as ChunksUpdateGameActionParams;
+  const chunksUpdateGAHandler: GANotificationHandler = {
+    async handle(notification: GANotification): Promise<void> {
+    //   const { chunks } = notification.params as unknown as ChunksUpdateGAParams;
     //   for (const chunk of chunks) {
     //     chunkManager.register(chunk);
     //   }

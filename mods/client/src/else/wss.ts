@@ -1,16 +1,17 @@
-import { clientGameActionProcessor } from "../../../client-domain/action/bootstrap.ts";
+import { clientGAProcessor } from "../../../client-domain/action/bootstrap.ts";
 import { logger } from "../../../common/logger.ts";
-import { onlineRPCGameActionCommunicator } from "../../../core/action/communication/onlineCommunicator.ts";
+import { onlineGACommunicator } from "../../../core/action/communication.ts";
 import { resolveService } from "../../../core/dependency/service.ts";
+import { loginGA } from "../../../domain/login.ts";
 
 (async function () {
   const ws = new WebSocket("ws://token:token@localhost:8000/wss/token");
   ws.binaryType = "arraybuffer";
-  const processor = await resolveService(clientGameActionProcessor);
-  const communicator = await resolveService(onlineRPCGameActionCommunicator, { processor, ws });
+  const processor = await resolveService(clientGAProcessor);
+  const communicator = await resolveService(onlineGACommunicator, { processor, ws });
 
   ws.addEventListener("open", (event) => {
-    communicator.request("login", { token: "token" });
+    const test = communicator.request(loginGA, { token: "siema" });
     const data = new Uint8Array(8);
     data.set([1, 2, 3, 4, 5, 6, 7, 8]);
     communicator.request("encoder", { type: 123, data });

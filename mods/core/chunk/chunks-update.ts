@@ -1,27 +1,26 @@
+import { Data } from "https://deno.land/std@0.188.0/crypto/keystack.ts";
 import { fromArrayBuffer, toArrayBuffer } from "../../common/binary.ts";
-import { GameActionCodec } from "../action/codec.ts";
-import { GameAction } from "../action/foundation.ts";
+import { GACodec } from "../action/codec.ts";
+import { GA } from "../action/foundation.ts";
 import { ChunkId } from "./chunkId.ts";
 
-export interface ChunkBlockUpdateGameActionParams {
+export interface ChunkBlockUpdateGAParams {
   chunkId: ChunkId;
   block: Uint8Array;
 }
 
-export interface ChunkBlockUpdateGameAction extends GameAction<ChunkBlockUpdateGameActionParams> {
+export interface ChunkBlockUpdateGA extends GA<ChunkBlockUpdateGAParams> {
   code: 'chunk-block-update';
-  params: ChunkBlockUpdateGameActionParams;
+  params: ChunkBlockUpdateGAParams;
 }
 
-export class ChunkBlockUpdateGameActionCodec implements GameActionCodec<ChunkBlockUpdateGameAction> {
+export class ChunkBlockUpdateGACodec implements GABinaryCodec<ChunkBlockUpdateGA> {
 
-  public readonly code = "chunk-block-update";
-
-  public calcBufferSize({ block }: ChunkBlockUpdateGameActionParams): number {
+  public calcBufferSize({ block }: ChunkBlockUpdateGAParams): number {
     return ChunkId.BYTE_LENGTH + block.byteLength;
   }
 
-  public decode(buffer: ArrayBuffer, byteOffset: number): ChunkBlockUpdateGameActionParams {
+  public decode(buffer: ArrayBuffer, byteOffset: number): ChunkBlockUpdateGAParams {
     const chunkId = fromArrayBuffer(buffer, byteOffset, ChunkId);
     const block = new Uint8Array(buffer, byteOffset + ChunkId.BYTE_LENGTH);
     return {
@@ -33,7 +32,7 @@ export class ChunkBlockUpdateGameActionCodec implements GameActionCodec<ChunkBlo
   public encode(
     buffer: ArrayBuffer,
     byteOffset: number,
-    { chunkId, block }: ChunkBlockUpdateGameActionParams
+    { chunkId, block }: ChunkBlockUpdateGAParams
   ): void {
     toArrayBuffer(buffer, byteOffset, chunkId);
     const binaryDest = new Uint8Array(buffer, byteOffset + ChunkId.BYTE_LENGTH);
