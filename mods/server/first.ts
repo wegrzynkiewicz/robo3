@@ -105,7 +105,7 @@ const unauthorizeWSSStrategy: WSSStrategy = {
     // }, 1000);
 
     ws.onclose = (event) => {
-      console.log("Disconncted from client", { event });
+      console.log("Disconncted from client");
     //   clearInterval(internal);
     };
   });

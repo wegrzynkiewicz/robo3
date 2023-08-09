@@ -36,7 +36,7 @@ export class GAJsonCodec<TData> implements GACodec<TData> {
   }
 
   decode(_definition: GADefinition, _header: GAHeader, data: unknown): TData {
-    const params = (this.transformator?.parse(data)) ?? {};
+    const params = (this.transformator?.parse(data)) ?? data;
     return params as TData;
   }
 

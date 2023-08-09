@@ -12,7 +12,6 @@ import { loginGADef } from "../../../domain/loginGA.ts";
 
   ws.addEventListener("open", async (event) => {
     const { status } = await communicator.request(loginGADef, { token: 'test' });
-    console.log(status);
     const data = new Uint8Array(8);
   });
 

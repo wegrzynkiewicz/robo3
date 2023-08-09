@@ -20,7 +20,7 @@ export class EncodingTranslation<T> {
   }
 
   public set(entry: T) {
-    const {index, key} = this.fetchKey(entry);
+    const { index, key } = this.fetchKey(entry);
     this.byIndex.set(index, entry);
     this.byKey.set(key, entry);
   }
@@ -48,12 +48,25 @@ export class PendingPromiseCollector<TKey, TValue> {
     return promise;
   }
 
+  public has(key: TKey): boolean {
+    return this.pendingResponses.has(key);
+  }
+
   public resolve(key: TKey, data: TValue): void {
     const promise = this.pendingResponses.get(key);
     if (promise === undefined) {
       throw new Breaker("not-found-pending-promise-by-key", { key });
     }
     promise.resolve(data);
+    this.pendingResponses.delete(key);
+  }
+
+  public reject(key: TKey, data: Error): void {
+    const promise = this.pendingResponses.get(key);
+    if (promise === undefined) {
+      throw new Breaker("not-found-pending-promise-by-key", { key });
+    }
+    promise.reject(data);
     this.pendingResponses.delete(key);
   }
 }

@@ -140,9 +140,11 @@ export class OnlineGACommunicator implements GACommunicator {
 
   protected async processError(definition: GADefinition, envelope: GAEnvelope<unknown>): Promise<void> {
     const { id } = envelope;
-    if (id > 0) {
-      this.collector.resolve(id, envelope);
+    const breaker = new Breaker('receive-error-envelope', { definition, envelope });
+    if (id > 0 && this.collector.has(id)) {
+      this.collector.reject(id, breaker);
     }
+    this.logger.error('receive-error-envelope', { definition, envelope });
   }
 
   protected async processNotification(
@@ -161,9 +163,10 @@ export class OnlineGACommunicator implements GACommunicator {
         params: {
           message: isBreaker ? error.message : 'unknown-error',
           options: isBreaker ? error.options : {},
+          error: error instanceof Error ? error.stack : error,
         },
       };
-      this.logger.error('error-then-processing-game-notification', { definition, envelope });
+      this.logger.error('error-then-processing-game-notification', { definition, envelope, error });
       const json = JSON.stringify(result);
       this.sendData(json);
       if (!isBreaker) {
