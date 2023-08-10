@@ -52,17 +52,17 @@ const unauthorizeWSSStrategy: WSSStrategy = {
   const dx = data as unknown as ChunkDoc[];
 
   const chunks: ChunkDTO[] = [];
-  const bf: { chunkId: ChunkId; data: Binary; }[] = [];
+  const bf: { chunkId: ChunkId; data: Binary }[] = [];
   for (const c of dx) {
     chunks.push({
-      chunkId: c._id.toString('hex'),
+      chunkId: c._id.toString("hex"),
       extended: [],
       tiles: c.tiles,
     });
     bf.push({
-      chunkId: ChunkId.fromHex(c._id.toString('hex')),
+      chunkId: ChunkId.fromHex(c._id.toString("hex")),
       data: c.data,
-    })
+    });
   }
 
   router.get("/wss/:token", async (ctx) => {
@@ -75,7 +75,7 @@ const unauthorizeWSSStrategy: WSSStrategy = {
     const ws = ctx.upgrade();
 
     ws.onopen = (event) => {
-      console.log('new client');
+      console.log("new client");
     };
 
     const processor = await resolveService(serverGAProcessor);
@@ -106,7 +106,7 @@ const unauthorizeWSSStrategy: WSSStrategy = {
 
     ws.onclose = (event) => {
       console.log("Disconncted from client");
-    //   clearInterval(internal);
+      //   clearInterval(internal);
     };
   });
 

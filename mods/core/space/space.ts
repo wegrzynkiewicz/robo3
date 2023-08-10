@@ -21,7 +21,7 @@ export function calcSpaceDimension(cube: Cube): Dimension {
     d: n - f + 1,
     h: b - t + 1,
     w: r - l + 1,
-  }
+  };
 }
 
 export function calcSpaceChunks(dimension: Dimension) {

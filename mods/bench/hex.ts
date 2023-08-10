@@ -1,5 +1,4 @@
 class ChunkId {
-
   public constructor(
     public readonly spaceId: number,
     public readonly x: number,
@@ -24,7 +23,7 @@ class ChunkId {
       y.toString(16).padStart(4, "0"),
       x.toString(16).padStart(4, "0"),
     ];
-    return parts.join('');
+    return parts.join("");
   }
 }
 
@@ -36,7 +35,6 @@ function buffer2hex(buffer: Uint8Array): string {
   }
   return hexChars.join("");
 }
-
 
 const chunkId = new ChunkId(1, 2, 3, 4);
 

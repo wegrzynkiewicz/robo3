@@ -1,4 +1,4 @@
-import { assertObject, assertRequiredString, assertArray, assertPositiveNumber } from "../../common/asserts.ts";
+import { assertArray, assertObject, assertPositiveNumber, assertRequiredString } from "../../common/asserts.ts";
 import { ChunkId } from "./chunkId.ts";
 
 export interface ChunkComplexGODTO {
@@ -9,7 +9,7 @@ export interface ChunkComplexGODTO {
 }
 
 export function parseChunkComplexGODTO(data: unknown): ChunkComplexGODTO {
-  assertObject<ChunkComplexGODTO>(data, 'chunk-complex-go-must-be-object');
+  assertObject<ChunkComplexGODTO>(data, "chunk-complex-go-must-be-object");
   const { gid, lid, pos, typ } = data;
   assertRequiredString(gid);
   assertPositiveNumber(lid);
@@ -25,22 +25,22 @@ export interface ChunkDTO {
 }
 
 export function parseChunkDTO(data: unknown): ChunkDTO {
-  assertObject<ChunkDTO>(data, 'chunk-must-be-object');
+  assertObject<ChunkDTO>(data, "chunk-must-be-object");
   const { chunkId, extended, tiles } = data;
-  assertRequiredString(chunkId, 'chunk-id-must-be-string');
-  assertArray(extended, 'chunk-extended-must-be-array');
+  assertRequiredString(chunkId, "chunk-id-must-be-string");
+  assertArray(extended, "chunk-extended-must-be-array");
   const parsedExtended: ChunkComplexGODTO[] = [];
   for (const probablyChunkComplexGODTO of extended) {
     const chunkComplexGODTO = parseChunkComplexGODTO(probablyChunkComplexGODTO);
     parsedExtended.push(chunkComplexGODTO);
   }
-  assertPositiveNumber(tiles, 'chunk-tiles-must-be-number');
+  assertPositiveNumber(tiles, "chunk-tiles-must-be-number");
   return { chunkId, extended: parsedExtended, tiles };
 }
 
 export interface ChunkBinding {
   chunk: ChunkDTO;
-  chunkId: ChunkId,
+  chunkId: ChunkId;
 }
 
 export class ChunkManager {

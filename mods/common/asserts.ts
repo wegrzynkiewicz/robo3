@@ -25,7 +25,7 @@ export type Insecurity<T> = {
 export type AssertData = Record<string, unknown>;
 
 export function throws(msg?: string, data?: AssertData): never {
-  throw new Breaker(msg ?? 'assertion-fail', data);
+  throw new Breaker(msg ?? "assertion-fail", data);
 }
 
 export function assertTrue(value: unknown, msg?: string, data?: AssertData): asserts value is boolean {

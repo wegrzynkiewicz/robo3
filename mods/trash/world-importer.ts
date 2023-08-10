@@ -8,7 +8,6 @@ import { SpaceDoc } from "../storage/space.ts";
 const BYTES_PER_GAME_OBJECT = 8;
 
 export class Builder {
-
   public readonly buffer: ArrayBuffer;
   public readonly byteLength: number;
   public readonly byteOffset: number;
@@ -49,7 +48,7 @@ export class Builder {
       this.buffer,
       this.byteOffset,
       this.currentIndex * BYTES_PER_GAME_OBJECT,
-    )
+    );
   }
 
   public static allocate(numberOfGameObject: number): Builder {
@@ -72,17 +71,16 @@ function generateBuilder(): Builder {
   return builder;
 }
 
-
 (async () => {
   const client = await resolveService(dbClient);
-  const db = client.db('app');
-  const collection = db.collection('chunks')
+  const db = client.db("app");
+  const collection = db.collection("chunks");
   const spaceId = 1;
 
   const z = 0;
   let i = 0;
   let sum = 0;
-  console.time('test')
+  console.time("test");
   for (let y = 0; y <= 4; y++) {
     for (let x = 0; x <= 4; x++) {
       const chunkId = new ChunkId(spaceId, x, y, z).toHex();
@@ -96,11 +94,11 @@ function generateBuilder(): Builder {
         extended: [],
         data: new Binary(compressedBuffer, 3),
         tiles: builder.size(),
-      }
+      };
       await collection.insertOne(chunk as any);
     }
   }
-  console.timeEnd('test');
+  console.timeEnd("test");
   console.log(sum / 25);
 
   const space: SpaceDoc = {
@@ -114,7 +112,7 @@ function generateBuilder(): Builder {
       t: 0,
     },
   };
-  await db.collection('spaces').insertOne(space as any);
+  await db.collection("spaces").insertOne(space as any);
 
   await client.close();
 })();

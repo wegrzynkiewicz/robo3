@@ -10,7 +10,7 @@ export interface BinaryDeserializable<TObject> {
 export function toArrayBuffer(
   outputBuffer: ArrayBuffer,
   byteOffset: number,
-  object: BinarySerializable
+  object: BinarySerializable,
 ) {
   const dv = new DataView(outputBuffer, byteOffset);
   object.toDataView(dv);
@@ -19,7 +19,7 @@ export function toArrayBuffer(
 export function fromArrayBuffer<TObject>(
   sourceBuffer: ArrayBuffer,
   byteOffset: number,
-  constructor: BinaryDeserializable<TObject>
+  constructor: BinaryDeserializable<TObject>,
 ): TObject {
   const dv = new DataView(sourceBuffer, byteOffset, constructor.BYTE_LENGTH);
   const object = constructor.fromDataView(dv);

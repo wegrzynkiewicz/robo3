@@ -4,16 +4,16 @@ import { GACodec } from "./codec.ts";
 export interface GAConversation<TRequest, TResponse> {
   code: string;
   index: number;
-  type: 'conversation',
+  type: "conversation";
   request: GACodec<TRequest>;
   response: GACodec<TResponse>;
 }
 
 export interface GANotification<TNotification> {
-  code: string,
+  code: string;
   index: number;
   notify: GACodec<TNotification>;
-  type: 'notification',
+  type: "notification";
 }
 
 export type GADefinition = GAConversation<any, any> | GANotification<any>;

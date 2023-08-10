@@ -14,9 +14,8 @@ export class EncodingTranslation<T> {
   public readonly byKey = new Map<string, T>();
 
   public constructor(
-    protected readonly fetchKey: (entry: T) => { index: number, key: string },
+    protected readonly fetchKey: (entry: T) => { index: number; key: string },
   ) {
-
   }
 
   public set(entry: T) {

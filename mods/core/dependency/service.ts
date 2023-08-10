@@ -3,7 +3,7 @@ import { WithOptional } from "../../common/useful.ts";
 
 type ServiceKey = string | symbol;
 type ServiceInstance<TProvider extends (...args: any) => any> = ReturnType<TProvider> extends Promise<infer TInstance> ? TInstance : never;
-type ServiceUnknown = Service<(...args: any) => any>
+type ServiceUnknown = Service<(...args: any) => any>;
 type ServiceDependencies<TProvider extends (...args: any) => any> = Parameters<TProvider>[0];
 type ServiceProvider<TInstance> = (...args: any) => Promise<TInstance>;
 type ServiceOption<TProvider extends (...args: any) => any> = Parameters<TProvider>[1];
@@ -11,7 +11,7 @@ type ServiceOption<TProvider extends (...args: any) => any> = Parameters<TProvid
 export type Service<TProvider extends (...args: any) => any> = {
   dependencies?: {
     [K in keyof ServiceDependencies<TProvider>]: Service<ServiceProvider<ServiceDependencies<TProvider>[K]>>;
-  }
+  };
   provider: TProvider;
   singleton: boolean;
 };
@@ -19,7 +19,7 @@ export type Service<TProvider extends (...args: any) => any> = {
 export function registerService<TProvider extends (...args: any) => any>(
   service: WithOptional<Service<TProvider>, "singleton">,
 ): Service<TProvider> {
-  const {dependencies, provider, singleton} = service;
+  const { dependencies, provider, singleton } = service;
   return {
     dependencies,
     provider,

@@ -7,7 +7,6 @@ export interface GANotificationHandler<TNotification> {
 export type UnknownGANotificationHandler = GANotificationHandler<unknown>;
 
 export class GANotificationProcessor {
-
   public handlers = new WeakMap<GADefinition, UnknownGANotificationHandler>();
 
   public registerHandler<TNotification>(
@@ -28,7 +27,7 @@ export class GANotificationProcessor {
     try {
       await handler.handle(envelope.params);
     } catch (error) {
-      throw new Breaker('error-inside-game-action-notification-handler', { definition, envelope, error });
+      throw new Breaker("error-inside-game-action-notification-handler", { definition, envelope, error });
     }
   }
 }
@@ -39,7 +38,6 @@ export interface GARequestHandler<TRequest, TResponse> {
 export type UnknownGARequestHandler = GARequestHandler<unknown, unknown>;
 
 export class GARequestProcessor {
-
   public handlers = new WeakMap<GADefinition, UnknownGARequestHandler>();
 
   public registerHandler<TRequest, TResponse>(
@@ -61,7 +59,7 @@ export class GARequestProcessor {
       const params = await handler.handle(envelope.params);
       return params as TResponse;
     } catch (error) {
-      throw new Breaker('error-inside-game-action-request-handler', { definition, envelope, error });
+      throw new Breaker("error-inside-game-action-request-handler", { definition, envelope, error });
     }
   }
 }

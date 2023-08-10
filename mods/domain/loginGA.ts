@@ -11,23 +11,23 @@ export interface LoginGAResponse {
 }
 
 export const loginGADef = registerGADefinition({
-  code: 'login',
+  code: "login",
   index: 0x0001,
   request: new GAJsonCodec({
     parse(data: unknown): LoginGARequest {
-      assertObject<LoginGARequest>(data, 'invalid-data');
+      assertObject<LoginGARequest>(data, "invalid-data");
       const { token } = data;
-      assertRequiredString(token, 'invalid-token-parameter');
+      assertRequiredString(token, "invalid-token-parameter");
       return { token };
-    }
+    },
   }),
   response: new GAJsonCodec({
     parse(data: unknown): LoginGAResponse {
-      assertObject<LoginGAResponse>(data, 'invalid-data');
+      assertObject<LoginGAResponse>(data, "invalid-data");
       const { status } = data;
-      assertPositiveNumber(status, 'invalid-status-parameter');
+      assertPositiveNumber(status, "invalid-status-parameter");
       return { status };
     },
   }),
-  type: 'conversation',
-}); 
+  type: "conversation",
+});

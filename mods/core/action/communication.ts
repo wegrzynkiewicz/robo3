@@ -1,20 +1,20 @@
-import { isRequiredString, Breaker, assertEqual, assertObject } from "../../common/asserts.ts";
+import { assertEqual, assertObject, Breaker, isRequiredString } from "../../common/asserts.ts";
 import { fromArrayBuffer } from "../../common/binary.ts";
 import { Logger, logger } from "../../common/logger.ts";
 import { PendingPromiseCollector } from "../../common/useful.ts";
 import { registerService } from "../dependency/service.ts";
-import { GABinaryHeader, decodeGAJsonEnvelope } from "./codec.ts";
-import { GAConversation, GANotification, GAEnvelope, GAManager, GAHeader, GADefinition, gaManager, GAKind } from "./foundation.ts";
+import { decodeGAJsonEnvelope, GABinaryHeader } from "./codec.ts";
+import { GAConversation, GADefinition, GAEnvelope, GAHeader, GAKind, GAManager, gaManager, GANotification } from "./foundation.ts";
 import { GAProcessor } from "./processor.ts";
 
 export interface GACommunicator {
   request<TRequest, TResponse>(
     definition: GAConversation<TRequest, TResponse>,
-    params: TRequest
+    params: TRequest,
   ): Promise<TResponse>;
   notify<TNotification>(
     definition: GANotification<TNotification>,
-    params: TNotification
+    params: TNotification,
   ): void;
   receive(data: unknown): Promise<void>;
 }
@@ -38,11 +38,11 @@ export class OnlineGACommunicator implements GACommunicator {
 
   public async request<TRequest, TResponse>(
     definition: GAConversation<TRequest, TResponse>,
-    params: TRequest
+    params: TRequest,
   ): Promise<TResponse> {
     const { code, request } = definition;
     const id = this.id++;
-    const header: GAHeader = { code, id, kind: 'req' };
+    const header: GAHeader = { code, id, kind: "req" };
     const data = request.encode(definition, header, params);
     const promise = this.collector.create(id);
     this.sendData(data);
@@ -52,11 +52,11 @@ export class OnlineGACommunicator implements GACommunicator {
 
   public notify<TNotification>(
     definition: GANotification<TNotification>,
-    params: TNotification
+    params: TNotification,
   ): void {
     const { code, notify } = definition;
     const id = this.id++;
-    const header: GAHeader = { code, id, kind: 'not' };
+    const header: GAHeader = { code, id, kind: "not" };
     const data = notify.encode(definition, header, params);
     this.sendData(data);
   }
@@ -74,13 +74,13 @@ export class OnlineGACommunicator implements GACommunicator {
       const decodedHeader = decodeGAJsonEnvelope(data);
       const { code, id, kind, params } = decodedHeader;
       const definition = this.gaManager.byCode.get(code);
-      assertObject(definition, 'cannot-decode-envelope-with-unknown-code', { definition, code });
+      assertObject(definition, "cannot-decode-envelope-with-unknown-code", { definition, code });
       return [definition, id, kind, params];
     } else if (data instanceof ArrayBuffer) {
       const decodedHeader = fromArrayBuffer(data, 0, GABinaryHeader);
       const { id, index, kind } = decodedHeader;
       const definition = this.gaManager.byIndex.get(index);
-      assertObject(definition, 'cannot-decode-envelope-with-unknown-index', { definition, index });
+      assertObject(definition, "cannot-decode-envelope-with-unknown-index", { definition, index });
       return [definition, id, kind, data];
     } else {
       throw new Breaker("unexpected-game-action-communication-message");
@@ -94,15 +94,15 @@ export class OnlineGACommunicator implements GACommunicator {
         return data;
       }
       case "not": {
-        assertEqual(type, 'notification', 'cannot-match-ga-kind-with-def', { definition, header });
+        assertEqual(type, "notification", "cannot-match-ga-kind-with-def", { definition, header });
         return definition.notify.decode(definition, header, data);
       }
       case "req": {
-        assertEqual(type, 'conversation', 'cannot-match-ga-kind-with-def', { definition, header });
+        assertEqual(type, "conversation", "cannot-match-ga-kind-with-def", { definition, header });
         return definition.request.decode(definition, header, data);
       }
       case "res": {
-        assertEqual(type, 'conversation', 'cannot-match-ga-kind-with-def', { definition, header });
+        assertEqual(type, "conversation", "cannot-match-ga-kind-with-def", { definition, header });
         return definition.response.decode(definition, header, data);
       }
     }
@@ -112,7 +112,7 @@ export class OnlineGACommunicator implements GACommunicator {
     const { ws } = this;
     const { readyState } = ws;
     if (readyState !== ws.OPEN) {
-      throw new Breaker('ws-not-open', { readyState });
+      throw new Breaker("ws-not-open", { readyState });
     }
     ws.send(data);
     // TODO: process WS
@@ -124,15 +124,15 @@ export class OnlineGACommunicator implements GACommunicator {
         return this.processError(definition, envelope);
       }
       case "not": {
-        assertEqual(definition.type, 'notification', 'cannot-match-ga-kind-with-def', { definition });
+        assertEqual(definition.type, "notification", "cannot-match-ga-kind-with-def", { definition });
         return this.processNotification(definition, envelope);
       }
       case "req": {
-        assertEqual(definition.type, 'conversation', 'cannot-match-ga-kind-with-def', { definition });
+        assertEqual(definition.type, "conversation", "cannot-match-ga-kind-with-def", { definition });
         return this.processRequest(definition, envelope);
       }
       case "res": {
-        assertEqual(definition.type, 'conversation', 'cannot-match-ga-kind-with-def', { definition });
+        assertEqual(definition.type, "conversation", "cannot-match-ga-kind-with-def", { definition });
         return this.processResponse(definition, envelope);
       }
     }
@@ -140,16 +140,16 @@ export class OnlineGACommunicator implements GACommunicator {
 
   protected async processError(definition: GADefinition, envelope: GAEnvelope<unknown>): Promise<void> {
     const { id } = envelope;
-    const breaker = new Breaker('receive-error-envelope', { definition, envelope });
+    const breaker = new Breaker("receive-error-envelope", { definition, envelope });
     if (id > 0 && this.collector.has(id)) {
       this.collector.reject(id, breaker);
     }
-    this.logger.error('receive-error-envelope', { definition, envelope });
+    this.logger.error("receive-error-envelope", { definition, envelope });
   }
 
   protected async processNotification(
     definition: GANotification<unknown>,
-    envelope: GAEnvelope<unknown>
+    envelope: GAEnvelope<unknown>,
   ): Promise<void> {
     try {
       await this.processor.notification.process(definition, envelope);
@@ -161,23 +161,23 @@ export class OnlineGACommunicator implements GACommunicator {
         id,
         kind: "err",
         params: {
-          message: isBreaker ? error.message : 'unknown-error',
+          message: isBreaker ? error.message : "unknown-error",
           options: isBreaker ? error.options : {},
           error: error instanceof Error ? error.stack : error,
         },
       };
-      this.logger.error('error-then-processing-game-notification', { definition, envelope, error });
+      this.logger.error("error-then-processing-game-notification", { definition, envelope, error });
       const json = JSON.stringify(result);
       this.sendData(json);
       if (!isBreaker) {
-        throw new Breaker('unknown-error-then-processing-game-notification', { definition, envelope });
+        throw new Breaker("unknown-error-then-processing-game-notification", { definition, envelope });
       }
     }
   }
 
   protected async processRequest(
     definition: GAConversation<unknown, unknown>,
-    envelope: GAEnvelope<unknown>
+    envelope: GAEnvelope<unknown>,
   ): Promise<void> {
     const { code, id } = envelope;
     try {
@@ -192,22 +192,22 @@ export class OnlineGACommunicator implements GACommunicator {
         id,
         kind: "err",
         params: {
-          message: isBreaker ? error.message : 'unknown-error',
+          message: isBreaker ? error.message : "unknown-error",
           options: isBreaker ? error.options : {},
         },
       };
-      this.logger.error('error-then-processing-game-request', { definition, envelope });
+      this.logger.error("error-then-processing-game-request", { definition, envelope });
       const json = JSON.stringify(result);
       this.sendData(json);
       if (!isBreaker) {
-        throw new Breaker('unknown-error-then-processing-game-request', { definition, envelope });
+        throw new Breaker("unknown-error-then-processing-game-request", { definition, envelope });
       }
     }
   }
 
   protected async processResponse(
     definition: GAConversation<unknown, unknown>,
-    envelope: GAEnvelope<unknown>
+    envelope: GAEnvelope<unknown>,
   ): Promise<void> {
     const { id } = envelope;
     if (id > 0) {

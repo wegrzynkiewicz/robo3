@@ -1,7 +1,6 @@
 import { Position } from "../numbers.ts";
 
 export class ChunkId {
-
   public static readonly BYTE_LENGTH = 10;
 
   public readonly position: Position;
@@ -31,7 +30,7 @@ export class ChunkId {
       y.toString(16).padStart(4, "0"),
       x.toString(16).padStart(4, "0"),
     ];
-    return parts.join('');
+    return parts.join("");
   }
 
   public static fromDataView(dv: DataView): ChunkId {

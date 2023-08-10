@@ -7,7 +7,7 @@ Deno.test("encodeChunkId", () => {
 });
 
 Deno.test("decodeChunkId", () => {
-  const { spaceId, x, y, z  } = ChunkId.fromHex("00000001000400050006");
+  const { spaceId, x, y, z } = ChunkId.fromHex("00000001000400050006");
   assertEquals(spaceId, 1);
   assertEquals(z, 4);
   assertEquals(y, 5);

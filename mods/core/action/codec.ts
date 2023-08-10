@@ -29,9 +29,8 @@ export function decodeGAJsonEnvelope(data: string): GAEnvelope<unknown> {
 }
 
 export class GAJsonCodec<TData> implements GACodec<TData> {
-
   public constructor(
-    public transformator?: GATransformator<TData>
+    public transformator?: GATransformator<TData>,
   ) {
   }
 
@@ -48,7 +47,6 @@ export class GAJsonCodec<TData> implements GACodec<TData> {
 }
 
 export class GABinaryHeader implements BinarySerializable {
-
   public static readonly BYTE_LENGTH = 12;
 
   public constructor(
@@ -66,7 +64,7 @@ export class GABinaryHeader implements BinarySerializable {
 
   public static fromDataView(dv: DataView): GABinaryHeader {
     const kind = allowedActionKinds[dv.getUint32(0, true)];
-    assertPositiveNumber(kind, 'invalid-kind-of-serialized-game-action-envelope-binary-header');
+    assertPositiveNumber(kind, "invalid-kind-of-serialized-game-action-envelope-binary-header");
     const index = dv.getUint16(4, true);
     const id = dv.getUint16(8, true);
     return new GABinaryHeader(kind, index, id);
@@ -80,7 +78,6 @@ export interface GABinarySubCodec<TData> {
 }
 
 export class GABinaryCodec<TData> implements GACodec<TData> {
-
   public constructor(
     public subCodec: GABinarySubCodec<TData>,
   ) {
@@ -88,7 +85,7 @@ export class GABinaryCodec<TData> implements GACodec<TData> {
 
   decode(definition: GADefinition, _header: GAHeader, buffer: TData): TData {
     if (!(buffer instanceof ArrayBuffer)) {
-      throw new Breaker('unexpected-value-in-game-action-codec', { definition });
+      throw new Breaker("unexpected-value-in-game-action-codec", { definition });
     }
     const params = this.subCodec.decode(buffer, GABinaryHeader.BYTE_LENGTH);
     return params;

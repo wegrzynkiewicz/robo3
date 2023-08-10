@@ -9,8 +9,8 @@ export const clientGAProcessor = registerService({
   },
   provider: async (
     { chunksUpdateGAHandler }: {
-      chunksUpdateGAHandler: GANotificationHandler<ChunksUpdateGA>,
-    }
+      chunksUpdateGAHandler: GANotificationHandler<ChunksUpdateGA>;
+    },
   ) => {
     const processor = new GAProcessor();
     const { notification } = processor;
