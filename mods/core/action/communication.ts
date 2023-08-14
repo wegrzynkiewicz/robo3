@@ -15,7 +15,7 @@ export interface GACommunicator {
   notify<TNotification>(
     definition: GANotification<TNotification>,
     params: TNotification,
-  ): void;
+  ): Promise<void>;
   receive(data: unknown): Promise<void>;
 }
 
@@ -43,21 +43,21 @@ export class OnlineGACommunicator implements GACommunicator {
     const { code, request } = definition;
     const id = this.id++;
     const header: GAHeader = { code, id, kind: "req" };
-    const data = request.encode(definition, header, params);
+    const data = await request.encode(definition, header, params);
     const promise = this.collector.create(id);
     this.sendData(data);
     const response = await promise;
     return response.params as TResponse;
   }
 
-  public notify<TNotification>(
+  public async notify<TNotification>(
     definition: GANotification<TNotification>,
     params: TNotification,
-  ): void {
+  ): Promise<void> {
     const { code, notify } = definition;
     const id = this.id++;
     const header: GAHeader = { code, id, kind: "not" };
-    const data = notify.encode(definition, header, params);
+    const data = await notify.encode(definition, header, params);
     this.sendData(data);
   }
 
@@ -183,7 +183,7 @@ export class OnlineGACommunicator implements GACommunicator {
     try {
       const params = await this.processor.request.process(definition, envelope);
       const header: GAHeader = { code, id, kind: "res" };
-      const response = definition.response.encode(definition, header, params);
+      const response = await definition.response.encode(definition, header, params);
       this.sendData(response);
     } catch (error) {
       const isBreaker = error instanceof Breaker;

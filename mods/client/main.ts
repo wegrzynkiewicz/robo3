@@ -1,5 +1,5 @@
-import { assertNonNull, throws } from "../common/asserts.ts";
-import { SPRITES_PER_CHUNK_AXIS } from "../core/vars.ts";
+import { assertNonNull } from "../common/asserts.ts";
+import { TILES_PER_CHUNK_GRID_AXIS } from "../core/vars.ts";
 import { processMap, processMap1 } from "../tiled-map/types.ts";
 import { initGridProgram } from "./src/graphic/gridProgram.ts";
 import { ortho } from "./src/graphic/math.ts";
@@ -139,8 +139,8 @@ processMap1().then((chunkManager) => {
   for (const texture of chunkManager.binaries) {
     console.log({ texture });
     let i = 0;
-    for (let y = SPRITES_PER_CHUNK_AXIS - 1; y >= 0; y--) {
-      for (let x = 0; x < SPRITES_PER_CHUNK_AXIS; x++) {
+    for (let y = TILES_PER_CHUNK_GRID_AXIS - 1; y >= 0; y--) {
+      for (let x = 0; x < TILES_PER_CHUNK_GRID_AXIS; x++) {
         const textureIndex = texture[i];
         i++;
         if (textureIndex === 0) {

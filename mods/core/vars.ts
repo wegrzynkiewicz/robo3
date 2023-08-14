@@ -7,8 +7,8 @@ export const SPRITE_STRIDE_NORMALIZED = SPRITE_SIZE / SPRITES_TEXTURE_SIZE;
 export const MAX_WORLD_SPRITES_PER_AXIS = 65536;
 export const MAX_WORLD_DEPTH = 256;
 
-export const SPRITES_PER_CHUNK_AXIS = 32;
-export const SPRITES_PER_CHUNK = SPRITES_PER_CHUNK_AXIS ** 2;
+export const TILES_PER_CHUNK_GRID_AXIS = 32;
+export const TILES_PER_CHUNK_GRID = TILES_PER_CHUNK_GRID_AXIS ** 2;
 
 export const ERROR_GAME_OBJECT_SPRITE_INDEX = 0;
 export const UNDEFINED_GAME_OBJECT_SPRITE_INDEX = 1;
@@ -21,3 +21,16 @@ export const DEFAULT_GAME_OBJECT_SPRITE_INDEX = 2;
 // u16 - pos
 // u16 - tex
 // u16 - alfa
+
+
+// 1 1 
+// 2 4
+// 3 16
+// 4 64
+// 5 256
+// 6 1024
+// 7 4096
+// 8 16384
+// 9 65536
+// A 262144
+

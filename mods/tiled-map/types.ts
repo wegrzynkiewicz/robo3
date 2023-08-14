@@ -1,7 +1,7 @@
 import { assertArray, assertObject, assertPositiveNumber, assertRequiredString, assertTrue, Breaker } from "../common/asserts.ts";
 import { BrowserImageManager } from "../core/image.ts";
 import { createContext2D, getTilesFromCanvasContext, Tile, TilesTextureAllocator } from "../core/tile.ts";
-import { SPRITE_SIZE, SPRITES_PER_CHUNK, SPRITES_PER_CHUNK_AXIS, SPRITES_TEXTURE_SIZE } from "../core/vars.ts";
+import { SPRITE_SIZE, TILES_PER_CHUNK_GRID, TILES_PER_CHUNK_GRID_AXIS, SPRITES_TEXTURE_SIZE } from "../core/vars.ts";
 
 interface TiledMap {
   //   backgroundcolor?: string;
@@ -185,13 +185,13 @@ async function processLayer(ctx: LoadingContext, layer: unknown) {
       for (const [chunkIndex, tiledChunk] of Object.entries(chunks)) {
         assertObject<TiledChunk>(tiledChunk, "invalid-tiled-chunk-structure");
         const { data, height, width, x, y } = tiledChunk;
-        const size = SPRITES_PER_CHUNK_AXIS;
-        const area = SPRITES_PER_CHUNK;
+        const size = TILES_PER_CHUNK_GRID_AXIS;
+        const area = TILES_PER_CHUNK_GRID;
         assertTrue(width === size, `tiled-chunk-width-should-be-${size}`, { chunkIndex, layerId, width });
         assertTrue(height === size, `tiled-chunk-height-should-be-${size}`, { chunkIndex, layerId, height });
         assertArray(data, "tiled-chunks-data-should-be-array", { chunkIndex, layerId });
         assertTrue(data.length > 1, `tiled-chunks-data-length-should-be-${area}`, { chunkIndex, layerId });
-        const binary = new Uint16Array(SPRITES_PER_CHUNK);
+        const binary = new Uint16Array(TILES_PER_CHUNK_GRID);
         binary.set(data.map((e) => (e ?? 1)));
         ctx.chunkManager.createChunk({ binary });
       }
@@ -218,7 +218,7 @@ async function processMap2(ctx: LoadingContext, data: unknown) {
 }
 
 export function createChunkBinary() {
-  new Uint16Array(SPRITES_PER_CHUNK);
+  new Uint16Array(TILES_PER_CHUNK_GRID);
 }
 
 interface TileAtlas {

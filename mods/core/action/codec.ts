@@ -1,10 +1,10 @@
 import { assertObject, assertPositiveNumber, assertRequiredString, Breaker } from "../../common/asserts.ts";
-import { BinarySerializable, toArrayBuffer } from "../../common/binary.ts";
+import { BinarySerializable, compress, decompress, toArrayBuffer } from "../../common/binary.ts";
 import { GADefinition, GAEnvelope, GAHeader, GAKind } from "./foundation.ts";
 
 export interface GACodec<TData> {
-  decode(definition: GADefinition, header: GAHeader, data: unknown): TData;
-  encode(definition: GADefinition, header: GAHeader, data: TData): string | ArrayBuffer;
+  decode(definition: GADefinition, header: GAHeader, data: unknown): Promise<TData>;
+  encode(definition: GADefinition, header: GAHeader, data: TData): Promise<string | ArrayBuffer>;
 }
 
 export interface GATransformator<TData> {
@@ -34,12 +34,12 @@ export class GAJsonCodec<TData> implements GACodec<TData> {
   ) {
   }
 
-  decode(_definition: GADefinition, _header: GAHeader, data: unknown): TData {
+  async decode(_definition: GADefinition, _header: GAHeader, data: unknown): Promise<TData> {
     const params = (this.transformator?.parse(data)) ?? data;
     return params as TData;
   }
 
-  encode(_definition: GADefinition, header: GAHeader, data: TData): string {
+  async encode(_definition: GADefinition, header: GAHeader, data: TData): Promise<string> {
     const params = (this.transformator?.normalize?.(data)) || data;
     const envelope: GAEnvelope<unknown> = { ...header, params };
     return JSON.stringify(envelope);
@@ -83,7 +83,7 @@ export class GABinaryCodec<TData> implements GACodec<TData> {
   ) {
   }
 
-  decode(definition: GADefinition, _header: GAHeader, buffer: TData): TData {
+  async decode(definition: GADefinition, _header: GAHeader, buffer: TData): Promise<TData> {
     if (!(buffer instanceof ArrayBuffer)) {
       throw new Breaker("unexpected-value-in-game-action-codec", { definition });
     }
@@ -91,7 +91,7 @@ export class GABinaryCodec<TData> implements GACodec<TData> {
     return params;
   }
 
-  encode(definition: GADefinition, header: GAHeader, params: TData): ArrayBuffer {
+  async encode(definition: GADefinition, header: GAHeader, params: TData): Promise<ArrayBuffer> {
     const { id, kind } = header;
     const byteOffset = GABinaryHeader.BYTE_LENGTH;
     const totalLength = byteOffset + this.subCodec.calcBufferSize(params);
@@ -99,6 +99,40 @@ export class GABinaryCodec<TData> implements GACodec<TData> {
     const binary = new GABinaryHeader(kind, definition.index, id);
     toArrayBuffer(buffer, 0, binary);
     this.subCodec.encode(buffer, byteOffset, params);
+    return buffer;
+  }
+}
+
+
+export class GACompressorCodec<TData> implements GACodec<TData> {
+  public constructor(
+    public subCodec: GABinarySubCodec<TData>,
+  ) {
+  }
+
+  async decode(definition: GADefinition, _header: GAHeader, buffer: TData): Promise<TData> {
+    if (!(buffer instanceof ArrayBuffer)) {
+      throw new Breaker("unexpected-value-in-game-action-codec", { definition });
+    }
+    const view = new Uint8Array(buffer, GABinaryHeader.BYTE_LENGTH);
+    const decompressedBuffer = await decompress(view);
+    const params = this.subCodec.decode(decompressedBuffer, 0);
+    return params;
+  }
+
+  async encode(definition: GADefinition, header: GAHeader, params: TData): Promise<ArrayBuffer> {
+    const { id, kind } = header;
+    const uncompressedLength = this.subCodec.calcBufferSize(params);
+    const uncompressedBuffer = new ArrayBuffer(uncompressedLength);
+    this.subCodec.encode(uncompressedBuffer, 0, params);
+    const view = new Uint8Array(uncompressedBuffer);
+    const compressedBuffer = await compress(view);
+    const compressedView = new Uint8Array(compressedBuffer);
+    const totalLength = compressedBuffer.byteLength + GABinaryHeader.BYTE_LENGTH;
+    const buffer = new ArrayBuffer(totalLength);
+    const binary = new GABinaryHeader(kind, definition.index, id);
+    toArrayBuffer(buffer, 0, binary);
+    (new Uint8Array(buffer, GABinaryHeader.BYTE_LENGTH, totalLength)).set(compressedView);
     return buffer;
   }
 }

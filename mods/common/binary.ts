@@ -41,3 +41,19 @@ export function buffer2hex(buffer: Uint8Array): string {
   }
   return hexChars.join("");
 }
+
+export function decompress(input: Uint8Array): Promise<ArrayBuffer> {
+  const ds = new DecompressionStream("deflate");
+  const writer = ds.writable.getWriter();
+  writer.write(input);
+  writer.close();
+  return new Response(ds.readable).arrayBuffer();
+}
+
+export function compress(input: Uint8Array): Promise<ArrayBuffer> {
+  const cs = new CompressionStream("deflate");
+  const writer = cs.writable.getWriter();
+  writer.write(input);
+  writer.close();
+  return new Response(cs.readable).arrayBuffer();
+}

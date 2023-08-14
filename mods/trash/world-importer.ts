@@ -1,4 +1,5 @@
 import { ChunkId } from "../core/chunk/chunkId.ts";
+import { ChunkSegment } from "../core/chunk/chunkSegment.ts";
 import { resolveService } from "../core/dependency/service.ts";
 import { dbClient } from "../server/db.ts";
 import { ChunkDoc } from "../storage/chunk.ts";
@@ -6,6 +7,8 @@ import { Binary, deflate } from "../storage/deps.ts";
 import { SpaceDoc } from "../storage/space.ts";
 
 const BYTES_PER_GAME_OBJECT = 8;
+
+let fill = 1;
 
 export class Builder {
   public readonly buffer: ArrayBuffer;
@@ -52,10 +55,12 @@ export class Builder {
   }
 
   public static allocate(numberOfGameObject: number): Builder {
+    const segment = ChunkSegment.createEmpty(numberOfGameObject);
+    segment.grid.view.fill(fill++);
     const byteOffset = 0;
     const byteLength = numberOfGameObject * BYTES_PER_GAME_OBJECT;
     const arrayBuffer = new ArrayBuffer(byteLength);
-    return new Builder(arrayBuffer, byteOffset, byteLength);
+    return new Builder(segment.buffer, segment.list.byteOffset, segment.list.byteLength);
   }
 }
 
@@ -77,6 +82,8 @@ function generateBuilder(): Builder {
   const collection = db.collection("chunks");
   const spaceId = 1;
 
+  collection.deleteMany({});
+
   const z = 0;
   let i = 0;
   let sum = 0;
@@ -85,7 +92,7 @@ function generateBuilder(): Builder {
     for (let x = 0; x <= 4; x++) {
       const chunkId = new ChunkId(spaceId, x, y, z).toHex();
       const builder = generateBuilder();
-      const buffer = builder.getFilledArray();
+      const buffer = new Uint8Array(builder.buffer);
       const compressedBuffer = deflate(buffer, { level: 1, memLevel: 9 });
       sum += compressedBuffer.length;
 
@@ -112,6 +119,7 @@ function generateBuilder(): Builder {
       t: 0,
     },
   };
+  await db.collection("spaces").deleteMany({});
   await db.collection("spaces").insertOne(space as any);
 
   await client.close();

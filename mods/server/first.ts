@@ -10,6 +10,7 @@ import { onlineGACommunicator } from "../core/action/communication.ts";
 import { ChunkDTO } from "../core/chunk/chunk.ts";
 import { serverGAProcessor } from "../domain-server/serverGAProcessor.ts";
 import { chunksUpdateGADef } from "../domain/chunk/chunksUpdateGA.ts";
+import { chunksSegmentUpdateGADef } from "../domain/chunk/chunkBlockUpdateGA.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -94,7 +95,7 @@ const unauthorizeWSSStrategy: WSSStrategy = {
       communicator.notify(chunksUpdateGADef, { chunks });
       for (const c of bf) {
         const binary = c.data.buffer;
-        // communicator.notify("chunk-data-update", { chunkId: c.chunkId, binary });
+        communicator.notify(chunksSegmentUpdateGADef, { chunkId: c.chunkId, binary });
       }
     }, 500);
 
