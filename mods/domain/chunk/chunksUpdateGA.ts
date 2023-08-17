@@ -7,8 +7,7 @@ export interface ChunksUpdateGA {
 }
 
 export const chunksUpdateGADef = registerGADefinition({
-  code: "chunks-update",
-  index: 0x0010,
-  notify: new GAJsonCodec<ChunksUpdateGA>(),
-  type: "notification",
+  codec: new GAJsonCodec<ChunksUpdateGA>(),
+  kind: "chunks-update",
+  key: 0x0010,
 });

@@ -1,5 +1,6 @@
+import { assertArrayBuffer } from "../../common/asserts.ts";
 import { fromArrayBuffer, toArrayBuffer } from "../../common/binary.ts";
-import { GABinarySubCodec, GACompressorCodec } from "../../core/action/codec.ts";
+import { GACodec } from "../../core/action/codec.ts";
 import { registerGADefinition } from "../../core/action/foundation.ts";
 import { ChunkId } from "../../core/chunk/chunkId.ts";
 import { ChunkSegment } from "../../core/chunk/chunkSegment.ts";
@@ -9,31 +10,37 @@ export interface ChunksSegmentUpdateGA {
   segment: ChunkSegment,
 }
 
-const subCodec = new class implements GABinarySubCodec<ChunksSegmentUpdateGA> {
+const codec = new class implements GACodec<ChunksSegmentUpdateGA> {
   calcBufferSize({ segment }: ChunksSegmentUpdateGA): number {
     const byteLength =
       + ChunkId.BYTE_LENGTH
       + segment.byteLength;
     return byteLength;
   }
-  decode(buffer: ArrayBuffer, byteOffset: number): ChunksSegmentUpdateGA {
-    let offset = byteOffset;
-    const chunkId = fromArrayBuffer(buffer, offset, ChunkId);
+  decode(data: unknown): ChunksSegmentUpdateGA {
+    assertArrayBuffer(data, 'expected-array-buffer');
+    let offset = 0;
+    const chunkId = fromArrayBuffer(data, offset, ChunkId);
     offset += ChunkId.BYTE_LENGTH;
-    const segment = ChunkSegment.createFromBuffer(buffer, offset);
+    const segment = ChunkSegment.createFromBuffer(data, offset);
     return { chunkId, segment };
   }
-  encode(buffer: ArrayBuffer, byteOffset: number, { chunkId, segment }: ChunksSegmentUpdateGA): void {
-    let offset = byteOffset;
+  encode(data: ChunksSegmentUpdateGA): ArrayBuffer {
+    const { chunkId, segment } = data;
+    const byteLength =
+      + ChunkId.BYTE_LENGTH
+      + segment.byteLength;
+    const buffer = new ArrayBuffer(byteLength);
+    let offset = 0;
     toArrayBuffer(buffer, offset, chunkId);
     offset += ChunkId.BYTE_LENGTH;
     (new Uint8Array(buffer, offset, segment.byteLength)).set(segment.view);
+    return buffer;
   }
 }
 
 export const chunksSegmentUpdateGADef = registerGADefinition({
-  code: "chunk-segment-update",
-  index: 0x0011,
-  notify: new GACompressorCodec<ChunksSegmentUpdateGA>(subCodec),
-  type: "notification",
+  codec,
+  kind: "chunk-segment-update",
+  key: 0x0011,
 });

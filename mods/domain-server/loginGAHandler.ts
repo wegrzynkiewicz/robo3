@@ -1,17 +1,27 @@
 import { assertRequiredString } from "../common/asserts.ts";
-import { GARequestHandler } from "../core/action/processor.ts";
+import { GAHandler } from "../core/action/processor.ts";
+import { GASender } from "../core/action/sender.ts";
 import { registerService } from "../core/dependency/service.ts";
-import { LoginGARequest, LoginGAResponse } from "../domain/loginGA.ts";
+import { LoginGARequest, loginGAResponseDef } from "../domain/loginGA.ts";
 
-async function provider() {
-  const loginGAHandler: GARequestHandler<LoginGARequest, LoginGAResponse> = {
-    async handle(request: LoginGARequest): Promise<LoginGAResponse> {
-      const { token } = request;
+async function provider(
+  _globalContext: any,
+  { sender }: {
+    sender: GASender,
+  }
+) {
+  console.log(...arguments);
+  const loginGARequestHandler: GAHandler<LoginGARequest> = {
+    async handle(request: LoginGARequest): Promise<void> {
+      const { id, token } = request;
       assertRequiredString(token, "token-should-be-valid-non-empty-string", { request });
-      return { status: 1 };
+      sender.send(loginGAResponseDef, { id, status: 1 })
     },
   };
-  return loginGAHandler;
+  return loginGARequestHandler;
 }
 
-export const loginGAHandler = registerService({ provider });
+export const loginGARequestHandler = registerService({
+  globalKey: 'loginGARequestHandler',
+  provider,
+});

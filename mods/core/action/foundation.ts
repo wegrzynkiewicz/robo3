@@ -1,45 +1,44 @@
+import { isRequiredString, Breaker, assertObject } from "../../common/asserts.ts";
 import { registerService } from "../dependency/service.ts";
-import { GACodec } from "./codec.ts";
+import { GACodec, decodeGAJsonEnvelope } from "./codec.ts";
 
-export interface GAConversation<TRequest, TResponse> {
-  code: string;
-  index: number;
-  type: "conversation";
-  request: GACodec<TRequest>;
-  response: GACodec<TResponse>;
+export interface GADefinition<TData> {
+  codec: GACodec<TData>,
+  key: number;
+  kind: string;
 }
 
-export interface GANotification<TNotification> {
-  code: string;
-  index: number;
-  notify: GACodec<TNotification>;
-  type: "notification";
-}
-
-export type GADefinition = GAConversation<any, any> | GANotification<any>;
-
-export type GAKind = "err" | "not" | "req" | "res";
-
-export interface GAHeader {
-  code: string;
-  id: number;
-  kind: GAKind;
-}
-
-export interface GAEnvelope<TData> extends GAHeader {
-  params: TData;
-}
+export type AnyGADefinition = GADefinition<any>;
 
 export class GAManager {
-  protected currentIndex = 1;
-  public readonly byCode = new Map<string, GADefinition>();
-  public readonly byIndex = new Map<number, GADefinition>();
+  public readonly byKey = new Map<number, AnyGADefinition>();
+  public readonly byKind = new Map<string, AnyGADefinition>();
 
-  public registerGADefinition<TDefinition extends GADefinition>(definition: TDefinition): TDefinition {
-    const { code, index } = definition;
-    this.byCode.set(code, definition);
-    this.byIndex.set(index, definition);
+  public registerGADefinition<TDefinition extends AnyGADefinition>(definition: TDefinition): TDefinition {
+    const { key, kind } = definition;
+    this.byKey.set(key, definition);
+    this.byKind.set(kind, definition);
     return definition;
+  }
+
+  public decode<TData>(message: unknown): [GADefinition<TData>, TData] {
+    if (isRequiredString(message)) {
+      const data = decodeGAJsonEnvelope(message);
+      const { kind } = data;
+      const definition = this.byKind.get(kind);
+      assertObject(definition, "cannot-decode-envelope-with-unknown-kind", { definition, kind });
+      const envelope = definition.codec.decode(message);
+      return [definition, envelope];
+    } else if (message instanceof ArrayBuffer) {
+      const dv = new DataView(message);
+      const key = dv.getUint32(0, false);
+      const definition = this.byKey.get(key);
+      assertObject(definition, "cannot-decode-envelope-with-unknown-key", { definition, key });
+      const envelope = definition.codec.decode(message);
+      return [definition, envelope];
+    } else {
+      throw new Breaker("unexpected-game-action-communication-message");
+    }
   }
 }
 
@@ -47,6 +46,7 @@ const manager = new GAManager();
 export const registerGADefinition = manager.registerGADefinition.bind(manager);
 
 export const gaManager = registerService({
+  globalKey: 'gaManager',
   provider: async () => (manager),
   singleton: true,
 });

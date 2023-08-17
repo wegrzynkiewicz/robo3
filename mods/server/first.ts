@@ -80,24 +80,25 @@ const unauthorizeWSSStrategy: WSSStrategy = {
     };
 
     const processor = await resolveService(serverGAProcessor);
+    console.log(processor);
     const communicator = await resolveService(onlineGACommunicator, { processor, ws });
 
     ws.onmessage = async (message) => {
       try {
-        await communicator.receive(message.data);
+        await communicator.receiver.receive(message.data);
       } catch (error) {
         logger.error("error-when-processing-wss-message", { error });
         ws.close(4001, error instanceof Breaker ? error.message : "unknown-error");
       }
     };
 
-    setTimeout(() => {
-      communicator.notify(chunksUpdateGADef, { chunks });
-      for (const c of bf) {
-        const binary = c.data.buffer;
-        communicator.notify(chunksSegmentUpdateGADef, { chunkId: c.chunkId, binary });
-      }
-    }, 500);
+    // setTimeout(() => {
+    //   communicator.notify(chunksUpdateGADef, { chunks });
+    //   for (const c of bf) {
+    //     const binary = c.data.buffer;
+    //     communicator.notify(chunksSegmentUpdateGADef, { chunkId: c.chunkId, binary });
+    //   }
+    // }, 500);
 
     // let i = 1;
     // const internal = setInterval(() => {

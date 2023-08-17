@@ -1,4 +1,4 @@
-import { GANotificationHandler } from "../../core/action/processor.ts";
+import { GAHandler } from "../../core/action/processor.ts";
 import { ChunkManager } from "../../core/chunk/chunk.ts";
 import { registerService } from "../../core/dependency/service.ts";
 import { ChunksUpdateGA } from "../../domain/chunk/chunksUpdateGA.ts";
@@ -9,7 +9,7 @@ async function provider(
     chunkManager: ChunkManager;
   },
 ) {
-  const chunksUpdateGAHandler: GANotificationHandler<ChunksUpdateGA> = {
+  const chunksUpdateGAHandler: GAHandler<ChunksUpdateGA> = {
     async handle(notification: ChunksUpdateGA): Promise<void> {
       const { chunks } = notification;
       for (const chunk of chunks) {
@@ -24,5 +24,6 @@ export const chunksUpdateGAHandler = registerService({
   dependencies: {
     chunkManager,
   },
+  globalKey: 'chunksUpdateGAHandler', 
   provider,
 });

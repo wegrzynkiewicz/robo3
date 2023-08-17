@@ -1,33 +1,24 @@
-import { assertObject, assertPositiveNumber, assertRequiredString } from "../common/asserts.ts";
 import { GAJsonCodec } from "../core/action/codec.ts";
 import { registerGADefinition } from "../core/action/foundation.ts";
 
 export interface LoginGARequest {
+  id: number;
   token: string;
 }
 
+export const loginGARequestDef = registerGADefinition({
+  codec: new GAJsonCodec<LoginGARequest>(),
+  key: 0x0001,
+  kind: 'login-req',
+});
+
 export interface LoginGAResponse {
+  id: number;
   status: number;
 }
 
-export const loginGADef = registerGADefinition({
-  code: "login",
-  index: 0x0001,
-  request: new GAJsonCodec({
-    parse(data: unknown): LoginGARequest {
-      assertObject<LoginGARequest>(data, "invalid-data");
-      const { token } = data;
-      assertRequiredString(token, "invalid-token-parameter");
-      return { token };
-    },
-  }),
-  response: new GAJsonCodec({
-    parse(data: unknown): LoginGAResponse {
-      assertObject<LoginGAResponse>(data, "invalid-data");
-      const { status } = data;
-      assertPositiveNumber(status, "invalid-status-parameter");
-      return { status };
-    },
-  }),
-  type: "conversation",
+export const loginGAResponseDef = registerGADefinition({
+  codec: new GAJsonCodec<LoginGAResponse>(),
+  key: 0x0002,
+  kind: 'login-req',
 });

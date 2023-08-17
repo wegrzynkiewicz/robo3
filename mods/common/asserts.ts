@@ -46,8 +46,19 @@ export function assertNonNull<T>(value: T, msg?: string, data?: AssertData): ass
   }
 }
 
+
+export function isObject<T>(value: unknown): value is Insecurity<T> {
+  return typeof value === "object" && value !== null;
+}
+
 export function assertObject<T>(value: unknown, msg?: string, data?: AssertData): asserts value is Insecurity<T> {
   if (typeof value !== "object" || value === null) {
+    throw new Breaker(msg, data);
+  }
+}
+
+export function assertArrayBuffer<T>(value: unknown, msg?: string, data?: AssertData): asserts value is ArrayBuffer {
+  if (!(value instanceof ArrayBuffer)) {
     throw new Breaker(msg, data);
   }
 }
@@ -69,7 +80,11 @@ export function assertRequiredString(value: unknown, msg?: string, data?: Assert
 }
 
 export function isPositiveNumber(value: unknown): value is number {
-  return typeof value === "number" && value >= 0 && !isNaN(value);
+  return typeof value === "number" && value >= 0 && !isNaN(value) && isFinite(value);
+}
+
+export function isGreaterThenZero(value: unknown): value is number {
+  return typeof value === "number" && value > 0 && !isNaN(value) && isFinite(value);
 }
 
 export function assertPositiveNumber(value: unknown, msg?: string, data?: AssertData): asserts value is number {

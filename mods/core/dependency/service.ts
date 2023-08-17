@@ -1,4 +1,5 @@
 import { Breaker } from "../../common/asserts.ts";
+import { debug } from "../../common/debug.ts";
 import { WithOptional } from "../../common/useful.ts";
 
 type ServiceKey = string | symbol;
@@ -12,6 +13,7 @@ export type Service<TProvider extends (...args: any) => any> = {
   dependencies?: {
     [K in keyof ServiceDependencies<TProvider>]: Service<ServiceProvider<ServiceDependencies<TProvider>[K]>>;
   };
+  globalKey: string;
   provider: TProvider;
   singleton: boolean;
 };
@@ -19,9 +21,10 @@ export type Service<TProvider extends (...args: any) => any> = {
 export function registerService<TProvider extends (...args: any) => any>(
   service: WithOptional<Service<TProvider>, "singleton">,
 ): Service<TProvider> {
-  const { dependencies, provider, singleton } = service;
+  const { dependencies, globalKey, provider, singleton } = service;
   return {
     dependencies,
+    globalKey,
     provider,
     singleton: singleton ?? false,
   };
@@ -35,17 +38,19 @@ export class ServiceResolver {
     service: Service<TProvider>,
     options?: ServiceOption<TProvider>,
   ): Promise<ServiceInstance<TProvider>> {
+    debug('[SERVICE] resolving', service);
     const singletonService = this.singletonServiceMap.get(service);
     if (singletonService) {
+      debug('[SERVICE] singleton-resolve', { singletonService });
       return singletonService as ServiceInstance<TProvider>;
     }
+    const promise = this.invokeProvider(service, options);
     const existingPromise = this.promises.get(service);
     if (existingPromise === undefined) {
-      const promise = this.invokeProvider(service, options);
       this.promises.set(service, promise);
       return promise;
     }
-    return existingPromise as ServiceInstance<TProvider>;
+    return promise as ServiceInstance<TProvider>;
   }
 
   async invokeProvider<TProvider extends (...args: any) => any>(
@@ -55,7 +60,9 @@ export class ServiceResolver {
     try {
       const { dependencies, provider, singleton } = service;
       const args = await this.resolveDependencies(dependencies, options);
-      const instance = await provider(args, options);
+      debug('[SERVICE] invoking', service);
+      const instance = await provider(args, options ?? {});
+      debug('[SERVICE] invoked', service);
       if (singleton === true) {
         this.singletonServiceMap.set(service, instance);
       }
