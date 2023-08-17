@@ -1,6 +1,6 @@
 import { isRequiredString, Breaker, assertObject } from "../../common/asserts.ts";
 import { registerService } from "../dependency/service.ts";
-import { GACodec, decodeGAJsonEnvelope } from "./codec.ts";
+import { GACodec, GAEnvelope, decodeGAJsonEnvelope } from "./codec.ts";
 
 export interface GADefinition<TData> {
   codec: GACodec<TData>,
@@ -21,13 +21,13 @@ export class GAManager {
     return definition;
   }
 
-  public decode<TData>(message: unknown): [GADefinition<TData>, TData] {
+  public decode<TData>(message: unknown): [GADefinition<TData>, GAEnvelope<TData>] {
     if (isRequiredString(message)) {
       const data = decodeGAJsonEnvelope(message);
       const { kind } = data;
       const definition = this.byKind.get(kind);
       assertObject(definition, "cannot-decode-envelope-with-unknown-kind", { definition, kind });
-      const envelope = definition.codec.decode(message);
+      const envelope = definition.codec.decode(data);
       return [definition, envelope];
     } else if (message instanceof ArrayBuffer) {
       const dv = new DataView(message);

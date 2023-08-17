@@ -1,6 +1,6 @@
 import { assertArrayBuffer } from "../../common/asserts.ts";
 import { fromArrayBuffer, toArrayBuffer } from "../../common/binary.ts";
-import { GACodec } from "../../core/action/codec.ts";
+import { GACodec, GAEnvelope } from "../../core/action/codec.ts";
 import { registerGADefinition } from "../../core/action/foundation.ts";
 import { ChunkId } from "../../core/chunk/chunkId.ts";
 import { ChunkSegment } from "../../core/chunk/chunkSegment.ts";
@@ -17,16 +17,21 @@ const codec = new class implements GACodec<ChunksSegmentUpdateGA> {
       + segment.byteLength;
     return byteLength;
   }
-  decode(data: unknown): ChunksSegmentUpdateGA {
+  decode(data: unknown): GAEnvelope<ChunksSegmentUpdateGA> {
     assertArrayBuffer(data, 'expected-array-buffer');
     let offset = 0;
     const chunkId = fromArrayBuffer(data, offset, ChunkId);
     offset += ChunkId.BYTE_LENGTH;
     const segment = ChunkSegment.createFromBuffer(data, offset);
-    return { chunkId, segment };
+    const envelope: GAEnvelope<ChunksSegmentUpdateGA> = {
+      id: 0,
+      kind: chunksSegmentUpdateGADef.kind,
+      params: { chunkId, segment }
+    }
+    return envelope;
   }
-  encode(data: ChunksSegmentUpdateGA): ArrayBuffer {
-    const { chunkId, segment } = data;
+  encode(envelope: GAEnvelope<ChunksSegmentUpdateGA>): ArrayBuffer {
+    const { chunkId, segment } = envelope.params;
     const byteLength =
       + ChunkId.BYTE_LENGTH
       + segment.byteLength;

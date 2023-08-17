@@ -9,7 +9,7 @@ async function provider(
     chunkManager: ChunkManager;
   },
 ) {
-  const chunksUpdateGAHandler: GAHandler<ChunksUpdateGA> = {
+  const chunksUpdateGAHandler: GAHandler<ChunksUpdateGA, void> = {
     async handle(notification: ChunksUpdateGA): Promise<void> {
       const { chunks } = notification;
       for (const chunk of chunks) {

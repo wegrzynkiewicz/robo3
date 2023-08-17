@@ -9,8 +9,7 @@ import { Binary } from "../storage/deps.ts";
 import { onlineGACommunicator } from "../core/action/communication.ts";
 import { ChunkDTO } from "../core/chunk/chunk.ts";
 import { serverGAProcessor } from "../domain-server/serverGAProcessor.ts";
-import { chunksUpdateGADef } from "../domain/chunk/chunksUpdateGA.ts";
-import { chunksSegmentUpdateGADef } from "../domain/chunk/chunkBlockUpdateGA.ts";
+import { OnlineGASender } from "../core/action/sender.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -32,18 +31,6 @@ Deno.addSignalListener(
     console.log("SIGTERM!");
   },
 );
-
-interface WSSStrategy {
-  processMessage(message: MessageEvent<any>): Promise<void>;
-}
-
-const unauthorizeWSSStrategy: WSSStrategy = {
-  async processMessage(message: MessageEvent<unknown>): Promise<void> {
-    const { data } = message;
-    assertRequiredString(data, "invalid-authorize-message");
-    const request = JSON.parse(data);
-  },
-};
 
 (async () => {
   const client = await resolveService(dbClient);
@@ -79,8 +66,8 @@ const unauthorizeWSSStrategy: WSSStrategy = {
       console.log("new client");
     };
 
-    const processor = await resolveService(serverGAProcessor);
-    console.log(processor);
+    const sender = new OnlineGASender(ws);
+    const processor = await resolveService(serverGAProcessor, { sender });
     const communicator = await resolveService(onlineGACommunicator, { processor, ws });
 
     ws.onmessage = async (message) => {

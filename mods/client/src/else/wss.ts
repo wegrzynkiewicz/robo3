@@ -1,5 +1,6 @@
 import { logger } from "../../../common/logger.ts";
 import { onlineGACommunicator } from "../../../core/action/communication.ts";
+import { OnlineGASender } from "../../../core/action/sender.ts";
 import { resolveService } from "../../../core/dependency/service.ts";
 import { clientGAProcessor } from "../../../domain-client/clientGAProcessor.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../../../domain/loginGA.ts";
@@ -7,7 +8,8 @@ import { loginGARequestDef, loginGAResponseDef } from "../../../domain/loginGA.t
 (async function () {
   const ws = new WebSocket("ws://token:token@localhost:8000/wss/token");
   ws.binaryType = "arraybuffer";
-  const processor = await resolveService(clientGAProcessor);
+  const sender = new OnlineGASender(ws);
+  const processor = await resolveService(clientGAProcessor, { sender });
   const communicator = await resolveService(onlineGACommunicator, { processor, ws });
 
   ws.addEventListener("open", async (event) => {

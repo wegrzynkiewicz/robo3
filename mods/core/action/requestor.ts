@@ -1,5 +1,6 @@
 import { isObject, isGreaterThenZero } from "../../common/asserts.ts";
 import { Deferred, deferred } from "../../deps.ts";
+import { GAEnvelope } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
 import { GAProcessor } from "./processor.ts";
 import { GASender } from "./sender.ts";
@@ -17,10 +18,10 @@ export interface GARequest<TRequest, TResponse> {
 export type AnyGARequest = GARequest<unknown, unknown>;
 
 export interface GARequestor {
-  request<TRequest extends { id: number }, TResponse extends { id: number }>(
+  request<TRequest, TResponse>(
     requestDefinition: GADefinition<TRequest>,
     responseDefinition: GADefinition<TResponse>,
-    data: WithoutId<TRequest>,
+    data: TRequest,
   ): Promise<TResponse>;
 }
 
@@ -34,7 +35,7 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
 
   }
 
-  public canProcess<TData>(definition: GADefinition<TData>, envelope: TData): boolean {
+  public canProcess<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): boolean {
     if (!isObject<WithId<TData>>(envelope)) {
       return false;
     }
@@ -52,21 +53,22 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
     return true;
   }
 
-  public async process<TData>(_definition: GADefinition<TData>, envelope: TData): Promise<void> {
-    const id = (envelope as WithId<TData>).id;
+  public async process<TData>(_definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
+    const id = envelope.id;
     const request = this.requests.get(id);
     const { promise } = request!;
     promise.resolve(envelope);
     this.requests.delete(id);
   }
 
-  public request<TRequest extends { id: number }, TResponse extends { id: number }>(
+  public request<TRequest, TResponse>(
     requestDefinition: GADefinition<TRequest>,
     responseDefinition: GADefinition<TResponse>,
-    data: WithoutId<TRequest>,
+    params: TRequest,
   ): Promise<TResponse> {
     const id = this.id++;
-    const params = { ...data, id };
+    const { kind, codec } = requestDefinition;
+    const envelope = { id, kind, params };
     const promise = deferred<TResponse>();
     const request: GARequest<TRequest, TResponse> = {
       id,
@@ -74,8 +76,9 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
       requestDefinition,
       responseDefinition,
     }
+    const data = codec.encode(envelope);
     this.requests.set(id, request);
-    this.sender.send(requestDefinition, params);
+    this.sender.sendRaw(data);
     return promise;
   }
 }

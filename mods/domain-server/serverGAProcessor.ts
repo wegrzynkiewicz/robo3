@@ -1,6 +1,7 @@
 import { GAHandler, UniversalGAProcessor } from "../core/action/processor.ts";
+import { GASender } from "../core/action/sender.ts";
 import { registerService } from "../core/dependency/service.ts";
-import { LoginGARequest, loginGARequestDef } from "../domain/loginGA.ts";
+import { LoginGARequest, LoginGAResponse, loginGARequestDef, loginGAResponseDef } from "../domain/loginGA.ts";
 import { loginGARequestHandler } from "./loginGAHandler.ts";
 
 export const serverGAProcessor = registerService({
@@ -10,11 +11,14 @@ export const serverGAProcessor = registerService({
   globalKey: 'serverGAProcessor',
   provider: async (
     { loginGARequestHandler }: {
-      loginGARequestHandler: GAHandler<LoginGARequest>;
+      loginGARequestHandler: GAHandler<LoginGARequest, LoginGAResponse>;
     },
+    { sender }: {
+      sender: GASender,
+    }
   ) => {
-    const processor = new UniversalGAProcessor();
-    processor.registerHandler(loginGARequestDef, loginGARequestHandler);
+    const processor = new UniversalGAProcessor(sender);
+    processor.registerHandler(loginGARequestDef, loginGAResponseDef, loginGARequestHandler);
     return processor;
   },
 });

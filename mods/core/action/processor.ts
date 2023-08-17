@@ -1,38 +1,63 @@
 import { Breaker } from "../../common/asserts.ts";
+import { GAEnvelope } from "./codec.ts";
 import { AnyGADefinition, GADefinition } from "./foundation.ts";
+import { GASender } from "./sender.ts";
 
 export interface GAProcessor {
-  canProcess<TData>(definition: GADefinition<TData>, envelope: TData): boolean;
-  process<TData>(definition: GADefinition<TData>, envelope: TData): Promise<void>;
+  canProcess<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): boolean;
+  process<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void>;
 }
 
-export interface GAHandler<TData> {
-  handle(envelope: TData): Promise<void>;
+export interface GAHandler<TRequest, TResponse> {
+  handle(envelope: TRequest): Promise<TResponse>;
 }
 
-export type AnyGAHandler = GAHandler<any>;
+export type AnyGAHandler = GAHandler<any, any>;
+
+export interface HandlerBinding<TRequest, TResponse> {
+  handler: GAHandler<TRequest, TResponse>,
+  request: GADefinition<TRequest>,
+  response?: GADefinition<TResponse>,
+}
+export type AnyHandlerBinding = HandlerBinding<any, any>;
 
 export class UniversalGAProcessor implements GAProcessor {
-  public handlers = new WeakMap<AnyGADefinition, AnyGAHandler>();
+  public handlers = new Map<AnyGADefinition, AnyHandlerBinding>();
 
-  public registerHandler<TData>(
-    definition: GADefinition<TData>,
-    handler: GAHandler<TData>,
+  public constructor(
+    public readonly sender: GASender,
   ) {
-    this.handlers.set(definition, handler as AnyGAHandler);
+
+  }
+
+  public registerHandler<TRequest, TResponse>(
+    request: GADefinition<TRequest>,
+    response: TResponse extends void ? undefined : GADefinition<TResponse>,
+    handler: GAHandler<TRequest, TResponse>,
+  ) {
+    const binding: HandlerBinding<TRequest, TResponse> = { handler, request, response };
+    this.handlers.set(request, binding);
   }
 
   public canProcess<TData>(definition: GADefinition<TData>): boolean {
     return this.handlers.has(definition);
   }
 
-  public async process<TData>(definition: GADefinition<TData>, envelope: TData): Promise<void> {
-    const handler = this.handlers.get(definition);
-    if (!handler) {
+  public async process<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
+    const binding = this.handlers.get(definition);
+    if (!binding) {
       throw new Breaker("game-action-handler-not-found", { definition, envelope });
     }
     try {
-      await handler.handle(envelope);
+      const { id, params } = envelope;
+      const { handler, response } = binding;
+      const result = await handler.handle(params);
+      if (response !== undefined) {
+        const { kind, codec } = response;
+        const resultEnvelope: GAEnvelope<unknown> = { id, kind, params: result };
+        const data = codec.encode(resultEnvelope);
+        this.sender.sendRaw(data);
+      }
     } catch (error) {
       throw new Breaker("error-inside-game-action-handler", { definition, envelope, error });
     }

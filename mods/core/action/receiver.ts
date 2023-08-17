@@ -25,9 +25,9 @@ export class UniversalGAReceiver implements GAReceiver {
           await processor.process(definition, envelope);
         } catch (error) {
           const isBreaker = error instanceof Breaker;
-          this.logger.error("error-then-processing-game-action-envelope", { definition, envelope });
+          this.logger.error("error-then-processing-game-action-envelope", { definition, envelope, error });
           if (!isBreaker) {
-            throw new Breaker("unknown-error-then-processing-game-request", { definition, envelope });
+            throw new Breaker("unknown-error-then-processing-game-request", { definition, envelope, error });
           }
         }
         processed = true;
