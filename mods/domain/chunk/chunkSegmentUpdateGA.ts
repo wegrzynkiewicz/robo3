@@ -1,5 +1,5 @@
 import { assertArrayBuffer } from "../../common/asserts.ts";
-import { fromArrayBuffer, toArrayBuffer } from "../../common/binary.ts";
+import { copyViewToArrayBuffer, fromArrayBuffer, toArrayBuffer } from "../../common/binary.ts";
 import { GACodec, GAEnvelope } from "../../core/action/codec.ts";
 import { registerGADefinition } from "../../core/action/foundation.ts";
 import { ChunkId } from "../../core/chunk/chunkId.ts";
@@ -10,20 +10,19 @@ export interface ChunksSegmentUpdateGA {
   segment: ChunkSegment,
 }
 
-const codec = new class implements GACodec<ChunksSegmentUpdateGA> {
+const codec: GACodec<ChunksSegmentUpdateGA> = {
   decode(data: unknown): GAEnvelope<ChunksSegmentUpdateGA> {
     assertArrayBuffer(data, 'expected-array-buffer');
     let offset = 0;
     const chunkId = fromArrayBuffer(data, offset, ChunkId);
-    offset += ChunkId.BYTE_LENGTH;
-    const segment = ChunkSegment.createFromBuffer(data, offset);
+    const segment = ChunkSegment.createFromBuffer(data,  offset += ChunkId.BYTE_LENGTH);
     const envelope: GAEnvelope<ChunksSegmentUpdateGA> = {
       id: 0,
       kind: chunksSegmentUpdateGADef.kind,
       params: { chunkId, segment }
     }
     return envelope;
-  }
+  },
   encode(envelope: GAEnvelope<ChunksSegmentUpdateGA>): ArrayBuffer {
     const { chunkId, segment } = envelope.params;
     const byteLength =
@@ -32,8 +31,7 @@ const codec = new class implements GACodec<ChunksSegmentUpdateGA> {
     const buffer = new ArrayBuffer(byteLength);
     let offset = 0;
     toArrayBuffer(buffer, offset, chunkId);
-    offset += ChunkId.BYTE_LENGTH;
-    (new Uint8Array(buffer, offset, segment.byteLength)).set(segment.view);
+    copyViewToArrayBuffer(buffer, offset += ChunkId.BYTE_LENGTH, segment);
     return buffer;
   }
 }

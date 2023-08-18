@@ -1,4 +1,4 @@
-import { assertEqual } from "../../common/asserts.ts";
+import { Breaker, assertEqual } from "../../common/asserts.ts";
 import { registerIdentifier } from "../identifier.ts";
 import { TILES_PER_CHUNK_GRID } from "../vars.ts";
 
@@ -49,6 +49,19 @@ export class ChunkSegmentList {
   public static calcByteLength(count: number): number {
     return count * ChunkSegmentList.ITEM_BYTE_LENGTH;
   }
+
+  public read(index: number): [number, number] {
+    const currentIndex = index * 2;
+    const goTypeId = this.view[currentIndex + 0];
+    const position = this.view[currentIndex + 1];
+    return [goTypeId, position];
+  }
+
+  public write(index: number, goTypeId: number, position: number) {
+    const currentIndex = index * 2;
+    this.view[currentIndex + 0] = goTypeId;
+    this.view[currentIndex + 1] = position;
+  }
 }
 
 export class ChunkSegmentGrid {
@@ -63,6 +76,14 @@ export class ChunkSegmentGrid {
     byteOffset: number,
   ) {
     this.view = new Uint16Array(buffer, byteOffset, ChunkSegmentGrid.ITEM_COUNT);
+  }
+
+  public read(index: number): number {
+    return this.view[index];
+  }
+
+  public write(index: number, goTypeId: number) {
+    this.view[index] = goTypeId;
   }
 }
 
