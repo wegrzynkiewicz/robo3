@@ -1,24 +1,14 @@
-import { GAHandler, UniversalGAProcessor } from "../core/action/processor.ts";
-import { GASender } from "../core/action/sender.ts";
-import { registerService } from "../core/dependency/service.ts";
-import { LoginGARequest, LoginGAResponse, loginGARequestDef, loginGAResponseDef } from "../domain/loginGA.ts";
-import { loginGARequestHandler } from "./loginGAHandler.ts";
+import { GAProcessor, UniversalGAProcessor } from "../core/action/processor.ts";
+import { gaSenderService } from "../core/action/sender.ts";
+import { ServiceResolver, registerService } from "../core/dependency/service.ts";
+import { loginGARequestDef, loginGAResponseDef } from "../domain/loginGA.ts";
+import { loginGARequestHandlerService } from "./loginGAHandler.ts";
 
 export const serverGAProcessor = registerService({
-  dependencies: {
-    loginGARequestHandler,
-  },
-  globalKey: 'serverGAProcessor',
-  provider: async (
-    { loginGARequestHandler }: {
-      loginGARequestHandler: GAHandler<LoginGARequest, LoginGAResponse>;
-    },
-    { sender }: {
-      sender: GASender,
-    }
-  ) => {
+  provider: async (resolver: ServiceResolver): Promise<GAProcessor> => {
+    const sender = await resolver.resolve(gaSenderService);
     const processor = new UniversalGAProcessor(sender);
-    processor.registerHandler(loginGARequestDef, loginGAResponseDef, loginGARequestHandler);
+    processor.registerHandler(loginGARequestDef, loginGAResponseDef, await resolver.resolve(loginGARequestHandlerService));
     return processor;
   },
 });

@@ -1,15 +1,16 @@
-import { assertRequiredString, Breaker } from "../common/asserts.ts";
+import { Breaker } from "../common/asserts.ts";
 import { logger } from "../common/logger.ts";
-import { resolveService } from "../core/dependency/service.ts";
 import { Application, Router } from "./deps.ts";
 import { ChunkDoc } from "../storage/chunk.ts";
 import { dbClient } from "./db.ts";
 import { ChunkId } from "../core/chunk/chunkId.ts";
 import { Binary } from "../storage/deps.ts";
-import { onlineGACommunicator } from "../core/action/communication.ts";
 import { ChunkDTO } from "../core/chunk/chunk.ts";
 import { serverGAProcessor } from "../domain-server/serverGAProcessor.ts";
-import { OnlineGASender } from "../core/action/sender.ts";
+import { gaSenderService, OnlineGASender } from "../core/action/sender.ts";
+import { ServiceResolver } from "../core/dependency/service.ts";
+import { gaCommunicator } from "../core/action/communication.ts";
+import { gaProcessorService } from "../core/action/processor.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -33,7 +34,8 @@ Deno.addSignalListener(
 );
 
 (async () => {
-  const client = await resolveService(dbClient);
+  const resolver = new ServiceResolver();
+  const client = await resolver.resolve(dbClient);
   const db = client.db("app");
   const collection = db.collection("chunks");
   const data = await collection.find().toArray();
@@ -66,9 +68,12 @@ Deno.addSignalListener(
       console.log("new client");
     };
 
+    const resolver = new ServiceResolver();
     const sender = new OnlineGASender(ws);
-    const processor = await resolveService(serverGAProcessor, { sender });
-    const communicator = await resolveService(onlineGACommunicator, { processor, ws });
+    resolver.inject(gaSenderService, sender);
+    const processor = await resolver.resolve(serverGAProcessor);
+    resolver.inject(gaProcessorService, processor);
+    const communicator = await resolver.resolve(gaCommunicator);
 
     ws.onmessage = async (message) => {
       try {

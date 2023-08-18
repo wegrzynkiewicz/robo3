@@ -1,9 +1,10 @@
 import { isObject, isGreaterThenZero } from "../../common/asserts.ts";
 import { Deferred, deferred } from "../../deps.ts";
+import { ServiceResolver, registerService } from "../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
 import { GAProcessor } from "./processor.ts";
-import { GASender } from "./sender.ts";
+import { GASender, gaSenderService } from "./sender.ts";
 
 export type WithId<TData> = { id: number } & TData;
 export type WithoutId<TData> = Omit<TData, 'id'>;
@@ -82,3 +83,10 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
     return promise;
   }
 }
+
+export const gaRequestorService = registerService({
+  provider: async (resolver: ServiceResolver): Promise<UniversalGARequestor> => {
+    const sender = await resolver.resolve(gaSenderService);
+    return new UniversalGARequestor(sender);
+  },
+});

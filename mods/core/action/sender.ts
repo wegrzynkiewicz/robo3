@@ -1,4 +1,5 @@
 import { Breaker } from "../../common/asserts.ts";
+import { registerService } from "../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
 
@@ -31,3 +32,9 @@ export class OnlineGASender implements GASender {
     // TODO: process WS
   }
 }
+
+export const gaSenderService = registerService({
+  async provider(): Promise<GASender> {
+    throw new Breaker('sender-service-should-be-injected');
+  },
+})

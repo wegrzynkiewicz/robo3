@@ -1,4 +1,5 @@
 import { Breaker } from "../../common/asserts.ts";
+import { registerService } from "../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
 import { AnyGADefinition, GADefinition } from "./foundation.ts";
 import { GASender } from "./sender.ts";
@@ -63,3 +64,9 @@ export class UniversalGAProcessor implements GAProcessor {
     }
   }
 }
+
+export const gaProcessorService = registerService({
+  async provider(): Promise<GAProcessor> {
+    throw new Breaker('main-ga-processor-should-be-injected');
+  },
+});

@@ -1,16 +1,21 @@
 import { logger } from "../../../common/logger.ts";
-import { onlineGACommunicator } from "../../../core/action/communication.ts";
-import { OnlineGASender } from "../../../core/action/sender.ts";
-import { resolveService } from "../../../core/dependency/service.ts";
+import { gaCommunicator } from "../../../core/action/communication.ts";
+import { gaProcessorService } from "../../../core/action/processor.ts";
+import { OnlineGASender, gaSenderService } from "../../../core/action/sender.ts";
+import { ServiceResolver } from "../../../core/dependency/service.ts";
 import { clientGAProcessor } from "../../../domain-client/clientGAProcessor.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../../../domain/loginGA.ts";
 
 (async function () {
   const ws = new WebSocket("ws://token:token@localhost:8000/wss/token");
   ws.binaryType = "arraybuffer";
+
+  const resolver = new ServiceResolver();
   const sender = new OnlineGASender(ws);
-  const processor = await resolveService(clientGAProcessor, { sender });
-  const communicator = await resolveService(onlineGACommunicator, { processor, ws });
+  resolver.inject(gaSenderService, sender);
+  const processor = await resolver.resolve(clientGAProcessor);
+  resolver.inject(gaProcessorService, processor);
+  const communicator = await resolver.resolve(gaCommunicator);
 
   ws.addEventListener("open", async (event) => {
     const { status } = await communicator.requestor.request(

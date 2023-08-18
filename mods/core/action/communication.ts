@@ -1,8 +1,7 @@
-import { registerService, resolveService } from "../dependency/service.ts";
-import { GAProcessor } from "./processor.ts";
-import { GAReceiver, universalGAReceiver } from "./receiver.ts";
-import { GARequestor, UniversalGARequestor } from "./requestor.ts";
-import { GASender, OnlineGASender } from "./sender.ts";
+import { ServiceResolver, registerService } from "../dependency/service.ts";
+import { GAReceiver, gaReceiverService } from "./receiver.ts";
+import { GARequestor, gaRequestorService } from "./requestor.ts";
+import { GASender, gaSenderService } from "./sender.ts";
 
 export interface GACommunicator {
   sender: GASender,
@@ -10,19 +9,17 @@ export interface GACommunicator {
   requestor: GARequestor,
 }
 
-export const onlineGACommunicator = registerService({
-  globalKey: 'onlineGACommunicator',
-  provider: async (
-    _globalContext: unknown,
-    { processor, ws }: {
-      processor: GAProcessor;
-      ws: WebSocket;
-    },
-  ) => {
-    const sender = new OnlineGASender(ws);
-    const requestor = new UniversalGARequestor(sender);
-    const processors: GAProcessor[] = [requestor, processor];
-    const receiver = await resolveService(universalGAReceiver, {processors});
+export const gaCommunicator = registerService({
+  async provider(resolver: ServiceResolver): Promise<GACommunicator> {
+    const [
+      sender,
+      receiver,
+      requestor,
+    ] = await Promise.all([
+      resolver.resolve(gaSenderService),
+      resolver.resolve(gaReceiverService),
+      resolver.resolve(gaRequestorService),
+    ]);
     const communicator: GACommunicator = {
       sender,
       receiver,
