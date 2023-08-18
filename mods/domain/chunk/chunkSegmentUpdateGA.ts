@@ -11,12 +11,6 @@ export interface ChunksSegmentUpdateGA {
 }
 
 const codec = new class implements GACodec<ChunksSegmentUpdateGA> {
-  calcBufferSize({ segment }: ChunksSegmentUpdateGA): number {
-    const byteLength =
-      + ChunkId.BYTE_LENGTH
-      + segment.byteLength;
-    return byteLength;
-  }
   decode(data: unknown): GAEnvelope<ChunksSegmentUpdateGA> {
     assertArrayBuffer(data, 'expected-array-buffer');
     let offset = 0;

@@ -1,9 +1,15 @@
 import { assertEqual } from "../../common/asserts.ts";
+import { registerIdentifier } from "../identifier.ts";
 import { TILES_PER_CHUNK_GRID } from "../vars.ts";
+
+const identifier = registerIdentifier({
+  key: 0x11,
+  kind: 'chunk-segment-header',
+});
 
 export class ChunkSegmentHeader {
 
-  public static readonly HEADER_ID = 0x11;
+  public static readonly HEADER_ID = identifier.key;
   public static readonly BYTE_LENGTH = 8;
 
   public constructor(
@@ -99,7 +105,7 @@ export class ChunkSegment {
     return this.createSegment(buffer, 0, header);
   }
 
-  public static createSegment(buffer: ArrayBuffer, byteOffset: number, header: ChunkSegmentHeader): ChunkSegment {
+  protected static createSegment(buffer: ArrayBuffer, byteOffset: number, header: ChunkSegmentHeader): ChunkSegment {
     let offset = byteOffset;
     offset += ChunkSegmentHeader.BYTE_LENGTH;
     const grid = new ChunkSegmentGrid(buffer, offset);

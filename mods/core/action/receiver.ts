@@ -45,7 +45,7 @@ export const gaReceiverService = registerService({
   async provider(resolver: ServiceResolver): Promise<GAReceiver> {
     const [
       gaManager,
-      ...processors,
+      ...processors
     ] = await Promise.all([
       resolver.resolve(gaManagerService),
       resolver.resolve(gaRequestorService),

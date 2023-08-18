@@ -1,5 +1,6 @@
 import { isRequiredString, Breaker, assertObject } from "../../common/asserts.ts";
 import { registerService } from "../dependency/service.ts";
+import { registerIdentifier } from "../identifier.ts";
 import { GACodec, GAEnvelope, decodeGAJsonEnvelope } from "./codec.ts";
 
 export interface GADefinition<TData> {
@@ -16,6 +17,7 @@ export class GAManager {
 
   public registerGADefinition<TDefinition extends AnyGADefinition>(definition: TDefinition): TDefinition {
     const { key, kind } = definition;
+    registerIdentifier({ key, kind });
     this.byKey.set(key, definition);
     this.byKind.set(kind, definition);
     return definition;
