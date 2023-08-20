@@ -1,4 +1,5 @@
 import { assertObject, assertPositiveNumber, assertRequiredString } from "../../common/asserts.ts";
+import { BinarySerializable } from "../../common/binary.ts";
 
 export interface GAEnvelope<TData> {
   id: number;
@@ -14,8 +15,6 @@ export interface GACodec<TData> {
 }
 
 export type AnyGACodec = GACodec<any>;
-
-export type WithKind<TData> = { kind: string } & TData
 
 export function decodeGAJsonEnvelope(message: string): AnyGAEnvelope {
   const envelope = JSON.parse(message);
@@ -36,4 +35,29 @@ export class GAJsonCodec<TData> implements GACodec<TData> {
   encode(data: GAEnvelope<TData>): string {
     return JSON.stringify(data);
   }
+}
+
+export class GABinaryHeader implements BinarySerializable {
+  public static readonly BYTE_LENGTH = 8;
+
+  public constructor(
+    public readonly key: number,
+    public readonly id: number,
+  ) {
+  }
+
+  public toDataView(dv: DataView): void {
+    dv.setUint32(0, this.key, true);
+    dv.setUint32(4, this.id, true);
+  }
+
+  public static fromDataView(dv: DataView): GABinaryHeader {
+    const key = dv.getUint32(0, true);
+    const id = dv.getUint32(4, true);
+    return new GABinaryHeader(key, id);
+  }
+}
+
+export function align(byteLength: number): number {
+  return Math.ceil(byteLength / 4) * 4;
 }

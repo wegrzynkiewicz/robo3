@@ -33,7 +33,7 @@ export class GAManager {
       return [definition, envelope];
     } else if (message instanceof ArrayBuffer) {
       const dv = new DataView(message);
-      const key = dv.getUint32(0, false);
+      const key = dv.getUint32(0, true);
       const definition = this.byKey.get(key);
       assertObject(definition, "cannot-decode-envelope-with-unknown-key", { definition, key });
       const envelope = definition.codec.decode(message);

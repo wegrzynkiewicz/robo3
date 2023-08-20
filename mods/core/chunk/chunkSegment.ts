@@ -19,12 +19,12 @@ export class ChunkSegmentHeader {
 
   public toDataView(dv: DataView): void {
     const { itemCount } = this;
-    dv.setUint8(0, ChunkSegmentHeader.HEADER_ID);
+    dv.setUint32(0, ChunkSegmentHeader.HEADER_ID, true);
     dv.setUint32(4, itemCount, true);
   }
 
   public static fromDataView(dv: DataView): ChunkSegmentHeader {
-    const id = dv.getUint8(0);
+    const id = dv.getUint32(0, true);
     assertEqual(id, ChunkSegmentHeader.HEADER_ID, 'invalid-header-id-in-buffer');
     const itemCount = dv.getUint32(4, true);
     return new ChunkSegmentHeader(itemCount);
@@ -119,7 +119,6 @@ export class ChunkSegment {
   public static createEmpty(itemCount: number): ChunkSegment {
     const byteLength = ChunkSegment.calcByteLength(itemCount);
     const buffer = new ArrayBuffer(byteLength);
-
     const dv = new DataView(buffer, 0);
     const header = new ChunkSegmentHeader(itemCount);
     header.toDataView(dv);

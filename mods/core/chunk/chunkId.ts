@@ -16,10 +16,10 @@ export class ChunkId {
 
   public toDataView(dv: DataView): void {
     const { spaceId, x, y, z } = this;
-    dv.setUint32(0, spaceId);
-    dv.setUint16(4, z);
-    dv.setUint16(6, y);
-    dv.setUint16(8, x);
+    dv.setUint32(0, spaceId, true);
+    dv.setUint16(4, z, true);
+    dv.setUint16(6, y, true);
+    dv.setUint16(8, x, true);
   }
 
   public toHex(): string {
@@ -34,10 +34,10 @@ export class ChunkId {
   }
 
   public static fromDataView(dv: DataView): ChunkId {
-    const spaceId = dv.getUint32(0);
-    const z = dv.getUint16(4);
-    const y = dv.getUint16(6);
-    const x = dv.getUint16(8);
+    const spaceId = dv.getUint32(0, true);
+    const z = dv.getUint16(4, true);
+    const y = dv.getUint16(6, true);
+    const x = dv.getUint16(8, true);
     return new ChunkId(spaceId, x, y, z);
   }
 

@@ -4,13 +4,16 @@ import { Application, Router } from "./deps.ts";
 import { ChunkDoc } from "../storage/chunk.ts";
 import { dbClient } from "./db.ts";
 import { ChunkId } from "../core/chunk/chunkId.ts";
-import { Binary } from "../storage/deps.ts";
 import { ChunkDTO } from "../core/chunk/chunk.ts";
 import { serverGAProcessor } from "../domain-server/serverGAProcessor.ts";
 import { gaSenderService, OnlineGASender } from "../core/action/sender.ts";
 import { ServiceResolver } from "../core/dependency/service.ts";
 import { gaCommunicator } from "../core/action/communication.ts";
 import { gaProcessorService } from "../core/action/processor.ts";
+import { chunkSegmentUpdateGADef } from "../domain/chunk/chunkSegmentUpdateGA.ts";
+import { chunksUpdateGADef } from "../domain/chunk/chunksUpdateGA.ts";
+import { decompress } from "../common/binary.ts";
+import { ChunkSegment } from "../core/chunk/chunkSegment.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -42,16 +45,18 @@ Deno.addSignalListener(
   const dx = data as unknown as ChunkDoc[];
 
   const chunks: ChunkDTO[] = [];
-  const bf: { chunkId: ChunkId; data: Binary }[] = [];
+  const bf: { chunkId: ChunkId; segment: ChunkSegment }[] = [];
   for (const c of dx) {
     chunks.push({
       chunkId: c._id.toString("hex"),
       extended: [],
       tiles: c.tiles,
     });
+    const decompressed = await decompress(c.data.buffer);
+    const segment = ChunkSegment.createFromBuffer(decompressed, 0);
     bf.push({
       chunkId: ChunkId.fromHex(c._id.toString("hex")),
-      data: c.data,
+      segment,
     });
   }
 
@@ -84,13 +89,12 @@ Deno.addSignalListener(
       }
     };
 
-    // setTimeout(() => {
-    //   communicator.notify(chunksUpdateGADef, { chunks });
-    //   for (const c of bf) {
-    //     const binary = c.data.buffer;
-    //     communicator.notify(chunksSegmentUpdateGADef, { chunkId: c.chunkId, binary });
-    //   }
-    // }, 500);
+    setTimeout(() => {
+      communicator.sender.send(chunksUpdateGADef, { chunks });
+      for (const c of bf) {
+        communicator.sender.send(chunkSegmentUpdateGADef, c);
+      }
+    }, 500);
 
     // let i = 1;
     // const internal = setInterval(() => {
