@@ -14,12 +14,12 @@ export class IdentifierRegistry {
     const { key, kind } = source;
     const existsIdentifierByKey = this.byKey.get(key);
     if (existsIdentifierByKey !== undefined) {
-      throw new Breaker('identifier-with-key-already-exists', { existsIdentifierByKey, key });
+      throw new Breaker("identifier-with-key-already-exists", { existsIdentifierByKey, key });
     }
     this.byKey.set(key, source);
     const existsIdentifierByKind = this.byKind.get(kind);
     if (existsIdentifierByKind !== undefined) {
-      throw new Breaker('identifier-with-key-kind-exists', { existsIdentifierByKind, key });
+      throw new Breaker("identifier-with-key-kind-exists", { existsIdentifierByKind, key });
     }
     this.byKind.set(kind, source);
     return source;

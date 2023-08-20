@@ -13,5 +13,5 @@ export const loginGARequestHandlerService = registerService({
       },
     };
     return loginGARequestHandler;
-  }
+  },
 });

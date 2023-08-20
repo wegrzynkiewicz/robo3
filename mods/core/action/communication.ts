@@ -1,12 +1,12 @@
-import { ServiceResolver, registerService } from "../dependency/service.ts";
+import { registerService, ServiceResolver } from "../dependency/service.ts";
 import { GAReceiver, gaReceiverService } from "./receiver.ts";
 import { GARequestor, gaRequestorService } from "./requestor.ts";
 import { GASender, gaSenderService } from "./sender.ts";
 
 export interface GACommunicator {
-  sender: GASender,
-  receiver: GAReceiver,
-  requestor: GARequestor,
+  sender: GASender;
+  receiver: GAReceiver;
+  requestor: GARequestor;
 }
 
 export const gaCommunicator = registerService({
@@ -23,8 +23,8 @@ export const gaCommunicator = registerService({
     const communicator: GACommunicator = {
       sender,
       receiver,
-      requestor
-    }
+      requestor,
+    };
     return communicator;
   },
 });

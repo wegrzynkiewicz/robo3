@@ -16,9 +16,9 @@ export interface GAHandler<TRequest, TResponse> {
 export type AnyGAHandler = GAHandler<any, any>;
 
 export interface HandlerBinding<TRequest, TResponse> {
-  handler: GAHandler<TRequest, TResponse>,
-  request: GADefinition<TRequest>,
-  response?: GADefinition<TResponse>,
+  handler: GAHandler<TRequest, TResponse>;
+  request: GADefinition<TRequest>;
+  response?: GADefinition<TResponse>;
 }
 export type AnyHandlerBinding = HandlerBinding<any, any>;
 
@@ -28,7 +28,6 @@ export class UniversalGAProcessor implements GAProcessor {
   public constructor(
     public readonly sender: GASender,
   ) {
-
   }
 
   public registerHandler<TRequest, TResponse>(
@@ -67,6 +66,6 @@ export class UniversalGAProcessor implements GAProcessor {
 
 export const gaProcessorService = registerService({
   async provider(): Promise<GAProcessor> {
-    throw new Breaker('main-ga-processor-should-be-injected');
+    throw new Breaker("main-ga-processor-should-be-injected");
   },
 });

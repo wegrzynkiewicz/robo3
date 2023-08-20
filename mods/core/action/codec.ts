@@ -27,7 +27,6 @@ export function decodeGAJsonEnvelope(message: string): AnyGAEnvelope {
 }
 
 export class GAJsonCodec<TData> implements GACodec<TData> {
-
   decode(data: unknown): GAEnvelope<TData> {
     return data as GAEnvelope<TData>;
   }

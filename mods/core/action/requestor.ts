@@ -1,19 +1,19 @@
-import { isObject, isGreaterThenZero } from "../../common/asserts.ts";
+import { isGreaterThenZero, isObject } from "../../common/asserts.ts";
 import { Deferred, deferred } from "../../deps.ts";
-import { ServiceResolver, registerService } from "../dependency/service.ts";
+import { registerService, ServiceResolver } from "../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
 import { GAProcessor } from "./processor.ts";
 import { GASender, gaSenderService } from "./sender.ts";
 
 export type WithId<TData> = { id: number } & TData;
-export type WithoutId<TData> = Omit<TData, 'id'>;
+export type WithoutId<TData> = Omit<TData, "id">;
 
 export interface GARequest<TRequest, TResponse> {
-  id: number,
-  promise: Deferred<TResponse>,
-  requestDefinition: GADefinition<TRequest>,
-  responseDefinition: GADefinition<TResponse>,
+  id: number;
+  promise: Deferred<TResponse>;
+  requestDefinition: GADefinition<TRequest>;
+  responseDefinition: GADefinition<TResponse>;
 }
 
 export type AnyGARequest = GARequest<unknown, unknown>;
@@ -33,7 +33,6 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
   public constructor(
     public readonly sender: GASender,
   ) {
-
   }
 
   public canProcess<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): boolean {
@@ -76,7 +75,7 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
       promise,
       requestDefinition,
       responseDefinition,
-    }
+    };
     const data = codec.encode(envelope);
     this.requests.set(id, request);
     this.sender.sendRaw(data);

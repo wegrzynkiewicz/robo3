@@ -1,7 +1,7 @@
 import { logger } from "../../../common/logger.ts";
 import { gaCommunicator } from "../../../core/action/communication.ts";
 import { gaProcessorService } from "../../../core/action/processor.ts";
-import { OnlineGASender, gaSenderService } from "../../../core/action/sender.ts";
+import { gaSenderService, OnlineGASender } from "../../../core/action/sender.ts";
 import { ServiceResolver } from "../../../core/dependency/service.ts";
 import { clientGAProcessor } from "../../../domain-client/clientGAProcessor.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../../../domain/loginGA.ts";
@@ -21,7 +21,7 @@ import { loginGARequestDef, loginGAResponseDef } from "../../../domain/loginGA.t
     const { status } = await communicator.requestor.request(
       loginGARequestDef,
       loginGAResponseDef,
-      { token: "test" }
+      { token: "test" },
     );
     const data = new Uint8Array(8);
   });

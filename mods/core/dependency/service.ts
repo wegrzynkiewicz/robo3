@@ -19,7 +19,7 @@ export class ServiceResolver {
     if (service.singleton) {
       singletons.set(service, instance);
     }
-  } 
+  }
 
   async resolve<TInstance>(service: Service<TInstance>): Promise<TInstance> {
     const singletonService = singletons.get(service);
@@ -52,9 +52,9 @@ export class ServiceResolver {
 }
 
 export function registerService<TInstance>(
-  service: WithOptional<Service<TInstance>, 'singleton'>,
+  service: WithOptional<Service<TInstance>, "singleton">,
 ): Service<TInstance> {
-  const {provider, singleton} = service;
+  const { provider, singleton } = service;
   return {
     provider,
     singleton: singleton ?? false,

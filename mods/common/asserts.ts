@@ -46,7 +46,6 @@ export function assertNonNull<T>(value: T, msg?: string, data?: AssertData): ass
   }
 }
 
-
 export function isObject<T>(value: unknown): value is Insecurity<T> {
   return typeof value === "object" && value !== null;
 }

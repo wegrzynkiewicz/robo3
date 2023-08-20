@@ -1,5 +1,5 @@
 import { GAHandler } from "../../core/action/processor.ts";
-import { ServiceResolver, registerService } from "../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../core/dependency/service.ts";
 import { ChunkSegmentUpdateGA } from "../../domain/chunk/chunkSegmentUpdateGA.ts";
 
 export const chunkSegmentUpdateGAHandlerService = registerService({

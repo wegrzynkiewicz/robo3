@@ -1,10 +1,10 @@
-import { isRequiredString, Breaker, assertObject } from "../../common/asserts.ts";
+import { assertObject, Breaker, isRequiredString } from "../../common/asserts.ts";
 import { registerService } from "../dependency/service.ts";
 import { registerIdentifier } from "../identifier.ts";
-import { GACodec, GAEnvelope, decodeGAJsonEnvelope } from "./codec.ts";
+import { decodeGAJsonEnvelope, GACodec, GAEnvelope } from "./codec.ts";
 
 export interface GADefinition<TData> {
-  codec: GACodec<TData>,
+  codec: GACodec<TData>;
   key: number;
   kind: string;
 }

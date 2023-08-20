@@ -22,8 +22,7 @@ export const DEFAULT_GAME_OBJECT_SPRITE_INDEX = 2;
 // u16 - tex
 // u16 - alfa
 
-
-// 1 1 
+// 1 1
 // 2 4
 // 3 16
 // 4 64
@@ -33,4 +32,3 @@ export const DEFAULT_GAME_OBJECT_SPRITE_INDEX = 2;
 // 8 16384
 // 9 65536
 // A 262144
-

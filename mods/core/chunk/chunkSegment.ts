@@ -1,14 +1,13 @@
-import { Breaker, assertEqual } from "../../common/asserts.ts";
+import { assertEqual, Breaker } from "../../common/asserts.ts";
 import { registerIdentifier } from "../identifier.ts";
 import { TILES_PER_CHUNK_GRID } from "../vars.ts";
 
 const identifier = registerIdentifier({
   key: 0x11,
-  kind: 'chunk-segment-header',
+  kind: "chunk-segment-header",
 });
 
 export class ChunkSegmentHeader {
-
   public static readonly HEADER_ID = identifier.key;
   public static readonly BYTE_LENGTH = 8;
 
@@ -25,7 +24,7 @@ export class ChunkSegmentHeader {
 
   public static fromDataView(dv: DataView): ChunkSegmentHeader {
     const id = dv.getUint32(0, true);
-    assertEqual(id, ChunkSegmentHeader.HEADER_ID, 'invalid-header-id-in-buffer');
+    assertEqual(id, ChunkSegmentHeader.HEADER_ID, "invalid-header-id-in-buffer");
     const itemCount = dv.getUint32(4, true);
     return new ChunkSegmentHeader(itemCount);
   }
@@ -103,10 +102,9 @@ export class ChunkSegment {
   }
 
   public static calcByteLength(itemCount: number): number {
-    const byteLength =
-      + (ChunkSegmentHeader.BYTE_LENGTH)
-      + (ChunkSegmentGrid.BYTE_LENGTH)
-      + (ChunkSegmentList.calcByteLength(itemCount));
+    const byteLength = +(ChunkSegmentHeader.BYTE_LENGTH) +
+      (ChunkSegmentGrid.BYTE_LENGTH) +
+      (ChunkSegmentList.calcByteLength(itemCount));
     return byteLength;
   }
 

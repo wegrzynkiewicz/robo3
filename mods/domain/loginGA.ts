@@ -8,7 +8,7 @@ export interface LoginGARequest {
 export const loginGARequestDef = registerGADefinition({
   codec: new GAJsonCodec<LoginGARequest>(),
   key: 0x0001,
-  kind: 'login-req',
+  kind: "login-req",
 });
 
 export interface LoginGAResponse {
@@ -18,5 +18,5 @@ export interface LoginGAResponse {
 export const loginGAResponseDef = registerGADefinition({
   codec: new GAJsonCodec<LoginGAResponse>(),
   key: 0x0002,
-  kind: 'login-res',
+  kind: "login-res",
 });

@@ -70,9 +70,9 @@ function generateChunkSegment(): ChunkSegment {
 })();
 
 function resolveService(dbClient: Service<MongoClient>) {
-throw new Error("Function not implemented.");
+  throw new Error("Function not implemented.");
 }
 
 function generateBuilder() {
-throw new Error("Function not implemented.");
+  throw new Error("Function not implemented.");
 }

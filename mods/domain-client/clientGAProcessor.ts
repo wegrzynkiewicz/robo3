@@ -1,6 +1,6 @@
 import { UniversalGAProcessor } from "../core/action/processor.ts";
 import { gaSenderService } from "../core/action/sender.ts";
-import { ServiceResolver, registerService } from "../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../core/dependency/service.ts";
 import { chunkSegmentUpdateGADef } from "../domain/chunk/chunkSegmentUpdateGA.ts";
 import { chunksUpdateGADef } from "../domain/chunk/chunksUpdateGA.ts";
 import { chunkSegmentUpdateGAHandlerService } from "./chunk/chunkSegmentUpdateGAHandler.ts";

@@ -5,11 +5,10 @@ import { GADefinition } from "./foundation.ts";
 
 export interface GASender {
   send<TData>(definition: GADefinition<TData>, data: TData): void;
-  sendRaw(data: string | ArrayBuffer): void
+  sendRaw(data: string | ArrayBuffer): void;
 }
 
 export class OnlineGASender implements GASender {
-
   public constructor(
     public readonly ws: WebSocket,
   ) {
@@ -35,6 +34,6 @@ export class OnlineGASender implements GASender {
 
 export const gaSenderService = registerService({
   async provider(): Promise<GASender> {
-    throw new Breaker('sender-service-should-be-injected');
+    throw new Breaker("sender-service-should-be-injected");
   },
-})
+});
