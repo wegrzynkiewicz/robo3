@@ -1,4 +1,5 @@
 import { Breaker } from "../../common/asserts.ts";
+import { logger } from "../../common/logger.ts";
 import { registerService } from "../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
@@ -25,7 +26,8 @@ export class OnlineGASender implements GASender {
     const { ws } = this;
     const { readyState } = ws;
     if (readyState !== ws.OPEN) {
-      throw new Breaker("ws-not-open", { readyState });
+      logger.error("ws-not-open", { readyState });
+      return;
     }
     ws.send(data);
     // TODO: process WS

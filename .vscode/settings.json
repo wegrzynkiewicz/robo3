@@ -21,6 +21,7 @@
     "tileheight",
     "tilelayer",
     "Tileset",
-    "tilewidth"
-  ]
+    "tilewidth",
+    "uvec"
+]
 }

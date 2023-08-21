@@ -1,8 +1,7 @@
 import { ChunkId } from "../core/chunk/chunkId.ts";
 import { ChunkSegment } from "../core/chunk/chunkSegment.ts";
-import { Service, ServiceResolver } from "../core/dependency/service.ts";
+import { ServiceResolver } from "../core/dependency/service.ts";
 import { dbClient } from "../server/db.ts";
-import { MongoClient } from "../server/deps.ts";
 import { ChunkDoc } from "../storage/chunk.ts";
 import { Binary, deflate } from "../storage/deps.ts";
 import { SpaceDoc } from "../storage/space.ts";
@@ -11,6 +10,7 @@ let tile = 1;
 function generateChunkSegment(): ChunkSegment {
   const segment = ChunkSegment.createEmpty(32);
   segment.grid.view.fill(tile++);
+  segment.grid.view[4] = 5;
   for (let x = 0; x < 32; x++) {
     const position = Math.floor(32 * 32 + 32 * 32);
     const goTypeId = Math.floor(Math.random() * 256);
@@ -68,11 +68,3 @@ function generateChunkSegment(): ChunkSegment {
 
   await client.close();
 })();
-
-function resolveService(dbClient: Service<MongoClient>) {
-  throw new Error("Function not implemented.");
-}
-
-function generateBuilder() {
-  throw new Error("Function not implemented.");
-}

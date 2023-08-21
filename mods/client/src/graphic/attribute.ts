@@ -1,108 +1,52 @@
-export type AttributeType =
-  | WebGL2RenderingContext["BOOL"]
-  | WebGL2RenderingContext["BYTE"]
-  | WebGL2RenderingContext["FLOAT"]
-  | WebGL2RenderingContext["INT"]
-  | WebGL2RenderingContext["SHORT"]
-  | WebGL2RenderingContext["UNSIGNED_BYTE"]
-  | WebGL2RenderingContext["UNSIGNED_INT"]
-  | WebGL2RenderingContext["UNSIGNED_SHORT"];
+import { isPositiveNumber } from "../../../common/asserts.ts";
+import { logger } from "../../../common/logger.ts";
+import { VertexAttributeType } from "./types.ts";
 
-export type Accessor =
-  | Float32ArrayConstructor
-  | Int8ArrayConstructor
-  | Int16ArrayConstructor
-  | Int32ArrayConstructor
-  | Uint8ArrayConstructor
-  | Uint16ArrayConstructor
-  | Uint32ArrayConstructor;
-
-export interface VertexAttribute {
-  accessor: Accessor;
-  axes: number;
-  byteSize: number;
-  divisor: number;
-  glType: AttributeType;
-  isInteger: boolean;
-  isSigned: boolean;
-  location: number;
-  name: string;
-  normalize: boolean;
-  shaderType: string;
-  totalByteSize: number;
-}
-
-export function toShaderLine(va: VertexAttribute) {
-  const { location, name, shaderType } = va;
-  return `layout(location = ${location}) in ${shaderType} ${name};`;
-}
-
-function resolveIntegerTypeByByte(byte: number): number {
-  switch (byte) {
-    case 1:
-      return WebGL2RenderingContext["BYTE"];
-    case 2:
-      return WebGL2RenderingContext["SHORT"];
-    case 4:
-      return WebGL2RenderingContext["INT"];
-    default:
-      return 0;
+export class VertexAttribute {
+  public readonly byteOffset: number;
+  public readonly byteStride: number;
+  public readonly divisor: number;
+  public readonly location: number;
+  public readonly name: string;
+  public readonly type: VertexAttributeType;
+  public constructor(
+    { byteOffset, byteStride, divisor, location, name, type }: {
+      byteOffset: number;
+      byteStride?: number;
+      divisor?: number;
+      location: number,
+      name: string,
+      type: VertexAttributeType,
+    }
+  ) {
+    this.byteOffset = byteOffset;
+    this.byteStride = byteStride ?? 0;
+    this.divisor = divisor ?? 0;
+    this.location = location;
+    this.name = name;
+    this.type = type;
   }
-}
 
-export function attribute(text: string): VertexAttribute {
-  const segments = text.split(":");
-  const [location, structure, name, divisor] = segments;
-  const chars = structure.split("");
-  const type = chars.shift();
-
-  let glType: AttributeType = WebGL2RenderingContext["FLOAT"];
-  let axes = 1;
-  let isInteger = false;
-  let isSigned = false;
-  let shaderType = "";
-  if (type === "v") {
-    axes = parseInt(chars.shift()!);
+  public toShaderLine() {
+    const { location, name, type: { shaderType } } = this;
+    return `layout(location = ${location}) in ${shaderType} ${name};`;
   }
-  const scalar = chars.shift();
-  const byteSize = parseInt(chars.shift()!);
-  switch (scalar) {
-    case "b": {
-      glType = WebGL2RenderingContext["BOOL"];
-      shaderType = axes > 1 ? `bvec${axes}` : "bool";
-      break;
+
+  public enableVertexAttribute(gl: WebGL2RenderingContext, glProgram: WebGLProgram): void {
+    const { byteOffset, byteStride, divisor, name, type: { axes, glType, isInteger } } = this;
+    const location = gl.getAttribLocation(glProgram, name);
+    if (!isPositiveNumber(location)) {
+      logger.warn("attribute-location-not-found-in-shader", { va: this });
+      return;
     }
-    case "f": {
-      shaderType = axes > 1 ? `vec${axes}` : "float";
-      break;
+    gl.enableVertexAttribArray(location);
+    if (isInteger) {
+      gl.vertexAttribIPointer(location, axes, glType, byteStride, byteOffset);
+    } else {
+      gl.vertexAttribPointer(location, axes, glType, false, byteStride, byteOffset);
     }
-    case "i": {
-      isSigned = true;
-      isInteger = true;
-      glType = resolveIntegerTypeByByte(byteSize) as AttributeType;
-      shaderType = axes > 1 ? `ivec${axes}` : "int";
-      break;
-    }
-    case "u": {
-      isInteger = true;
-      glType = resolveIntegerTypeByByte(byteSize) + 1 as AttributeType;
-      shaderType = axes > 1 ? `uvec${axes}` : "uint";
+    if (divisor > 0) {
+      gl.vertexAttribDivisor(location, divisor);
     }
   }
-  const totalByteSize = byteSize * axes;
-
-  return {
-    accessor: Float32Array,
-    axes,
-    byteSize,
-    divisor: divisor ? parseInt(divisor) : 0,
-    glType,
-    isInteger,
-    isSigned,
-    location: parseInt(location),
-    name,
-    normalize: false,
-    shaderType,
-    totalByteSize,
-  };
 }

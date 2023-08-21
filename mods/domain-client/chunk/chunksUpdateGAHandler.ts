@@ -10,7 +10,7 @@ export const chunksUpdateGAHandlerService = registerService({
       async handle(request: ChunksUpdateGA): Promise<void> {
         const { chunks } = request;
         for (const chunk of chunks) {
-          chunkManager.register(chunk);
+          chunkManager.update(chunk);
         }
       },
     };

@@ -22,6 +22,15 @@ export const DEFAULT_GAME_OBJECT_SPRITE_INDEX = 2;
 // u16 - tex
 // u16 - alfa
 
+// 32 pos x
+// 32 pos y
+// 16 tex atlas
+//  8 tex x
+//  8 tex y
+//  8 tex w
+//  8 tex h
+//  8 alpha
+
 // 1 1
 // 2 4
 // 3 16
