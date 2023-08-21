@@ -14,6 +14,7 @@ import { createSpriteIndexTable } from "../core/sprite/binding.ts";
 import { allocateSpritesInCanvas } from "./src/graphic/texture.ts";
 import { ServiceResolver } from "../core/dependency/service.ts";
 import { chunkManagerService } from "../domain-client/chunk/chunkManager.ts";
+import { index2coords } from "../core/numbers.ts";
 
 document.addEventListener("DOMContentLoaded", () => {
   documentHeight();
@@ -145,21 +146,12 @@ async function loadMap() {
         if (textureIndex === 0) {
           continue;
         }
-        // ta[n + 0] = 1;
-        // ta[n + 1] = 1;
-        // ta[n + 2] = 1;
-        // ta[n + 3] = 1;
-        // ta[n + 4] = 1;
-        // ta[n + 5] = 1;
-        // ta[n + 6] = 1;
-        // ta[n + 7] = 1;
-        
         ta[n + 0] = x * 32.0;
         ta[n + 1] = y * 32.0;
         ta[n + 2] = 32.0;
         ta[n + 3] = 32.0;
-        ta[n + 4] = 0.45;
-        ta[n + 5] = 0.32;
+        ta[n + 4] = index2coords(textureIndex)[0] * 32.0;
+        ta[n + 5] = index2coords(textureIndex)[1] * 32.0;
         ta[n + 6] = 0;
         ta[n + 7] = 0;
         n += 8;

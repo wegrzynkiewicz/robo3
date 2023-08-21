@@ -1,5 +1,4 @@
 import { assertNonNull } from "../../../common/asserts.ts";
-import { SPRITE_STRIDE_NORMALIZED } from "../../../core/vars.ts";
 import { VertexAttribute } from "./attribute.ts";
 import { vec,float } from "./types.ts";
 import { createProgram, GL } from "./utilities.ts";
@@ -23,33 +22,28 @@ ${tileTex.toShaderLine()}
 ${tileAlpha.toShaderLine()}
 
 out vec3 v_texCoords;
-out vec3 v_color;
-out vec2 v_color2;
-out float alpha;
-flat out ivec2 texture4;
+flat out float v_alpha;
 
 uniform instanced {
   mat4 worldMatrix;
   vec4 test[4092];
 };
 
+float TEXTURE_SIZE = 1024.0;
+
 uniform mat4 u_Projection;
 
 void main(void) {
     gl_Position = u_Projection * vec4(vertPos.xy * tileSize.xy + tilePos.xy, 0.0, 1.0);
-    v_texCoords = tileTex + vec3(vertTex, 0.0);
-    v_color = vec3(tilePos.xy, 1.0);
+    v_texCoords = vec3((tileTex.xy + (vertTex.xy * tileSize.xy)) / TEXTURE_SIZE, tileTex.z);
+    v_alpha = tileAlpha;
 }
-
 `;
 
 const fragmentShader = `#version 300 es
 
 in highp vec3 v_texCoords;
-in highp vec3 v_color;
-in highp vec2 v_color2;
-in highp float alpha;
-flat in highp ivec2 texture4;
+in highp float v_alpha;
 
 out highp vec4 outputColor;
 
@@ -57,8 +51,6 @@ uniform sampler2D u_texture;
 
 void main(void) {
   outputColor = vec4(texture(u_texture, v_texCoords.xy));
-//   outputColor = vec4(1.0, 1.0, 1.0, 1.0);
-//   outputColor = vec4(v_color, 1.0);
 }
 `;
 
@@ -91,8 +83,7 @@ export function initGridProgram(gl: GL): {
   {
     const { byteOffset, type: { accessor, axes } } = vertTex
     const view = new accessor(perVertexBuffer, byteOffset, axes * vertexCount);
-    const s = SPRITE_STRIDE_NORMALIZED;
-    view.set([0, 0, s, 0, s, s, 0, s]);
+    view.set([0, 0, 1, 0, 1, 1, 0, 1]);
     vertTex.enableVertexAttribute(gl, glProgram);
   }
   console.log({perVertexBuffer});
