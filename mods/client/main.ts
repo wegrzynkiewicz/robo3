@@ -138,8 +138,7 @@ async function loadMap() {
     const segment = chunk.segment!;
     console.log({ segment });
     let i = 0;
-    // for (let y = TILES_PER_CHUNK_GRID_AXIS - 1; y >= 0; y--) {
-    for (let y = 0; y < TILES_PER_CHUNK_GRID_AXIS; y++) {
+    for (let y = TILES_PER_CHUNK_GRID_AXIS - 1; y >= 0; y--) {
       for (let x = 0; x < TILES_PER_CHUNK_GRID_AXIS; x++) {
         const textureIndex = segment.grid.read(i);
         i++;
@@ -296,7 +295,7 @@ function updateLogic(deltaTime: number) {
 
 function draw() {
   gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawElementsInstanced(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0, 2000);
+  gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, 2000);
   updateTexture();
 }
 
