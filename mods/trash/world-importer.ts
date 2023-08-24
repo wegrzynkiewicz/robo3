@@ -7,21 +7,20 @@ import { ChunkDoc } from "../storage/chunk.ts";
 import { Binary, deflate } from "../storage/deps.ts";
 import { SpaceDoc } from "../storage/space.ts";
 
-let tile = 1;
 function generateChunkSegment(): ChunkSegment {
-  const segment = ChunkSegment.createEmpty(32);
+  const element = Math.floor(Math.random() * 100) + 1;
+  const segment = ChunkSegment.createEmpty(element);
+  const tile = Math.floor(Math.random() * 7) + 1;
   for (let x = 0; x < 1024; x++) {
     const goTypeId = tile;
     segment.grid.view[x] = goTypeId;
   }
-  tile++;
-  for (let i = 0; i < 1; i++) {
-    // const x = Math.floor(Math.random() * 1024);
-    // const y = Math.floor(Math.random() * 1024);
-    const x = 1;
-    const y = 1;
-    const position = GONormChunkPosition.fromChunkPosition(x, y, 0, 32);
-    const goTypeId = Math.floor(Math.random() * 256);
+  for (let i = 0; i < element; i++) {
+    const x = Math.floor(Math.random() * 1024);
+    const y = Math.floor(Math.random() * 1024);
+    const position = GONormChunkPosition.fromChunkPosition(x, y, 0, 1024);
+    // const goTypeId = Math.floor(Math.random() * 256);
+    const goTypeId = Math.floor(Math.random() * 33) + 41;
     segment.list.write(i, goTypeId, position.index);
   }
   return segment;
