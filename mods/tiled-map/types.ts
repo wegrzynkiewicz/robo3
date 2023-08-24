@@ -154,7 +154,7 @@ export async function processMap() {
   await processTileSet(ctx, json);
 
   ctx.tilesTextureAllocator.paintHelperTiles();
-  ctx.tilesTextureAllocator.contexts.map((c) => document.body.appendChild(c.canvas));
+//   ctx.tilesTextureAllocator.contexts.map((c) => document.body.appendChild(c.canvas));
   const dataSource = ctx.tilesTextureAllocator.contexts[0].getImageData(0, 0, SPRITES_TEXTURE_SIZE, SPRITES_TEXTURE_SIZE);
   return dataSource;
 }

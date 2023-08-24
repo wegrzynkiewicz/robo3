@@ -2,7 +2,7 @@ import { assertNonNull } from "../common/asserts.ts";
 import { TILES_PER_CHUNK_GRID_AXIS } from "../core/vars.ts";
 import { processMap } from "../tiled-map/types.ts";
 import { initGridProgram } from "./src/graphic/gridProgram.ts";
-import { ortho } from "./src/graphic/math.ts";
+import { identity, ortho, translate } from "./src/graphic/math.ts";
 import { getUniformBlocksInfo, getUniformInfo } from "./src/graphic/utilities.ts";
 import "./src/else/wss.ts";
 import "../core/bootstrap.ts";
@@ -16,10 +16,6 @@ import { ServiceResolver } from "../core/dependency/service.ts";
 import { chunkManagerService } from "../domain-client/chunk/chunkManager.ts";
 import { index2coords } from "../core/numbers.ts";
 
-document.addEventListener("DOMContentLoaded", () => {
-  documentHeight();
-});
-
 const canvas = document.getElementById("primary-canvas") as HTMLCanvasElement;
 assertNonNull(canvas, "cannot-find-primary-canvas");
 
@@ -27,14 +23,6 @@ const gl = canvas.getContext("webgl2", {
   premultipliedAlpha: true, // Ask for non-premultiplied alpha
   alpha: false,
 })!;
-const documentHeight = () => {
-  document.documentElement.style.setProperty("--doc-height", `${window.innerHeight * 0.01}px`);
-  document.documentElement.style.height = `${window.innerHeight}px`;
-  document.body.style.height = `${window.innerHeight}px`;
-  canvas.height = window.innerHeight;
-};
-globalThis.addEventListener(`resize`, documentHeight);
-documentHeight();
 
 gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
@@ -94,7 +82,7 @@ gl.samplerParameteri(nearestSampler, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 gl.samplerParameteri(nearestSampler, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 gl.bindSampler(0, nearestSampler);
 
-const ab = new ArrayBuffer(32* 2000);
+const ab = new ArrayBuffer(32 * 2000);
 const ta = new Float32Array(ab);
 const ia = new Int32Array(ab);
 
@@ -159,7 +147,7 @@ async function loadMap() {
     n += 8;
     break;
   }
-  console.log({ab});
+  console.log({ ab });
   gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, ab, gl.DYNAMIC_DRAW);
   draw();
@@ -202,6 +190,7 @@ console.log({ ab });
 
 gl.useProgram(glProgram);
 const projectionLoc1 = gl.getUniformLocation(glProgram, "u_Projection");
+const viewMatrixLoc = gl.getUniformLocation(glProgram, "u_View");
 const textureLoc1 = gl.getUniformLocation(glProgram, "u_texture");
 console.log(getUniformBlocksInfo(gl, glProgram));
 console.log(getUniformInfo(gl, glProgram));
@@ -232,33 +221,50 @@ const datas: [string, number][] = [
   ["SRC_ALPHA_SATURATE", gl.SRC_ALPHA_SATURATE],
 ];
 
-let sb = 0;
-let eb = 0;
-document.addEventListener("keypress", (event) => {
-  if (event.key === "q") {
-    sb += 1;
-  }
-  if (event.key === "z") {
-    sb -= 1;
-  }
-  if (event.key === "e") {
-    eb += 1;
-  }
-  if (event.key === "c") {
-    eb -= 1;
-    loadMap();
-    console.log('test');
-  }
-  //   console.log(datas[sb][0], "----", datas[eb][0]);
-  //   gl.blendFunc(datas[sb][1], datas[eb][1]);
+const keys: Record<string, boolean> = {};
+document.addEventListener("keydown", (event) => {
+  keys[event.code] = true;
 });
+document.addEventListener("keyup", (event) => {
+  keys[event.code] = false;
+});
+
+const viewMatrix = new Float32Array(16);
+identity(viewMatrix);
+gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
+
+function processKeyboard(deltaTime: number) {
+  let y = 0;
+  let x = 0;
+  if (keys['KeyW'] === true) {
+    y = -0.3 * deltaTime;
+  }
+  if (keys['KeyS'] === true) {
+    y = 0.3 * deltaTime;
+  }
+  if (keys['KeyD'] === true) {
+    x = -0.3 * deltaTime;
+  }
+  if (keys['KeyA'] === true) {
+    x = 0.3 * deltaTime;
+  }
+  translate(viewMatrix, viewMatrix, [x, y, 0]);
+  gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
+}
 
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  ortho(projection, 0, canvas.width / 2, 0, canvas.height / 2, -10, 10);
+
+  const w = 32 * 16 * 2;
+  const h = 32 * 9 * 2;
+
+  const ratio = 9 / 16;
+
+  canvas.width = w;
+  canvas.height = h;
+
+  ortho(projection, 0, w / 2, 0, h / 2, -10, 10);
   gl.uniformMatrix4fv(projectionLoc1, false, projection);
   gl.viewport(0, 0, canvas.width, canvas.height);
   console.log(canvas.width, "x", canvas.height);
@@ -266,7 +272,6 @@ function resizeCanvas() {
 // resize the canvas to fill browser window dynamically
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
-documentHeight();
 
 let then = 0;
 let frameCount = 0;
@@ -282,6 +287,7 @@ function mainLoop(now: number) {
       frameCount = 0;
       timeAccumulator = 0;
     }
+    processKeyboard(deltaTime);
     updateLogic(deltaTime);
     draw();
     then = now;
@@ -312,7 +318,7 @@ const cgoMap = c.resolveGameObjectTypes();
 
   const res = await allocateSpritesInCanvas({ sprites });
   for (const context of res.contexts) {
-    document.body.appendChild(context.canvas);
+    // document.body.appendChild(context.canvas);
   }
 })();
 

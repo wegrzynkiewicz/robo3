@@ -9,8 +9,10 @@ import { SpaceDoc } from "../storage/space.ts";
 let tile = 1;
 function generateChunkSegment(): ChunkSegment {
   const segment = ChunkSegment.createEmpty(32);
-  segment.grid.view.fill(tile++);
-  segment.grid.view[4] = 5;
+  for (let x = 0; x < 1024; x++) {
+    const goTypeId = Math.floor(Math.random() * 1024);
+    segment.grid.view[x] = goTypeId;
+  }
   for (let x = 0; x < 32; x++) {
     const position = Math.floor(32 * 32 + 32 * 32);
     const goTypeId = Math.floor(Math.random() * 256);

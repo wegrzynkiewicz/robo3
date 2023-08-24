@@ -38,6 +38,7 @@ const vec2 vertices[6] = vec2[6](
 float TEXTURE_SIZE = 1024.0;
 
 uniform mat4 u_Projection;
+uniform mat4 u_View;
 
 void main(void) {
   vec2 localSpace = vertices[gl_VertexID];
@@ -45,7 +46,7 @@ void main(void) {
   vec2 texelSpace = modelSpace.xy + tileTex.xy;
   vec2 worldSpace = modelSpace.xy + tilePos.xy;
   vec2 textureUVN = texelSpace.xy / TEXTURE_SIZE;
-  gl_Position = u_Projection * vec4(worldSpace.xy, 0.0, 1.0);
+  gl_Position = u_Projection * u_View * vec4(worldSpace.xy, 0.0, 1.0);
   v_texCoords = vec3(textureUVN.xy, tileTex.z);
   v_alpha = tileAlpha;
 }
