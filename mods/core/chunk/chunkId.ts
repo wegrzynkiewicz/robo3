@@ -1,4 +1,5 @@
 import { Position } from "../numbers.ts";
+import { LAYERS_PER_CHUNK, PIXELS_PER_CHUNK_GRID_AXIS } from "../vars.ts";
 
 export class ChunkId {
   public static readonly BYTE_LENGTH = 10;
@@ -31,6 +32,13 @@ export class ChunkId {
       x.toString(16).padStart(4, "0"),
     ];
     return parts.join("");
+  }
+
+  public toSpacePosition(): Position {
+    const x = this.x * PIXELS_PER_CHUNK_GRID_AXIS;
+    const y = this.y * PIXELS_PER_CHUNK_GRID_AXIS;
+    const z = this.z * LAYERS_PER_CHUNK;
+    return { x, y, z };
   }
 
   public static fromDataView(dv: DataView): ChunkId {

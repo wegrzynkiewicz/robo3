@@ -1,4 +1,4 @@
-import { assertEqual, Breaker } from "../../common/asserts.ts";
+import { assertEqual } from "../../common/asserts.ts";
 import { registerIdentifier } from "../identifier.ts";
 import { TILES_PER_CHUNK_GRID } from "../vars.ts";
 
@@ -34,7 +34,7 @@ export class ChunkSegmentList {
   public static readonly ITEM_BYTE_LENGTH = 8;
 
   public readonly byteLength: number;
-  protected readonly view: Uint32Array;
+  public readonly view: Uint32Array;
 
   public constructor(
     buffer: ArrayBuffer,

@@ -1,6 +1,7 @@
 import { ChunkId } from "../core/chunk/chunkId.ts";
 import { ChunkSegment } from "../core/chunk/chunkSegment.ts";
 import { ServiceResolver } from "../core/dependency/service.ts";
+import { GONormChunkPosition } from "../core/game-object/position.ts";
 import { dbClient } from "../server/db.ts";
 import { ChunkDoc } from "../storage/chunk.ts";
 import { Binary, deflate } from "../storage/deps.ts";
@@ -10,13 +11,18 @@ let tile = 1;
 function generateChunkSegment(): ChunkSegment {
   const segment = ChunkSegment.createEmpty(32);
   for (let x = 0; x < 1024; x++) {
-    const goTypeId = Math.floor(Math.random() * 1024);
+    const goTypeId = tile;
     segment.grid.view[x] = goTypeId;
   }
-  for (let x = 0; x < 32; x++) {
-    const position = Math.floor(32 * 32 + 32 * 32);
+  tile++;
+  for (let i = 0; i < 1; i++) {
+    // const x = Math.floor(Math.random() * 1024);
+    // const y = Math.floor(Math.random() * 1024);
+    const x = 1;
+    const y = 1;
+    const position = GONormChunkPosition.fromChunkPosition(x, y, 0, 32);
     const goTypeId = Math.floor(Math.random() * 256);
-    segment.list.write(x, goTypeId, position);
+    segment.list.write(i, goTypeId, position.index);
   }
   return segment;
 }

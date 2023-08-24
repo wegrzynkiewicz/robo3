@@ -41,24 +41,6 @@ Deno.addSignalListener(
   const client = await resolver.resolve(dbClient);
   const db = client.db("app");
   const collection = db.collection("chunks");
-  const data = await collection.find().toArray();
-  const dx = data as unknown as ChunkDoc[];
-
-  const chunks: ChunkDTO[] = [];
-  const bf: { chunkId: ChunkId; segment: ChunkSegment }[] = [];
-  for (const c of dx) {
-    chunks.push({
-      chunkId: c._id.toString("hex"),
-      extended: [],
-      tiles: c.tiles,
-    });
-    const decompressed = await decompress(c.data.buffer);
-    const segment = ChunkSegment.createFromBuffer(decompressed, 0);
-    bf.push({
-      chunkId: ChunkId.fromHex(c._id.toString("hex")),
-      segment,
-    });
-  }
 
   router.get("/wss/:token", async (ctx) => {
     if (!ctx.isUpgradable) {
@@ -68,6 +50,25 @@ Deno.addSignalListener(
     ctx.request.headers;
 
     const ws = ctx.upgrade();
+    
+    const data = await collection.find().toArray();
+    const dx = data as unknown as ChunkDoc[];
+  
+    const chunks: ChunkDTO[] = [];
+    const bf: { chunkId: ChunkId; segment: ChunkSegment }[] = [];
+    for (const c of dx) {
+      chunks.push({
+        chunkId: c._id.toString("hex"),
+        extended: [],
+        tiles: c.tiles,
+      });
+      const decompressed = await decompress(c.data.buffer);
+      const segment = ChunkSegment.createFromBuffer(decompressed, 0);
+      bf.push({
+        chunkId: ChunkId.fromHex(c._id.toString("hex")),
+        segment,
+      });
+    }
 
     ws.onopen = (event) => {
       console.log("new client");

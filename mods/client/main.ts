@@ -82,7 +82,7 @@ gl.samplerParameteri(nearestSampler, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 gl.samplerParameteri(nearestSampler, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 gl.bindSampler(0, nearestSampler);
 
-const ab = new ArrayBuffer(32 * 2000);
+const ab = new ArrayBuffer(32 * 30000);
 const ta = new Float32Array(ab);
 const ia = new Int32Array(ab);
 
@@ -123,29 +123,41 @@ async function loadMap() {
   const chunkManager = await resolver.resolve(chunkManagerService);
   let n = 0;
   for (const chunk of chunkManager.chunks.values()) {
-    const segment = chunk.segment!;
-    console.log({ segment });
-    let i = 0;
-    for (let y = TILES_PER_CHUNK_GRID_AXIS - 1; y >= 0; y--) {
-      for (let x = 0; x < TILES_PER_CHUNK_GRID_AXIS; x++) {
-        const textureIndex = segment.grid.read(i);
-        i++;
-        if (textureIndex === 0) {
-          continue;
-        }
-        ta[n + 0] = x * 32.0;
-        ta[n + 1] = y * 32.0;
-        ta[n + 2] = 32.0;
-        ta[n + 3] = 32.0;
-        ta[n + 4] = index2coords(textureIndex)[0] * 32.0;
-        ta[n + 5] = index2coords(textureIndex)[1] * 32.0;
-        ta[n + 6] = 0;
-        ta[n + 7] = 0;
-        n += 8;
-      }
+    for (const go of chunk.gos) {
+      const { goTypeId, spacePosition } = go;
+      ta[n + 0] = spacePosition.x;
+      ta[n + 1] = spacePosition.y;
+      ta[n + 2] = 32.0;
+      ta[n + 3] = 32.0;
+      ta[n + 4] = index2coords(goTypeId)[0] * 32.0;
+      ta[n + 5] = index2coords(goTypeId)[1] * 32.0;
+      ta[n + 6] = 0;
+      ta[n + 7] = 0;
+      n += 8;
     }
-    n += 8;
-    break;
+
+
+
+    // for (let y = TILES_PER_CHUNK_GRID_AXIS - 1; y >= 0; y--) {
+    //   for (let x = 0; x < TILES_PER_CHUNK_GRID_AXIS; x++) {
+    //     const textureIndex = segment.grid.read(i);
+    //     i++;
+    //     if (textureIndex === 0) {
+    //       continue;
+    //     }
+    //     ta[n + 0] = x * 32.0;
+    //     ta[n + 1] = y * 32.0;
+    //     ta[n + 2] = 32.0;
+    //     ta[n + 3] = 32.0;
+    //     ta[n + 4] = index2coords(textureIndex)[0] * 32.0;
+    //     ta[n + 5] = index2coords(textureIndex)[1] * 32.0;
+    //     ta[n + 6] = 0;
+    //     ta[n + 7] = 0;
+    //     n += 8;
+    //   }
+    // }
+    // n += 8;
+    // break;
   }
   console.log({ ab });
   gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
@@ -236,19 +248,21 @@ gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
 function processKeyboard(deltaTime: number) {
   let y = 0;
   let x = 0;
+  deltaTime= 1;
+  const speed = 8;
   if (keys['KeyW'] === true) {
-    y = -0.3 * deltaTime;
+    y = -speed * deltaTime;
   }
   if (keys['KeyS'] === true) {
-    y = 0.3 * deltaTime;
+    y = speed * deltaTime;
   }
   if (keys['KeyD'] === true) {
-    x = -0.3 * deltaTime;
+    x = -speed * deltaTime;
   }
   if (keys['KeyA'] === true) {
-    x = 0.3 * deltaTime;
+    x = speed * deltaTime;
   }
-  translate(viewMatrix, viewMatrix, [x, y, 0]);
+  translate(viewMatrix, [x, y, 0]);
   gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
 }
 
@@ -256,15 +270,15 @@ gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 function resizeCanvas() {
 
-  const w = 32 * 16 * 2;
-  const h = 32 * 9 * 2;
+  const w = 32 * 16 * 3;
+  const h = 32 * 9 * 3;
 
   const ratio = 9 / 16;
 
   canvas.width = w;
   canvas.height = h;
 
-  ortho(projection, 0, w / 2, 0, h / 2, -10, 10);
+  ortho(projection, 0, w, 0, h, -10, 10);
   gl.uniformMatrix4fv(projectionLoc1, false, projection);
   gl.viewport(0, 0, canvas.width, canvas.height);
   console.log(canvas.width, "x", canvas.height);
@@ -301,7 +315,7 @@ function updateLogic(deltaTime: number) {
 
 function draw() {
   gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, 2000);
+  gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, 30000);
   updateTexture();
 }
 
