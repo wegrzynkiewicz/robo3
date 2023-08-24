@@ -243,6 +243,7 @@ document.addEventListener("keyup", (event) => {
 
 const viewMatrix = new Float32Array(16);
 identity(viewMatrix);
+translate(viewMatrix, [50, 32 * 9 * 3 -50, 0]);
 gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
 
 function processKeyboard(deltaTime: number) {
