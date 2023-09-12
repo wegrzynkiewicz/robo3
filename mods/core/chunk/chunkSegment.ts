@@ -30,6 +30,37 @@ export class ChunkSegmentHeader {
   }
 }
 
+// export const chunkSegmentIdentifier = registerIdentifier({
+//   key: 0x11,
+//   kind: "chunk-segment-header",
+// });
+
+// export interface ChunkSegmentHeader {
+//   readonly gridBitMask: number;
+//   readonly itemCount: number;
+// }
+
+// export const chunkSegmentHeaderCodec: BinaryBYOBCodec<ChunkSegmentHeader> = {
+//   calcByteLength(): number {
+//     return 12;
+//   },
+//   decode(buffer: ArrayBuffer, byteOffset: number): ChunkSegmentHeader {
+//     const dv = new DataView(buffer, byteOffset);
+//     const key = dv.getUint32(0, true);
+//     assertEqual(key, chunkSegmentIdentifier.key, "invalid-chunk-segment-header-id-in-buffer");
+//     const itemCount = dv.getUint32(4, true);
+//     const gridBitMask = dv.getUint32(8, true);
+//     return { gridBitMask, itemCount };
+//   },
+//   encode(buffer: ArrayBuffer, byteOffset: number, data: ChunkSegmentHeader): void {
+//     const { gridBitMask, itemCount } = data;
+//     const dv = new DataView(buffer, byteOffset);
+//     dv.setUint32(0, chunkSegmentIdentifier.key, true);
+//     dv.setUint32(4, itemCount, true);
+//     dv.setUint32(8, gridBitMask, true);
+//   },
+// };
+
 export class ChunkSegmentList {
   public static readonly ITEM_BYTE_LENGTH = 8;
 

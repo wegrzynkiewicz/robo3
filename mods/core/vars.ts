@@ -21,31 +21,3 @@ export const POSITIONS_SAMPLING_PER_PIXEL = Math.floor(POSITIONS_SAMPLING_PER_CH
 export const ERROR_GAME_OBJECT_SPRITE_INDEX = 0;
 export const UNDEFINED_GAME_OBJECT_SPRITE_INDEX = 1;
 export const DEFAULT_GAME_OBJECT_SPRITE_INDEX = 2;
-
-// X,Y,Z,0 - 4
-// R,T,U   - 4
-// 0,1,2,3 - 4
-
-// u16 - pos
-// u16 - tex
-// u16 - alfa
-
-// 32 pos x
-// 32 pos y
-// 16 tex atlas
-//  8 tex x
-//  8 tex y
-//  8 tex w
-//  8 tex h
-//  8 alpha
-
-// 1 1
-// 2 4
-// 3 16
-// 4 64
-// 5 256
-// 6 1024
-// 7 4096
-// 8 16384
-// 9 65536
-// A 262144
