@@ -1,8 +1,7 @@
 import { assertNonNull } from "../../../common/asserts.ts";
 import { VertexAttribute } from "./attribute.ts";
-import { vec, float } from "./types.ts";
+import { float, vec } from "./types.ts";
 import { createProgram, GL } from "./utilities.ts";
-
 
 const byteStride = (2 * 4) + (2 * 4) + (3 * 4) + (1 * 4);
 const tilePos = new VertexAttribute({ byteOffset: 0, byteStride, divisor: 1, location: 0, name: "tilePos", type: vec(2) });

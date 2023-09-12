@@ -14,10 +14,10 @@ export class VertexAttribute {
       byteOffset: number;
       byteStride?: number;
       divisor?: number;
-      location: number,
-      name: string,
-      type: VertexAttributeType,
-    }
+      location: number;
+      name: string;
+      type: VertexAttributeType;
+    },
   ) {
     this.byteOffset = byteOffset;
     this.byteStride = byteStride ?? 0;

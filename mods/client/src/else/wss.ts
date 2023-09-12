@@ -1,7 +1,7 @@
 import { logger } from "../../../common/logger.ts";
 import { gaCommunicator } from "../../../core/action/communication.ts";
 import { gaProcessorService } from "../../../core/action/processor.ts";
-import { gaSenderService, OnlineGASender } from "../../../core/action/sender.ts";
+import { gaSenderWebSocketService } from "../../../core/action/sender.ts";
 import { ServiceResolver } from "../../../core/dependency/service.ts";
 import { clientGAProcessor } from "../../../domain-client/clientGAProcessor.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../../../domain/loginGA.ts";
@@ -11,8 +11,7 @@ import { loginGARequestDef, loginGAResponseDef } from "../../../domain/loginGA.t
   ws.binaryType = "arraybuffer";
 
   const resolver = new ServiceResolver();
-  const sender = new OnlineGASender(ws);
-  resolver.inject(gaSenderService, sender);
+  resolver.inject(gaSenderWebSocketService, ws);
   const processor = await resolver.resolve(clientGAProcessor);
   resolver.inject(gaProcessorService, processor);
   const communicator = await resolver.resolve(gaCommunicator);

@@ -8,11 +8,11 @@ import { Position } from "../../core/numbers.ts";
 import { TILES_PER_CHUNK_GRID_AXIS } from "../../core/vars.ts";
 
 export interface GOView {
-  chunkPosition: Position,
+  chunkPosition: Position;
   goTypeId: number;
-  localId: number,
-  normChunkPosition: GONormChunkPosition,
-  spacePosition: Position,
+  localId: number;
+  normChunkPosition: GONormChunkPosition;
+  spacePosition: Position;
 }
 
 export class Chunk {
@@ -21,7 +21,6 @@ export class Chunk {
   public constructor(
     public chunkId: ChunkId,
   ) {
-
   }
 
   public processGO() {

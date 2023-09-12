@@ -36,7 +36,7 @@ export function vec(axes: number): VertexAttributeType {
     isInteger: false,
     isSigned: false,
     shaderType: `vec${axes}`,
-  }
+  };
 }
 
 export function float(): VertexAttributeType {
@@ -48,21 +48,21 @@ export function float(): VertexAttributeType {
     isInteger: false,
     isSigned: false,
     shaderType: `float`,
-  }
+  };
 }
 
-export type SignedType = 'i16' | 'i32' | 'i8';
-export type UnsignedType = 'u16' | 'u32' | 'u8';
-export type MapEntry = { accessor: Accessor, glType: GLType, size: number };
+export type SignedType = "i16" | "i32" | "i8";
+export type UnsignedType = "u16" | "u32" | "u8";
+export type MapEntry = { accessor: Accessor; glType: GLType; size: number };
 
 const map: Record<SignedType | UnsignedType, MapEntry> = {
-  'i16': { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 1 },
-  'i32': { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 2 },
-  'i8': { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 4 },
-  'u16': { accessor: Uint16Array, glType: WebGL2RenderingContext["UNSIGNED_SHORT"], size: 1 },
-  'u32': { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 2 },
-  'u8': { accessor: Uint8Array, glType: WebGL2RenderingContext["UNSIGNED_BYTE"], size: 4 },
-}
+  "i16": { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 1 },
+  "i32": { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 2 },
+  "i8": { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 4 },
+  "u16": { accessor: Uint16Array, glType: WebGL2RenderingContext["UNSIGNED_SHORT"], size: 1 },
+  "u32": { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 2 },
+  "u8": { accessor: Uint8Array, glType: WebGL2RenderingContext["UNSIGNED_BYTE"], size: 4 },
+};
 
 export function uvec(axes: number, type: UnsignedType): VertexAttributeType {
   const { accessor, glType, size } = map[type];
@@ -74,7 +74,7 @@ export function uvec(axes: number, type: UnsignedType): VertexAttributeType {
     isInteger: true,
     isSigned: false,
     shaderType: `uvec${axes}`,
-  }
+  };
 }
 
 export function ivec(axes: number, type: SignedType): VertexAttributeType {
@@ -87,5 +87,5 @@ export function ivec(axes: number, type: SignedType): VertexAttributeType {
     isInteger: true,
     isSigned: true,
     shaderType: `ivec${axes}`,
-  }
+  };
 }

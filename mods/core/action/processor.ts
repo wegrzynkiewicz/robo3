@@ -48,18 +48,17 @@ export class UniversalGAProcessor implements GAProcessor {
     if (!binding) {
       throw new Breaker("game-action-handler-not-found", { definition, envelope });
     }
+    const { id, params } = envelope;
+    const { handler, response } = binding;
     try {
-      const { id, params } = envelope;
-      const { handler, response } = binding;
       const result = await handler.handle(params);
       if (response !== undefined) {
-        const { kind, codec } = response;
+        const { kind } = response;
         const resultEnvelope: GAEnvelope<unknown> = { id, kind, params: result };
-        const data = codec.encode(resultEnvelope);
-        this.sender.sendRaw(data);
+        this.sender.sendEnvelope(response, resultEnvelope);
       }
     } catch (error) {
-      throw new Breaker("error-inside-game-action-handler", { definition, envelope, error });
+      throw new Breaker("error-inside-game-action-handler", { definition, envelope: { id }, error });
     }
   }
 }

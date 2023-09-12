@@ -1,4 +1,3 @@
-import { GAJsonCodec } from "../../core/action/codec.ts";
 import { registerGADefinition } from "../../core/action/foundation.ts";
 import { ChunkDTO } from "../../core/chunk/chunk.ts";
 
@@ -7,7 +6,9 @@ export interface ChunksUpdateGA {
 }
 
 export const chunksUpdateGADef = registerGADefinition({
-  codec: new GAJsonCodec<ChunksUpdateGA>(),
+  encoding: {
+    type: "json",
+  },
   kind: "chunks-update",
   key: 0x0010,
 });

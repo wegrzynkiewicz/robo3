@@ -31,7 +31,7 @@ const texture = gl.createTexture();
 gl.activeTexture(gl.TEXTURE0 + 0);
 gl.bindTexture(gl.TEXTURE_2D, texture);
 const img = new Image();
-let updateTexture = () => { };
+let updateTexture = () => {};
 const onLoadedImage = function () {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   //   const ab2 = new Uint8Array(512 * 512 * 4);
@@ -136,8 +136,6 @@ async function loadMap() {
       n += 8;
     }
 
-
-
     // for (let y = TILES_PER_CHUNK_GRID_AXIS - 1; y >= 0; y--) {
     //   for (let x = 0; x < TILES_PER_CHUNK_GRID_AXIS; x++) {
     //     const textureIndex = segment.grid.read(i);
@@ -195,8 +193,7 @@ async function loadMap() {
 //   draw();
 // });
 
-
-setTimeout(loadMap, 500);
+setTimeout(loadMap, 1000);
 
 console.log({ ab });
 
@@ -243,24 +240,24 @@ document.addEventListener("keyup", (event) => {
 
 const viewMatrix = new Float32Array(16);
 identity(viewMatrix);
-translate(viewMatrix, [50, 32 * 9 * 3 -50, 0]);
+translate(viewMatrix, [50, 32 * 9 * 3 - 50, 0]);
 gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
 
 function processKeyboard(deltaTime: number) {
   let y = 0;
   let x = 0;
-  deltaTime= 1;
+  deltaTime = 1;
   const speed = 8;
-  if (keys['KeyW'] === true) {
+  if (keys["KeyW"] === true) {
     y = -speed * deltaTime;
   }
-  if (keys['KeyS'] === true) {
+  if (keys["KeyS"] === true) {
     y = speed * deltaTime;
   }
-  if (keys['KeyD'] === true) {
+  if (keys["KeyD"] === true) {
     x = -speed * deltaTime;
   }
-  if (keys['KeyA'] === true) {
+  if (keys["KeyA"] === true) {
     x = speed * deltaTime;
   }
   translate(viewMatrix, [x, y, 0]);
@@ -270,7 +267,6 @@ function processKeyboard(deltaTime: number) {
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 function resizeCanvas() {
-
   const w = 32 * 16 * 3;
   const h = 32 * 9 * 3;
 

@@ -1,6 +1,6 @@
 import { ChunkId } from "../chunk/chunkId.ts";
 import { Position } from "../numbers.ts";
-import { POSITIONS_SAMPLING_PER_CHUNK_AXIS, PIXELS_PER_CHUNK_GRID_AXIS, LAYERS_PER_CHUNK } from "../vars.ts";
+import { LAYERS_PER_CHUNK, PIXELS_PER_CHUNK_GRID_AXIS, POSITIONS_SAMPLING_PER_CHUNK_AXIS } from "../vars.ts";
 
 export class GONormChunkPosition implements Position {
   public static readonly X_BITMASK = 0b00000000_00000000_00111111_11111111;
@@ -32,7 +32,7 @@ export class GONormChunkPosition implements Position {
   public static fromChunkPositionIndex(index: number): GONormChunkPosition {
     const x = ((GONormChunkPosition.X_BITMASK & index) >> 0) / POSITIONS_SAMPLING_PER_CHUNK_AXIS;
     const y = ((GONormChunkPosition.Y_BITMASK & index) >> 14) / POSITIONS_SAMPLING_PER_CHUNK_AXIS;
-    const z = ((GONormChunkPosition.Z_BITMASK & index) >> 28);
+    const z = (GONormChunkPosition.Z_BITMASK & index) >> 28;
     return new GONormChunkPosition(x, y, z, index);
   }
 
@@ -40,7 +40,7 @@ export class GONormChunkPosition implements Position {
     chunkPositionX: number,
     chunkPositionY: number,
     chunkPositionZ: number,
-    ratio: number = PIXELS_PER_CHUNK_GRID_AXIS
+    ratio: number = PIXELS_PER_CHUNK_GRID_AXIS,
   ): GONormChunkPosition {
     const normX = chunkPositionX / ratio;
     const normY = chunkPositionY / ratio;
@@ -48,10 +48,10 @@ export class GONormChunkPosition implements Position {
     const x = Math.floor(normX * POSITIONS_SAMPLING_PER_CHUNK_AXIS);
     const y = Math.floor(normY * POSITIONS_SAMPLING_PER_CHUNK_AXIS);
     const z = normZ;
-    const index = 0
-      | GONormChunkPosition.X_BITMASK & (x << 0)
-      | GONormChunkPosition.Y_BITMASK & (y << 14)
-      | GONormChunkPosition.Z_BITMASK & (z << 28);
+    const index = 0 |
+      GONormChunkPosition.X_BITMASK & (x << 0) |
+      GONormChunkPosition.Y_BITMASK & (y << 14) |
+      GONormChunkPosition.Z_BITMASK & (z << 28);
     return new GONormChunkPosition(normX, normY, z, index);
   }
 }

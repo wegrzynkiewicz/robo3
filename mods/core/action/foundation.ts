@@ -1,10 +1,9 @@
-import { assertObject, Breaker, isRequiredString } from "../../common/asserts.ts";
 import { registerService } from "../dependency/service.ts";
 import { registerIdentifier } from "../identifier.ts";
-import { decodeGAJsonEnvelope, GACodec, GAEnvelope } from "./codec.ts";
+import { GAEncodingDefinition } from "./codec.ts";
 
 export interface GADefinition<TData> {
-  codec: GACodec<TData>;
+  encoding: GAEncodingDefinition<TData>;
   key: number;
   kind: string;
 }
@@ -15,32 +14,12 @@ export class GAManager {
   public readonly byKey = new Map<number, AnyGADefinition>();
   public readonly byKind = new Map<string, AnyGADefinition>();
 
-  public registerGADefinition<TDefinition extends AnyGADefinition>(definition: TDefinition): TDefinition {
+  public registerGADefinition<TInstance>(definition: GADefinition<TInstance>): GADefinition<TInstance> {
     const { key, kind } = definition;
     registerIdentifier({ key, kind });
     this.byKey.set(key, definition);
     this.byKind.set(kind, definition);
     return definition;
-  }
-
-  public decode<TData>(message: unknown): [GADefinition<TData>, GAEnvelope<TData>] {
-    if (isRequiredString(message)) {
-      const data = decodeGAJsonEnvelope(message);
-      const { kind } = data;
-      const definition = this.byKind.get(kind);
-      assertObject(definition, "cannot-decode-envelope-with-unknown-kind", { definition, kind });
-      const envelope = definition.codec.decode(data);
-      return [definition, envelope];
-    } else if (message instanceof ArrayBuffer) {
-      const dv = new DataView(message);
-      const key = dv.getUint32(0, true);
-      const definition = this.byKey.get(key);
-      assertObject(definition, "cannot-decode-envelope-with-unknown-key", { definition, key });
-      const envelope = definition.codec.decode(message);
-      return [definition, envelope];
-    } else {
-      throw new Breaker("unexpected-game-action-communication-message");
-    }
   }
 }
 

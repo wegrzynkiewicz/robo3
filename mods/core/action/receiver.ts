@@ -1,7 +1,7 @@
 import { Breaker } from "../../common/asserts.ts";
 import { Logger, logger } from "../../common/logger.ts";
 import { registerService, ServiceResolver } from "../dependency/service.ts";
-import { GAManager, gaManagerService } from "./foundation.ts";
+import { GACodec, gaCodecService } from "./codec.ts";
 import { GAProcessor, gaProcessorService } from "./processor.ts";
 import { gaRequestorService } from "./requestor.ts";
 
@@ -11,26 +11,28 @@ export interface GAReceiver {
 
 export class UniversalGAReceiver implements GAReceiver {
   public constructor(
+    public readonly codec: GACodec,
     public readonly logger: Logger,
-    public readonly manager: GAManager,
     public readonly processors: GAProcessor[],
   ) {
   }
 
   public async receive(message: unknown): Promise<void> {
-    const [definition, envelope] = this.manager.decode(message);
+    const [definition, envelope] = this.codec.decode(message);
     let processed = false;
     for (const processor of this.processors) {
       if (!processor.canProcess(definition, envelope)) {
         continue;
       }
+      const { id } = envelope;
       try {
         await processor.process(definition, envelope);
       } catch (error) {
         const isBreaker = error instanceof Breaker;
-        this.logger.error("error-then-processing-game-action-envelope", { definition, envelope, error });
+        const errorOptions = { definition, envelope: { id }, error };
+        this.logger.error("error-then-receiving-game-action-envelope", errorOptions);
         if (!isBreaker) {
-          throw new Breaker("unknown-error-then-processing-game-request", { definition, envelope, error });
+          throw new Breaker("unknown-error-then-processing-game-request", errorOptions);
         }
       }
       processed = true;
@@ -44,13 +46,13 @@ export class UniversalGAReceiver implements GAReceiver {
 export const gaReceiverService = registerService({
   async provider(resolver: ServiceResolver): Promise<GAReceiver> {
     const [
-      gaManager,
+      codec,
       ...processors
     ] = await Promise.all([
-      resolver.resolve(gaManagerService),
+      resolver.resolve(gaCodecService),
       resolver.resolve(gaRequestorService),
       resolver.resolve(gaProcessorService),
     ]);
-    return new UniversalGAReceiver(logger, gaManager, processors);
+    return new UniversalGAReceiver(codec, logger, processors);
   },
 });

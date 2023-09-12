@@ -67,8 +67,8 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
     params: TRequest,
   ): Promise<TResponse> {
     const id = this.id++;
-    const { kind, codec } = requestDefinition;
-    const envelope = { id, kind, params };
+    const { kind } = requestDefinition;
+    const envelope: GAEnvelope<TRequest> = { id, kind, params };
     const promise = deferred<TResponse>();
     const request: GARequest<TRequest, TResponse> = {
       id,
@@ -76,9 +76,8 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
       requestDefinition,
       responseDefinition,
     };
-    const data = codec.encode(envelope);
     this.requests.set(id, request);
-    this.sender.sendRaw(data);
+    this.sender.sendEnvelope(requestDefinition, envelope);
     return promise;
   }
 }

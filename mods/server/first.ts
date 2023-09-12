@@ -6,7 +6,7 @@ import { dbClient } from "./db.ts";
 import { ChunkId } from "../core/chunk/chunkId.ts";
 import { ChunkDTO } from "../core/chunk/chunk.ts";
 import { serverGAProcessor } from "../domain-server/serverGAProcessor.ts";
-import { gaSenderService, OnlineGASender } from "../core/action/sender.ts";
+import { gaSenderWebSocketService } from "../core/action/sender.ts";
 import { ServiceResolver } from "../core/dependency/service.ts";
 import { gaCommunicator } from "../core/action/communication.ts";
 import { gaProcessorService } from "../core/action/processor.ts";
@@ -50,10 +50,10 @@ Deno.addSignalListener(
     ctx.request.headers;
 
     const ws = ctx.upgrade();
-    
+
     const data = await collection.find().toArray();
     const dx = data as unknown as ChunkDoc[];
-  
+
     const chunks: ChunkDTO[] = [];
     const bf: { chunkId: ChunkId; segment: ChunkSegment }[] = [];
     for (const c of dx) {
@@ -75,8 +75,7 @@ Deno.addSignalListener(
     };
 
     const resolver = new ServiceResolver();
-    const sender = new OnlineGASender(ws);
-    resolver.inject(gaSenderService, sender);
+    resolver.inject(gaSenderWebSocketService, ws);
     const processor = await resolver.resolve(serverGAProcessor);
     resolver.inject(gaProcessorService, processor);
     const communicator = await resolver.resolve(gaCommunicator);
