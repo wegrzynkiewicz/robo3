@@ -6,6 +6,7 @@ import { registerService } from "../../core/dependency/service.ts";
 import { GONormChunkPosition } from "../../core/game-object/position.ts";
 import { Position } from "../../core/numbers.ts";
 import { TILES_PER_CHUNK_GRID_AXIS } from "../../core/vars.ts";
+import { CornerRectangle, cornerRect } from "../../math/CornerRectangle.ts";
 
 export interface GOView {
   chunkPosition: Position;
@@ -13,20 +14,27 @@ export interface GOView {
   localId: number;
   normChunkPosition: GONormChunkPosition;
   spacePosition: Position;
+  worldSpaceRect: CornerRectangle;
 }
 
 export class Chunk {
   public segment?: ChunkSegment;
   public gos: GOView[] = [];
+  public readonly worldSpaceRect: CornerRectangle;
+  public readonly worldSpaceBoundRect: CornerRectangle;
   public constructor(
     public chunkId: ChunkId,
   ) {
+    this.worldSpaceRect = this.chunkId.getWorldSpaceCornerRect();
+    this.worldSpaceBoundRect = {...this.worldSpaceRect};
   }
 
   public processGO() {
     if (this.segment === undefined) {
       return;
     }
+    let maxX = this.worldSpaceRect.x2;
+    let maxY = this.worldSpaceRect.y2;
     const gridView = this.segment.grid.view;
     let localId = 0;
     for (let y = 0; y < TILES_PER_CHUNK_GRID_AXIS; y++) {
@@ -35,7 +43,13 @@ export class Chunk {
         const normChunkPosition = GONormChunkPosition.fromChunkPosition(x, y, 0, TILES_PER_CHUNK_GRID_AXIS);
         const chunkPosition = normChunkPosition.toChunkPosition();
         const spacePosition = normChunkPosition.toSpacePosition(this.chunkId);
-        const goView: GOView = { normChunkPosition, chunkPosition, goTypeId, localId, spacePosition };
+        const worldSpaceRect = cornerRect(
+          spacePosition.x,
+          spacePosition.y,
+          spacePosition.x + 32,
+          spacePosition.y + 32,
+        );
+        const goView: GOView = { normChunkPosition, chunkPosition, goTypeId, localId, spacePosition, worldSpaceRect };
         this.gos.push(goView);
         localId++;
       }
@@ -47,10 +61,20 @@ export class Chunk {
       const normChunkPosition = GONormChunkPosition.fromChunkPositionIndex(position);
       const chunkPosition = normChunkPosition.toChunkPosition();
       const spacePosition = normChunkPosition.toSpacePosition(this.chunkId);
-      const goView: GOView = { normChunkPosition, chunkPosition, goTypeId, localId, spacePosition };
+      const worldSpaceRect = cornerRect(
+        spacePosition.x,
+        spacePosition.y,
+        spacePosition.x + 32,
+        spacePosition.y + 32,
+      );
+      maxX = Math.max(worldSpaceRect.x2,  maxX);
+      maxY = Math.max(worldSpaceRect.y2,  maxY);
+      const goView: GOView = { normChunkPosition, chunkPosition, goTypeId, localId, spacePosition, worldSpaceRect };
       this.gos.push(goView);
       localId++;
     }
+    this.worldSpaceBoundRect.x2 = maxX;
+    this.worldSpaceBoundRect.y2 = maxY;
   }
 }
 

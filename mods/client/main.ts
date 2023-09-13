@@ -1,7 +1,6 @@
 import { assertNonNull } from "../common/asserts.ts";
 import { processMap } from "../tiled-map/types.ts";
 import { initGridProgram } from "./src/graphic/gridProgram.ts";
-import { identity, ortho, translate } from "./src/graphic/math.ts";
 import { getUniformBlocksInfo, getUniformInfo } from "./src/graphic/utilities.ts";
 import "./src/else/wss.ts";
 import "../core/bootstrap.ts";
@@ -14,6 +13,9 @@ import { allocateSpritesInCanvas } from "./src/graphic/texture.ts";
 import { ServiceResolver } from "../core/dependency/service.ts";
 import { chunkManagerService } from "../domain-client/chunk/chunkManager.ts";
 import { index2coords } from "../core/numbers.ts";
+import { CornerRectangle, cornerRect, intersectsNonStrict } from "../math/CornerRectangle.ts";
+import { Point, point } from "../math/Point.ts";
+import { identity, fromTranslation, ortho } from "../math/mat4.ts";
 
 const canvas = document.getElementById("primary-canvas") as HTMLCanvasElement;
 assertNonNull(canvas, "cannot-find-primary-canvas");
@@ -50,33 +52,6 @@ const ta = new Float32Array(ab);
 
 const { glProgram, glVAOGrid, glTilesBuffer } = initGridProgram(gl);
 
-async function loadMap() {
-  const resolver = new ServiceResolver();
-  const chunkManager = await resolver.resolve(chunkManagerService);
-  let n = 0;
-  for (const chunk of chunkManager.chunks.values()) {
-    for (const go of chunk.gos) {
-      const { goTypeId, spacePosition } = go;
-      ta[n + 0] = spacePosition.x;
-      ta[n + 1] = spacePosition.y;
-      ta[n + 2] = 32.0;
-      ta[n + 3] = 32.0;
-      ta[n + 4] = index2coords(goTypeId)[0] * 32.0;
-      ta[n + 5] = index2coords(goTypeId)[1] * 32.0;
-      ta[n + 6] = 0;
-      ta[n + 7] = 0;
-      n += 8;
-    }
-  }
-  gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, ab, gl.DYNAMIC_DRAW);
-  draw();
-}
-
-setTimeout(loadMap, 1000);
-
-console.log({ ab });
-
 gl.useProgram(glProgram);
 const projectionLoc1 = gl.getUniformLocation(glProgram, "u_Projection");
 const viewMatrixLoc = gl.getUniformLocation(glProgram, "u_View");
@@ -84,6 +59,90 @@ const textureLoc1 = gl.getUniformLocation(glProgram, "u_texture");
 console.log(getUniformBlocksInfo(gl, glProgram));
 console.log(getUniformInfo(gl, glProgram));
 gl.bindVertexArray(glVAOGrid);
+
+const viewMatrix = new Float32Array(16);
+
+class Viewport {
+  public readonly worldSpaceRect: CornerRectangle;
+  public readonly halfSize: Point;
+  public readonly centerPoint: Point;
+  public constructor(
+    public readonly viewMatrix: Float32Array,
+    public readonly size: Point,
+  ) {
+    const { x, y } = size;
+    identity(viewMatrix);
+    this.centerPoint = point(0, 0);
+    this.halfSize = point(x / 2, y / 2);
+    this.worldSpaceRect = cornerRect(0, 0, 0, 0);
+    this.lookAt(0, 0);
+  }
+
+  public lookAt(x: number, y: number): void {
+    const { halfSize, viewMatrix, worldSpaceRect } = this;
+
+    worldSpaceRect.x1 = x - halfSize.x;
+    worldSpaceRect.y1 = y - halfSize.y;
+    worldSpaceRect.x2 = x + halfSize.x;
+    worldSpaceRect.y2 = y + halfSize.y;
+
+    const mx = -x + halfSize.x;
+    const my = y + halfSize.y;
+    const mz = 0;
+
+    fromTranslation(viewMatrix, mx, my, mz);
+    gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
+  }
+}
+
+const keys: Record<string, boolean> = {};
+document.addEventListener("keydown", (event) => {
+  keys[event.code] = true;
+});
+document.addEventListener("keyup", (event) => {
+  keys[event.code] = false;
+});
+
+const viewport = new Viewport(viewMatrix, { x: 480, y: 352 });
+let elements = 0;
+async function loadMap() {
+  const resolver = new ServiceResolver();
+  const chunkManager = await resolver.resolve(chunkManagerService);
+  let n = 0;
+  elements = 0;
+  for (const chunk of chunkManager.chunks.values()) {
+    if (intersectsNonStrict(chunk.worldSpaceBoundRect, viewport.worldSpaceRect)) {
+      if (keys['KeyF']) {
+        console.log(chunk);
+      }
+      for (const go of chunk.gos) {
+        if (intersectsNonStrict(go.worldSpaceRect, viewport.worldSpaceRect)) {
+          const { goTypeId, spacePosition } = go;
+          ta[n + 0] = spacePosition.x;
+          ta[n + 1] = spacePosition.y;
+          ta[n + 2] = 32.0;
+          ta[n + 3] = 32.0;
+          ta[n + 4] = index2coords(goTypeId)[0] * 32.0;
+          ta[n + 5] = index2coords(goTypeId)[1] * 32.0;
+          ta[n + 6] = 0;
+          ta[n + 7] = 0;
+          n += 8;
+          elements++;
+        }
+      }
+    }
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, ta, gl.DYNAMIC_DRAW, 0, elements * 8);
+  if (keys['KeyF']) {
+    console.log({ elements });
+  }
+  draw();
+}
+
+setTimeout(loadMap, 1000);
+
+console.log({ ab });
 
 const projection = new Float32Array(16);
 gl.uniformMatrix4fv(projectionLoc1, false, projection);
@@ -110,45 +169,36 @@ const datas: [string, number][] = [
   ["SRC_ALPHA_SATURATE", gl.SRC_ALPHA_SATURATE],
 ];
 
-const keys: Record<string, boolean> = {};
-document.addEventListener("keydown", (event) => {
-  keys[event.code] = true;
-});
-document.addEventListener("keyup", (event) => {
-  keys[event.code] = false;
-});
-
-const viewMatrix = new Float32Array(16);
-identity(viewMatrix);
-translate(viewMatrix, [50, 32 * 9 * 3 - 50, 0]);
-gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
+let y = 0;
+let x = 0;
 
 function processKeyboard(deltaTime: number) {
-  let y = 0;
-  let x = 0;
-  deltaTime = 1;
-  const speed = 8;
+  const speed = 16;
   if (keys["KeyW"] === true) {
-    y = -speed * deltaTime;
+    y += -speed;
   }
   if (keys["KeyS"] === true) {
-    y = speed * deltaTime;
+    y += speed;
   }
   if (keys["KeyD"] === true) {
-    x = -speed * deltaTime;
+    x += speed;
   }
   if (keys["KeyA"] === true) {
-    x = speed * deltaTime;
+    x += -speed;
   }
-  translate(viewMatrix, [x, y, 0]);
-  gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
+  if (keys["KeyQ"] === true) {
+    x = 0;
+    y = 0;
+  }
+
+  viewport.lookAt(x, y);
 }
 
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 function resizeCanvas() {
-  const w = 32 * 16 * 3;
-  const h = 32 * 9 * 3;
+  const w = 32 * 18;
+  const h = 32 * 11;
 
   const ratio = 9 / 16;
 
@@ -180,6 +230,7 @@ function mainLoop(now: number) {
     }
     processKeyboard(deltaTime);
     updateLogic(deltaTime);
+    loadMap();
     draw();
     then = now;
     frameCount++;
@@ -192,7 +243,7 @@ function updateLogic(deltaTime: number) {
 
 function draw() {
   gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, 30000);
+  gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, elements);
 }
 
 const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });

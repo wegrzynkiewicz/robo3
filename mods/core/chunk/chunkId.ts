@@ -1,6 +1,7 @@
+import { CornerRectangle } from "../../math/CornerRectangle.ts";
 import { BinaryBYOBCodec } from "../codec.ts";
 import { Position } from "../numbers.ts";
-import { LAYERS_PER_CHUNK, PIXELS_PER_CHUNK_GRID_AXIS } from "../vars.ts";
+import { PIXELS_PER_CHUNK_GRID_AXIS } from "../vars.ts";
 
 export class ChunkId {
   public readonly position: Position;
@@ -14,6 +15,14 @@ export class ChunkId {
     this.position = { x, y, z };
   }
 
+  public getWorldSpaceCornerRect(): CornerRectangle {
+    const x1 = this.x * PIXELS_PER_CHUNK_GRID_AXIS;
+    const y1 = this.y * PIXELS_PER_CHUNK_GRID_AXIS;
+    const x2 = x1 + PIXELS_PER_CHUNK_GRID_AXIS;
+    const y2 = y1 + PIXELS_PER_CHUNK_GRID_AXIS;
+    return { x1, y1, x2, y2 };
+  }
+
   public toHex(): string {
     const { spaceId, x, y, z } = this;
     const parts = [
@@ -23,13 +32,6 @@ export class ChunkId {
       x.toString(16).padStart(4, "0"),
     ];
     return parts.join("");
-  }
-
-  public toSpacePosition(): Position {
-    const x = this.x * PIXELS_PER_CHUNK_GRID_AXIS;
-    const y = this.y * PIXELS_PER_CHUNK_GRID_AXIS;
-    const z = this.z * LAYERS_PER_CHUNK;
-    return { x, y, z };
   }
 
   public static fromHex(hex: string) {
