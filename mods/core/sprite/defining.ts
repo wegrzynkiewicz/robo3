@@ -1,11 +1,11 @@
 import { throws } from "../../common/asserts.ts";
 import { Registry } from "../../common/registry.ts";
-import { Rectangle } from "../numbers.ts";
+import { DimensionalRectangle } from "../../math/DimensionalRectangle.ts";
 import { SPRITE_SIZE } from "../vars.ts";
 
 export interface SpriteDefinition {
   predefinedSpriteIndex?: number;
-  sourceRect: Partial<Rectangle>;
+  sourceRect: Partial<DimensionalRectangle>;
   spriteAtlasKey: string;
   spriteKey: string;
 }

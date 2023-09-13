@@ -1,5 +1,4 @@
 import { assertNonNull } from "../common/asserts.ts";
-import { TILES_PER_CHUNK_GRID_AXIS } from "../core/vars.ts";
 import { processMap } from "../tiled-map/types.ts";
 import { initGridProgram } from "./src/graphic/gridProgram.ts";
 import { identity, ortho, translate } from "./src/graphic/math.ts";
@@ -30,23 +29,6 @@ gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 const texture = gl.createTexture();
 gl.activeTexture(gl.TEXTURE0 + 0);
 gl.bindTexture(gl.TEXTURE_2D, texture);
-const img = new Image();
-let updateTexture = () => {};
-const onLoadedImage = function () {
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  //   const ab2 = new Uint8Array(512 * 512 * 4);
-  //   for (let i = 0; i < 512 * 512 * 4; i++) {
-  //     ab2[i] = Math.random() * 256;
-  //   }
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-  //   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 512, 512, 0, gl.RGBA, gl.UNSIGNED_BYTE, ab2);
-  gl.generateMipmap(gl.TEXTURE_2D);
-};
-img.addEventListener("load", () => {
-  //   onLoadedImage();
-  //   updateTexture = onLoadedImage;
-});
-img.src = "./assets/1.png";
 
 processMap().then((imageData) => {
   gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -54,25 +36,6 @@ processMap().then((imageData) => {
   gl.generateMipmap(gl.TEXTURE_2D);
   draw();
 });
-
-{
-  const level = 0;
-  const internalFormat = gl.R8;
-  const width = 3;
-  const height = 2;
-  const border = 0;
-  const format = gl.RED;
-  const type = gl.UNSIGNED_BYTE;
-  const data = new Uint8Array([
-    128,
-    64,
-    128,
-    0,
-    192,
-    0,
-  ]);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-}
 
 const nearestSampler = gl.createSampler();
 assertNonNull(nearestSampler, "cannot-create-nearest-sampler");
@@ -84,39 +47,8 @@ gl.bindSampler(0, nearestSampler);
 
 const ab = new ArrayBuffer(32 * 30000);
 const ta = new Float32Array(ab);
-const ia = new Int32Array(ab);
 
 const { glProgram, glVAOGrid, glTilesBuffer } = initGridProgram(gl);
-
-// processMap1().then((chunkManager) => {
-//   let n = 0;
-//   for (const texture of chunkManager.binaries) {
-//     console.log({ texture });
-//     let i = 0;
-//     for (let y = TILES_PER_CHUNK_GRID_AXIS - 1; y >= 0; y--) {
-//       for (let x = 0; x < TILES_PER_CHUNK_GRID_AXIS; x++) {
-//         const textureIndex = texture[i];
-//         i++;
-//         if (textureIndex === 0) {
-//           continue;
-//         }
-//         ta[n + 0] = x * 32.0;
-//         ta[n + 1] = y * 32.0;
-//         ia[n + 2] = textureIndex;
-//         ta[n + 3] = 1;
-//         n += 4;
-//       }
-//     }
-//     ta[n + 0] = 8 * 32.0;
-//     ta[n + 1] = 8 * 32.0;
-//     ia[n + 2] = 0;
-//     ta[n + 3] = 1;
-//     n += 4;
-//   }
-//   gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
-//   gl.bufferData(gl.ARRAY_BUFFER, ab, gl.DYNAMIC_DRAW);
-//   draw();
-// });
 
 async function loadMap() {
   const resolver = new ServiceResolver();
@@ -135,63 +67,11 @@ async function loadMap() {
       ta[n + 7] = 0;
       n += 8;
     }
-
-    // for (let y = TILES_PER_CHUNK_GRID_AXIS - 1; y >= 0; y--) {
-    //   for (let x = 0; x < TILES_PER_CHUNK_GRID_AXIS; x++) {
-    //     const textureIndex = segment.grid.read(i);
-    //     i++;
-    //     if (textureIndex === 0) {
-    //       continue;
-    //     }
-    //     ta[n + 0] = x * 32.0;
-    //     ta[n + 1] = y * 32.0;
-    //     ta[n + 2] = 32.0;
-    //     ta[n + 3] = 32.0;
-    //     ta[n + 4] = index2coords(textureIndex)[0] * 32.0;
-    //     ta[n + 5] = index2coords(textureIndex)[1] * 32.0;
-    //     ta[n + 6] = 0;
-    //     ta[n + 7] = 0;
-    //     n += 8;
-    //   }
-    // }
-    // n += 8;
-    // break;
   }
-  console.log({ ab });
   gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, ab, gl.DYNAMIC_DRAW);
   draw();
 }
-
-// processMap1().then((chunkManager) => {
-//   let n = 0;
-//   for (const texture of chunkManager.binaries) {
-//     console.log({ texture });
-//     let i = 0;
-//     for (let y = TILES_PER_CHUNK_GRID_AXIS - 1; y >= 0; y--) {
-//       for (let x = 0; x < TILES_PER_CHUNK_GRID_AXIS; x++) {
-//         const textureIndex = texture[i];
-//         i++;
-//         if (textureIndex === 0) {
-//           continue;
-//         }
-//         ta[n + 0] = x * 32.0;
-//         ta[n + 1] = y * 32.0;
-//         ia[n + 2] = textureIndex;
-//         ta[n + 3] = 1;
-//         n += 4;
-//       }
-//     }
-//     ta[n + 0] = 8 * 32.0;
-//     ta[n + 1] = 8 * 32.0;
-//     ia[n + 2] = 0;
-//     ta[n + 3] = 1;
-//     n += 4;
-//   }
-//   gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
-//   gl.bufferData(gl.ARRAY_BUFFER, ab, gl.DYNAMIC_DRAW);
-//   draw();
-// });
 
 setTimeout(loadMap, 1000);
 
@@ -313,7 +193,6 @@ function updateLogic(deltaTime: number) {
 function draw() {
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, 30000);
-  updateTexture();
 }
 
 const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });

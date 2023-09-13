@@ -1,11 +1,11 @@
-import { Rectangle } from "../numbers.ts";
+import { DimensionalRectangle } from "../../math/DimensionalRectangle.ts";
 import { SpriteDefinition } from "./defining.ts";
 
 export interface Sprite {
   atlas: SpriteAtlas;
   definition: SpriteDefinition;
   spriteKey: string;
-  sourceRect: Rectangle;
+  sourceRect: DimensionalRectangle;
 }
 
 export interface SpriteAtlas {

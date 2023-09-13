@@ -12,13 +12,6 @@ export interface Position {
   z: number;
 }
 
-export interface Rectangle {
-  h: number;
-  w: number;
-  x: number;
-  y: number;
-}
-
 export interface Cube {
   b: number;
   f: number;
