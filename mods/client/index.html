@@ -24,6 +24,13 @@
     }
 
     .app {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .viewport {
+      position: absolute;
       align-items: center;
       display: flex;
       height: 100%;
@@ -31,12 +38,22 @@
       width: 100%;
       overflow: hidden;
     }
+
+    .debug {
+      font-family: monospace;
+      position: absolute;
+      white-space: pre;
+    }
+
   </style>
 </head>
 
 <body>
   <div class="app">
-    <canvas id="primary-canvas" class="primary-canvas"></canvas>
+    <div class="viewport">
+      <canvas id="primary-canvas" class="primary-canvas"></canvas>
+    </div>
+    <div id="debug" class="debug"></div>
   </div>
   <script src="./dist/main.js"></script>
 </body>

@@ -39,6 +39,11 @@ processMap().then((imageData) => {
   draw();
 });
 
+const info = {
+  fps: 0,
+  visibleTilesCount: 0,
+}
+
 const nearestSampler = gl.createSampler();
 assertNonNull(nearestSampler, "cannot-create-nearest-sampler");
 gl.samplerParameteri(nearestSampler, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
@@ -82,8 +87,10 @@ class Viewport {
   }
 
   public lookAt(x: number, y: number): void {
-    const { viewMatrix, worldHalfSize, worldSpaceRect } = this;
+    const { centerPoint, viewMatrix, worldHalfSize, worldSpaceRect } = this;
 
+    centerPoint.x = x;
+    centerPoint.y = y;
     worldSpaceRect.x1 = x - worldHalfSize.x;
     worldSpaceRect.y1 = y - worldHalfSize.y;
     worldSpaceRect.x2 = x + worldHalfSize.x;
@@ -137,9 +144,7 @@ async function loadMap() {
   }
   gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, ta, gl.DYNAMIC_DRAW, 0, elements * 8);
-  if (keys['KeyF']) {
-    console.log({ elements });
-  }
+  info.visibleTilesCount = elements;
   draw();
 }
 
@@ -214,14 +219,14 @@ gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 function resizeCanvas() {
   const tileSize = 32;
-  const maxTileW = 20;
-  const maxTileH = 20;
+  const maxTileW = 32;
+  const maxTileH = 32;
   const bodyW = document.body.clientWidth;
   const bodyH = document.body.clientHeight;
   const bodyTileW = Math.floor(bodyW / tileSize / zoom);
   const bodyTileH = Math.floor(bodyH / tileSize / zoom);
-  const tileW = Math.min(bodyTileW, maxTileW) + 1;
-  const tileH = Math.min(bodyTileH, maxTileH) + 1;
+  const tileW = Math.min(bodyTileW, maxTileW - 1) + 1;
+  const tileH = Math.min(bodyTileH, maxTileH - 1) + 1;
   const worldW = tileW * tileSize;
   const worldH = tileH * tileSize;
   const canvasW = worldW * zoom;
@@ -242,6 +247,21 @@ let then = 0;
 let frameCount = 0;
 let timeAccumulator = 0;
 
+function updateDebugInfo() {
+  const out = [];
+  out.push(`FPS ${info.fps.toFixed(2)}`);
+  const sw = document.body.clientWidth;
+  const sh = document.body.clientHeight;
+  out.push(`Screen: ${sw} ${sh}`);
+  const { worldSize: ws, centerPoint: cp, worldSpaceRect: wr } = viewport
+  out.push(`VP-Axis: ${ws.x / 32} ${ws.y / 32}`);
+  out.push(`VP-WorldSize: ${ws.x} ${ws.y}`);
+  out.push(`VP-CenterPoint: ${cp.x} ${cp.y}`);
+  out.push(`VP-WorldRect: ${wr.x1} ${wr.y1} ${wr.x2} ${wr.y2}`);
+  out.push(`VP-Tiles: ${info.visibleTilesCount}`);
+  document.getElementById('debug')!.textContent = out.join('\n');
+}
+
 function mainLoop(now: number) {
   const deltaTime = now - then;
   if (deltaTime > 0) {
@@ -249,6 +269,7 @@ function mainLoop(now: number) {
     if (frameCount === 9) {
       const averageFrameTime = timeAccumulator / frameCount;
       const fps = 1000 / averageFrameTime;
+      info.fps = fps;
       frameCount = 0;
       timeAccumulator = 0;
     }
@@ -256,6 +277,7 @@ function mainLoop(now: number) {
     updateLogic(deltaTime);
     loadMap();
     draw();
+    updateDebugInfo();
     then = now;
     frameCount++;
   }
