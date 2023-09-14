@@ -16,6 +16,8 @@ export const webGLService = registerService({
     })!;
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.clearColor(1.0, 0.4, 0.8, 1.0);
+    gl.enable(gl.BLEND);
     return gl;
   },
 });
