@@ -16,6 +16,10 @@ import { index2coords } from "../core/numbers.ts";
 import { CornerRectangle, cornerRect, intersectsNonStrict } from "../math/CornerRectangle.ts";
 import { Point, point } from "../math/Point.ts";
 import { identity, fromTranslation, ortho } from "../math/mat4.ts";
+import { TILE_SIZE, SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y } from "../core/vars.ts";
+import { bgYellow } from "https://deno.land/std@0.140.0/fmt/colors.ts";
+import { Display } from "./src/Display.ts";
+import { Viewport } from "./src/Viewport.ts";
 
 const canvas = document.getElementById("primary-canvas") as HTMLCanvasElement;
 assertNonNull(canvas, "cannot-find-primary-canvas");
@@ -65,45 +69,8 @@ console.log(getUniformBlocksInfo(gl, glProgram));
 console.log(getUniformInfo(gl, glProgram));
 gl.bindVertexArray(glVAOGrid);
 
+const projectionMatrix = new Float32Array(16);
 const viewMatrix = new Float32Array(16);
-
-class Viewport {
-  public readonly centerPoint = point(0, 0);
-  public readonly worldHalfSize = point(0, 0);
-  public readonly worldSize = point(0, 0);
-  public readonly worldSpaceRect = cornerRect(0, 0, 0, 0);
-  public constructor(
-    public readonly viewMatrix: Float32Array,
-  ) {
-    identity(viewMatrix);
-    this.lookAt(0, 0);
-  }
-
-  public setWorldSize(x: number, y: number): void {
-    this.worldSize.x = x;
-    this.worldSize.y = y;
-    this.worldHalfSize.x = x / 2;
-    this.worldHalfSize.y = y / 2;
-  }
-
-  public lookAt(x: number, y: number): void {
-    const { centerPoint, viewMatrix, worldHalfSize, worldSpaceRect } = this;
-
-    centerPoint.x = x;
-    centerPoint.y = y;
-    worldSpaceRect.x1 = x - worldHalfSize.x;
-    worldSpaceRect.y1 = y - worldHalfSize.y;
-    worldSpaceRect.x2 = x + worldHalfSize.x;
-    worldSpaceRect.y2 = y + worldHalfSize.y;
-
-    const mx = -x + worldHalfSize.x;
-    const my = y + worldHalfSize.y;
-    const mz = 0;
-
-    fromTranslation(viewMatrix, mx, my, mz);
-    gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
-  }
-}
 
 const keys: Record<string, boolean> = {};
 document.addEventListener("keydown", (event) => {
@@ -113,7 +80,7 @@ document.addEventListener("keyup", (event) => {
   keys[event.code] = false;
 });
 
-const viewport = new Viewport(viewMatrix);
+const viewport = new Viewport(viewMatrix, projectionMatrix);
 let elements = 0;
 async function loadMap() {
   const resolver = new ServiceResolver();
@@ -152,8 +119,6 @@ setTimeout(loadMap, 1000);
 
 console.log({ ab });
 
-const projection = new Float32Array(16);
-gl.uniformMatrix4fv(projectionLoc1, false, projection);
 gl.uniform1i(textureLoc1, 0);
 // gl.uniform1ui(toLoc, 50);
 gl.clearColor(1.0, 0.4, 0.8, 1.0);
@@ -200,48 +165,33 @@ function processKeyboard(deltaTime: number) {
     y = 0;
   }
   if (keys["KeyZ"] === true) {
-    zoom = 1;
-    resizeCanvas();
+    display.scale = 1;
   }
   if (keys["KeyX"] === true) {
-    zoom = 2;
-    resizeCanvas();
+    display.scale = 2;
   }
   if (keys["KeyC"] === true) {
-    zoom = 3;
-    resizeCanvas();
+    display.scale = 3;
   }
 
   viewport.lookAt(x, y);
+  gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
+  gl.uniformMatrix4fv(projectionLoc1, false, projectionMatrix);
 }
 
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-function resizeCanvas() {
-  const tileSize = 32;
-  const maxTileW = 32;
-  const maxTileH = 32;
-  const bodyW = document.body.clientWidth;
-  const bodyH = document.body.clientHeight;
-  const bodyTileW = Math.floor(bodyW / tileSize / zoom);
-  const bodyTileH = Math.floor(bodyH / tileSize / zoom);
-  const tileW = Math.min(bodyTileW, maxTileW - 1) + 1;
-  const tileH = Math.min(bodyTileH, maxTileH - 1) + 1;
-  const worldW = tileW * tileSize;
-  const worldH = tileH * tileSize;
-  const canvasW = worldW * zoom;
-  const canvasH = worldH * zoom;
-  canvas.width = canvasW;
-  canvas.height = canvasH;
+const display = new Display(gl, viewport);
 
-  viewport.setWorldSize(worldW, worldH);
-  ortho(projection, 0, worldW, 0, worldH, -10, 10);
-  gl.viewport(0, 0, canvasW, canvasH);
-  gl.uniformMatrix4fv(projectionLoc1, false, projection);
+function resizeWindow() {
+  display.setClientSize(
+    document.body.clientWidth,
+    document.body.clientHeight,
+  );
 }
 // resize the canvas to fill browser window dynamically
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
+window.addEventListener("resize", resizeWindow);
+resizeWindow();
 
 let then = 0;
 let frameCount = 0;
@@ -249,10 +199,10 @@ let timeAccumulator = 0;
 
 function updateDebugInfo() {
   const out = [];
-  out.push(`FPS ${info.fps.toFixed(2)}`);
-  const sw = document.body.clientWidth;
-  const sh = document.body.clientHeight;
-  out.push(`Screen: ${sw} ${sh}`);
+  out.push(`FPS: ${info.fps.toFixed(2)}`);
+  const { client, scale } = display
+  out.push(`SCR-Size: ${client.x} ${client.y}`);
+  out.push(`SCR-Scale: ${scale}`);
   const { worldSize: ws, centerPoint: cp, worldSpaceRect: wr } = viewport
   out.push(`VP-Axis: ${ws.x / 32} ${ws.y / 32}`);
   out.push(`VP-WorldSize: ${ws.x} ${ws.y}`);
