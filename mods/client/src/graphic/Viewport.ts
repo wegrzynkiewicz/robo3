@@ -1,6 +1,8 @@
-import { cornerRect } from "../../math/CornerRectangle.ts";
-import { point } from "../../math/Point.ts";
-import { identity, ortho, fromTranslation } from "../../math/mat4.ts";
+import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { cornerRect } from "../../../math/CornerRectangle.ts";
+import { point } from "../../../math/Point.ts";
+import { identity, ortho, fromTranslation } from "../../../math/mat4.ts";
+import { primaryUBOService } from "./PrimaryUBO.ts";
 
 export class Viewport {
   public readonly centerPoint = point(0, 0);
@@ -8,8 +10,8 @@ export class Viewport {
   public readonly worldSize = point(0, 0);
   public readonly worldSpaceRect = cornerRect(0, 0, 0, 0);
   public constructor(
-    public readonly viewMatrix: Float32Array,
     public readonly projectionMatrix: Float32Array,
+    public readonly viewMatrix: Float32Array,
   ) {
     identity(viewMatrix);
     identity(projectionMatrix);
@@ -42,3 +44,11 @@ export class Viewport {
     fromTranslation(viewMatrix, mx, my, mz);
   }
 }
+
+export const viewportService = registerService({
+  async provider(resolver: ServiceResolver) {
+    const primaryUBO = await resolver.resolve(primaryUBOService);
+    const { projectionMatrix, viewMatrix } = primaryUBO
+    return new Viewport(projectionMatrix, viewMatrix);
+  },
+});

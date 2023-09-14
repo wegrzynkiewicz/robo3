@@ -18,8 +18,8 @@ import { Point, point } from "../math/Point.ts";
 import { identity, fromTranslation, ortho } from "../math/mat4.ts";
 import { TILE_SIZE, SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y } from "../core/vars.ts";
 import { bgYellow } from "https://deno.land/std@0.140.0/fmt/colors.ts";
-import { Display } from "./src/Display.ts";
-import { Viewport } from "./src/Viewport.ts";
+import { Display } from "./src/graphic/Display.ts";
+import { Viewport } from "./src/graphic/Viewport.ts";
 
 const canvas = document.getElementById("primary-canvas") as HTMLCanvasElement;
 assertNonNull(canvas, "cannot-find-primary-canvas");
@@ -80,7 +80,7 @@ document.addEventListener("keyup", (event) => {
   keys[event.code] = false;
 });
 
-const viewport = new Viewport(viewMatrix, projectionMatrix);
+const viewport = new Viewport(projectionMatrix, viewMatrix);
 let elements = 0;
 async function loadMap() {
   const resolver = new ServiceResolver();

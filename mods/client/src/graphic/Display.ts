@@ -1,6 +1,8 @@
-import { TILE_SIZE, SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y } from "../../core/vars.ts";
-import { point } from "../../math/Point.ts";
-import { Viewport } from "./Viewport.ts";
+import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { TILE_SIZE, SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y } from "../../../core/vars.ts";
+import { point } from "../../../math/Point.ts";
+import { Viewport, viewportService } from "./Viewport.ts";
+import { webGLService } from "./WebGL.ts";
 
 export class Display {
 
@@ -50,3 +52,13 @@ export class Display {
     gl.viewport(0, 0, canvasW, canvasH);
   }
 }
+
+export const displayService = registerService({
+  async provider(resolver: ServiceResolver) {
+    const [gl, viewport] = await Promise.all([
+      resolver.resolve(webGLService),
+      resolver.resolve(viewportService),
+    ]);
+    return new Display(gl, viewport);
+  },
+});
