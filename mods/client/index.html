@@ -21,14 +21,23 @@
 
     .primary-canvas {
       display: block;
-      /* width: 100%; */
-      /* height: 100%; */
+    }
+
+    .app {
+      align-items: center;
+      display: flex;
+      height: 100%;
+      justify-content: center;
+      width: 100%;
+      overflow: hidden;
     }
   </style>
 </head>
 
 <body>
-  <canvas id="primary-canvas" class="primary-canvas"></canvas>
+  <div class="app">
+    <canvas id="primary-canvas" class="primary-canvas"></canvas>
+  </div>
   <script src="./dist/main.js"></script>
 </body>
 

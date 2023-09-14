@@ -63,31 +63,34 @@ gl.bindVertexArray(glVAOGrid);
 const viewMatrix = new Float32Array(16);
 
 class Viewport {
-  public readonly worldSpaceRect: CornerRectangle;
-  public readonly halfSize: Point;
-  public readonly centerPoint: Point;
+  public readonly centerPoint = point(0, 0);
+  public readonly worldHalfSize = point(0, 0);
+  public readonly worldSize = point(0, 0);
+  public readonly worldSpaceRect = cornerRect(0, 0, 0, 0);
   public constructor(
     public readonly viewMatrix: Float32Array,
-    public readonly size: Point,
   ) {
-    const { x, y } = size;
     identity(viewMatrix);
-    this.centerPoint = point(0, 0);
-    this.halfSize = point(x / 2, y / 2);
-    this.worldSpaceRect = cornerRect(0, 0, 0, 0);
     this.lookAt(0, 0);
   }
 
+  public setWorldSize(x: number, y: number): void {
+    this.worldSize.x = x;
+    this.worldSize.y = y;
+    this.worldHalfSize.x = x / 2;
+    this.worldHalfSize.y = y / 2;
+  }
+
   public lookAt(x: number, y: number): void {
-    const { halfSize, viewMatrix, worldSpaceRect } = this;
+    const { viewMatrix, worldHalfSize, worldSpaceRect } = this;
 
-    worldSpaceRect.x1 = x - halfSize.x;
-    worldSpaceRect.y1 = y - halfSize.y;
-    worldSpaceRect.x2 = x + halfSize.x;
-    worldSpaceRect.y2 = y + halfSize.y;
+    worldSpaceRect.x1 = x - worldHalfSize.x;
+    worldSpaceRect.y1 = y - worldHalfSize.y;
+    worldSpaceRect.x2 = x + worldHalfSize.x;
+    worldSpaceRect.y2 = y + worldHalfSize.y;
 
-    const mx = -x + halfSize.x;
-    const my = y + halfSize.y;
+    const mx = -x + worldHalfSize.x;
+    const my = y + worldHalfSize.y;
     const mz = 0;
 
     fromTranslation(viewMatrix, mx, my, mz);
@@ -103,7 +106,7 @@ document.addEventListener("keyup", (event) => {
   keys[event.code] = false;
 });
 
-const viewport = new Viewport(viewMatrix, { x: 480, y: 352 });
+const viewport = new Viewport(viewMatrix);
 let elements = 0;
 async function loadMap() {
   const resolver = new ServiceResolver();
@@ -171,6 +174,7 @@ const datas: [string, number][] = [
 
 let y = 0;
 let x = 0;
+let zoom = 2;
 
 function processKeyboard(deltaTime: number) {
   const speed = 16;
@@ -190,6 +194,18 @@ function processKeyboard(deltaTime: number) {
     x = 0;
     y = 0;
   }
+  if (keys["KeyZ"] === true) {
+    zoom = 1;
+    resizeCanvas();
+  }
+  if (keys["KeyX"] === true) {
+    zoom = 2;
+    resizeCanvas();
+  }
+  if (keys["KeyC"] === true) {
+    zoom = 3;
+    resizeCanvas();
+  }
 
   viewport.lookAt(x, y);
 }
@@ -197,18 +213,26 @@ function processKeyboard(deltaTime: number) {
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 function resizeCanvas() {
-  const w = 32 * 18;
-  const h = 32 * 11;
+  const tileSize = 32;
+  const maxTileW = 20;
+  const maxTileH = 20;
+  const bodyW = document.body.clientWidth;
+  const bodyH = document.body.clientHeight;
+  const bodyTileW = Math.floor(bodyW / tileSize / zoom);
+  const bodyTileH = Math.floor(bodyH / tileSize / zoom);
+  const tileW = Math.min(bodyTileW, maxTileW) + 1;
+  const tileH = Math.min(bodyTileH, maxTileH) + 1;
+  const worldW = tileW * tileSize;
+  const worldH = tileH * tileSize;
+  const canvasW = worldW * zoom;
+  const canvasH = worldH * zoom;
+  canvas.width = canvasW;
+  canvas.height = canvasH;
 
-  const ratio = 9 / 16;
-
-  canvas.width = w;
-  canvas.height = h;
-
-  ortho(projection, 0, w, 0, h, -10, 10);
+  viewport.setWorldSize(worldW, worldH);
+  ortho(projection, 0, worldW, 0, worldH, -10, 10);
+  gl.viewport(0, 0, canvasW, canvasH);
   gl.uniformMatrix4fv(projectionLoc1, false, projection);
-  gl.viewport(0, 0, canvas.width, canvas.height);
-  console.log(canvas.width, "x", canvas.height);
 }
 // resize the canvas to fill browser window dynamically
 window.addEventListener("resize", resizeCanvas);
