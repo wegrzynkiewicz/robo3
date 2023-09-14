@@ -1,7 +1,6 @@
 import { assertNonNull } from "../common/asserts.ts";
 import { processMap } from "../tiled-map/types.ts";
 import { initGridProgram } from "./src/graphic/gridProgram.ts";
-import { getUniformBlocksInfo, getUniformInfo } from "./src/graphic/utilities.ts";
 import "./src/else/wss.ts";
 import "../core/bootstrap.ts";
 import { spriteAtlasRegistry, spriteRegistry } from "../core/sprite/defining.ts";
@@ -18,6 +17,9 @@ import { displayService } from "./src/graphic/Display.ts";
 import { viewportService } from "./src/graphic/Viewport.ts";
 import { canvasService, webGLService } from "./src/graphic/WebGL.ts";
 import { primaryUBOService } from "./src/graphic/PrimaryUBO.ts";
+import { keyboardService } from "./src/Keyboard.ts";
+import { mainLoopService } from "./src/MainLoop.ts";
+import { debugInfoService } from "./src/DebugInfo.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -25,13 +27,41 @@ async function start() {
   assertNonNull(canvas, "cannot-find-primary-canvas");
   resolver.inject(canvasService, canvas);
 
-  const [gl, viewport, primaryUBO, display, chunkManager] = await Promise.all([
+  const [gl, viewport, primaryUBO, display, chunkManager, keyboard, mainLoop, debugInfo] = await Promise.all([
     resolver.resolve(webGLService),
     resolver.resolve(viewportService),
     resolver.resolve(primaryUBOService),
     resolver.resolve(displayService),
     resolver.resolve(chunkManagerService),
+    resolver.resolve(keyboardService),
+    resolver.resolve(mainLoopService),
+    resolver.resolve(debugInfoService),
   ])
+
+  function resizeWindow() {
+    display.setClientSize(
+      document.body.clientWidth,
+      document.body.clientHeight,
+    );
+  }
+  globalThis.addEventListener("resize", resizeWindow);
+  resizeWindow();
+
+  function onKeyDown(event: KeyboardEvent) {
+    if (event.target === document.body) {
+      keyboard.keyDown(event);
+    }
+  }
+  document.addEventListener('keydown', onKeyDown);
+
+  function onKeyUp(event: KeyboardEvent) {
+    if (event.target === document.body) {
+      keyboard.keyUp(event);
+    }
+  }
+  document.addEventListener('keyup', onKeyUp);
+
+  debugInfo.enable();
 
   const texture = gl.createTexture();
   gl.activeTexture(gl.TEXTURE0 + 0);
@@ -41,7 +71,6 @@ async function start() {
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
     gl.generateMipmap(gl.TEXTURE_2D);
-    draw();
   });
 
   const info = {
@@ -67,14 +96,6 @@ async function start() {
   const viewMatrixLoc = gl.getUniformLocation(glProgram, "u_View");
   const textureLoc1 = gl.getUniformLocation(glProgram, "u_texture");
   gl.bindVertexArray(glVAOGrid);
-
-  const keys: Record<string, boolean> = {};
-  document.addEventListener("keydown", (event) => {
-    keys[event.code] = true;
-  });
-  document.addEventListener("keyup", (event) => {
-    keys[event.code] = false;
-  });
 
   let elements = 0;
   function loadMap() {
@@ -104,8 +125,6 @@ async function start() {
     info.visibleTilesCount = elements;
   }
 
-  setTimeout(loadMap, 1000);
-
   gl.uniform1i(textureLoc1, 0);
 
   let y = 0;
@@ -113,29 +132,30 @@ async function start() {
 
   function processKeyboard() {
     const speed = 16;
-    if (keys["KeyW"] === true) {
+    const { states } = keyboard;
+    if (states["KeyW"] === true) {
       y += -speed;
     }
-    if (keys["KeyS"] === true) {
+    if (states["KeyS"] === true) {
       y += speed;
     }
-    if (keys["KeyD"] === true) {
+    if (states["KeyD"] === true) {
       x += speed;
     }
-    if (keys["KeyA"] === true) {
+    if (states["KeyA"] === true) {
       x += -speed;
     }
-    if (keys["KeyQ"] === true) {
+    if (states["KeyQ"] === true) {
       x = 0;
       y = 0;
     }
-    if (keys["KeyZ"] === true) {
+    if (states["KeyZ"] === true) {
       display.scale = 1;
     }
-    if (keys["KeyX"] === true) {
+    if (states["KeyX"] === true) {
       display.scale = 2;
     }
-    if (keys["KeyC"] === true) {
+    if (states["KeyC"] === true) {
       display.scale = 3;
     }
 
@@ -143,63 +163,6 @@ async function start() {
     const { projectionMatrix, viewMatrix } = primaryUBO;
     gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
     gl.uniformMatrix4fv(projectionLoc1, false, projectionMatrix);
-  }
-
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-  function resizeWindow() {
-    display.setClientSize(
-      document.body.clientWidth,
-      document.body.clientHeight,
-    );
-  }
-  // resize the canvas to fill browser window dynamically
-  window.addEventListener("resize", resizeWindow);
-  resizeWindow();
-
-  let then = 0;
-  let frameCount = 0;
-  let timeAccumulator = 0;
-
-  function updateDebugInfo() {
-    const out = [];
-    out.push(`FPS: ${info.fps.toFixed(2)}`);
-    const { client, scale } = display
-    out.push(`SCR-Size: ${client.x} ${client.y}`);
-    out.push(`SCR-Scale: ${scale}`);
-    const { worldSize: ws, centerPoint: cp, worldSpaceRect: wr } = viewport
-    out.push(`VP-Axis: ${ws.x / 32} ${ws.y / 32}`);
-    out.push(`VP-WorldSize: ${ws.x} ${ws.y}`);
-    out.push(`VP-CenterPoint: ${cp.x} ${cp.y}`);
-    out.push(`VP-WorldRect: ${wr.x1} ${wr.y1} ${wr.x2} ${wr.y2}`);
-    out.push(`VP-Tiles: ${info.visibleTilesCount}`);
-    document.getElementById('debug')!.textContent = out.join('\n');
-  }
-
-  function mainLoop(now: number) {
-    const deltaTime = now - then;
-    if (deltaTime > 0) {
-      timeAccumulator += deltaTime;
-      if (frameCount === 9) {
-        const averageFrameTime = timeAccumulator / frameCount;
-        const fps = 1000 / averageFrameTime;
-        info.fps = fps;
-        frameCount = 0;
-        timeAccumulator = 0;
-      }
-      processKeyboard();
-      loadMap();
-      draw();
-      updateDebugInfo();
-      then = now;
-      frameCount++;
-    }
-    requestAnimationFrame(mainLoop);
-  }
-
-  function draw() {
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, elements);
   }
 
   const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
@@ -217,7 +180,13 @@ async function start() {
     // document.body.appendChild(context.canvas);
   }
 
-  mainLoop(0);
+  function loop() {
+    processKeyboard();
+    loadMap();
+    requestAnimationFrame(loop);
+  }
+  mainLoop.run();
+  loop();
 
 }
 start();
