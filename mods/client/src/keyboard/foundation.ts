@@ -1,5 +1,5 @@
 import { registerService } from "../../../core/dependency/service.ts";
-import { KeyShortCut } from "./shortcut.ts";
+import { KeyShortCut } from "./KeyShortCut.ts";
 
 export interface KAInput {
   name: string;

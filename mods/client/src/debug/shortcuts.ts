@@ -1,5 +1,5 @@
-import { registerKADefinition } from "../keyboard/manager.ts";
-import { KeyShortCut, KeyState } from "../keyboard/shortcut.ts";
+import { KeyState, KeyShortCut } from "../keyboard/KeyShortCut.ts";
+import { registerKADefinition } from "../keyboard/foundation.ts";
 
 const common = [
   new KeyState("AltRight"),
@@ -11,5 +11,5 @@ export const debugInfoOpenKA = registerKADefinition({
   name: 'debug.open-info',
   shortCuts: [
     new KeyShortCut(...common, new KeyState('KeyI')),
-  ]
+  ],
 });

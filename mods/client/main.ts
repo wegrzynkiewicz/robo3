@@ -20,6 +20,7 @@ import { primaryUBOService } from "./src/graphic/PrimaryUBO.ts";
 import { mainLoopService } from "./src/MainLoop.ts";
 import { debugInfoService } from "./src/debug/DebugInfo.ts";
 import { keyboardService } from "./src/keyboard/Keyboard.ts";
+import { gameContextService } from "./src/context/ContextManager.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -27,7 +28,17 @@ async function start() {
   assertNonNull(canvas, "cannot-find-primary-canvas");
   resolver.inject(canvasService, canvas);
 
-  const [gl, viewport, primaryUBO, display, chunkManager, keyboard, mainLoop, debugInfo] = await Promise.all([
+  const [
+    gl,
+    viewport,
+    primaryUBO,
+    display,
+    chunkManager,
+    keyboard,
+    mainLoop,
+    debugInfo,
+    gameContext,
+  ] = await Promise.all([
     resolver.resolve(webGLService),
     resolver.resolve(viewportService),
     resolver.resolve(primaryUBOService),
@@ -36,6 +47,7 @@ async function start() {
     resolver.resolve(keyboardService),
     resolver.resolve(mainLoopService),
     resolver.resolve(debugInfoService),
+    resolver.resolve(gameContextService),
   ])
 
   function resizeWindow() {
@@ -51,6 +63,7 @@ async function start() {
     if (document.activeElement === document.body) {
       keyboard.keyDown(event);
     }
+    gameContext.processKeyboard();
   }
   document.addEventListener('keydown', onKeyDown);
 
@@ -58,6 +71,7 @@ async function start() {
     if (document.activeElement === document.body) {
       keyboard.keyUp(event);
     }
+    gameContext.processKeyboard();
   }
   document.addEventListener('keyup', onKeyUp);
 
