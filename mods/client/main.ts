@@ -63,7 +63,9 @@ async function start() {
     if (document.activeElement === document.body) {
       keyboard.keyDown(event);
     }
-    gameContext.processKeyboard();
+    if (event.repeat === false) {
+      gameContext.processKeyboard();
+    }
   }
   document.addEventListener('keydown', onKeyDown);
 
@@ -71,7 +73,6 @@ async function start() {
     if (document.activeElement === document.body) {
       keyboard.keyUp(event);
     }
-    gameContext.processKeyboard();
   }
   document.addEventListener('keyup', onKeyUp);
 

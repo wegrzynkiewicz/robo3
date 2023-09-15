@@ -1,21 +1,22 @@
+import { deepClone } from "../../../common/useful.ts";
 import { Keyboard } from "./Keyboard.ts";
 
 export class KeyState {
   public constructor(
     public readonly code: string,
-    public readonly altKey = false,
-    public readonly ctrlKey = false,
-    public readonly shiftKey = false,
+    public readonly alt = false,
+    public readonly ctrl = false,
+    public readonly shift = false,
   ) {
 
   }
 
-  public match(event: KeyboardEvent): boolean {
+  public match(key: KeyState): boolean {
     return true &&
-      this.altKey === event.altKey &&
-      this.ctrlKey === event.ctrlKey &&
-      this.shiftKey === event.shiftKey &&
-      this.code === event.code;
+      this.alt === key.alt &&
+      this.ctrl === key.ctrl &&
+      this.shift === key.shift &&
+      this.code === key.code;
   }
 }
 
@@ -36,19 +37,18 @@ export class KeyShortCut {
   }
 
   public match(keyboard: Keyboard): boolean {
-    const length = keyboard.sequence.length;
-    if (length === 0) {
+    if (keyboard.sequence.length === 0) {
       return false;
     }
-    if (this.sequence.length < length) {
+    if (keyboard.sequence.length < this.sequence.length) {
       return false;
     }
-    let index = length - 1;
+    let index = keyboard.sequence.length - 1;
     for (let i = this.sequence.length - 1; i >= 0; i--) {
-      const keyState = this.sequence[i];
       if (index < 0) {
         return false;
       }
+      const keyState = this.sequence[i];
       const event = keyboard.sequence[index];
       if (!keyState.match(event)) {
         if (!KeyShortCut.IGNORE_CODES.includes(event.code)) {

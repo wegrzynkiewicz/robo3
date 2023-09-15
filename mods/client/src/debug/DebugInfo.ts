@@ -26,6 +26,14 @@ export class DebugInfo {
     this.element.innerText = '';
   }
 
+  public toggle() {
+    if (this.isEnabled) {
+      this.disable();
+    } else {
+      this.enable();
+    }
+  }
+
   public update(fps: number) {
     if (this.isEnabled === false) {
       return;

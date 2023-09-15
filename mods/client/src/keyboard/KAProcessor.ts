@@ -1,6 +1,6 @@
 import { Breaker } from "../../../common/asserts.ts";
 import { registerService,ServiceResolver } from "../../../core/dependency/service.ts";
-import { debugInfoOpenKA } from "../debug/shortcuts.ts";
+import { debugOpenInfoKA } from "../debug/debugOpenInfoUA.ts";
 import { KAHandler, universalKAHandlerService } from "./KAHandler.ts";
 import { KADefinition } from "./foundation.ts";
 
@@ -28,7 +28,7 @@ export const kaProcessorService = registerService({
   async provider(resolve: ServiceResolver): Promise<KAProcessor> {
     const universalKAHandler = await resolve.resolve(universalKAHandlerService);
     const processor = new KAProcessor();
-    processor.registerHandler(debugInfoOpenKA, universalKAHandler);
+    processor.registerHandler(debugOpenInfoKA, universalKAHandler);
     return processor;
   },
 });
