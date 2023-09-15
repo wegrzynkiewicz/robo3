@@ -1,7 +1,7 @@
-import { assertNonNull } from "../../common/asserts.ts";
-import { registerService, ServiceResolver } from "../../core/dependency/service.ts";
-import { Display, displayService } from "./graphic/Display.ts";
-import { Viewport, viewportService } from "./graphic/Viewport.ts";
+import { assertNonNull } from "../../../common/asserts.ts";
+import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { Display, displayService } from "../graphic/Display.ts";
+import { Viewport, viewportService } from "../graphic/Viewport.ts";
 
 export class DebugInfo {
 

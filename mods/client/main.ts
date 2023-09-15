@@ -17,9 +17,9 @@ import { displayService } from "./src/graphic/Display.ts";
 import { viewportService } from "./src/graphic/Viewport.ts";
 import { canvasService, webGLService } from "./src/graphic/WebGL.ts";
 import { primaryUBOService } from "./src/graphic/PrimaryUBO.ts";
-import { keyboardService } from "./src/Keyboard.ts";
 import { mainLoopService } from "./src/MainLoop.ts";
-import { debugInfoService } from "./src/DebugInfo.ts";
+import { debugInfoService } from "./src/debug/DebugInfo.ts";
+import { keyboardService } from "./src/keyboard/Keyboard.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -48,14 +48,14 @@ async function start() {
   resizeWindow();
 
   function onKeyDown(event: KeyboardEvent) {
-    if (event.target === document.body) {
+    if (document.activeElement === document.body) {
       keyboard.keyDown(event);
     }
   }
   document.addEventListener('keydown', onKeyDown);
 
   function onKeyUp(event: KeyboardEvent) {
-    if (event.target === document.body) {
+    if (document.activeElement === document.body) {
       keyboard.keyUp(event);
     }
   }

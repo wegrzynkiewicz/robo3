@@ -50,3 +50,10 @@ powierzchnia warstwa 0
 Ukryte bloki pod najniższą powierzchnią 
 Bloki specjalne
 Nie używany
+
+# ShortCuts
+
+ga - Game Action
+ka - Keyboard Action
+go - Game Object
+ua - User Action

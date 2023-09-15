@@ -1,5 +1,5 @@
 import { registerService, ServiceResolver } from "../../core/dependency/service.ts";
-import { DebugInfo, debugInfoService } from "./DebugInfo.ts";
+import { DebugInfo, debugInfoService } from "./debug/DebugInfo.ts";
 import { Renderer, rendererService } from "./graphic/Renderer.ts";
 
 export class MainLoop {
