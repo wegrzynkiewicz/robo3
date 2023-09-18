@@ -11,7 +11,7 @@ export class KAShortCutProcessor {
 
   }
   
-  public process(definitions: KADefinition[]) {
+  public process(definitions: KADefinition<any>[]) {
     for (const definition of definitions) {
       for (const shortcut of definition.currentShortCuts) {
         if (shortcut.match(this.keyboard)) {

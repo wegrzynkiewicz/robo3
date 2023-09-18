@@ -1,4 +1,3 @@
-import { deepClone } from "../../../common/useful.ts";
 import { Keyboard } from "./Keyboard.ts";
 
 export class KeyState {

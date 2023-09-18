@@ -1,34 +1,31 @@
 import { Breaker } from "../../../common/asserts.ts";
-import { registerService,ServiceResolver } from "../../../core/dependency/service.ts";
-import { debugOpenInfoKA } from "../debug/debugOpenInfoUA.ts";
-import { KAHandler, universalKAHandlerService } from "./KAHandler.ts";
+import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { UAProcessor, uaProcessorService } from "../ua/processor.ts";
 import { KADefinition } from "./foundation.ts";
 
 export class KAProcessor {
-  public handlers = new Map<KADefinition, KAHandler>();
 
-  public registerHandler(definition: KADefinition, handler: KAHandler): void {
-    this.handlers.set(definition, handler);
+  public constructor(
+    public readonly uaProcessor: UAProcessor,
+  ) {
+
   }
 
-  public async process(definition: KADefinition): Promise<void> {
-    const handler = this.handlers.get(definition);
-    if (!handler) {
-      throw new Breaker("keyboard-handler-not-found", { definition });
-    }
+  public async process<TData>(kaDefinition: KADefinition<TData>): Promise<void> {
+    const {definition, data} = kaDefinition.ua;
     try {
-      await handler.handle(definition);
+      this.uaProcessor.process(definition, data);
     } catch (error) {
-      throw new Breaker("error-inside-keyboard-action-handler", { definition, error });
+      throw new Breaker('error-in-ka-processor', { error, kaDefinition, definition });
     }
   }
 }
 
 export const kaProcessorService = registerService({
-  async provider(resolve: ServiceResolver): Promise<KAProcessor> {
-    const universalKAHandler = await resolve.resolve(universalKAHandlerService);
-    const processor = new KAProcessor();
-    processor.registerHandler(debugOpenInfoKA, universalKAHandler);
-    return processor;
+  async provider(resolver: ServiceResolver): Promise<KAProcessor> {
+    const [uaProcessor] = await Promise.all([
+      resolver.resolve(uaProcessorService),
+    ]);
+    return new KAProcessor(uaProcessor);
   },
 });

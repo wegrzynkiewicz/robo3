@@ -1,26 +1,36 @@
 import { registerService } from "../../../core/dependency/service.ts";
+import { UADefinition } from "../ua/foundation.ts";
 import { KeyShortCut } from "./KeyShortCut.ts";
 
-export interface KAInput {
+export interface KACommon<TData> {
   name: string;
+  ua: {
+    definition: UADefinition<TData>,
+    data: TData,
+  },
+}
+
+export interface KAInput<TData> extends KACommon<TData> {
   shortCuts: KeyShortCut[];
 }
 
-export interface KADefinition {
+export interface KADefinition<TData> extends KACommon<TData> {
   currentShortCuts: KeyShortCut[];
-  name: string;
   originalShortCuts: KeyShortCut[];
 }
 
-export class KAManager {
-  public readonly byName = new Map<string, KADefinition>();
+export type AnyKADefinition = KADefinition<any>
 
-  public registerKADefinition(definition: KAInput): KADefinition {
-    const { name, shortCuts } = definition;
-    const action: KADefinition = {
+export class KAManager {
+  public readonly byName = new Map<string, AnyKADefinition>();
+
+  public registerKADefinition<TData>(definition: KAInput<TData>): KADefinition<TData> {
+    const { name, shortCuts, ua } = definition;
+    const action: KADefinition<TData> = {
       currentShortCuts: shortCuts,
       name,
       originalShortCuts: shortCuts,
+      ua,
     }
     this.byName.set(name, action);
     return action;

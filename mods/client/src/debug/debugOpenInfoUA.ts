@@ -9,15 +9,19 @@ const common = [
   new KeyState("KeyV", true),
 ];
 
+export const debugOpenInfoUA = registerUADefinition<null>({
+  name: 'debug.open-info',
+});
+
 export const debugOpenInfoKA = registerKADefinition({
   name: 'debug.open-info',
   shortCuts: [
     new KeyShortCut(...common, new KeyState('KeyI')),
   ],
-});
-
-export const debugOpenInfoUA = registerUADefinition<null>({
-  name: 'debug.open-info',
+  ua: {
+    definition: debugOpenInfoUA,
+    data: null,
+  },
 });
 
 export const debugOpenInfoUAHandlerService = registerService({
