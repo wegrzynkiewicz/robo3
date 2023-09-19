@@ -14,6 +14,17 @@ export const webGLService = registerService({
       premultipliedAlpha: true,
       alpha: false,
     })!;
+
+    const oldBindBuffer = gl.bindBuffer;
+    const bound: Record<number, unknown> = {};
+    gl.bindBuffer = (target: number, buffer: WebGLBuffer | null): void => {
+      if (bound[target] === buffer) {
+        return;
+      }
+      oldBindBuffer.call(gl, target, buffer);
+      bound[target] = buffer;
+    }
+
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.clearColor(1.0, 0.4, 0.8, 1.0);

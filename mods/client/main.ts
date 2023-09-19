@@ -101,16 +101,15 @@ async function start() {
   gl.samplerParameteri(nearestSampler, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.bindSampler(0, nearestSampler);
 
-  const ab = new ArrayBuffer(32 * 30000);
-  const ta = new Float32Array(ab);
-
-  const { glProgram, glVAOGrid, glTilesBuffer } = initGridProgram(gl);
+  const { glProgram, glVAOGrid, tilesBuffer } = initGridProgram(gl);
 
   gl.useProgram(glProgram);
   const projectionLoc1 = gl.getUniformLocation(glProgram, "u_Projection");
   const viewMatrixLoc = gl.getUniformLocation(glProgram, "u_View");
   const textureLoc1 = gl.getUniformLocation(glProgram, "u_texture");
   gl.bindVertexArray(glVAOGrid);
+
+  const view = tilesBuffer.typedArray;
 
   let elements = 0;
   function loadMap() {
@@ -121,22 +120,20 @@ async function start() {
         for (const go of chunk.gos) {
           if (intersectsNonStrict(go.worldSpaceRect, viewport.worldSpaceRect)) {
             const { goTypeId, spacePosition } = go;
-            ta[n + 0] = spacePosition.x;
-            ta[n + 1] = spacePosition.y;
-            ta[n + 2] = 32.0;
-            ta[n + 3] = 32.0;
-            ta[n + 4] = index2coords(goTypeId)[0] * 32.0;
-            ta[n + 5] = index2coords(goTypeId)[1] * 32.0;
-            ta[n + 6] = 0;
-            ta[n + 7] = 0;
-            n += 8;
+            view[n++] = spacePosition.x;
+            view[n++] = spacePosition.y;
+            view[n++] = 32.0;
+            view[n++] = 32.0;
+            view[n++] = index2coords(goTypeId)[0] * 32.0;
+            view[n++] = index2coords(goTypeId)[1] * 32.0;
+            view[n++] = 0;
+            view[n++] = 0;
             elements++;
           }
         }
       }
     }
-    gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, ta, gl.DYNAMIC_DRAW, 0, elements * 8);
+    tilesBuffer.update(n*4);
     info.visibleTilesCount = elements;
   }
 
@@ -163,15 +160,6 @@ async function start() {
     if (states["KeyQ"] === true) {
       x = 0;
       y = 0;
-    }
-    if (states["KeyZ"] === true) {
-      display.scale = 1;
-    }
-    if (states["KeyX"] === true) {
-      display.scale = 2;
-    }
-    if (states["KeyC"] === true) {
-      display.scale = 3;
     }
 
     viewport.lookAt(x, y);

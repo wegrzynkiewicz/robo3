@@ -74,8 +74,41 @@ void main(void) {
 }
 `;
 
+
+const { ARRAY_BUFFER, DYNAMIC_DRAW } = WebGL2RenderingContext;
+
+export class DynamicDrawBuffer {
+  public typedArray: Float32Array;
+  public dataView: DataView;
+  protected readonly arrayBuffer: ArrayBuffer;
+  protected readonly glBuffer: WebGLBuffer;
+
+  public constructor(
+    public readonly gl: WebGL2RenderingContext,
+    public readonly byteLength: number,
+  ) {
+    const glBuffer = this.gl.createBuffer()!;
+    assertNonNull(glBuffer, "cannot-create-buffer");
+    this.glBuffer = glBuffer;
+    this.gl.bindBuffer(ARRAY_BUFFER, this.glBuffer);
+    this.gl.bufferData(ARRAY_BUFFER, this.byteLength, DYNAMIC_DRAW);
+    this.arrayBuffer = new ArrayBuffer(this.byteLength);
+    this.dataView = new DataView(this.arrayBuffer);
+    this.typedArray = new Float32Array(this.arrayBuffer);
+  }
+
+  public bind() {
+    this.gl.bindBuffer(ARRAY_BUFFER, this.glBuffer);
+  }
+
+  public update(byteLength: number) {
+    this.gl.bindBuffer(ARRAY_BUFFER, this.glBuffer);
+    this.gl.bufferSubData(ARRAY_BUFFER, 0, this.dataView, 0, byteLength);
+  }
+}
+
 export function initGridProgram(gl: GL): {
-  glTilesBuffer: WebGLBuffer;
+  tilesBuffer: DynamicDrawBuffer;
   glProgram: WebGLProgram;
   glVAOGrid: WebGLVertexArrayObject;
 } {
@@ -86,15 +119,11 @@ export function initGridProgram(gl: GL): {
   gl.bindVertexArray(glVAOGrid);
 
   // Prepare tile buffer
-  const glTilesBuffer = gl.createBuffer();
-  assertNonNull(glTilesBuffer, "cannot-create-tile-buffer");
-  gl.bindBuffer(gl.ARRAY_BUFFER, glTilesBuffer);
-  {
-    tilePos.enableVertexAttribute(gl, glProgram);
-    tileSize.enableVertexAttribute(gl, glProgram);
-    tileTex.enableVertexAttribute(gl, glProgram);
-    tileAlpha.enableVertexAttribute(gl, glProgram);
-  }
+  const tilesBuffer = new DynamicDrawBuffer(gl, 65536);
+  tilePos.enableVertexAttribute(gl, glProgram);
+  tileSize.enableVertexAttribute(gl, glProgram);
+  tileTex.enableVertexAttribute(gl, glProgram);
+  tileAlpha.enableVertexAttribute(gl, glProgram);
 
   gl.bindVertexArray(null);
 
@@ -114,7 +143,7 @@ export function initGridProgram(gl: GL): {
   );
 
   return {
-    glTilesBuffer,
+    tilesBuffer,
     glProgram,
     glVAOGrid,
   };
