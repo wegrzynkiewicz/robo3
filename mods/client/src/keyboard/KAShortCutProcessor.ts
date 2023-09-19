@@ -1,7 +1,7 @@
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
 import { KAProcessor, kaProcessorService } from "./KAProcessor.ts";
 import { Keyboard, keyboardService } from "./Keyboard.ts";
-import { KADefinition } from "./foundation.ts";
+import { AnyKADefinition } from "./foundation.ts";
 
 export class KAShortCutProcessor {
   public constructor(
@@ -11,7 +11,7 @@ export class KAShortCutProcessor {
 
   }
   
-  public process(definitions: KADefinition<any>[]) {
+  public process(definitions: AnyKADefinition[]) {
     for (const definition of definitions) {
       for (const shortcut of definition.currentShortCuts) {
         if (shortcut.match(this.keyboard)) {

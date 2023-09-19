@@ -78,3 +78,37 @@ export function inflate(input: Uint8Array): Promise<ArrayBuffer> {
   const arrayBufferPromise = new Response(ds.readable).arrayBuffer();
   return arrayBufferPromise;
 }
+
+export class MapSet<TKey, TValue> {
+  public readonly map = new Map<TKey, Set<TValue>>();
+  public add(key: TKey, value: TValue): void {
+    const set = this.fetch(key);
+    set.add(value);
+  }
+  public fetch(key: TKey): Set<TValue> {
+    const value = this.map.get(key);
+    if (value === undefined) {
+      const set = new Set<TValue>();
+      this.map.set(key, set);
+      return set;
+    }
+    return value;
+  }
+}
+
+export class MapList<TKey, TValue> {
+  public readonly list = new Map<TKey, TValue[]>();
+  public push(key: TKey, value: TValue): void {
+    const set = this.fetch(key);
+    set.push(value);
+  }
+  public fetch(key: TKey): TValue[] {
+    const value = this.list.get(key);
+    if (value === undefined) {
+      const list: TValue[] = [];
+      this.list.set(key, list);
+      return list;
+    }
+    return value;
+  }
+}

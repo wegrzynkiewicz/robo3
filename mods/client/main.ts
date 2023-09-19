@@ -20,7 +20,7 @@ import { primaryUBOService } from "./src/graphic/PrimaryUBO.ts";
 import { mainLoopService } from "./src/MainLoop.ts";
 import { debugInfoService } from "./src/debug/DebugInfo.ts";
 import { keyboardService } from "./src/keyboard/Keyboard.ts";
-import { gameContextService } from "./src/context/ContextManager.ts";
+import { phaseManagerService } from "./src/phase/PhaseManager.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -37,7 +37,7 @@ async function start() {
     keyboard,
     mainLoop,
     debugInfo,
-    gameContext,
+    phaseManager,
   ] = await Promise.all([
     resolver.resolve(webGLService),
     resolver.resolve(viewportService),
@@ -47,7 +47,7 @@ async function start() {
     resolver.resolve(keyboardService),
     resolver.resolve(mainLoopService),
     resolver.resolve(debugInfoService),
-    resolver.resolve(gameContextService),
+    resolver.resolve(phaseManagerService),
   ])
 
   function resizeWindow() {
@@ -64,7 +64,7 @@ async function start() {
       keyboard.keyDown(event);
     }
     if (event.repeat === false) {
-      gameContext.processKeyboard();
+      phaseManager.processKeyboard();
     }
   }
   document.addEventListener('keydown', onKeyDown);

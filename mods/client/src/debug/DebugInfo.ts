@@ -41,8 +41,8 @@ export class DebugInfo {
     const out = [];
     out.push(`FPS: ${fps.toFixed(2)}`);
     const { client, scale } = this.display;
-    out.push(`SCR-Size: ${client.x} ${client.y}`);
-    out.push(`SCR-Scale: ${scale}`);
+    out.push(`DSP-Size: ${client.x} ${client.y}`);
+    out.push(`DSP-Scale: ${scale}`);
     const { worldSize: ws, centerPoint: cp, worldSpaceRect: wr } = this.viewport
     out.push(`VP-Axis: ${ws.x / 32} ${ws.y / 32}`);
     out.push(`VP-WorldSize: ${ws.x} ${ws.y}`);

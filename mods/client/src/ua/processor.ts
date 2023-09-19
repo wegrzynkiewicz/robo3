@@ -1,6 +1,7 @@
 import { Breaker } from "../../../common/asserts.ts";
-import { registerService,ServiceResolver } from "../../../core/dependency/service.ts";
-import { debugOpenInfoUA,debugOpenInfoUAHandlerService } from "../debug/debugOpenInfoUA.ts";
+import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { debugDisplayScaleUA, debugDisplayScaleUAHandlerService } from "../debug/debugDisplayScaleUA.ts";
+import { debugOpenInfoUA, debugOpenInfoUAHandlerService } from "../debug/debugOpenInfoUA.ts";
 import { AnyUADefinition, UADefinition } from "./foundation.ts";
 
 export interface UAHandler<TData> {
@@ -32,7 +33,8 @@ export class UAProcessor {
 export const uaProcessorService = registerService({
   async provider(resolver: ServiceResolver): Promise<UAProcessor> {
     const processor = new UAProcessor();
-    processor.registerHandler(debugOpenInfoUA, await resolver.resolve(debugOpenInfoUAHandlerService))
+    processor.registerHandler(debugOpenInfoUA, await resolver.resolve(debugOpenInfoUAHandlerService));
+    processor.registerHandler(debugDisplayScaleUA, await resolver.resolve(debugDisplayScaleUAHandlerService));
     return processor;
   },
 });

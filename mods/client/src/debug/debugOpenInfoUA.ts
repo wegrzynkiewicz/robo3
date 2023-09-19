@@ -4,19 +4,19 @@ import { registerKADefinition } from "../keyboard/foundation.ts";
 import { registerUADefinition } from "../ua/foundation.ts";
 import { UAHandler } from "../ua/processor.ts";
 import { debugInfoService } from "./DebugInfo.ts";
-
-const common = [
-  new KeyState("KeyV", true),
-];
+import { debugKeyShortCut } from "./common.ts";
 
 export const debugOpenInfoUA = registerUADefinition<null>({
-  name: 'debug.open-info',
+  name: 'ua.debug.open-info',
 });
 
 export const debugOpenInfoKA = registerKADefinition({
-  name: 'debug.open-info',
+  name: 'ka.debug.open-info',
   shortCuts: [
-    new KeyShortCut(...common, new KeyState('KeyI')),
+    new KeyShortCut(
+      ...debugKeyShortCut,
+      new KeyState('KeyI')
+    ),
   ],
   ua: {
     definition: debugOpenInfoUA,
