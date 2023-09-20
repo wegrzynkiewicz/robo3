@@ -17,7 +17,7 @@ export class Keyboard {
   public keyDown(event: KeyboardEvent): void {
     const { clearSequenceBound, sequence, states } = this;
     states[event.code] = true;
-    this.processModifiers();
+    this.processModifiers(event);
     if (event.repeat) {
       return;
     }
@@ -25,23 +25,22 @@ export class Keyboard {
     this.timerId = setTimeout(clearSequenceBound, 1000);
     const keyState = new KeyState(
       event.code,
-      this.alt,
-      this.ctrl,
-      this.shift
+      states['AltLeft'] || states['AltRight'] || false,
+      states['ControlLeft'] || states['ControlRight'] || false,
+      states['ShiftLeft'] || states['ShiftRight'] || false,
     );
     sequence.push(keyState);
   }
 
   public keyUp(event: KeyboardEvent): void {
     this.states[event.code] = false;
-    this.processModifiers();
+    this.processModifiers(event);
   }
 
-  public processModifiers() {
-    const s = this.states;
-    this.alt = s['AltLeft'] || s['AltRight'] || false;
-    this.ctrl = s['ControlLeft'] || s['ControlRight'] || false;
-    this.shift = s['ShiftLeft'] || s['ShiftRight'] || false;
+  public processModifiers(event: KeyboardEvent) {
+    this.alt = event.altKey;
+    this.ctrl = event.ctrlKey;
+    this.shift = event.shiftKey;
   }
 
   public clearSequence(): void {
