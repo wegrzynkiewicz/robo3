@@ -27,8 +27,7 @@ export class UniversalGAProcessor implements GAProcessor {
 
   public constructor(
     public readonly sender: GASender,
-  ) {
-  }
+  ) {}
 
   public registerHandler<TRequest, TResponse>(
     request: GADefinition<TRequest>,

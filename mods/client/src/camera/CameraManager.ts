@@ -8,8 +8,7 @@ export interface Camera {
 export class CameraManager {
   public constructor(
     protected currentCamera: Camera,
-  ) {
-  }
+  ) {}
 
   public setCurrentCamera(camera: Camera) {
     this.currentCamera = camera;

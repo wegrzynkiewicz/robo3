@@ -14,8 +14,7 @@ export class PhaseManager {
     public readonly kaManager: KAManager,
     public readonly kaShortCutProcessor: KAShortCutProcessor,
     protected currentPhase: Phase,
-  ) {
-  }
+  ) {}
 
   public setCurrentPhase(phase: Phase) {
     this.currentPhase = phase;

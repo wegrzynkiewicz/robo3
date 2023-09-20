@@ -33,8 +33,7 @@ export class BinarySequencyDecoder {
   public constructor(
     protected buffer: ArrayBuffer,
     protected byteOffset: number,
-  ) {
-  }
+  ) {}
 
   public decode<TData>(codec: BinaryBYOBCodec<TData>): TData {
     const { buffer, byteOffset } = this;
@@ -49,8 +48,7 @@ export class BinarySequencyEncoder {
   public constructor(
     protected buffer: ArrayBuffer,
     protected byteOffset: number,
-  ) {
-  }
+  ) {}
 
   public encode<TData>(codec: BinaryBYOBCodec<TData>, data: TData): void {
     const byteLength = codec.calcByteLength(data);

@@ -13,8 +13,7 @@ export class ChunkSegmentHeader {
 
   public constructor(
     public readonly itemCount: number,
-  ) {
-  }
+  ) {}
 
   public toDataView(dv: DataView): void {
     const { itemCount } = this;

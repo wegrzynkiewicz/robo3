@@ -32,8 +32,7 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
 
   public constructor(
     public readonly sender: GASender,
-  ) {
-  }
+  ) {}
 
   public canProcess<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): boolean {
     if (!isObject<WithId<TData>>(envelope)) {

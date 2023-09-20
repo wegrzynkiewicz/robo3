@@ -75,8 +75,7 @@ class LeafQuadTree<TInstance> implements QuadTree<TInstance> {
   public constructor(
     public readonly rect: CornerRectangle,
     public readonly depth: number,
-  ) {
-  }
+  ) {}
 
   public insert(rect: CornerRectangle, instance: TInstance): boolean {
     if (intersectsNonStrict(this.rect, rect)) {

@@ -60,8 +60,7 @@ export const gaBinaryHeaderCodec: BinaryBYOBCodec<GABinaryHeader> = {
 export class GACodec {
   public constructor(
     public manager: GAManager,
-  ) {
-  }
+  ) {}
 
   public decode<TData>(message: unknown): [GADefinition<TData>, GAEnvelope<TData>] {
     if (isRequiredString(message)) {

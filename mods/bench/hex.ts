@@ -4,8 +4,7 @@ class ChunkId {
     public readonly x: number,
     public readonly y: number,
     public readonly z: number,
-  ) {
-  }
+  ) {}
 
   public toDataView(dv: DataView): void {
     const { spaceId, x, y, z } = this;

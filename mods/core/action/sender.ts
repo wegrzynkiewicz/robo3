@@ -14,8 +14,7 @@ export class OnlineGASender implements GASender {
   public constructor(
     public readonly codec: GACodec,
     public readonly ws: WebSocket,
-  ) {
-  }
+  ) {}
 
   public send<TData>(definition: GADefinition<TData>, params: TData): void {
     const { kind } = definition;

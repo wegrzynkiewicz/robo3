@@ -12,8 +12,7 @@ export class GONormChunkPosition implements Position {
     public readonly y: number,
     public readonly z: number,
     public readonly index: number,
-  ) {
-  }
+  ) {}
 
   public toChunkPosition(): Position {
     const x = this.x * PIXELS_PER_CHUNK_GRID_AXIS;

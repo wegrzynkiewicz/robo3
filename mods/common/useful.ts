@@ -15,8 +15,7 @@ export class EncodingTranslation<T> {
 
   public constructor(
     protected readonly fetchKey: (entry: T) => { index: number; key: string },
-  ) {
-  }
+  ) {}
 
   public set(entry: T) {
     const { index, key } = this.fetchKey(entry);
