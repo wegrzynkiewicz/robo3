@@ -7,12 +7,31 @@ export const canvasService = registerService({
   },
 });
 
+function replaceOriginalFunction(gl: WebGL2RenderingContext, props: string) {
+  const oldFunction = (gl as any)[props];
+  let bound: unknown;
+  (gl as any)[props] = (arg: unknown): void => {
+    if (bound === arg) {
+      return;
+    }
+    oldFunction.call(gl, arg);
+    bound = arg;
+  }
+}
+
 export const webGLService = registerService({
   async provider(resolver: ServiceResolver): Promise<WebGL2RenderingContext> {
     const canvas = await resolver.resolve(canvasService);
     const gl = canvas.getContext("webgl2", {
-      premultipliedAlpha: true,
       alpha: false,
+      premultipliedAlpha: true,
+      antialias: false,
+      depth: false,
+      desynchronized: false,
+      failIfMajorPerformanceCaveat: false,
+      powerPreference: "high-performance",
+      preserveDrawingBuffer: false,
+      stencil: false,
     })!;
 
     const oldBindBuffer = gl.bindBuffer;
@@ -24,6 +43,9 @@ export const webGLService = registerService({
       oldBindBuffer.call(gl, target, buffer);
       bound[target] = buffer;
     }
+
+    replaceOriginalFunction(gl, 'useProgram');
+    replaceOriginalFunction(gl, 'bindVertexArray');
 
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);

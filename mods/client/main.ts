@@ -1,6 +1,5 @@
 import { assertNonNull } from "../common/asserts.ts";
 import { processMap } from "../tiled-map/types.ts";
-import { initGridProgram } from "./src/graphic/gridProgram.ts";
 import "./src/else/wss.ts";
 import "../core/bootstrap.ts";
 import { spriteAtlasRegistry, spriteRegistry } from "../core/sprite/defining.ts";
@@ -10,9 +9,6 @@ import { resolveSpriteAtlases, resolveSprites } from "../core/sprite/resolving.t
 import { createSpriteIndexTable } from "../core/sprite/binding.ts";
 import { allocateSpritesInCanvas } from "./src/graphic/texture.ts";
 import { ServiceResolver } from "../core/dependency/service.ts";
-import { chunkManagerService } from "../domain-client/chunk/chunkManager.ts";
-import { index2coords } from "../core/numbers.ts";
-import { intersectsNonStrict } from "../math/CornerRectangle.ts";
 import { displayService } from "./src/graphic/Display.ts";
 import { viewportService } from "./src/graphic/Viewport.ts";
 import { canvasService, webGLService } from "./src/graphic/WebGL.ts";
@@ -21,6 +17,7 @@ import { mainLoopService } from "./src/MainLoop.ts";
 import { debugInfoService } from "./src/debug/DebugInfo.ts";
 import { keyboardService } from "./src/keyboard/Keyboard.ts";
 import { phaseManagerService } from "./src/phase/PhaseManager.ts";
+import { tilesProgramService } from "./src/graphic/tiles/TilesProgram.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -33,21 +30,21 @@ async function start() {
     viewport,
     primaryUBO,
     display,
-    chunkManager,
     keyboard,
     mainLoop,
     debugInfo,
     phaseManager,
+    tilesProgram,
   ] = await Promise.all([
     resolver.resolve(webGLService),
     resolver.resolve(viewportService),
     resolver.resolve(primaryUBOService),
     resolver.resolve(displayService),
-    resolver.resolve(chunkManagerService),
     resolver.resolve(keyboardService),
     resolver.resolve(mainLoopService),
     resolver.resolve(debugInfoService),
     resolver.resolve(phaseManagerService),
+    resolver.resolve(tilesProgramService),
   ])
 
   function resizeWindow() {
@@ -88,11 +85,6 @@ async function start() {
     gl.generateMipmap(gl.TEXTURE_2D);
   });
 
-  const info = {
-    fps: 0,
-    visibleTilesCount: 0,
-  }
-
   const nearestSampler = gl.createSampler();
   assertNonNull(nearestSampler, "cannot-create-nearest-sampler");
   gl.samplerParameteri(nearestSampler, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
@@ -101,41 +93,10 @@ async function start() {
   gl.samplerParameteri(nearestSampler, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.bindSampler(0, nearestSampler);
 
-  const { glProgram, glVAOGrid, tilesBuffer } = initGridProgram(gl);
-
-  gl.useProgram(glProgram);
-  const projectionLoc1 = gl.getUniformLocation(glProgram, "u_Projection");
-  const viewMatrixLoc = gl.getUniformLocation(glProgram, "u_View");
-  const textureLoc1 = gl.getUniformLocation(glProgram, "u_texture");
-  gl.bindVertexArray(glVAOGrid);
-
-  const view = tilesBuffer.typedArray;
-
-  let elements = 0;
-  function loadMap() {
-    let n = 0;
-    elements = 0;
-    for (const chunk of chunkManager.chunks.values()) {
-      if (intersectsNonStrict(chunk.worldSpaceBoundRect, viewport.worldSpaceRect)) {
-        for (const go of chunk.gos) {
-          if (intersectsNonStrict(go.worldSpaceRect, viewport.worldSpaceRect)) {
-            const { goTypeId, spacePosition } = go;
-            view[n++] = spacePosition.x;
-            view[n++] = spacePosition.y;
-            view[n++] = 32.0;
-            view[n++] = 32.0;
-            view[n++] = index2coords(goTypeId)[0] * 32.0;
-            view[n++] = index2coords(goTypeId)[1] * 32.0;
-            view[n++] = 0;
-            view[n++] = 0;
-            elements++;
-          }
-        }
-      }
-    }
-    tilesBuffer.update(n*4);
-    info.visibleTilesCount = elements;
-  }
+  tilesProgram.bind();
+  const projectionLoc1 = gl.getUniformLocation(tilesProgram.glProgram, "u_Projection");
+  const viewMatrixLoc = gl.getUniformLocation(tilesProgram.glProgram, "u_View");
+  const textureLoc1 = gl.getUniformLocation(tilesProgram.glProgram, "u_texture");
 
   gl.uniform1i(textureLoc1, 0);
 
@@ -185,7 +146,6 @@ async function start() {
 
   function loop() {
     processKeyboard();
-    loadMap();
     requestAnimationFrame(loop);
   }
   mainLoop.run();

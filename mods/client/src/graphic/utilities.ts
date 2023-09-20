@@ -1,6 +1,4 @@
-import { assertObject, Breaker, isPositiveNumber } from "../../../common/asserts.ts";
-import { logger } from "../../../common/logger.ts";
-import { VertexAttribute } from "./attribute.ts";
+import { assertNonNull, assertObject, Breaker } from "../../../common/asserts.ts";
 
 export type GL = WebGL2RenderingContext;
 
@@ -43,6 +41,19 @@ export function createProgram(
     });
   }
   return program;
+}
+
+export function createBuffer(gl: GL): WebGLBuffer {
+  const buffer = gl.createBuffer();
+  assertNonNull(buffer, "cannot-create-array-buffer");
+  return buffer;
+}
+
+export function createVertexArray(gl: GL): WebGLVertexArrayObject {
+  const vao = gl.createVertexArray();
+  assertNonNull(vao, "cannot-create-vertex-array-object");
+  gl.bindVertexArray(vao);
+  return vao;
 }
 
 export function getProgramParameters(gl: GL, program: WebGLProgram) {

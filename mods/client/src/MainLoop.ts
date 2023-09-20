@@ -1,6 +1,6 @@
 import { registerService, ServiceResolver } from "../../core/dependency/service.ts";
 import { DebugInfo, debugInfoService } from "./debug/DebugInfo.ts";
-import { Renderer, rendererService } from "./graphic/Renderer.ts";
+import { Renderer, tilesRendererService } from "./graphic/tiles/TilesRenderer.ts";
 
 export class MainLoop {
   protected animationFrameId = 0;
@@ -53,7 +53,7 @@ export const mainLoopService = registerService({
   async provider(resolver: ServiceResolver): Promise<MainLoop> {
     const [debugInfo, renderer] = await Promise.all([
       resolver.resolve(debugInfoService),
-      resolver.resolve(rendererService),
+      resolver.resolve(tilesRendererService),
     ]);
     return new MainLoop(debugInfo, renderer);
   },
