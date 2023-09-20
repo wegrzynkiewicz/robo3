@@ -1,6 +1,11 @@
 import { registerService, ServiceResolver } from "../../core/dependency/service.ts";
-import { DebugInfo, debugInfoService } from "./debug/DebugInfo.ts";
-import { Renderer, tilesRendererService } from "./graphic/tiles/TilesRenderer.ts";
+import { cameraManagerService } from "./camera/CameraManager.ts";
+import { debugInfoService } from "./debug/DebugInfo.ts";
+import { tilesRendererService } from "./graphic/tiles/TilesRenderer.ts";
+
+export interface Updatable {
+  update(fps: number): void;
+}
 
 export class MainLoop {
   protected animationFrameId = 0;
@@ -12,8 +17,7 @@ export class MainLoop {
   protected timeAccumulator = 0;
 
   public constructor(
-    public readonly debugInfo: DebugInfo,
-    public readonly renderer: Renderer,
+    public readonly updaters: Updatable[],
   ) {
     this.boundLoop = this.loop.bind(this);
   }
@@ -40,8 +44,9 @@ export class MainLoop {
       }
       this.then = now;
       this.frameCount++;
-      this.renderer.draw();
-      this.debugInfo.update(this.fps);
+      for (const updatable of this.updaters) {
+        updatable.update(this.fps);
+      }
     }
     if (this.isRunning === true) {
       this.animationFrameId = requestAnimationFrame(this.boundLoop);
@@ -51,10 +56,11 @@ export class MainLoop {
 
 export const mainLoopService = registerService({
   async provider(resolver: ServiceResolver): Promise<MainLoop> {
-    const [debugInfo, renderer] = await Promise.all([
-      resolver.resolve(debugInfoService),
+    const [...updaters] = await Promise.all([
+      resolver.resolve(cameraManagerService),
       resolver.resolve(tilesRendererService),
+      resolver.resolve(debugInfoService),
     ]);
-    return new MainLoop(debugInfo, renderer);
+    return new MainLoop(updaters);
   },
 });

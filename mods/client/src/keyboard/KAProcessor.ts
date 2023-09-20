@@ -12,11 +12,13 @@ export class KAProcessor {
   }
 
   public async process<TData>(kaDefinition: KADefinition<TData>): Promise<void> {
-    const {definition, data} = kaDefinition.ua;
-    try {
-      this.uaProcessor.process(definition, data);
-    } catch (error) {
-      throw new Breaker('error-in-ka-processor', { error, kaDefinition, definition });
+    if (kaDefinition.ua) {
+      const { definition, data } = kaDefinition.ua;
+      try {
+        this.uaProcessor.process(definition, data);
+      } catch (error) {
+        throw new Breaker('error-in-ka-processor', { error, kaDefinition, definition });
+      }
     }
   }
 }

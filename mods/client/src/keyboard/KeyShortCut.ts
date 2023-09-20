@@ -10,6 +10,14 @@ export class KeyState {
 
   }
 
+  public isHold(keyboard: Keyboard) {
+    return true &&
+      keyboard.alt === this.alt &&
+      keyboard.ctrl === this.ctrl &&
+      keyboard.shift === this.shift &&
+      keyboard.states[this.code] === true;
+  }
+
   public match(key: KeyState): boolean {
     return true &&
       this.alt === key.alt &&
@@ -33,6 +41,20 @@ export class KeyShortCut {
   public readonly sequence: KeyState[];
   public constructor(...sequence: KeyState[]) {
     this.sequence = sequence;
+  }
+
+  public isHold(keyboard: Keyboard): boolean {
+    const length = this.sequence.length;
+    if (length === 0) {
+      return false;
+    }
+    for (let i = this.sequence.length - 1; i >= 0; i--) {
+      const keyState = this.sequence[i];
+      if (keyState.isHold(keyboard) === false) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public match(keyboard: Keyboard): boolean {

@@ -10,9 +10,7 @@ import { createSpriteIndexTable } from "../core/sprite/binding.ts";
 import { allocateSpritesInCanvas } from "./src/graphic/texture.ts";
 import { ServiceResolver } from "../core/dependency/service.ts";
 import { displayService } from "./src/graphic/Display.ts";
-import { viewportService } from "./src/graphic/Viewport.ts";
 import { canvasService, webGLService } from "./src/graphic/WebGL.ts";
-import { primaryUBOService } from "./src/graphic/PrimaryUBO.ts";
 import { mainLoopService } from "./src/MainLoop.ts";
 import { debugInfoService } from "./src/debug/DebugInfo.ts";
 import { keyboardService } from "./src/keyboard/Keyboard.ts";
@@ -27,8 +25,6 @@ async function start() {
 
   const [
     gl,
-    viewport,
-    primaryUBO,
     display,
     keyboard,
     mainLoop,
@@ -37,8 +33,6 @@ async function start() {
     tilesProgram,
   ] = await Promise.all([
     resolver.resolve(webGLService),
-    resolver.resolve(viewportService),
-    resolver.resolve(primaryUBOService),
     resolver.resolve(displayService),
     resolver.resolve(keyboardService),
     resolver.resolve(mainLoopService),
@@ -94,40 +88,9 @@ async function start() {
   gl.bindSampler(0, nearestSampler);
 
   tilesProgram.bind();
-  const projectionLoc1 = gl.getUniformLocation(tilesProgram.glProgram, "u_Projection");
-  const viewMatrixLoc = gl.getUniformLocation(tilesProgram.glProgram, "u_View");
   const textureLoc1 = gl.getUniformLocation(tilesProgram.glProgram, "u_texture");
 
   gl.uniform1i(textureLoc1, 0);
-
-  let y = 0;
-  let x = 0;
-
-  function processKeyboard() {
-    const speed = 16;
-    const { states } = keyboard;
-    if (states["KeyW"] === true) {
-      y += -speed;
-    }
-    if (states["KeyS"] === true) {
-      y += speed;
-    }
-    if (states["KeyD"] === true) {
-      x += speed;
-    }
-    if (states["KeyA"] === true) {
-      x += -speed;
-    }
-    if (states["KeyQ"] === true) {
-      x = 0;
-      y = 0;
-    }
-
-    viewport.lookAt(x, y);
-    const { projectionMatrix, viewMatrix } = primaryUBO;
-    gl.uniformMatrix4fv(viewMatrixLoc, false, viewMatrix);
-    gl.uniformMatrix4fv(projectionLoc1, false, projectionMatrix);
-  }
 
   const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
   const sgoMap = s.resolveGameObjectTypes();
@@ -145,11 +108,10 @@ async function start() {
   }
 
   function loop() {
-    processKeyboard();
     requestAnimationFrame(loop);
   }
-  mainLoop.run();
   loop();
+  mainLoop.run();
 
 }
 start();

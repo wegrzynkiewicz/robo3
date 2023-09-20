@@ -2,6 +2,9 @@ import { registerService } from "../../../core/dependency/service.ts";
 import { KeyState } from "./KeyShortCut.ts";
 
 export class Keyboard {
+  public alt = false;
+  public ctrl = false;
+  public shift = false;
   public readonly states: Record<string, boolean> = {};
   public readonly sequence: KeyState[] = [];
   protected timerId = 0;
@@ -14,6 +17,7 @@ export class Keyboard {
   public keyDown(event: KeyboardEvent): void {
     const { clearSequenceBound, sequence, states } = this;
     states[event.code] = true;
+    this.processModifiers();
     if (event.repeat) {
       return;
     }
@@ -21,15 +25,23 @@ export class Keyboard {
     this.timerId = setTimeout(clearSequenceBound, 1000);
     const keyState = new KeyState(
       event.code,
-      event.altKey || states["AltRight"] || false,
-      event.ctrlKey || states["ControlRight"] || false,
-      event.shiftKey || states["ShiftRight"] || false,
+      this.alt,
+      this.ctrl,
+      this.shift
     );
     sequence.push(keyState);
   }
 
   public keyUp(event: KeyboardEvent): void {
     this.states[event.code] = false;
+    this.processModifiers();
+  }
+
+  public processModifiers() {
+    const s = this.states;
+    this.alt = s['AltLeft'] || s['AltRight'] || false;
+    this.ctrl = s['ControlLeft'] || s['ControlRight'] || false;
+    this.shift = s['ShiftLeft'] || s['ShiftRight'] || false;
   }
 
   public clearSequence(): void {

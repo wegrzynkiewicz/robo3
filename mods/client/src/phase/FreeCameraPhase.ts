@@ -2,7 +2,7 @@ import { registerService } from "../../../core/dependency/service.ts";
 import { AnyUADefinition } from "../ua/foundation.ts";
 import { debugActions } from "./actions.ts";
 
-export class GamePhase {
+export class FreeCameraPhase {
   public getAvailableUADefinition(): AnyUADefinition[] {
     return [
       ...debugActions,
@@ -10,8 +10,8 @@ export class GamePhase {
   }
 }
 
-export const gamePhaseService = registerService({
-  async provider(): Promise<GamePhase> {
-    return new GamePhase();
+export const freeCameraPhaseService = registerService({
+  async provider(): Promise<FreeCameraPhase> {
+    return new FreeCameraPhase();
   },
 });

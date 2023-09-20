@@ -5,7 +5,7 @@ import { KeyShortCut } from "./KeyShortCut.ts";
 
 export interface KACommon<TData> {
   name: string;
-  ua: {
+  ua?: {
     definition: UADefinition<TData>,
     data: TData,
   },
@@ -34,7 +34,9 @@ export class KAManager {
       originalShortCuts: shortCuts,
       ua,
     }
-    this.byUADefinition.push(ua.definition, action);
+    if (ua) {
+      this.byUADefinition.push(ua.definition, action);
+    }
     this.byName.set(name, action);
     return action;
   }
