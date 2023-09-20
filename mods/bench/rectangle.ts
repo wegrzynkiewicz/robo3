@@ -4,8 +4,8 @@
       public x: number,
       public y: number,
       public w: number,
-      public h: number
-    ) { }
+      public h: number,
+    ) {}
 
     public intersects(range: RectangleOnePoint): boolean {
       return (
@@ -47,8 +47,8 @@
       public x1: number,
       public y1: number,
       public x2: number,
-      public y2: number
-    ) { }
+      public y2: number,
+    ) {}
 
     intersects(range: RectangleTwoPoint): boolean {
       return (
@@ -99,7 +99,7 @@
       r1.y2 >= r2.y1 &&
       r1.y1 <= r2.y2
     );
-  }
+  };
 
   const rect = function (x1: number, y1: number, x2: number, y2: number): RectangleInterface {
     return { x1, y1, x2, y2 };
@@ -112,7 +112,7 @@
     ({ x1: 32, y1: 32, x2: 32, y2: 32 });
   });
   Deno.bench("RectangleInterface::rect", () => {
-    const r: RectangleInterface = rect(32, 32, 32, 32);
+    rect(32, 32, 32, 32);
   });
   Deno.bench("RectangleInterface::intersects", () => {
     intersects(r1, r2);

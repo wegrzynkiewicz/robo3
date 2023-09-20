@@ -6,9 +6,7 @@ export class KeyState {
     public readonly alt = false,
     public readonly ctrl = false,
     public readonly shift = false,
-  ) {
-
-  }
+  ) {}
 
   public isHold(keyboard: Keyboard) {
     return true &&
@@ -28,14 +26,13 @@ export class KeyState {
 }
 
 export class KeyShortCut {
-
   public static readonly IGNORE_CODES = [
-    'AltLeft',
-    'AltRight',
-    'ControlLeft',
-    'ControlRight',
-    'ShiftLeft',
-    'ShiftRight',
+    "AltLeft",
+    "AltRight",
+    "ControlLeft",
+    "ControlRight",
+    "ShiftLeft",
+    "ShiftRight",
   ];
 
   public readonly sequence: KeyState[];

@@ -4,12 +4,9 @@ import { UAProcessor, uaProcessorService } from "../ua/processor.ts";
 import { KADefinition } from "./foundation.ts";
 
 export class KAProcessor {
-
   public constructor(
     public readonly uaProcessor: UAProcessor,
-  ) {
-
-  }
+  ) {}
 
   public async process<TData>(kaDefinition: KADefinition<TData>): Promise<void> {
     if (kaDefinition.ua) {
@@ -17,7 +14,7 @@ export class KAProcessor {
       try {
         this.uaProcessor.process(definition, data);
       } catch (error) {
-        throw new Breaker('error-in-ka-processor', { error, kaDefinition, definition });
+        throw new Breaker("error-in-ka-processor", { error, kaDefinition, definition });
       }
     }
   }

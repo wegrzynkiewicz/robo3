@@ -129,7 +129,7 @@ function* genChunks() {
         rect,
         data,
         tree,
-      }
+      };
     }
   }
 }

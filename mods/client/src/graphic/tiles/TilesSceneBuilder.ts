@@ -12,9 +12,7 @@ export class TilesSceneBuilder {
     public readonly chunkManager: ChunkManager,
     public readonly viewport: Viewport,
     public readonly tilesBuffer: DynamicDrawBuffer,
-  ) {
-
-  }
+  ) {}
 
   public build() {
     const view = this.tilesBuffer.typedArray;

@@ -1,20 +1,17 @@
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
-import { TILE_SIZE, SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y } from "../../../core/vars.ts";
+import { SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y, TILE_SIZE } from "../../../core/vars.ts";
 import { point } from "../../../math/Point.ts";
 import { Viewport, viewportService } from "./Viewport.ts";
 import { webGLService } from "./WebGL.ts";
 
 export class Display {
-
   private _scale = 1.0;
   public readonly client = point(0, 0);
 
   public constructor(
     public readonly gl: WebGL2RenderingContext,
     public readonly viewport: Viewport,
-  ) {
-
-  }
+  ) {}
 
   get scale(): number {
     return this._scale;

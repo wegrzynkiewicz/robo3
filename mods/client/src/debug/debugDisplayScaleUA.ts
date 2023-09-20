@@ -1,13 +1,13 @@
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
 import { displayService } from "../graphic/Display.ts";
-import { KeyState, KeyShortCut } from "../keyboard/KeyShortCut.ts";
+import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
-import { UADefinition, registerUADefinition } from "../ua/foundation.ts";
+import { registerUADefinition, UADefinition } from "../ua/foundation.ts";
 import { UAHandler } from "../ua/processor.ts";
 import { debugKeyShortCut } from "./common.ts";
 
 export const debugDisplayScaleUA = registerUADefinition<number>({
-  name: 'ua.debug.display-scale',
+  name: "ua.debug.display-scale",
 });
 
 for (const data of [1, 2, 3]) {
@@ -16,7 +16,7 @@ for (const data of [1, 2, 3]) {
     shortCuts: [
       new KeyShortCut(
         ...debugKeyShortCut,
-        new KeyState('KeyS'),
+        new KeyState("KeyS"),
         new KeyState(`Digit${data}`),
       ),
     ],

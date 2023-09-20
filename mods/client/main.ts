@@ -48,14 +48,14 @@ async function start() {
       phaseManager.processKeyboard();
     }
   }
-  document.addEventListener('keydown', onKeyDown);
+  document.addEventListener("keydown", onKeyDown);
 
   function onKeyUp(event: KeyboardEvent) {
     if (document.activeElement === document.body) {
       keyboard.keyUp(event);
     }
   }
-  document.addEventListener('keyup', onKeyUp);
+  document.addEventListener("keyup", onKeyUp);
 
   debugInfo.enable();
 
@@ -98,6 +98,5 @@ async function start() {
   }
 
   mainLoop.run();
-
 }
 start();

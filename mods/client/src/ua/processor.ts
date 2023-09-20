@@ -5,7 +5,7 @@ import { debugOpenInfoUA, debugOpenInfoUAHandlerService } from "../debug/debugOp
 import { AnyUADefinition, UADefinition } from "./foundation.ts";
 
 export interface UAHandler<TData> {
-  handle(definition: UADefinition<TData>, data: TData): Promise<void>
+  handle(definition: UADefinition<TData>, data: TData): Promise<void>;
 }
 
 export type AnyUAHandler = UAHandler<any>;

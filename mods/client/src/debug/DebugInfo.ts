@@ -8,7 +8,6 @@ import { TilesSceneBuilder, tilesSceneBuilderService } from "../graphic/tiles/Ti
 import { tilesBufferService } from "../graphic/tiles/tilesBuffer.ts";
 
 export class DebugInfo {
-
   public readonly element: HTMLElement;
   public isEnabled = false;
 
@@ -18,7 +17,7 @@ export class DebugInfo {
     public readonly tilesSceneBuilder: TilesSceneBuilder,
     public readonly tilesBuffer: DynamicDrawBuffer,
   ) {
-    const element = document.getElementById('debug-info');
+    const element = document.getElementById("debug-info");
     assertNonNull(element);
     this.element = element;
   }
@@ -29,7 +28,7 @@ export class DebugInfo {
 
   public disable() {
     this.isEnabled = false;
-    this.element.innerText = '';
+    this.element.innerText = "";
   }
 
   public toggle() {
@@ -50,7 +49,7 @@ export class DebugInfo {
     out.push(`  FPS: ${fps.toFixed(2)}`);
     out.push(`  Size: ${client.x} ${client.y}`);
     out.push(`  Scale: ${scale}`);
-    const { worldSize: ws, centerPoint: cp, worldSpaceRect: wr } = this.viewport
+    const { worldSize: ws, centerPoint: cp, worldSpaceRect: wr } = this.viewport;
     out.push(`Viewport`);
     out.push(`  Axis: ${ws.x / 32} ${ws.y / 32}`);
     out.push(`  WorldSize: ${ws.x} ${ws.y}`);
@@ -60,7 +59,7 @@ export class DebugInfo {
     out.push(`  VisibleTiles: ${this.tilesSceneBuilder.visibleTiles}`);
     const bs = this.tilesBuffer.bytesSent;
     out.push(`  BytesSent: ${bs} (${formatBytes(bs)})`);
-    this.element.textContent = out.join('\n');
+    this.element.textContent = out.join("\n");
   }
 }
 

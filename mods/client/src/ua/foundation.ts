@@ -8,7 +8,7 @@ export interface UADefinition<TData> {
   name: string;
 }
 
-export type AnyUADefinition = UADefinition<any> 
+export type AnyUADefinition = UADefinition<any>;
 
 export class UAManager {
   public readonly byName = new Map<string, AnyUADefinition>();
@@ -17,7 +17,7 @@ export class UAManager {
     const { name } = definition;
     const action: UADefinition<TData> = {
       name,
-    }
+    };
     this.byName.set(name, action);
     return action;
   }

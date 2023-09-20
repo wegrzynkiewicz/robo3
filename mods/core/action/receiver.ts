@@ -51,7 +51,7 @@ export const gaReceiverService = registerService({
       [
         await resolver.resolve(gaRequestorService),
         await resolver.resolve(gaProcessorService),
-      ]
+      ],
     );
   },
 });

@@ -23,8 +23,7 @@ export class CameraManager {
 export const cameraManagerService = registerService({
   async provider(resolver: ServiceResolver): Promise<CameraManager> {
     return new CameraManager(
-      await resolver.resolve(freeCameraService)
+      await resolver.resolve(freeCameraService),
     );
   },
 });
-

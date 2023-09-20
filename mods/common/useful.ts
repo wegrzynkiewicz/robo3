@@ -115,10 +115,10 @@ export class MapList<TKey, TValue> {
 
 export function formatBytes(bytes: number): string {
   if (bytes === 0) {
-    return '0 B';
+    return "0 B";
   }
-  const sizes = ['B', 'kiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+  const sizes = ["B", "kiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
   const index = Math.floor(Math.log(bytes) / Math.log(1024));
   const float = bytes / Math.pow(1024, index);
-  return float.toFixed(2) + ' ' + sizes[index];
+  return `${float.toFixed(2)} ${sizes[index]}`;
 }

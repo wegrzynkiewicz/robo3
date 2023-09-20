@@ -2,7 +2,7 @@ import { registerService, ServiceResolver } from "../../../../core/dependency/se
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
 import { webGLService } from "../WebGL.ts";
 import { VertexAttribute } from "../attribute.ts";
-import { vec, float } from "../types.ts";
+import { float, vec } from "../types.ts";
 import { createProgram, createVertexArray } from "../utilities.ts";
 import { tilesBufferService } from "./tilesBuffer.ts";
 
@@ -91,7 +91,7 @@ export class TilesProgram {
     tileAlpha.enableVertexAttribute(gl, this.glProgram);
     gl.bindVertexArray(null);
 
-    gl.uniformBlockBinding(this.glProgram, gl.getUniformBlockIndex(this.glProgram, 'Primary'), 0);
+    gl.uniformBlockBinding(this.glProgram, gl.getUniformBlockIndex(this.glProgram, "Primary"), 0);
   }
 
   public bind(): void {

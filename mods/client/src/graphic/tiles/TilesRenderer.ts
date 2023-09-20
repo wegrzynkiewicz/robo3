@@ -18,9 +18,7 @@ export class TilesRenderer implements Renderer {
     public readonly primaryUBO: PrimaryUBO,
     public readonly tilesProgram: TilesProgram,
     public readonly tilesSceneBuilder: TilesSceneBuilder,
-  ) {
-
-  }
+  ) {}
 
   public update(): void {
     this.tilesSceneBuilder.build();

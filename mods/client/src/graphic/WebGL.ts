@@ -1,9 +1,9 @@
 import { Breaker } from "../../../common/asserts.ts";
-import { ServiceResolver, registerService } from "../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
 
 export const canvasService = registerService({
   async provider(): Promise<HTMLCanvasElement> {
-    throw new Breaker('canvas-service-must-be-injected');
+    throw new Breaker("canvas-service-must-be-injected");
   },
 });
 
@@ -16,7 +16,7 @@ function replaceOriginalFunction(gl: WebGL2RenderingContext, props: string) {
     }
     oldFunction.call(gl, arg);
     bound = arg;
-  }
+  };
 }
 
 export const webGLService = registerService({
@@ -42,10 +42,10 @@ export const webGLService = registerService({
       }
       oldBindBuffer.call(gl, target, buffer);
       bound[target] = buffer;
-    }
+    };
 
-    replaceOriginalFunction(gl, 'useProgram');
-    replaceOriginalFunction(gl, 'bindVertexArray');
+    replaceOriginalFunction(gl, "useProgram");
+    replaceOriginalFunction(gl, "bindVertexArray");
 
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);

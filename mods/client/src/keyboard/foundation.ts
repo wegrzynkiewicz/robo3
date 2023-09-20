@@ -6,9 +6,9 @@ import { KeyShortCut } from "./KeyShortCut.ts";
 export interface KACommon<TData> {
   name: string;
   ua?: {
-    definition: UADefinition<TData>,
-    data: TData,
-  },
+    definition: UADefinition<TData>;
+    data: TData;
+  };
 }
 
 export interface KAInput<TData> extends KACommon<TData> {
@@ -20,7 +20,7 @@ export interface KADefinition<TData> extends KACommon<TData> {
   originalShortCuts: KeyShortCut[];
 }
 
-export type AnyKADefinition = KADefinition<any>
+export type AnyKADefinition = KADefinition<any>;
 
 export class KAManager {
   public readonly byName = new Map<string, AnyKADefinition>();
@@ -33,7 +33,7 @@ export class KAManager {
       name,
       originalShortCuts: shortCuts,
       ua,
-    }
+    };
     if (ua) {
       this.byUADefinition.push(ua.definition, action);
     }

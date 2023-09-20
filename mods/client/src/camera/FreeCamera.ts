@@ -14,18 +14,17 @@ function createHolder(code: string, name: string, vector: Point) {
       ),
     ],
   });
-  return { kaDefinition, vector }
+  return { kaDefinition, vector };
 }
 
 const holders = [
-  createHolder('KeyW', 'up', { x: 0, y: -1 }),
-  createHolder('KeyS', 'down', { x: 0, y: 1 }),
-  createHolder('KeyA', 'left', { x: -1, y: 0 }),
-  createHolder('KeyD', 'right', { x: 1, y: 0 }),
+  createHolder("KeyW", "up", { x: 0, y: -1 }),
+  createHolder("KeyS", "down", { x: 0, y: 1 }),
+  createHolder("KeyA", "left", { x: -1, y: 0 }),
+  createHolder("KeyD", "right", { x: 1, y: 0 }),
 ];
 
 export class FreeCamera {
-
   public speed = 16;
   public x = 0;
   public y = 0;
@@ -33,9 +32,7 @@ export class FreeCamera {
   public constructor(
     public readonly viewport: Viewport,
     public readonly keyboard: Keyboard,
-  ) {
-
-  }
+  ) {}
 
   public update() {
     for (const holder of holders) {

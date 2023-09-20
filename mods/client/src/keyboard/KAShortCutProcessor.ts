@@ -7,10 +7,8 @@ export class KAShortCutProcessor {
   public constructor(
     public readonly keyboard: Keyboard,
     public readonly processor: KAProcessor,
-  ) {
+  ) {}
 
-  }
-  
   public process(definitions: AnyKADefinition[]) {
     for (const definition of definitions) {
       for (const shortcut of definition.currentShortCuts) {

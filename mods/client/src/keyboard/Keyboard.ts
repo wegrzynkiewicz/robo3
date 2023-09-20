@@ -25,9 +25,9 @@ export class Keyboard {
     this.timerId = setTimeout(clearSequenceBound, 1000);
     const keyState = new KeyState(
       event.code,
-      states['AltLeft'] || states['AltRight'] || false,
-      states['ControlLeft'] || states['ControlRight'] || false,
-      states['ShiftLeft'] || states['ShiftRight'] || false,
+      states["AltLeft"] || states["AltRight"] || false,
+      states["ControlLeft"] || states["ControlRight"] || false,
+      states["ShiftLeft"] || states["ShiftRight"] || false,
     );
     sequence.push(keyState);
   }

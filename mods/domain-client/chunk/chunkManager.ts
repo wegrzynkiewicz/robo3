@@ -6,7 +6,7 @@ import { registerService } from "../../core/dependency/service.ts";
 import { GONormChunkPosition } from "../../core/game-object/position.ts";
 import { Position } from "../../core/numbers.ts";
 import { TILES_PER_CHUNK_GRID_AXIS } from "../../core/vars.ts";
-import { CornerRectangle, cornerRect } from "../../math/CornerRectangle.ts";
+import { cornerRect, CornerRectangle } from "../../math/CornerRectangle.ts";
 
 export interface GOView {
   chunkPosition: Position;
@@ -26,7 +26,7 @@ export class Chunk {
     public chunkId: ChunkId,
   ) {
     this.worldSpaceRect = this.chunkId.getWorldSpaceCornerRect();
-    this.worldSpaceBoundRect = {...this.worldSpaceRect};
+    this.worldSpaceBoundRect = { ...this.worldSpaceRect };
   }
 
   public processGO() {
@@ -67,8 +67,8 @@ export class Chunk {
         spacePosition.x + 32,
         spacePosition.y + 32,
       );
-      maxX = Math.max(worldSpaceRect.x2,  maxX);
-      maxY = Math.max(worldSpaceRect.y2,  maxY);
+      maxX = Math.max(worldSpaceRect.x2, maxX);
+      maxY = Math.max(worldSpaceRect.y2, maxY);
       const goView: GOView = { normChunkPosition, chunkPosition, goTypeId, localId, spacePosition, worldSpaceRect };
       this.gos.push(goView);
       localId++;

@@ -1,7 +1,7 @@
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
 import { cornerRect } from "../../../math/CornerRectangle.ts";
 import { point } from "../../../math/Point.ts";
-import { identity, ortho, fromTranslation } from "../../../math/mat4.ts";
+import { fromTranslation, identity, ortho } from "../../../math/mat4.ts";
 import { primaryUBOService } from "./PrimaryUBO.ts";
 
 export class Viewport {
@@ -48,7 +48,7 @@ export class Viewport {
 export const viewportService = registerService({
   async provider(resolver: ServiceResolver) {
     const primaryUBO = await resolver.resolve(primaryUBOService);
-    const { projectionMatrix, viewMatrix } = primaryUBO
+    const { projectionMatrix, viewMatrix } = primaryUBO;
     return new Viewport(projectionMatrix, viewMatrix);
   },
 });
