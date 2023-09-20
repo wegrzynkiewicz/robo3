@@ -26,9 +26,7 @@ export const debugOpenInfoKA = registerKADefinition({
 
 export const debugOpenInfoUAHandlerService = registerService({
   async provider(resolver: ServiceResolver): Promise<UAHandler<null>> {
-    const [debugInfo] = await Promise.all([
-      resolver.resolve(debugInfoService),
-    ]);
+    const debugInfo = await resolver.resolve(debugInfoService);
     const handle = async (): Promise<void> => {
       debugInfo.toggle();
     };

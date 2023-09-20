@@ -21,7 +21,7 @@ export class TilesSceneBuilder {
     const { worldSpaceRect } = this.viewport;
     this.visibleTiles = 0;
     let index = 0;
-    for (const chunk of this.chunkManager.chunks.values()) { 
+    for (const chunk of this.chunkManager.chunks.values()) {
       // TODO: query chunks by chunkId set, based on viewport center point
       if (intersectsNonStrict(chunk.worldSpaceBoundRect, worldSpaceRect)) {
         for (const go of chunk.gos) {
@@ -46,11 +46,10 @@ export class TilesSceneBuilder {
 
 export const tilesSceneBuilderService = registerService({
   async provider(resolver: ServiceResolver): Promise<TilesSceneBuilder> {
-    const [chunkManager, viewport, tilesBuffer] = await Promise.all([
-      resolver.resolve(chunkManagerService),
-      resolver.resolve(viewportService),
-      resolver.resolve(tilesBufferService),
-    ]);
-    return new TilesSceneBuilder(chunkManager, viewport, tilesBuffer);
+    return new TilesSceneBuilder(
+      await resolver.resolve(chunkManagerService),
+      await resolver.resolve(viewportService),
+      await resolver.resolve(tilesBufferService),
+    );
   },
 });

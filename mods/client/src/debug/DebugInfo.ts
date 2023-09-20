@@ -66,12 +66,11 @@ export class DebugInfo {
 
 export const debugInfoService = registerService({
   async provider(resolver: ServiceResolver): Promise<DebugInfo> {
-    const [display, viewport, tilesSceneBuilder, tilesBuffer] = await Promise.all([
-      resolver.resolve(displayService),
-      resolver.resolve(viewportService),
-      resolver.resolve(tilesSceneBuilderService),
-      resolver.resolve(tilesBufferService),
-    ]);
-    return new DebugInfo(display, viewport, tilesSceneBuilder, tilesBuffer);
+    return new DebugInfo(
+      await resolver.resolve(displayService),
+      await resolver.resolve(viewportService),
+      await resolver.resolve(tilesSceneBuilderService),
+      await resolver.resolve(tilesBufferService),
+    );
   },
 });

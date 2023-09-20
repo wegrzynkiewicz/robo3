@@ -24,10 +24,9 @@ export class KAShortCutProcessor {
 
 export const kaShortCutProcessorService = registerService({
   async provider(resolver: ServiceResolver): Promise<KAShortCutProcessor> {
-    const [keyboard, processor] = await Promise.all([
-      resolver.resolve(keyboardService),
-      resolver.resolve(kaProcessorService),
-    ]);
-    return new KAShortCutProcessor(keyboard, processor);
+    return new KAShortCutProcessor(
+      await resolver.resolve(keyboardService),
+      await resolver.resolve(kaProcessorService),
+    );
   },
 });

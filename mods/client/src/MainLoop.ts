@@ -56,11 +56,10 @@ export class MainLoop {
 
 export const mainLoopService = registerService({
   async provider(resolver: ServiceResolver): Promise<MainLoop> {
-    const [...updaters] = await Promise.all([
-      resolver.resolve(cameraManagerService),
-      resolver.resolve(tilesRendererService),
-      resolver.resolve(debugInfoService),
+    return new MainLoop([
+      await resolver.resolve(cameraManagerService),
+      await resolver.resolve(tilesRendererService),
+      await resolver.resolve(debugInfoService),
     ]);
-    return new MainLoop(updaters);
   },
 });

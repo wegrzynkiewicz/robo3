@@ -59,10 +59,9 @@ export class FreeCamera {
 
 export const freeCameraService = registerService({
   async provider(resolver: ServiceResolver): Promise<FreeCamera> {
-    const [viewport, keyboard] = await Promise.all([
-      resolver.resolve(viewportService),
-      resolver.resolve(keyboardService),
-    ]);
-    return new FreeCamera(viewport, keyboard);
+    return new FreeCamera(
+      await resolver.resolve(viewportService),
+      await resolver.resolve(keyboardService),
+    );
   },
 });

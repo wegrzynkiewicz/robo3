@@ -32,12 +32,11 @@ export class TilesRenderer implements Renderer {
 
 export const tilesRendererService = registerService({
   async provider(resolver: ServiceResolver): Promise<TilesRenderer> {
-    const [gl, primaryUBO, tilesProgram, tilesSceneBuilder] = await Promise.all([
-      resolver.resolve(webGLService),
-      resolver.resolve(primaryUBOService),
-      resolver.resolve(tilesProgramService),
-      resolver.resolve(tilesSceneBuilderService),
-    ]);
-    return new TilesRenderer(gl, primaryUBO, tilesProgram, tilesSceneBuilder);
+    return new TilesRenderer(
+      await resolver.resolve(webGLService),
+      await resolver.resolve(primaryUBOService),
+      await resolver.resolve(tilesProgramService),
+      await resolver.resolve(tilesSceneBuilderService),
+    );
   },
 });

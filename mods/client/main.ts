@@ -23,23 +23,13 @@ async function start() {
   assertNonNull(canvas, "cannot-find-primary-canvas");
   resolver.inject(canvasService, canvas);
 
-  const [
-    gl,
-    display,
-    keyboard,
-    mainLoop,
-    debugInfo,
-    phaseManager,
-    tilesProgram,
-  ] = await Promise.all([
-    resolver.resolve(webGLService),
-    resolver.resolve(displayService),
-    resolver.resolve(keyboardService),
-    resolver.resolve(mainLoopService),
-    resolver.resolve(debugInfoService),
-    resolver.resolve(phaseManagerService),
-    resolver.resolve(tilesProgramService),
-  ])
+  const gl = await resolver.resolve(webGLService);
+  const display = await resolver.resolve(displayService);
+  const keyboard = await resolver.resolve(keyboardService);
+  const mainLoop = await resolver.resolve(mainLoopService);
+  const debugInfo = await resolver.resolve(debugInfoService);
+  const phaseManager = await resolver.resolve(phaseManagerService);
+  const tilesProgram = await resolver.resolve(tilesProgramService);
 
   function resizeWindow() {
     display.setClientSize(

@@ -4,9 +4,9 @@ import { webGLService } from "../WebGL.ts";
 
 export const tilesBufferService = registerService({
   async provider(resolver: ServiceResolver): Promise<DynamicDrawBuffer> {
-    const [gl] = await Promise.all([
-      resolver.resolve(webGLService),
-    ]);
-    return new DynamicDrawBuffer(gl, 65536 * 2);
+    return new DynamicDrawBuffer(
+      await resolver.resolve(webGLService), 
+      65536 * 2
+    );
   },
 });

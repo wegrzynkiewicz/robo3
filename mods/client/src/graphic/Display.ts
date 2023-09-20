@@ -55,10 +55,9 @@ export class Display {
 
 export const displayService = registerService({
   async provider(resolver: ServiceResolver) {
-    const [gl, viewport] = await Promise.all([
-      resolver.resolve(webGLService),
-      resolver.resolve(viewportService),
-    ]);
-    return new Display(gl, viewport);
+    return new Display(
+      await resolver.resolve(webGLService),
+      await resolver.resolve(viewportService),
+    );
   },
 });

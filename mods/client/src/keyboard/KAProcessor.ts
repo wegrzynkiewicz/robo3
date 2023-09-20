@@ -25,9 +25,8 @@ export class KAProcessor {
 
 export const kaProcessorService = registerService({
   async provider(resolver: ServiceResolver): Promise<KAProcessor> {
-    const [uaProcessor] = await Promise.all([
-      resolver.resolve(uaProcessorService),
-    ]);
-    return new KAProcessor(uaProcessor);
+    return new KAProcessor(
+      await resolver.resolve(uaProcessorService),
+    );
   },
 });

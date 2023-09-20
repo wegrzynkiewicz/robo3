@@ -48,13 +48,9 @@ export const gaSenderWebSocketService = registerService({
 
 export const gaSenderService = registerService({
   async provider(resolver: ServiceResolver): Promise<GASender> {
-    const [
-      codec,
-      ws,
-    ] = await Promise.all([
-      resolver.resolve(gaCodecService),
-      resolver.resolve(gaSenderWebSocketService),
-    ]);
-    return new OnlineGASender(codec, ws);
+    return new OnlineGASender(
+      await resolver.resolve(gaCodecService),
+      await resolver.resolve(gaSenderWebSocketService),
+    );
   },
 });

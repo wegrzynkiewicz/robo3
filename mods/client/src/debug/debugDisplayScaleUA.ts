@@ -29,9 +29,7 @@ for (const data of [1, 2, 3]) {
 
 export const debugDisplayScaleUAHandlerService = registerService({
   async provider(resolver: ServiceResolver): Promise<UAHandler<number>> {
-    const [display] = await Promise.all([
-      resolver.resolve(displayService),
-    ]);
+    const display = await resolver.resolve(displayService);
     const handle = async (_definition: UADefinition<number>, data: number): Promise<void> => {
       display.scale = data;
     };

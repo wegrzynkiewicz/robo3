@@ -1,4 +1,4 @@
-import { registerService,ServiceResolver } from "../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
 import { freeCameraService } from "./FreeCamera.ts";
 
 export interface Camera {
@@ -22,10 +22,9 @@ export class CameraManager {
 
 export const cameraManagerService = registerService({
   async provider(resolver: ServiceResolver): Promise<CameraManager> {
-    const [freeCamera] = await Promise.all([
-      resolver.resolve(freeCameraService),
-    ]);
-    return new CameraManager(freeCamera);
+    return new CameraManager(
+      await resolver.resolve(freeCameraService)
+    );
   },
 });
 

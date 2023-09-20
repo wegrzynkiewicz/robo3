@@ -11,19 +11,10 @@ export interface GACommunicator {
 
 export const gaCommunicator = registerService({
   async provider(resolver: ServiceResolver): Promise<GACommunicator> {
-    const [
-      sender,
-      receiver,
-      requestor,
-    ] = await Promise.all([
-      resolver.resolve(gaSenderService),
-      resolver.resolve(gaReceiverService),
-      resolver.resolve(gaRequestorService),
-    ]);
     const communicator: GACommunicator = {
-      sender,
-      receiver,
-      requestor,
+      sender: await resolver.resolve(gaSenderService),
+      receiver: await resolver.resolve(gaReceiverService),
+      requestor: await resolver.resolve(gaRequestorService),
     };
     return communicator;
   },
