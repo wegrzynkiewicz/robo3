@@ -42,10 +42,12 @@ const vec2 textures[6] = vec2[6](
   vec2(1.0, 1.0)
 );
 
-float TEXTURE_SIZE = 1024.0;
+uniform Primary {
+  uniform mat4 u_Projection;
+  uniform mat4 u_View;
+};
 
-uniform mat4 u_Projection;
-uniform mat4 u_View;
+float TEXTURE_SIZE = 1024.0;
 
 void main(void) {
   vec2 localSpace = vertices[gl_VertexID] * tileSize.xy;
@@ -75,6 +77,7 @@ void main(void) {
 export class TilesProgram {
   public readonly glProgram: WebGLProgram;
   public readonly glVAO: WebGLVertexArrayObject;
+
   public constructor(
     public readonly gl: WebGL2RenderingContext,
     public readonly tilesBuffer: DynamicDrawBuffer,
@@ -87,6 +90,8 @@ export class TilesProgram {
     tileTex.enableVertexAttribute(gl, this.glProgram);
     tileAlpha.enableVertexAttribute(gl, this.glProgram);
     gl.bindVertexArray(null);
+
+    gl.uniformBlockBinding(this.glProgram, gl.getUniformBlockIndex(this.glProgram, 'Primary'), 0);
   }
 
   public bind(): void {

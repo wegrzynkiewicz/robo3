@@ -107,10 +107,6 @@ async function start() {
     // document.body.appendChild(context.canvas);
   }
 
-  function loop() {
-    requestAnimationFrame(loop);
-  }
-  loop();
   mainLoop.run();
 
 }
