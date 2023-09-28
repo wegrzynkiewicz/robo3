@@ -20,7 +20,7 @@ ${tileTex.toShaderLine()}
 ${tileAlpha.toShaderLine()}
 
 out vec3 v_texCoords;
-flat out float v_alpha;
+out float v_alpha;
 
 const vec2 vertices[6] = vec2[6](
   vec2(0.0, 0.0),

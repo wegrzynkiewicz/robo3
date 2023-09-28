@@ -7,7 +7,8 @@ import { clientGAProcessor } from "../../../domain-client/clientGAProcessor.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../../../domain/loginGA.ts";
 
 (async function () {
-  const ws = new WebSocket("ws://token:token@localhost:8000/wss/token");
+  const { hostname } = window.location;
+  const ws = new WebSocket(`ws://${hostname}:8000/wss/token`);
   ws.binaryType = "arraybuffer";
 
   const resolver = new ServiceResolver();
