@@ -22,6 +22,7 @@ export class Chunk {
   public gos: GOView[] = [];
   public readonly worldSpaceRect: CornerRectangle;
   public readonly worldSpaceBoundRect: CornerRectangle;
+  public transparent = false;
   public constructor(
     public chunkId: ChunkId,
   ) {
@@ -30,6 +31,7 @@ export class Chunk {
   }
 
   public processGO() {
+    this.transparent = false;
     if (this.segment === undefined) {
       return;
     }
@@ -40,6 +42,9 @@ export class Chunk {
     for (let y = 0; y < TILES_PER_CHUNK_GRID_AXIS; y++) {
       for (let x = 0; x < TILES_PER_CHUNK_GRID_AXIS; x++) {
         const goTypeId = gridView[localId];
+        if (goTypeId === 0) {
+          this.transparent = true;
+        }
         const normChunkPosition = GONormChunkPosition.fromChunkPosition(x, y, 0, TILES_PER_CHUNK_GRID_AXIS);
         const chunkPosition = normChunkPosition.toChunkPosition();
         const spacePosition = normChunkPosition.toSpacePosition(this.chunkId);
