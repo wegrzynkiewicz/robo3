@@ -4,9 +4,9 @@ import { ChunkId } from "../../core/chunk/chunkId.ts";
 import { ChunkSegment } from "../../core/chunk/chunkSegment.ts";
 import { registerService } from "../../core/dependency/service.ts";
 import { GONormChunkPosition } from "../../core/game-object/position.ts";
-import { Position } from "../../core/numbers.ts";
 import { TILES_PER_CHUNK_GRID_AXIS } from "../../core/vars.ts";
 import { cornerRect, CornerRectangle } from "../../math/CornerRectangle.ts";
+import { Position } from "../../math/Position.ts";
 
 export interface GOView {
   chunkPosition: Position;

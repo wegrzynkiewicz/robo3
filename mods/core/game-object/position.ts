@@ -1,5 +1,5 @@
+import { Position } from "../../math/Position.ts";
 import { ChunkId } from "../chunk/chunkId.ts";
-import { Position } from "../numbers.ts";
 import { LAYERS_PER_CHUNK, PIXELS_PER_CHUNK_GRID_AXIS, POSITIONS_SAMPLING_PER_CHUNK_AXIS } from "../vars.ts";
 
 export class GONormChunkPosition implements Position {

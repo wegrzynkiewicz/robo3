@@ -1,6 +1,6 @@
 import { CornerRectangle } from "../../math/CornerRectangle.ts";
+import { Position } from "../../math/Position.ts";
 import { BinaryBYOBCodec } from "../codec.ts";
-import { Position } from "../numbers.ts";
 import { PIXELS_PER_CHUNK_GRID_AXIS } from "../vars.ts";
 
 export class ChunkId {
