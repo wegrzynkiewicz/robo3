@@ -14,7 +14,7 @@ export class TilesSceneBuilder {
     public readonly chunkManager: ChunkManager,
     public readonly viewport: Viewport,
     public readonly tilesBuffer: DynamicDrawBuffer,
-  ) { }
+  ) {}
 
   public getChunks() {
     const { centerChunk: { x, y }, depth: z } = this.viewport;

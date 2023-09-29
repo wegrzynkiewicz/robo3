@@ -26,7 +26,7 @@ export class NoiseGenerator {
         const e3 = 1.0 * noise(4.00 * nx, 4.00 * ny);
         const e4 = 0.1 * noise(30.00 * nx, 30.00 * ny);
 
-        e = (e1 + e2 + e3 + e4) / (4.0 + 2.0 + 1.0 + 0.1)
+        e = (e1 + e2 + e3 + e4) / (4.0 + 2.0 + 1.0 + 0.1);
         e = e / 2 + 0.5;
         e = Math.round(e * 16) / 16;
         e = e * 255;

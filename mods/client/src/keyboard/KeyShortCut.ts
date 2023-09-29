@@ -6,7 +6,7 @@ export class KeyState {
     public readonly alt = false,
     public readonly ctrl = false,
     public readonly shift = false,
-  ) { }
+  ) {}
 
   public isHold(keyboard: Keyboard) {
     return true &&

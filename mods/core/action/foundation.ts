@@ -27,6 +27,6 @@ const manager = new GAManager();
 export const registerGADefinition = manager.registerGADefinition.bind(manager);
 
 export const gaManagerService = registerService({
-  provider: async () => (manager),
+  provider: async () => manager,
   singleton: true,
 });

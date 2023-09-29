@@ -2,7 +2,7 @@ import { registerService, ServiceResolver } from "../../../core/dependency/servi
 import { viewportService } from "../graphic/Viewport.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
-import { UADefinition, registerUADefinition } from "../ua/foundation.ts";
+import { registerUADefinition, UADefinition } from "../ua/foundation.ts";
 import { UAHandler } from "../ua/processor.ts";
 
 export const debugSetViewportDepthUA = registerUADefinition<null>({
@@ -10,8 +10,8 @@ export const debugSetViewportDepthUA = registerUADefinition<null>({
 });
 
 const keys = [
-  { data: +1, key: 'KeyQ', name: 'inc' },
-  { data: -1, key: 'KeyZ', name: 'dec' },
+  { data: +1, key: "KeyQ", name: "inc" },
+  { data: -1, key: "KeyZ", name: "dec" },
 ];
 
 for (const { data, key, name } of keys) {

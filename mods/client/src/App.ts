@@ -1,4 +1,4 @@
-import { registerService,ServiceResolver } from "../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../core/dependency/service.ts";
 import { chunkManagerService } from "../../domain-client/chunk/chunkManager.ts";
 import { keyboardService } from "./keyboard/Keyboard.ts";
 import { kaManagerService } from "./keyboard/foundation.ts";
