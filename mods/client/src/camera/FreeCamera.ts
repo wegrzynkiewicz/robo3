@@ -25,7 +25,7 @@ const holders = [
 ];
 
 export class FreeCamera {
-  public speed = 16;
+  public speed = 32;
   public x = 0;
   public y = 0;
 

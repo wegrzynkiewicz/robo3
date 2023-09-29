@@ -12,28 +12,30 @@ export class TilesSceneBuilder {
     public readonly chunkManager: ChunkManager,
     public readonly viewport: Viewport,
     public readonly tilesBuffer: DynamicDrawBuffer,
-  ) {}
+  ) { }
 
   public build() {
     const view = this.tilesBuffer.typedArray;
-    const { worldSpaceRect } = this.viewport;
+    const { spaceRect } = this.viewport;
     this.visibleTiles = 0;
     let index = 0;
+    // TODO: query chunks by chunkId set, based on viewport center point
     for (const chunk of this.chunkManager.chunks.values()) {
-      // TODO: query chunks by chunkId set, based on viewport center point
-      if (intersectsNonStrict(chunk.worldSpaceBoundRect, worldSpaceRect)) {
-        for (const go of chunk.gos) {
-          if (intersectsNonStrict(go.worldSpaceRect, worldSpaceRect)) {
-            const { goTypeId, spacePosition } = go;
-            view[index++] = spacePosition.x;
-            view[index++] = spacePosition.y;
-            view[index++] = 32.0;
-            view[index++] = 32.0;
-            view[index++] = index2coords(goTypeId)[0] * 32.0;
-            view[index++] = index2coords(goTypeId)[1] * 32.0;
-            view[index++] = 0;
-            view[index++] = 0;
-            this.visibleTiles++;
+      if (chunk.chunkId.z === this.viewport.depth) {
+        if (intersectsNonStrict(chunk.worldSpaceBoundRect, spaceRect)) {
+          for (const go of chunk.gos) {
+            if (intersectsNonStrict(go.worldSpaceRect, spaceRect)) {
+              const { goTypeId, spacePosition } = go;
+              view[index++] = spacePosition.x;
+              view[index++] = spacePosition.y;
+              view[index++] = 32.0;
+              view[index++] = 32.0;
+              view[index++] = index2coords(goTypeId)[0] * 32.0;
+              view[index++] = index2coords(goTypeId)[1] * 32.0;
+              view[index++] = 0;
+              view[index++] = 0;
+              this.visibleTiles++;
+            }
           }
         }
       }

@@ -16,6 +16,7 @@ import { debugInfoService } from "./src/debug/DebugInfo.ts";
 import { keyboardService } from "./src/keyboard/Keyboard.ts";
 import { phaseManagerService } from "./src/phase/PhaseManager.ts";
 import { tilesProgramService } from "./src/graphic/tiles/TilesProgram.ts";
+import { appService } from "./src/App.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -23,6 +24,7 @@ async function start() {
   assertNonNull(canvas, "cannot-find-primary-canvas");
   resolver.inject(canvasService, canvas);
 
+  (globalThis as any).app = await resolver.resolve(appService);
   const gl = await resolver.resolve(webGLService);
   const display = await resolver.resolve(displayService);
   const keyboard = await resolver.resolve(keyboardService);

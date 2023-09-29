@@ -10,10 +10,12 @@ export class KAShortCutProcessor {
   ) {}
 
   public process(definitions: AnyKADefinition[]) {
+    const sequence = [...this.keyboard.sequence];
     for (const definition of definitions) {
       for (const shortcut of definition.currentShortCuts) {
-        if (shortcut.match(this.keyboard)) {
+        if (shortcut.match(sequence)) {
           this.processor.process(definition);
+          this.keyboard.clearSequence();
         }
       }
     }

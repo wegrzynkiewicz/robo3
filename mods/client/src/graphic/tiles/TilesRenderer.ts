@@ -4,7 +4,7 @@ import { webGLService } from "../WebGL.ts";
 import { TilesProgram, tilesProgramService } from "./TilesProgram.ts";
 import { TilesSceneBuilder, tilesSceneBuilderService } from "./TilesSceneBuilder.ts";
 
-const { TRIANGLES } = WebGL2RenderingContext;
+const { COLOR_BUFFER_BIT, TRIANGLES } = WebGL2RenderingContext;
 
 export interface Renderer {
   update(): void;
@@ -21,6 +21,7 @@ export class TilesRenderer implements Renderer {
   ) {}
 
   public update(): void {
+    this.gl.clear(COLOR_BUFFER_BIT);
     this.tilesSceneBuilder.build();
     this.tilesProgram.bind();
     this.primaryUBO.update();

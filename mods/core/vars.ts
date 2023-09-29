@@ -1,4 +1,4 @@
-export const SCREEN_MAX_VISIBLE_TILE_X = 32;
+export const SCREEN_MAX_VISIBLE_TILE_X = 64;
 export const SCREEN_MAX_VISIBLE_TILE_Y = 32;
 
 export const SPRITES_TEXTURE_SIZE = 1024;

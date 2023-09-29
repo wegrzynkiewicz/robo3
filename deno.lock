@@ -296,11 +296,14 @@
     "https://deno.land/x/wasmbuild@0.14.1/cache.ts": "89eea5f3ce6035a1164b3e655c95f21300498920575ade23161421f5b01967f4",
     "https://deno.land/x/wasmbuild@0.14.1/loader.ts": "d98d195a715f823151cbc8baa3f32127337628379a02d9eb2a3c5902dbccfc02",
     "https://esm.sh/gl-matrix@3.4.3": "2e4f6f9e0d1959da051740ad0a3336eac0d975f5409ef9821378e65ad278367c",
-    "https://esm.sh/v119/gl-matrix@3.4.3/deno/gl-matrix.mjs": "6a6789c9943e38abfed68315b2dc367badf0e02c8bd414fd8b016a5a1220dc16"
+    "https://esm.sh/simplex-noise@4.0.1": "069f03f6fd6bb4f3e42a0122feeca7bed1424357430d6e6e5459d9ec97e8fbf0",
+    "https://esm.sh/v119/gl-matrix@3.4.3/deno/gl-matrix.mjs": "6a6789c9943e38abfed68315b2dc367badf0e02c8bd414fd8b016a5a1220dc16",
+    "https://esm.sh/v130/simplex-noise@4.0.1/denonext/simplex-noise.mjs": "207aed4833af19beba2c052c09c5518e443f190446d9089617e1db3661dea331"
   },
   "npm": {
     "specifiers": {
-      "mongodb": "mongodb@5.6.0"
+      "mongodb": "mongodb@5.6.0",
+      "simplex-noise": "simplex-noise@4.0.1"
     },
     "packages": {
       "@types/node@20.2.5": {
@@ -355,6 +358,10 @@
         "dependencies": {
           "sparse-bitfield": "sparse-bitfield@3.0.3"
         }
+      },
+      "simplex-noise@4.0.1": {
+        "integrity": "sha512-zl/+bdSqW7HJOQ0oDbxrNYaF4F5ik0i7M6YOYmEoIJNtg16NpvWaTTM1Y7oV/7T0jFljawLgYPS81Uu2rsfo1A==",
+        "dependencies": {}
       },
       "smart-buffer@4.2.0": {
         "integrity": "sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==",

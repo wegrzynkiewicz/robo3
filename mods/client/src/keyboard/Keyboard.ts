@@ -2,6 +2,14 @@ import { registerService } from "../../../core/dependency/service.ts";
 import { KeyState } from "./KeyShortCut.ts";
 
 export class Keyboard {
+  public static readonly IGNORE_CODES = [
+    "AltLeft",
+    "AltRight",
+    "ControlLeft",
+    "ControlRight",
+    "ShiftLeft",
+    "ShiftRight",
+  ];
   public alt = false;
   public ctrl = false;
   public shift = false;
@@ -23,11 +31,14 @@ export class Keyboard {
     }
     clearTimeout(this.timerId);
     this.timerId = setTimeout(clearSequenceBound, 1000);
+    if (Keyboard.IGNORE_CODES.includes(event.code)) {
+      return;
+    }
     const keyState = new KeyState(
       event.code,
-      states["AltLeft"] || states["AltRight"] || false,
-      states["ControlLeft"] || states["ControlRight"] || false,
-      states["ShiftLeft"] || states["ShiftRight"] || false,
+      event.altKey || states["AltRight"] || false,
+      event.ctrlKey || states["ControlRight"] || false,
+      event.shiftKey || states["ShiftRight"] || false,
     );
     sequence.push(keyState);
   }
@@ -45,6 +56,12 @@ export class Keyboard {
 
   public clearSequence(): void {
     this.sequence.splice(0);
+    this.alt = false;
+    this.ctrl = false;
+    this.shift = false;
+    this.states["AltRight"] = false;
+    this.states["ControlRight"] = false;
+    this.states["ShiftRight"] = false;
   }
 }
 

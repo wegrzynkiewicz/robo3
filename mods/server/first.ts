@@ -91,8 +91,15 @@ Deno.addSignalListener(
 
     setTimeout(() => {
       communicator.sender.send(chunksUpdateGADef, { chunks });
-      for (const c of bf) {
-        communicator.sender.send(chunkSegmentUpdateGADef, c);
+      const chunkSize = 50;
+      let j = 0;
+      for (let i = 0; i < bf.length; i += chunkSize) {
+        const chunks = bf.slice(i, i + chunkSize);
+        setTimeout(() => {
+          for (const c of chunks) {
+            communicator.sender.send(chunkSegmentUpdateGADef, c);
+          }
+        }, 50 * (j++));
       }
     }, 500);
 

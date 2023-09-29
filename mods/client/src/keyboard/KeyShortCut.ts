@@ -6,7 +6,7 @@ export class KeyState {
     public readonly alt = false,
     public readonly ctrl = false,
     public readonly shift = false,
-  ) {}
+  ) { }
 
   public isHold(keyboard: Keyboard) {
     return true &&
@@ -26,15 +26,6 @@ export class KeyState {
 }
 
 export class KeyShortCut {
-  public static readonly IGNORE_CODES = [
-    "AltLeft",
-    "AltRight",
-    "ControlLeft",
-    "ControlRight",
-    "ShiftLeft",
-    "ShiftRight",
-  ];
-
   public readonly sequence: KeyState[];
   public constructor(...sequence: KeyState[]) {
     this.sequence = sequence;
@@ -54,28 +45,25 @@ export class KeyShortCut {
     return true;
   }
 
-  public match(keyboard: Keyboard): boolean {
-    if (keyboard.sequence.length === 0) {
+  public match(sequence: KeyState[]): boolean {
+    if (sequence.length === 0) {
       return false;
     }
-    if (keyboard.sequence.length < this.sequence.length) {
+    if (sequence.length < this.sequence.length) {
       return false;
     }
-    let index = keyboard.sequence.length - 1;
+    let index = sequence.length - 1;
     for (let i = this.sequence.length - 1; i >= 0; i--) {
       if (index < 0) {
         return false;
       }
       const keyState = this.sequence[i];
-      const event = keyboard.sequence[index];
+      const event = sequence[index];
       if (!keyState.match(event)) {
-        if (!KeyShortCut.IGNORE_CODES.includes(event.code)) {
-          return false;
-        }
+        return false;
       }
       index--;
     }
-    keyboard.clearSequence();
     return true;
   }
 }
