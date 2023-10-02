@@ -1,3 +1,11 @@
+function h(x: number, number = 4): string {
+  return x.toString(16).padStart(number, "0");
+}
+
+function hex(x: number, number: number): string {
+  return x.toString(16).padStart(number, "0");
+}
+
 class ChunkId {
   public constructor(
     public readonly spaceId: number,
@@ -25,6 +33,21 @@ class ChunkId {
     return parts.join("");
   }
 
+  public toHexConcat(): string {
+    const { spaceId, x, y, z } = this;
+    return `${spaceId.toString(16).padStart(8, "0")}${z.toString(16).padStart(4, "0")}${y.toString(16).padStart(4, "0")}${x.toString(16).padStart(4, "0")}`;
+  }
+
+  public toSubHexConcat(): string {
+    const { spaceId, x, y, z } = this;
+    return `${hex(spaceId, 8)}${hex(x, 4)}${hex(y, 4)}${hex(z, 4)}`;
+  }
+
+  public toSubHexConcat2(): string {
+    const { spaceId, x, y, z } = this;
+    return `${hex(spaceId, 8)}${h(x)}${h(y)}${h(z)}`;
+  }
+
   public toHexParts(): string {
     const { spaceId, x, y, z } = this;
     const parts = [spaceId, z, y, x];
@@ -48,6 +71,15 @@ Deno.bench("chunkId.toHex()", () => {
 });
 Deno.bench("chunkId.toHexParts()", () => {
   chunkId.toHexParts();
+});
+Deno.bench("chunkId.toHexConcat()", () => {
+  chunkId.toHexConcat();
+});
+Deno.bench("chunkId.toSubHexConcat()", () => {
+  chunkId.toSubHexConcat();
+});
+Deno.bench("chunkId.toSubHexConcat2()", () => {
+  chunkId.toSubHexConcat2();
 });
 
 const buffer = new Uint8Array(10);
