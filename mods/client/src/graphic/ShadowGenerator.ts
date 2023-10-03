@@ -3,12 +3,11 @@ import { createContext2D } from "../helpers/image-processing.ts";
 type ShadowSampler = (x: number, y: number) => number;
 
 export class ShadowGenerator {
-
   protected readonly context = createContext2D(6 * 32, 3 * 32);
 
   constructor(
     protected readonly intensive: number,
-  ) { }
+  ) {}
 
   protected blendColor(x1: number, y1: number, x2: number, y2: number): number {
     const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -22,7 +21,7 @@ export class ShadowGenerator {
     for (let y = 0; y < 16; y++) {
       for (let x = 0; x < 16; x++) {
         const index = (y * 16 + x) * 4 + 3;
-        image.data[index] = callback(x, y);;
+        image.data[index] = callback(x, y);
       }
     }
     this.context.putImageData(image, sourceX, sourceY);
