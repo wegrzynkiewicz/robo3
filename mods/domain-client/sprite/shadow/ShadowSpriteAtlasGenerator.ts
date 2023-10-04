@@ -1,13 +1,14 @@
-import { createContext2D } from "../helpers/image-processing.ts";
+import { createUnifiedCanvasContext } from "../../../canvas/UnifiedCanvasContext.ts";
+import { registerService } from "../../../core/dependency/service.ts";
 
 type ShadowSampler = (x: number, y: number) => number;
 
-export class ShadowGenerator {
-  protected readonly context = createContext2D(6 * 32, 3 * 32);
+export class ShadowSpriteAtlasGenerator {
+  protected readonly context = createUnifiedCanvasContext(6 * 32, 3 * 32);
 
   constructor(
-    protected readonly intensive: number,
-  ) {}
+    public readonly intensive: number,
+  ) { }
 
   protected blendColor(x1: number, y1: number, x2: number, y2: number): number {
     const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -27,7 +28,7 @@ export class ShadowGenerator {
     this.context.putImageData(image, sourceX, sourceY);
   }
 
-  public generate(): CanvasRenderingContext2D {
+  public generate(): ImageData {
     const fill = () => this.intensive;
     const empty = () => 0;
     const cornNW: ShadowSampler = (x, y) => this.blendColor(x, y, 16, 16);
@@ -105,6 +106,17 @@ export class ShadowGenerator {
     this.put(9, 4, edgeN);
     this.put(10, 4, (x, y) => this.intensive - this.blendColor(x, y, 0, 0));
 
-    return this.context;
+    const { height, width } = this.context;
+    const imageData = this.context.getImageData(0, 0, width, height);
+
+    return imageData;
   }
 }
+
+export const shadowSpriteAtlasGeneratorService = registerService({
+  async provider(): Promise<ShadowSpriteAtlasGenerator> {
+    return new ShadowSpriteAtlasGenerator(
+      128,
+    );
+  },
+});

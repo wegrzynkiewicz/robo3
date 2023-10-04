@@ -1,7 +1,8 @@
 import { createUnifiedCanvasContext } from "../../canvas/UnifiedCanvasContext.ts";
 import { dimRect } from "../../math/DimensionalRectangle.ts";
 import { registerService } from "../dependency/service.ts";
-import { SpriteAtlasImageData, SpriteImageData, SpriteSource } from "./foundation.ts";
+import { SpriteAtlasImageData } from "./atlas.ts";
+import { SpriteImageData, SpriteOrigin, SpriteSource } from "./sprite.ts";
 
 export class SpriteImageDataExtractor {
   public *extract(atlas: SpriteAtlasImageData): Generator<SpriteImageData, void, unknown> {
@@ -11,13 +12,14 @@ export class SpriteImageDataExtractor {
       source: atlasSource,
       source: { spriteAtlasId, layout }
     } = atlas;
+    const origin: SpriteOrigin = { atlas: atlasSource, type: 'atlas' };
     const context = createUnifiedCanvasContext(width, height);
     context.putImageData(image, 0, 0);
     switch (layout.type) {
       case "list": {
         for (const spriteInLayout of layout.sprites) {
           const { spriteId, sourceRect } = spriteInLayout;
-          const source: SpriteSource = { atlasSource, sourceRect, spriteId };
+          const source: SpriteSource = { origin, sourceRect, spriteId };
           const { x, y, w, h } = sourceRect;
           const image = context.getImageData(x, y, w, h);
           const sprite: SpriteImageData = { image, source };
@@ -28,7 +30,7 @@ export class SpriteImageDataExtractor {
       case "single": {
         const sourceRect = dimRect(0, 0, width, height);
         const spriteId = spriteAtlasId;
-        const source: SpriteSource = { atlasSource, sourceRect, spriteId };
+        const source: SpriteSource = { origin, sourceRect, spriteId };
         const { x, y, w, h } = sourceRect;
         const image = context.getImageData(x, y, w, h);
         const sprite: SpriteImageData = { image, source };

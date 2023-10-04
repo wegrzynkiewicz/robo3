@@ -5,8 +5,10 @@ export interface UnifiedCanvasContext {
   dispose(): void;
   drawImage(image: CanvasImageSource, x: number, y: number): void;
   getImageData(x: number, y: number, w: number, h: number): ImageData
+  height: number;
   putImageData(image: ImageData, x: number, y: number): void;
   toPNG(): Uint8Array;
+  width: number;
 }
 
 export abstract class AbstractUnifiedCanvasContext {

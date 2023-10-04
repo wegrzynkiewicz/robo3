@@ -1,5 +1,17 @@
 import { DimensionalRectangle } from "../../math/DimensionalRectangle.ts";
 
+export interface ExternalSpriteAtlasOrigin {
+  type: 'external';
+  url: string;
+}
+
+export interface GeneratedSpriteAtlasOrigin {
+  type: 'generated';
+  description: string;
+}
+
+export type SpriteAtlasOrigin = ExternalSpriteAtlasOrigin | GeneratedSpriteAtlasOrigin;
+
 export interface SpriteInListSpriteAtlasLayout {
   spriteId: string,
   sourceRect: DimensionalRectangle;
@@ -29,8 +41,8 @@ export type SpriteAtlasLayout = ListSpriteAtlasLayout | SingleSpriteAtlasLayout 
 export interface SpriteAtlasSource {
   allocation: SpriteAtlasAllocation;
   layout: SpriteAtlasLayout;
+  origin: SpriteAtlasOrigin;
   spriteAtlasId: string;
-  url: string;
 }
 
 export interface SpriteAtlasImageData {
@@ -40,15 +52,4 @@ export interface SpriteAtlasImageData {
 
 export interface SpriteAtlasProvider {
   provideSpriteAtlasImages(): Promise<SpriteAtlasImageData[]>;
-}
-
-export interface SpriteSource {
-  atlasSource: SpriteAtlasSource
-  spriteId: string;
-  sourceRect: DimensionalRectangle;
-}
-
-export interface SpriteImageData {
-  image: ImageData;
-  source: SpriteSource;
 }
