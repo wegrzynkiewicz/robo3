@@ -8,7 +8,7 @@ export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
     public readonly shadowSpriteAtlasGenerator: ShadowSpriteAtlasGenerator,
   ) {}
 
-  async provideSpriteAtlasImages(): Promise<SpriteAtlasImageData[]> {
+  async provideSpriteAtlasImage(): Promise<SpriteAtlasImageData> {
     const source: SpriteAtlasSource = {
       allocation: {
         type: 'static',
@@ -24,7 +24,7 @@ export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
     };
     const image = this.shadowSpriteAtlasGenerator.generate();
     const data: SpriteAtlasImageData = { image, source };
-    return [data];
+    return data;
   }
 }
 

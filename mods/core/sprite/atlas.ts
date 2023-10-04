@@ -46,5 +46,5 @@ export interface SpriteAtlasImageData {
 }
 
 export interface SpriteAtlasProvider {
-  provideSpriteAtlasImages(): Promise<SpriteAtlasImageData[]>;
+  provideSpriteAtlasImage(): Promise<SpriteAtlasImageData>;
 }
