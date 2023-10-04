@@ -15,7 +15,7 @@ export class EncodingTranslation<T> {
 
   public constructor(
     protected readonly fetchKey: (entry: T) => { index: number; key: string },
-  ) {}
+  ) { }
 
   public set(entry: T) {
     const { index, key } = this.fetchKey(entry);
@@ -120,4 +120,14 @@ export function formatBytes(bytes: number): string {
   const index = Math.floor(Math.log(bytes) / Math.log(1024));
   const float = bytes / Math.pow(1024, index);
   return `${float.toFixed(2)} ${sizes[index]}`;
+}
+
+export function loadImage(url: URL): Promise<HTMLImageElement> {
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.src = url.toString();
+    image.onload = () => {
+      resolve(image);
+    };
+  })
 }

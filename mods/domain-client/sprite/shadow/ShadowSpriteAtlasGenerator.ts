@@ -1,10 +1,10 @@
-import { createUnifiedCanvasContext } from "../../../canvas/UnifiedCanvasContext.ts";
+import { UnifiedCanvasContext } from "../../../canvas/UnifiedCanvasContext.ts";
 import { registerService } from "../../../core/dependency/service.ts";
 
 type ShadowSampler = (x: number, y: number) => number;
 
 export class ShadowSpriteAtlasGenerator {
-  protected readonly context = createUnifiedCanvasContext(6 * 32, 3 * 32);
+  protected readonly context = new UnifiedCanvasContext(6 * 32, 3 * 32);
 
   constructor(
     public readonly intensive: number,

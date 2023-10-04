@@ -1,4 +1,4 @@
-import { createUnifiedCanvasContext } from "../../canvas/UnifiedCanvasContext.ts";
+import { UnifiedCanvasContext } from "../../canvas/UnifiedCanvasContext.ts";
 import { dimRect } from "../../math/DimensionalRectangle.ts";
 import { registerService } from "../dependency/service.ts";
 import { SpriteAtlasImageData } from "./atlas.ts";
@@ -13,7 +13,7 @@ export class SpriteImageDataExtractor {
       source: { allocation, layout, spriteAtlasId },
     } = atlas;
     const origin: SpriteOrigin = { atlas: atlasSource, type: 'atlas' };
-    const context = createUnifiedCanvasContext(width, height);
+    const context = new UnifiedCanvasContext(width, height);
     context.putImageData(image, 0, 0);
     switch (layout.type) {
       case "list": {
