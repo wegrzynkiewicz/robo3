@@ -10,7 +10,7 @@ export class SpriteImageDataExtractor {
       image,
       image: { width, height },
       source: atlasSource,
-      source: { spriteAtlasId, layout }
+      source: { allocation, layout, spriteAtlasId },
     } = atlas;
     const origin: SpriteOrigin = { atlas: atlasSource, type: 'atlas' };
     const context = createUnifiedCanvasContext(width, height);
@@ -19,7 +19,7 @@ export class SpriteImageDataExtractor {
       case "list": {
         for (const spriteInLayout of layout.sprites) {
           const { spriteId, sourceRect } = spriteInLayout;
-          const source: SpriteSource = { origin, sourceRect, spriteId };
+          const source: SpriteSource = { allocation, origin, sourceRect, spriteId };
           const { x, y, w, h } = sourceRect;
           const image = context.getImageData(x, y, w, h);
           const sprite: SpriteImageData = { image, source };
@@ -30,7 +30,7 @@ export class SpriteImageDataExtractor {
       case "single": {
         const sourceRect = dimRect(0, 0, width, height);
         const spriteId = spriteAtlasId;
-        const source: SpriteSource = { origin, sourceRect, spriteId };
+        const source: SpriteSource = { allocation, origin, sourceRect, spriteId };
         const { x, y, w, h } = sourceRect;
         const image = context.getImageData(x, y, w, h);
         const sprite: SpriteImageData = { image, source };

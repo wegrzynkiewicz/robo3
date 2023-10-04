@@ -1,4 +1,5 @@
 import { DimensionalRectangle } from "../../math/DimensionalRectangle.ts";
+import { SpriteAllocation } from "./sprite.ts";
 
 export interface ExternalSpriteAtlasOrigin {
   type: 'external';
@@ -30,16 +31,10 @@ export interface TerrainSpriteAtlasLayout {
   type: 'terrain',
 }
 
-export interface StaticSpriteAtlasAllocation {
-  type: 'static',
-}
-
-export type SpriteAtlasAllocation = StaticSpriteAtlasAllocation;
-
 export type SpriteAtlasLayout = ListSpriteAtlasLayout | SingleSpriteAtlasLayout | TerrainSpriteAtlasLayout;
 
 export interface SpriteAtlasSource {
-  allocation: SpriteAtlasAllocation;
+  allocation: SpriteAllocation;
   layout: SpriteAtlasLayout;
   origin: SpriteAtlasOrigin;
   spriteAtlasId: string;
