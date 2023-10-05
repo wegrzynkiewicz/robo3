@@ -17,6 +17,9 @@ import { keyboardService } from "./src/keyboard/Keyboard.ts";
 import { phaseManagerService } from "./src/phase/PhaseManager.ts";
 import { tilesProgramService } from "./src/graphic/tiles/TilesProgram.ts";
 import { appService } from "./src/App.ts";
+import { Texture2DArray } from "./src/graphic/textures/Texture2DArray.ts";
+import { fromCanvasTextureFormatConfig } from "./src/graphic/textures/format.ts";
+import { dim3D } from "../math/Dim3D.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -61,14 +64,16 @@ async function start() {
 
   debugInfo.enable();
 
-  const texture = gl.createTexture();
   gl.activeTexture(gl.TEXTURE0 + 0);
-  gl.bindTexture(gl.TEXTURE_2D, texture);
+  const tex2D = new Texture2DArray(gl, dim3D(1024, 1024, 2), fromCanvasTextureFormatConfig);
 
-  processMap().then((imageData) => {
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
-    gl.generateMipmap(gl.TEXTURE_2D);
+  processMap().then((contexts) => {
+    tex2D.bind();
+    let x = 0;
+    for (const context of contexts) {
+      const data = context.getImageData(0, 0, 1024, 1024);
+      tex2D.update(x++, data);
+    }
   });
 
   const nearestSampler = gl.createSampler();

@@ -1,5 +1,7 @@
-import { Breaker } from "../../../common/asserts.ts";
+import { assertNonNull, Breaker } from "../../../common/asserts.ts";
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+
+const { TEXTURE0, TEXTURE_2D, TEXTURE_2D_ARRAY } = WebGL2RenderingContext;
 
 export const canvasService = registerService({
   async provider(): Promise<HTMLCanvasElement> {
@@ -19,6 +21,11 @@ function replaceOriginalFunction(gl: WebGL2RenderingContext, props: string) {
   };
 }
 
+interface TextureUnit {
+  [TEXTURE_2D]: WebGLTexture | null;
+  [TEXTURE_2D_ARRAY]: WebGLTexture | null;
+}
+
 export const webGLService = registerService({
   async provider(resolver: ServiceResolver): Promise<WebGL2RenderingContext> {
     const canvas = await resolver.resolve(canvasService);
@@ -33,6 +40,7 @@ export const webGLService = registerService({
       preserveDrawingBuffer: false,
       stencil: false,
     })!;
+    assertNonNull(gl, 'cannot-create-webgl2-context');
 
     const oldBindBuffer = gl.bindBuffer;
     const bound: Record<number, unknown> = {};
@@ -42,6 +50,40 @@ export const webGLService = registerService({
       }
       oldBindBuffer.call(gl, target, buffer);
       bound[target] = buffer;
+    };
+
+    const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+    const textureUnits: TextureUnit[] = [];
+    for (let i = 0; i < maxTextureUnits; i++) {
+      const unit: TextureUnit = {
+        [TEXTURE_2D]: null,
+        [TEXTURE_2D_ARRAY]: null,
+      }
+      textureUnits.push(unit);
+    }
+    let activeTextureUnit = 0;
+
+    const oldActiveTexture = gl.activeTexture;
+    gl.activeTexture = function (unit: number): void {
+      const index = unit - TEXTURE0;
+      if (index > (maxTextureUnits - 1)) {
+        throw new Error('unexpected-texture-unit');
+      }
+      if (activeTextureUnit === index) {
+        return;
+      }
+      oldActiveTexture.call(gl, unit);
+      activeTextureUnit = index;
+    };
+
+    const oldBindTexture = gl.bindTexture;
+    gl.bindTexture = function (target: number, texture: WebGLTexture | null): void {
+      const textureUnit = textureUnits[activeTextureUnit] as any;
+      if (textureUnit[target] === texture) {
+        return;
+      }
+      oldBindTexture.call(gl, target, texture);
+      textureUnit[target] = texture;
     };
 
     replaceOriginalFunction(gl, "useProgram");

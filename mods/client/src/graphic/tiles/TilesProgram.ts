@@ -67,10 +67,10 @@ in highp float v_alpha;
 
 out highp vec4 outputColor;
 
-uniform sampler2D u_texture;
+uniform highp sampler2DArray u_texture;
 
 void main(void) {
-  outputColor = vec4(texture(u_texture, v_texCoords.xy));
+  outputColor = texture(u_texture, vec3(v_texCoords.xy, 0.0));
 }
 `;
 

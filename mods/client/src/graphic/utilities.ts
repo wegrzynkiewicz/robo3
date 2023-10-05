@@ -43,6 +43,12 @@ export function createProgram(
   return program;
 }
 
+export function createTexture(gl: GL): WebGLTexture {
+  const texture = gl.createTexture();
+  assertNonNull(texture, "cannot-create-texture");
+  return texture;
+}
+
 export function createBuffer(gl: GL): WebGLBuffer {
   const buffer = gl.createBuffer();
   assertNonNull(buffer, "cannot-create-array-buffer");
