@@ -51,7 +51,7 @@ export const webGLService = registerService({
       powerPreference: "high-performance",
       preserveDrawingBuffer: false,
       stencil: false,
-    })!;
+    });
     assertNonNull(gl, 'cannot-create-webgl2-context');
 
     const oldBindBuffer = gl.bindBuffer;

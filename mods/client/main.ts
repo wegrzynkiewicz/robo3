@@ -85,4 +85,4 @@ async function start() {
 
   mainLoop.run();
 }
-start();
+document.addEventListener('DOMContentLoaded', start);

@@ -6,7 +6,7 @@ import { Texture2DArray } from "../textures/Texture2DArray.ts";
 import { fromCanvasTextureFormatConfig } from "../textures/format.ts";
 
 const requiredTextureSize = 1024;
-const requiredArrayLayers = 64;
+const requiredArrayLayers = 4;
 
 export const tilesTexture2DArrayService = registerService({
   async provider(resolver: ServiceResolver): Promise<Texture2DArray> {
