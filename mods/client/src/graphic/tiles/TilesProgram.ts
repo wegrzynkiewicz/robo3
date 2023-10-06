@@ -2,9 +2,12 @@ import { registerService, ServiceResolver } from "../../../../core/dependency/se
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
 import { webGLService } from "../WebGL.ts";
 import { VertexAttribute } from "../attribute.ts";
+import { Texture2DArray } from "../textures/Texture2DArray.ts";
 import { float, vec } from "../types.ts";
 import { createProgram, createVertexArray } from "../utilities.ts";
+import { tilesTexture2DArrayService } from "./TilesTexture2DArray.ts";
 import { tilesBufferService } from "./tilesBuffer.ts";
+import { assertNonNull } from "../../../../common/asserts.ts";
 
 const byteStride = (2 * 4) + (2 * 4) + (3 * 4) + (1 * 4);
 const tilePos = new VertexAttribute({ byteOffset: 0, byteStride, divisor: 1, location: 0, name: "tilePos", type: vec(2) });
@@ -67,10 +70,10 @@ in highp float v_alpha;
 
 out highp vec4 outputColor;
 
-uniform highp sampler2DArray u_texture;
+uniform highp sampler2DArray textures;
 
 void main(void) {
-  outputColor = texture(u_texture, vec3(v_texCoords.xy, 0.0));
+  outputColor = texture(textures, v_texCoords);
 }
 `;
 
@@ -81,8 +84,10 @@ export class TilesProgram {
   public constructor(
     public readonly gl: WebGL2RenderingContext,
     public readonly tilesBuffer: DynamicDrawBuffer,
+    public readonly tilesTexture2DArray: Texture2DArray,
   ) {
     this.glProgram = createProgram(gl, vertexShader, fragmentShader);
+    this.bind();
     this.glVAO = createVertexArray(gl);
     tilesBuffer.bind();
     tilePos.enableVertexAttribute(gl, this.glProgram);
@@ -92,6 +97,11 @@ export class TilesProgram {
     gl.bindVertexArray(null);
 
     gl.uniformBlockBinding(this.glProgram, gl.getUniformBlockIndex(this.glProgram, "Primary"), 0);
+
+    const locationName = 'textures';
+    const location = gl.getUniformLocation(this.glProgram, locationName);
+    assertNonNull(location, "cannot-get-uniform-location", { locationName });
+    gl.uniform1i(location, tilesTexture2DArray.textureUnit);
   }
 
   public bind(): void {
@@ -105,6 +115,7 @@ export const tilesProgramService = registerService({
     return new TilesProgram(
       await resolver.resolve(webGLService),
       await resolver.resolve(tilesBufferService),
+      await resolver.resolve(tilesTexture2DArrayService),
     );
   },
 });

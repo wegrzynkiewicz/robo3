@@ -10,16 +10,13 @@ import { createSpriteIndexTable } from "../core/sprite/binding.ts";
 import { allocateSpritesInCanvas } from "./src/graphic/texture.ts";
 import { ServiceResolver } from "../core/dependency/service.ts";
 import { displayService } from "./src/graphic/Display.ts";
-import { canvasService, webGLService } from "./src/graphic/WebGL.ts";
+import { canvasService } from "./src/graphic/WebGL.ts";
 import { mainLoopService } from "./src/MainLoop.ts";
 import { debugInfoService } from "./src/debug/DebugInfo.ts";
 import { keyboardService } from "./src/keyboard/Keyboard.ts";
 import { phaseManagerService } from "./src/phase/PhaseManager.ts";
-import { tilesProgramService } from "./src/graphic/tiles/TilesProgram.ts";
 import { appService } from "./src/App.ts";
-import { Texture2DArray } from "./src/graphic/textures/Texture2DArray.ts";
-import { fromCanvasTextureFormatConfig } from "./src/graphic/textures/format.ts";
-import { dim3D } from "../math/Dim3D.ts";
+import { tilesTexture2DArrayService } from "./src/graphic/tiles/TilesTexture2DArray.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -28,13 +25,12 @@ async function start() {
   resolver.inject(canvasService, canvas);
 
   (globalThis as any).app = await resolver.resolve(appService);
-  const gl = await resolver.resolve(webGLService);
   const display = await resolver.resolve(displayService);
   const keyboard = await resolver.resolve(keyboardService);
   const mainLoop = await resolver.resolve(mainLoopService);
   const debugInfo = await resolver.resolve(debugInfoService);
   const phaseManager = await resolver.resolve(phaseManagerService);
-  const tilesProgram = await resolver.resolve(tilesProgramService);
+  const tilesTexture2DArray = await resolver.resolve(tilesTexture2DArrayService);
 
   function resizeWindow() {
     display.setClientSize(
@@ -64,30 +60,13 @@ async function start() {
 
   debugInfo.enable();
 
-  gl.activeTexture(gl.TEXTURE0 + 0);
-  const tex2D = new Texture2DArray(gl, dim3D(1024, 1024, 2), fromCanvasTextureFormatConfig);
-
   processMap().then((contexts) => {
-    tex2D.bind();
     let x = 0;
     for (const context of contexts) {
       const data = context.getImageData(0, 0, 1024, 1024);
-      tex2D.update(x++, data);
+      tilesTexture2DArray.update(x++, data);
     }
   });
-
-  const nearestSampler = gl.createSampler();
-  assertNonNull(nearestSampler, "cannot-create-nearest-sampler");
-  gl.samplerParameteri(nearestSampler, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.samplerParameteri(nearestSampler, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-  gl.samplerParameteri(nearestSampler, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.samplerParameteri(nearestSampler, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.bindSampler(0, nearestSampler);
-
-  tilesProgram.bind();
-  const textureLoc1 = gl.getUniformLocation(tilesProgram.glProgram, "u_texture");
-
-  gl.uniform1i(textureLoc1, 0);
 
   const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
   const sgoMap = s.resolveGameObjectTypes();

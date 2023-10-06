@@ -26,6 +26,18 @@ interface TextureUnit {
   [TEXTURE_2D_ARRAY]: WebGLTexture | null;
 }
 
+function createTextureUnits(count: number): TextureUnit[] {
+  const textureUnits: TextureUnit[] = [];
+  for (let i = 0; i < count; i++) {
+    const unit: TextureUnit = {
+      [TEXTURE_2D]: null,
+      [TEXTURE_2D_ARRAY]: null,
+    }
+    textureUnits.push(unit);
+  }
+  return textureUnits;
+} 
+
 export const webGLService = registerService({
   async provider(resolver: ServiceResolver): Promise<WebGL2RenderingContext> {
     const canvas = await resolver.resolve(canvasService);
@@ -53,14 +65,7 @@ export const webGLService = registerService({
     };
 
     const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
-    const textureUnits: TextureUnit[] = [];
-    for (let i = 0; i < maxTextureUnits; i++) {
-      const unit: TextureUnit = {
-        [TEXTURE_2D]: null,
-        [TEXTURE_2D_ARRAY]: null,
-      }
-      textureUnits.push(unit);
-    }
+    const textureUnits = createTextureUnits(maxTextureUnits);
     let activeTextureUnit = 0;
 
     const oldActiveTexture = gl.activeTexture;

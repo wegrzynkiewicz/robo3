@@ -55,11 +55,23 @@ export function createBuffer(gl: GL): WebGLBuffer {
   return buffer;
 }
 
+export function createSampler(gl: GL): WebGLSampler {
+  const sampler = gl.createSampler();
+  assertNonNull(sampler, "cannot-create-sampler");
+  return sampler;
+}
+
 export function createVertexArray(gl: GL): WebGLVertexArrayObject {
   const vao = gl.createVertexArray();
   assertNonNull(vao, "cannot-create-vertex-array-object");
   gl.bindVertexArray(vao);
   return vao;
+}
+
+export function getProgramLocation(gl: GL, glProgram: WebGLProgram, locationName: string): WebGLUniformLocation {
+  const location = gl.getUniformLocation(glProgram, locationName);
+  assertNonNull(location, "cannot-get-uniform-location", { locationName });
+  return location;
 }
 
 export function getProgramParameters(gl: GL, program: WebGLProgram) {
