@@ -5,7 +5,7 @@ import { Viewport, viewportService } from "./Viewport.ts";
 import { webGLService } from "./WebGL.ts";
 
 export class Display {
-  private _scale = 1.0;
+  protected scale = 1.0;
   public readonly client = point(0, 0);
 
   public constructor(
@@ -13,16 +13,16 @@ export class Display {
     public readonly viewport: Viewport,
   ) {}
 
-  get scale(): number {
-    return this._scale;
+  public getScale() {
+    return this.scale;
   }
 
-  set scale(scale: number) {
+  public setScale(scale: number) {
     scale = Math.floor(scale);
     if (scale < 1 || scale > 3) {
       throw new Error("invalid-screen-scale");
     }
-    this._scale = scale;
+    this.scale = scale;
     this.resize();
   }
 

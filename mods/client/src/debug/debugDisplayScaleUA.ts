@@ -31,7 +31,7 @@ export const debugDisplayScaleUAHandlerService = registerService({
   async provider(resolver: ServiceResolver): Promise<UAHandler<number>> {
     const display = await resolver.resolve(displayService);
     const handle = async (_definition: UADefinition<number>, data: number): Promise<void> => {
-      display.scale = data;
+      display.setScale(data);
     };
     return { handle };
   },

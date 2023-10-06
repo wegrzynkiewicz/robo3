@@ -46,11 +46,11 @@ export class DebugInfo {
       return;
     }
     const out = [];
-    const { client, scale } = this.display;
+    const { client } = this.display;
     out.push(`Display`);
     out.push(`  FPS: ${fps.toFixed(2)}`);
     out.push(`  Size: ${client.x} ${client.y}`);
-    out.push(`  Scale: ${scale}`);
+    out.push(`  Scale: ${this.display.getScale()}`);
 
     const { size, centerChunk, centerPoint, depth, spaceId, spaceRect: sr } = this.viewport;
     out.push(`Viewport`);
