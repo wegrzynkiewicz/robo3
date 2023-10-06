@@ -17,7 +17,7 @@ export class SpriteAllocManager {
   public set(alloc: SpriteAlloc): void {
     const { spriteId, spriteIndex } = alloc;
     this.byId.set(spriteId, alloc);
-    this.bySpriteIndex[spriteIndex] = alloc; 
+    this.bySpriteIndex[spriteIndex] = alloc;
   }
 }
 

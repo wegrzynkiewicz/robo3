@@ -1,4 +1,4 @@
-import { CanvasRenderingContext2D, EmulatedCanvas2D, createCanvas, loadImage } from "https://deno.land/x/canvas@v1.4.1/mod.ts";
+import { CanvasRenderingContext2D, createCanvas, EmulatedCanvas2D, loadImage } from "https://deno.land/x/canvas@v1.4.1/mod.ts";
 import { AbstractUnifiedCanvasContext, UnifiedCanvasContextBase } from "./UnifiedCanvasContext.ts";
 
 export class UnifiedEmulatedCanvasContext extends AbstractUnifiedCanvasContext implements UnifiedCanvasContextBase {
@@ -10,7 +10,7 @@ export class UnifiedEmulatedCanvasContext extends AbstractUnifiedCanvasContext i
   ) {
     super();
     this.canvas = createCanvas(width, height);
-    this.context = this.canvas.getContext('2d');
+    this.context = this.canvas.getContext("2d");
   }
 
   public static async createFromImageURL(url: URL): Promise<UnifiedEmulatedCanvasContext> {
@@ -21,7 +21,7 @@ export class UnifiedEmulatedCanvasContext extends AbstractUnifiedCanvasContext i
   }
 
   public toPNG(): Uint8Array {
-    return this.canvas.toBuffer('image/png');
+    return this.canvas.toBuffer("image/png");
   }
 
   public dispose() {

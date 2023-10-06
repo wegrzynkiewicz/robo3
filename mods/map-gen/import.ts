@@ -13,9 +13,7 @@ function generateChunkSegment(noise: Uint8Array, chunkId: ChunkId): ChunkSegment
   for (let x = 0; x < 1024; x++) {
     const value = noise[x];
     const depth = Math.floor(value / 255 * 8);
-    const goTypeId = 
-      z < depth ? 6 :
-      z === depth ? 1 : 0;
+    const goTypeId = z < depth ? 6 : z === depth ? 1 : 0;
     segment.grid.view[x] = goTypeId;
   }
   return segment;

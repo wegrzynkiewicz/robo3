@@ -3,7 +3,6 @@ import { SpriteAtlasImageData, SpriteAtlasProvider, SpriteAtlasSource } from "..
 import { ShadowSpriteAtlasGenerator, shadowSpriteAtlasGeneratorService } from "./ShadowSpriteAtlasGenerator.ts";
 
 export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
-
   public constructor(
     public readonly shadowSpriteAtlasGenerator: ShadowSpriteAtlasGenerator,
   ) {}
@@ -11,16 +10,16 @@ export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
   async provideSpriteAtlasImage(): Promise<SpriteAtlasImageData> {
     const source: SpriteAtlasSource = {
       allocation: {
-        type: 'static',
+        type: "static",
       },
       layout: {
-        type: 'terrain',
+        type: "terrain",
       },
       origin: {
-        type: 'generated',
+        type: "generated",
         description: `shadow-generator-${this.shadowSpriteAtlasGenerator.intensive}`,
       },
-      spriteAtlasId: 'shadow',
+      spriteAtlasId: "shadow",
     };
     const image = this.shadowSpriteAtlasGenerator.generate();
     const data: SpriteAtlasImageData = { image, source };
@@ -31,7 +30,7 @@ export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
 export const shadowSpriteAtlasProviderService = registerService({
   async provider(resolver: ServiceResolver): Promise<ShadowSpriteAtlasProvider> {
     return new ShadowSpriteAtlasProvider(
-      await resolver.resolve(shadowSpriteAtlasGeneratorService)
+      await resolver.resolve(shadowSpriteAtlasGeneratorService),
     );
   },
 });

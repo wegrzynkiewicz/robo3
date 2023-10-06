@@ -98,7 +98,7 @@ export class TilesProgram {
 
     gl.uniformBlockBinding(this.glProgram, gl.getUniformBlockIndex(this.glProgram, "Primary"), 0);
 
-    const locationName = 'textures';
+    const locationName = "textures";
     const location = gl.getUniformLocation(this.glProgram, locationName);
     assertNonNull(location, "cannot-get-uniform-location", { locationName });
     gl.uniform1i(location, tilesTexture2DArray.textureUnit);

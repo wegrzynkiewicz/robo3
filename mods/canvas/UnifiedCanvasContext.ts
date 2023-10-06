@@ -4,7 +4,7 @@ import { UnifiedOffscreenCanvasContext } from "./UnifiedOffscreenCanvas.ts";
 export interface UnifiedCanvasContextBase {
   dispose(): void;
   drawImage(image: CanvasImageSource, x: number, y: number): void;
-  getImageData(x: number, y: number, w: number, h: number): ImageData
+  getImageData(x: number, y: number, w: number, h: number): ImageData;
   height: number;
   putImageData(image: ImageData, x: number, y: number): void;
   toPNG(): Uint8Array;
@@ -13,7 +13,7 @@ export interface UnifiedCanvasContextBase {
 
 export abstract class AbstractUnifiedCanvasContext {
   //   abstract readonly context: CanvasRenderingContext2D;
-  abstract readonly context: any
+  abstract readonly context: any;
   public drawImage(image: CanvasImageSource, x: number, y: number): void {
     this.context.drawImage(image, x, y);
   }
@@ -25,6 +25,4 @@ export abstract class AbstractUnifiedCanvasContext {
   }
 }
 
-export const UnifiedCanvasContext = typeof Deno === "object"
-  ? UnifiedEmulatedCanvasContext
-  : UnifiedOffscreenCanvasContext;
+export const UnifiedCanvasContext = typeof Deno === "object" ? UnifiedEmulatedCanvasContext : UnifiedOffscreenCanvasContext;

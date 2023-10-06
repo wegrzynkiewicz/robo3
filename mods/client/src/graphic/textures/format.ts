@@ -57,7 +57,7 @@ export type TextureInternalFormat =
   | WebGL2RenderingContext["RGBA8UI"]
   | WebGL2RenderingContext["RGBA8_SNORM"]
   | WebGL2RenderingContext["SRGB8"]
-  | WebGL2RenderingContext["SRGB8_ALPHA8"]
+  | WebGL2RenderingContext["SRGB8_ALPHA8"];
 
 export type TextureFormat =
   | WebGL2RenderingContext["ALPHA"]
@@ -72,7 +72,7 @@ export type TextureFormat =
   | WebGL2RenderingContext["RGBA"]
   | WebGL2RenderingContext["RGBA_INTEGER"]
   | WebGL2RenderingContext["RGB_INTEGER"]
-  | WebGL2RenderingContext["RG_INTEGER"]
+  | WebGL2RenderingContext["RG_INTEGER"];
 
 export type TextureFormatType =
   | WebGL2RenderingContext["BYTE"]
@@ -90,7 +90,7 @@ export type TextureFormatType =
   | WebGL2RenderingContext["UNSIGNED_SHORT"]
   | WebGL2RenderingContext["UNSIGNED_SHORT_4_4_4_4"]
   | WebGL2RenderingContext["UNSIGNED_SHORT_5_5_5_1"]
-  | WebGL2RenderingContext["UNSIGNED_SHORT_5_6_5"]
+  | WebGL2RenderingContext["UNSIGNED_SHORT_5_6_5"];
 
 export interface TextureFormatConfig {
   format: TextureFormat;
@@ -102,4 +102,4 @@ export const fromCanvasTextureFormatConfig: TextureFormatConfig = {
   format: WebGL2RenderingContext["RGBA"],
   internal: WebGL2RenderingContext["RGBA8"],
   type: WebGL2RenderingContext["UNSIGNED_BYTE"],
-}
+};

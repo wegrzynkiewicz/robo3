@@ -47,7 +47,7 @@ export class Texture2DArray {
     this.bind();
     const { dim, dim: { d, h, w }, formatConfig: { format, type }, gl } = this;
     if (offsetZ > d) {
-      throw new Breaker('texture-offset-z-overflow-dimensions', { dim, offsetZ });
+      throw new Breaker("texture-offset-z-overflow-dimensions", { dim, offsetZ });
     }
     gl.texSubImage3D(
       gl.TEXTURE_2D_ARRAY,
@@ -61,6 +61,6 @@ export class Texture2DArray {
       format,
       type,
       data,
-    )
+    );
   }
 }

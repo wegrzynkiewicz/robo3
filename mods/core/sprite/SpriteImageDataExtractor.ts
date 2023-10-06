@@ -12,7 +12,7 @@ export class SpriteImageDataExtractor {
       source: atlasSource,
       source: { allocation, layout, spriteAtlasId },
     } = atlas;
-    const origin: SpriteOrigin = { atlas: atlasSource, type: 'atlas' };
+    const origin: SpriteOrigin = { atlas: atlasSource, type: "atlas" };
     const context = new UnifiedCanvasContext(width, height);
     context.putImageData(image, 0, 0);
     switch (layout.type) {
@@ -38,10 +38,10 @@ export class SpriteImageDataExtractor {
         break;
       }
       case "terrain": {
-        throw new Error('not-implemented');
+        throw new Error("not-implemented");
       }
       default: {
-        throw new Error('unexpected');
+        throw new Error("unexpected");
       }
     }
     context.dispose();

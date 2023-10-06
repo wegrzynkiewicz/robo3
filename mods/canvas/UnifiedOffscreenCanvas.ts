@@ -10,8 +10,8 @@ export class UnifiedOffscreenCanvasContext extends AbstractUnifiedCanvasContext 
     public readonly height: number,
   ) {
     super();
-    this.canvas = new OffscreenCanvas(width, height)
-    const context = this.canvas.getContext('2d', { alpha: true, willReadFrequently: true });
+    this.canvas = new OffscreenCanvas(width, height);
+    const context = this.canvas.getContext("2d", { alpha: true, willReadFrequently: true });
     assertObject(context);
     this.context = context;
   }
@@ -23,9 +23,9 @@ export class UnifiedOffscreenCanvasContext extends AbstractUnifiedCanvasContext 
     return emulated;
   }
 
-  public dispose(): void { }
+  public dispose(): void {}
 
   public toPNG(): Uint8Array {
-    throw new Error('not-implemented');
+    throw new Error("not-implemented");
   }
 }

@@ -1,8 +1,7 @@
-import { Breaker, assertEqual, assertRequiredString } from "../../common/asserts.ts";
+import { assertEqual, assertRequiredString, Breaker } from "../../common/asserts.ts";
 
 export class SpriteAtlasURL {
-
-  public static readonly ALLOWED_LAYOUTS = ['single', 'terrain'];
+  public static readonly ALLOWED_LAYOUTS = ["single", "terrain"];
 
   protected constructor(
     public readonly url: URL,
@@ -13,11 +12,11 @@ export class SpriteAtlasURL {
   }
 
   public static fromURL(url: URL) {
-    const pathSegments = url.pathname.split('/');
+    const pathSegments = url.pathname.split("/");
     const fileName = pathSegments[pathSegments.length - 1];
-    const segments = fileName.split('.');
+    const segments = fileName.split(".");
     if (segments.length !== 2) {
-      throw new Breaker('unexpected-sprite-atlas-url-extension', { url });
+      throw new Breaker("unexpected-sprite-atlas-url-extension", { url });
     }
     const [
       vendor,
@@ -26,14 +25,14 @@ export class SpriteAtlasURL {
       resource,
       format,
     ] = segments;
-    assertRequiredString(vendor, 'invalid-sprite-atlas-url-vendor', { url });
-    assertRequiredString(sprite, 'invalid-sprite-atlas-url-sprite', { url });
-    assertRequiredString(layout, 'invalid-sprite-atlas-url-layout', { url });
-    assertEqual(resource, 'spr', 'unexpected-sprite-atlas-url-resource', { resource, url });
-    assertEqual(format, 'spr', 'unexpected-sprite-atlas-url-format', { format, url });
+    assertRequiredString(vendor, "invalid-sprite-atlas-url-vendor", { url });
+    assertRequiredString(sprite, "invalid-sprite-atlas-url-sprite", { url });
+    assertRequiredString(layout, "invalid-sprite-atlas-url-layout", { url });
+    assertEqual(resource, "spr", "unexpected-sprite-atlas-url-resource", { resource, url });
+    assertEqual(format, "spr", "unexpected-sprite-atlas-url-format", { format, url });
     const spriteId = `${vendor}/${sprite}`;
     if (!SpriteAtlasURL.ALLOWED_LAYOUTS.includes(layout)) {
-      throw new Breaker('invalid-sprite-atlas-url-layout', {
+      throw new Breaker("invalid-sprite-atlas-url-layout", {
         allowed: SpriteAtlasURL.ALLOWED_LAYOUTS,
         url,
       });

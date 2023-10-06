@@ -2,33 +2,33 @@ import { DimensionalRectangle } from "../../math/DimensionalRectangle.ts";
 import { SpriteAllocation } from "./sprite.ts";
 
 export interface ExternalSpriteAtlasOrigin {
-  type: 'external';
+  type: "external";
   url: string;
 }
 
 export interface GeneratedSpriteAtlasOrigin {
-  type: 'generated';
+  type: "generated";
   description: string;
 }
 
 export type SpriteAtlasOrigin = ExternalSpriteAtlasOrigin | GeneratedSpriteAtlasOrigin;
 
 export interface SpriteInListSpriteAtlasLayout {
-  spriteId: string,
+  spriteId: string;
   sourceRect: DimensionalRectangle;
 }
 
 export interface ListSpriteAtlasLayout {
-  type: 'list',
-  sprites: SpriteInListSpriteAtlasLayout[],
+  type: "list";
+  sprites: SpriteInListSpriteAtlasLayout[];
 }
 
 export interface SingleSpriteAtlasLayout {
-  type: 'single',
+  type: "single";
 }
 
 export interface TerrainSpriteAtlasLayout {
-  type: 'terrain',
+  type: "terrain";
 }
 
 export type SpriteAtlasLayout = ListSpriteAtlasLayout | SingleSpriteAtlasLayout | TerrainSpriteAtlasLayout;

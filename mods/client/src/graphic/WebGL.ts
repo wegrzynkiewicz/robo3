@@ -32,11 +32,11 @@ function createTextureUnits(count: number): TextureUnit[] {
     const unit: TextureUnit = {
       [TEXTURE_2D]: null,
       [TEXTURE_2D_ARRAY]: null,
-    }
+    };
     textureUnits.push(unit);
   }
   return textureUnits;
-} 
+}
 
 export const webGLService = registerService({
   async provider(resolver: ServiceResolver): Promise<WebGL2RenderingContext> {
@@ -52,7 +52,7 @@ export const webGLService = registerService({
       preserveDrawingBuffer: false,
       stencil: false,
     });
-    assertNonNull(gl, 'cannot-create-webgl2-context');
+    assertNonNull(gl, "cannot-create-webgl2-context");
 
     const oldBindBuffer = gl.bindBuffer;
     const bound: Record<number, unknown> = {};
@@ -72,7 +72,7 @@ export const webGLService = registerService({
     gl.activeTexture = function (unit: number): void {
       const index = unit - TEXTURE0;
       if (index > (maxTextureUnits - 1)) {
-        throw new Error('unexpected-texture-unit');
+        throw new Error("unexpected-texture-unit");
       }
       if (activeTextureUnit === index) {
         return;
