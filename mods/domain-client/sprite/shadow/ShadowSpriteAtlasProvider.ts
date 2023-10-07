@@ -1,5 +1,5 @@
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
-import { SpriteAtlasImageData, SpriteAtlasProvider, SpriteAtlasSource } from "../../../core/sprite/atlas.ts";
+import { SpriteAtlasImage, SpriteAtlasProvider, SpriteAtlasSource } from "../../../core/sprite/atlas.ts";
 import { ShadowSpriteAtlasGenerator, shadowSpriteAtlasGeneratorService } from "./ShadowSpriteAtlasGenerator.ts";
 
 export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
@@ -7,7 +7,7 @@ export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
     public readonly shadowSpriteAtlasGenerator: ShadowSpriteAtlasGenerator,
   ) {}
 
-  async provideSpriteAtlasImage(): Promise<SpriteAtlasImageData> {
+  async provideSpriteAtlasImage(): Promise<SpriteAtlasImage> {
     const source: SpriteAtlasSource = {
       allocation: {
         type: "static",
@@ -22,7 +22,7 @@ export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
       spriteAtlasId: "shadow",
     };
     const image = this.shadowSpriteAtlasGenerator.generate();
-    const data: SpriteAtlasImageData = { image, source };
+    const data: SpriteAtlasImage = { image, source };
     return data;
   }
 }

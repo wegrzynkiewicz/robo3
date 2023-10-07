@@ -21,7 +21,7 @@ export interface SpriteSource {
   sourceRect: DimensionalRectangle;
 }
 
-export interface SpriteImageData {
+export interface SpriteImage {
   image: ImageData;
   source: SpriteSource;
 }

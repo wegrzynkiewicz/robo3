@@ -1,3 +1,4 @@
+import { Dim2D } from "../../math/Dim2D.ts";
 import { DimensionalRectangle } from "../../math/DimensionalRectangle.ts";
 import { SpriteAllocation } from "./sprite.ts";
 
@@ -18,6 +19,18 @@ export interface SpriteInListSpriteAtlasLayout {
   sourceRect: DimensionalRectangle;
 }
 
+
+export interface GridNumbersSpriteAtlasLayout {
+  spriteDim: Dim2D;
+  type: "numbers";
+}
+
+export interface GridNamesSpriteAtlasLayout {
+  spriteDim: Dim2D;
+  type: "names";
+  names: string[];
+}
+
 export interface ListSpriteAtlasLayout {
   type: "list";
   sprites: SpriteInListSpriteAtlasLayout[];
@@ -31,7 +44,12 @@ export interface TerrainSpriteAtlasLayout {
   type: "terrain";
 }
 
-export type SpriteAtlasLayout = ListSpriteAtlasLayout | SingleSpriteAtlasLayout | TerrainSpriteAtlasLayout;
+export type SpriteAtlasLayout =
+  | GridNamesSpriteAtlasLayout
+  | GridNumbersSpriteAtlasLayout
+  | ListSpriteAtlasLayout
+  | SingleSpriteAtlasLayout
+  | TerrainSpriteAtlasLayout;
 
 export interface SpriteAtlasSource {
   allocation: SpriteAllocation;
@@ -40,11 +58,11 @@ export interface SpriteAtlasSource {
   spriteAtlasId: string;
 }
 
-export interface SpriteAtlasImageData {
+export interface SpriteAtlasImage {
   image: ImageData;
   source: SpriteAtlasSource;
 }
 
 export interface SpriteAtlasProvider {
-  provideSpriteAtlasImage(): Promise<SpriteAtlasImageData>;
+  provideSpriteAtlasImage(): Promise<SpriteAtlasImage>;
 }
