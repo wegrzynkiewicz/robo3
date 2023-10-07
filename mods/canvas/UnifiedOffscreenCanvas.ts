@@ -5,11 +5,9 @@ import { AbstractUnifiedCanvasContext, UnifiedCanvasContextBase, initialize } fr
 export class UnifiedOffscreenCanvasContext extends AbstractUnifiedCanvasContext implements UnifiedCanvasContextBase {
   public readonly canvas: OffscreenCanvas;
   public readonly context: OffscreenCanvasRenderingContext2D;
-  public constructor(
-    public readonly width: number,
-    public readonly height: number,
-  ) {
-    super();
+
+  public constructor(width: number, height: number) {
+    super(width, height);
     this.canvas = new OffscreenCanvas(width, height);
     const context = this.canvas.getContext("2d", { alpha: true, willReadFrequently: true });
     assertObject(context);

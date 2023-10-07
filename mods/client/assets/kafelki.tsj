@@ -1,7 +1,7 @@
 {
   "columns": 8,
-  "image": "tileset.png",
-  "imageheight": 4256,
+  "image": "3.png",
+  "imageheight": 256,
   "imagewidth": 256,
   "margin": 0,
   "name": "baseChipTileSet",

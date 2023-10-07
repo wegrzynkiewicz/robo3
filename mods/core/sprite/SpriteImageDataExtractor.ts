@@ -1,73 +1,82 @@
-import { UnifiedCanvasContext } from "../../canvas/UnifiedCanvasContext.ts";
+import { UnifiedCanvasContext, UnifiedCanvasContextBase } from "../../canvas/UnifiedCanvasContext.ts";
 import { dimRect } from "../../math/DimensionalRectangle.ts";
-import { registerService } from "../dependency/service.ts";
 import { SpriteAtlasImage } from "./atlas.ts";
 import { SpriteImage, SpriteOrigin, SpriteSource } from "./sprite.ts";
 
+const terrains = [
+  "LSE", "UN", "LSW", "CSE", "ES", "CSW",
+  "UW", "EMP", "UE", "EE", "FILL", "EW",
+  "LNE", "US", "LNW", "CNE", "EN", "CNW",
+];
+
 export class SpriteImageExtractor {
-  public *extract(atlas: SpriteAtlasImage): Generator<SpriteImage, void, unknown> {
-    const {
-      image,
-      image: { width, height },
-      source: atlasSource,
-      source: { allocation, layout, spriteAtlasId },
-    } = atlas;
-    const origin: SpriteOrigin = { atlas: atlasSource, type: "atlas" };
-    const context = new UnifiedCanvasContext(width, height);
-    context.putImageData(image, 0, 0);
+  public readonly context: UnifiedCanvasContextBase;
+  public constructor(
+    public readonly atlas: SpriteAtlasImage,
+  ) {
+    const { image, image: { width, height } } = atlas;
+    this.context = new UnifiedCanvasContext(width, height);
+    this.context.putImageData(image, 0, 0);
+  }
+
+  protected *extractMany(callback: (number: number) => string) {
+    const { width, height } = this.atlas.image;
+    const { h, w } = (this.atlas.source.layout as any).spriteDim;
+    const tilesPerWidth = Math.floor(width / w);
+    const tilesPerHeight = Math.floor(height / h);
+    let i = 0;
+    for (let y = 0; y < tilesPerHeight; y++) {
+      for (let x = 0; x < tilesPerWidth; x++) {
+        const sourceRect = dimRect(x * w, y * h, w, h);
+        const spriteId = callback(i++);
+        yield { sourceRect, spriteId };
+      }
+    }
+  }
+
+  protected *extractElementals() {
+    const { image: { width, height }, source: { layout, spriteAtlasId } } = this.atlas;
     switch (layout.type) {
+      case "names": {
+        yield* this.extractMany((n) => `${spriteAtlasId}/${layout.names[n]}`);
+        break;
+      }
       case "numbers": {
-        const { h, w } = layout.spriteDim
-        const tilesPerWidth = Math.floor(width / w);
-        const tilesPerHeight = Math.floor(height / h);
-        let number = 0;
-        for (let y = 0; y < tilesPerHeight; y++) {
-          for (let x = 0; x < tilesPerWidth; x++) {
-            const sourceRect = dimRect(x * w, y * h, w, h);
-            const image = context.getImageData(x * w, y * h, w, h);
-            const spriteId = `${spriteAtlasId}_${number.toString().padStart(5, '0')}`;
-            const source: SpriteSource = { allocation, origin, sourceRect, spriteId };
-            const sprite: SpriteImage = { image, source };
-            number++;
-            yield sprite;
-          }
-        }
+        yield* this.extractMany((n) => `${spriteAtlasId}/${n.toString().padStart(5, '0')}`);
         break;
       }
       case "list": {
         for (const spriteInLayout of layout.sprites) {
-          const { spriteId, sourceRect } = spriteInLayout;
-          const source: SpriteSource = { allocation, origin, sourceRect, spriteId };
-          const { x, y, w, h } = sourceRect;
-          const image = context.getImageData(x, y, w, h);
-          const sprite: SpriteImage = { image, source };
-          yield sprite;
+          yield spriteInLayout;
         }
         break;
       }
       case "single": {
-        const sourceRect = dimRect(0, 0, width, height);
-        const spriteId = spriteAtlasId;
-        const source: SpriteSource = { allocation, origin, sourceRect, spriteId };
-        const { x, y, w, h } = sourceRect;
-        const image = context.getImageData(x, y, w, h);
-        const sprite: SpriteImage = { image, source };
-        yield sprite;
+        yield {
+          sourceRect: dimRect(0, 0, width, height),
+          spriteId: spriteAtlasId,
+        }
         break;
       }
       case "terrain": {
-        throw new Error("not-implemented");
+        yield* this.extractMany((n) => `${spriteAtlasId}/${terrains[n]}`);
+        break;
       }
       default: {
         throw new Error("unexpected");
       }
     }
-    context.dispose();
+  }
+
+  public *extract(atlas: SpriteAtlasImage): Generator<SpriteImage, void, unknown> {
+    const { source: atlasSource, source: { allocation } } = atlas;
+    const origin: SpriteOrigin = { atlas: atlasSource, type: "atlas" };
+    for (const { sourceRect, spriteId } of this.extractElementals()) {
+      const source: SpriteSource = { allocation, origin, sourceRect, spriteId };
+      const { x, y, w, h } = sourceRect;
+      const image = this.context.getImageData(x, y, w, h);
+      const sprite: SpriteImage = { image, source };
+      yield sprite;
+    }
   }
 }
-
-export const SpriteImageExtractorService = registerService({
-  async provider() {
-    return new SpriteImageExtractor();
-  },
-});

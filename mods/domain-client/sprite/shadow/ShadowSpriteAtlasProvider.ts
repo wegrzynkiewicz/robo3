@@ -1,5 +1,6 @@
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
 import { SpriteAtlasImage, SpriteAtlasProvider, SpriteAtlasSource } from "../../../core/sprite/atlas.ts";
+import { dim2D } from "../../../math/Dim2D.ts";
 import { ShadowSpriteAtlasGenerator, shadowSpriteAtlasGeneratorService } from "./ShadowSpriteAtlasGenerator.ts";
 
 export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
@@ -13,6 +14,7 @@ export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
         type: "static",
       },
       layout: {
+        spriteDim: dim2D(32, 32),
         type: "terrain",
       },
       origin: {

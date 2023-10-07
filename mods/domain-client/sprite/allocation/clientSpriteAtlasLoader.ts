@@ -21,7 +21,7 @@ export const clientSpriteAtlasLoaderService = registerService({
       },
       spriteAtlasId: 'build-in',
     }
-    loader.addProvider(new ExternalSpriteAtlasProvider(build));
+    // loader.addProvider(new ExternalSpriteAtlasProvider(build));
     loader.addProvider(await resolver.resolve(shadowSpriteAtlasProviderService));
     return loader;
   },

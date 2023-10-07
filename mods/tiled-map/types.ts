@@ -156,7 +156,7 @@ export async function processMap() {
   ctx.tilesTextureAllocator.paintHelperTiles();
   //ctx.tilesTextureAllocator.contexts.map((c) => document.body.appendChild(c.canvas));
   const dataSource = ctx.tilesTextureAllocator.contexts;
-  return dataSource;
+  return {dataSource, ctx};
 }
 
 export async function processMap1() {

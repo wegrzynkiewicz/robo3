@@ -4,11 +4,9 @@ import { AbstractUnifiedCanvasContext, initialize, UnifiedCanvasContextBase } fr
 export class UnifiedEmulatedCanvasContext extends AbstractUnifiedCanvasContext implements UnifiedCanvasContextBase {
   public readonly canvas: EmulatedCanvas2D;
   public readonly context: CanvasRenderingContext2D;
-  public constructor(
-    public readonly width: number,
-    public readonly height: number,
-  ) {
-    super();
+
+  public constructor(width: number, height: number) {
+    super(width, height);
     this.canvas = createCanvas(width, height);
     this.context = this.canvas.getContext("2d");
   }

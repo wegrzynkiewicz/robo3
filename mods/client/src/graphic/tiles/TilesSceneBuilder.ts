@@ -42,7 +42,7 @@ export class TilesSceneBuilder {
     const chunk = this.chunkManager.chunks.get(chunkId.toHex());
     if (chunk) {
       chunks.unshift(chunk);
-      if (chunk.transparent) {
+      if (chunk.transparent || true) {
         const deepChunkId = new ChunkId(
           chunkId.spaceId,
           chunkId.x,
@@ -75,6 +75,18 @@ export class TilesSceneBuilder {
             view[index++] = 0;
             view[index++] = 0;
             this.visibleTiles++;
+
+            if (goTypeId > 64 && goTypeId !== 75) {
+              view[index++] = spacePosition.x;
+              view[index++] = spacePosition.y;
+              view[index++] = 32.0;
+              view[index++] = 32.0;
+              view[index++] = index2coords(75)[0] * 32.0;
+              view[index++] = index2coords(75)[1] * 32.0;
+              view[index++] = 0;
+              view[index++] = 0;
+              this.visibleTiles++;
+            }
           }
         }
       }

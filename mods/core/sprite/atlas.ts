@@ -41,6 +41,7 @@ export interface SingleSpriteAtlasLayout {
 }
 
 export interface TerrainSpriteAtlasLayout {
+  spriteDim: Dim2D;
   type: "terrain";
 }
 

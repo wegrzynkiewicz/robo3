@@ -1,7 +1,8 @@
+import "./src/else/wss.ts";
+import "../canvas/UnifiedOffscreenCanvas.ts";
+import "../core/bootstrap.ts";
 import { assertNonNull } from "../common/asserts.ts";
 import { processMap } from "../tiled-map/types.ts";
-import "./src/else/wss.ts";
-import "../core/bootstrap.ts";
 import { spriteAtlasRegistry, spriteRegistry } from "../core/sprite/defining.ts";
 import { cgotdRegistry, sgotdRegistry } from "../core/game-object/defining.ts";
 import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../core/game-object/resolving.ts";
@@ -17,6 +18,8 @@ import { keyboardService } from "./src/keyboard/Keyboard.ts";
 import { phaseManagerService } from "./src/phase/PhaseManager.ts";
 import { appService } from "./src/App.ts";
 import { tilesTexture2DArrayService } from "./src/graphic/tiles/TilesTexture2DArray.ts";
+import { clientSpriteAtlasLoaderService } from "../domain-client/sprite/allocation/clientSpriteAtlasLoader.ts";
+import { SpriteImageExtractor } from "../core/sprite/SpriteImageDataExtractor.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -31,6 +34,8 @@ async function start() {
   const debugInfo = await resolver.resolve(debugInfoService);
   const phaseManager = await resolver.resolve(phaseManagerService);
   const tilesTexture2DArray = await resolver.resolve(tilesTexture2DArrayService);
+  const clientSpriteAtlasLoader = await resolver.resolve(clientSpriteAtlasLoaderService);
+  const spriteAtlasImages = await clientSpriteAtlasLoader.loadSpriteAtlasImages();
 
   function resizeWindow() {
     display.setClientSize(
@@ -60,13 +65,20 @@ async function start() {
 
   debugInfo.enable();
 
-  processMap().then((contexts) => {
-    let x = 0;
-    for (const context of contexts) {
-      const data = context.getImageData(0, 0, 1024, 1024);
-      tilesTexture2DArray.update(x++, data);
+  const { dataSource, ctx } = await processMap();
+  let x = 0;
+
+  for (const i of spriteAtlasImages) {
+    const spriteImageExtractor = new SpriteImageExtractor(i);
+    for (const sprite of spriteImageExtractor.extract(i)) {
+      ctx.tilesTextureAllocator.insert(sprite.image);
+      // ctx.tilesTextureAllocator.contexts.map((c) => document.body.appendChild(c.canvas));
     }
-  });
+  }
+  for (const context of dataSource) {
+    const data = context.getImageData(0, 0, 1024, 1024);
+    tilesTexture2DArray.update(x++, data);
+  }
 
   const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
   const sgoMap = s.resolveGameObjectTypes();
