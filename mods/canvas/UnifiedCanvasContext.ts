@@ -1,6 +1,3 @@
-import { UnifiedEmulatedCanvasContext } from "./UnifiedEmulatedCanvasContext.ts";
-import { UnifiedOffscreenCanvasContext } from "./UnifiedOffscreenCanvas.ts";
-
 export interface UnifiedCanvasContextBase {
   dispose(): void;
   drawImage(image: CanvasImageSource, x: number, y: number): void;
@@ -9,6 +6,11 @@ export interface UnifiedCanvasContextBase {
   putImageData(image: ImageData, x: number, y: number): void;
   toPNG(): Uint8Array;
   width: number;
+}
+
+export interface UnifiedCanvasContextConstructor {
+  new (w: number, h: number): UnifiedCanvasContextBase;
+  createFromImageURL(url: URL): Promise<UnifiedCanvasContextBase>
 }
 
 export abstract class AbstractUnifiedCanvasContext {
@@ -25,4 +27,12 @@ export abstract class AbstractUnifiedCanvasContext {
   }
 }
 
-export const UnifiedCanvasContext = typeof Deno === "object" ? UnifiedEmulatedCanvasContext : UnifiedOffscreenCanvasContext;
+function fail () {
+  throw new Error('invalid-unified-canvas-context-import-direct');
+}
+fail.createFromImageURL = fail;
+
+export let UnifiedCanvasContext: UnifiedCanvasContextConstructor = fail as any;
+export function initialize(em: UnifiedCanvasContextConstructor) {
+  UnifiedCanvasContext = em;
+}

@@ -1,6 +1,6 @@
 import { assertObject } from "../common/asserts.ts";
 import { loadImage } from "../common/useful.ts";
-import { AbstractUnifiedCanvasContext, UnifiedCanvasContextBase } from "./UnifiedCanvasContext.ts";
+import { AbstractUnifiedCanvasContext, UnifiedCanvasContextBase, initialize } from "./UnifiedCanvasContext.ts";
 
 export class UnifiedOffscreenCanvasContext extends AbstractUnifiedCanvasContext implements UnifiedCanvasContextBase {
   public readonly canvas: OffscreenCanvas;
@@ -29,3 +29,5 @@ export class UnifiedOffscreenCanvasContext extends AbstractUnifiedCanvasContext 
     throw new Error("not-implemented");
   }
 }
+
+initialize(UnifiedOffscreenCanvasContext);

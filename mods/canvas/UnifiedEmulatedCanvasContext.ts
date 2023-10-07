@@ -1,5 +1,5 @@
 import { CanvasRenderingContext2D, createCanvas, EmulatedCanvas2D, loadImage } from "https://deno.land/x/canvas@v1.4.1/mod.ts";
-import { AbstractUnifiedCanvasContext, UnifiedCanvasContextBase } from "./UnifiedCanvasContext.ts";
+import { AbstractUnifiedCanvasContext, initialize, UnifiedCanvasContextBase } from "./UnifiedCanvasContext.ts";
 
 export class UnifiedEmulatedCanvasContext extends AbstractUnifiedCanvasContext implements UnifiedCanvasContextBase {
   public readonly canvas: EmulatedCanvas2D;
@@ -28,3 +28,5 @@ export class UnifiedEmulatedCanvasContext extends AbstractUnifiedCanvasContext i
     this.canvas.dispose();
   }
 }
+
+initialize(UnifiedEmulatedCanvasContext);
