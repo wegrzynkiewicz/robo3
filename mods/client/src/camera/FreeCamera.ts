@@ -26,8 +26,8 @@ const holders = [
 
 export class FreeCamera {
   public speed = 32;
-  public x = 0;
-  public y = 0;
+  public x = 1800;
+  public y = 1800;
 
   public constructor(
     public readonly viewport: Viewport,
