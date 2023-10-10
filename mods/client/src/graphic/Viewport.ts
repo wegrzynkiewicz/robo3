@@ -8,11 +8,13 @@ import { primaryUBOService } from "./PrimaryUBO.ts";
 export class Viewport {
   public readonly centerPoint = point(0, 0);
   public readonly centerChunk = point(0, 0);
-  public depth = 0;
+  public layer = 0;
   public readonly halfSize = point(0, 0);
   public readonly size = point(0, 0);
+  public readonly chunkRect = cornerRect(0, 0, 0, 0);
   public readonly spaceRect = cornerRect(0, 0, 0, 0);
-  public spaceId = 0;
+  public readonly tilesRect = cornerRect(0, 0, 0, 0);
+  public spaceId = 1;
 
   public constructor(
     public readonly projectionMatrix: Float32Array,
@@ -24,16 +26,31 @@ export class Viewport {
   }
 
   public lookAt(x: number, y: number): void {
-    const { centerPoint, centerChunk, halfSize, spaceRect, viewMatrix } = this;
+    const { centerPoint, centerChunk, chunkRect, halfSize, spaceRect, tilesRect, viewMatrix } = this;
+
+    if (centerPoint.x === x && centerPoint.y === y) {
+      return;
+    }
 
     centerPoint.x = x;
     centerPoint.y = y;
     centerChunk.x = Math.floor(x / SPRITES_TEXTURE_SIZE);
     centerChunk.y = Math.floor(y / SPRITES_TEXTURE_SIZE);
+
     spaceRect.x1 = x - halfSize.x;
     spaceRect.y1 = y - halfSize.y;
     spaceRect.x2 = x + halfSize.x;
     spaceRect.y2 = y + halfSize.y;
+
+    tilesRect.x1 = Math.floor(spaceRect.x1 / 32);
+    tilesRect.y1 = Math.floor(spaceRect.y1 / 32);
+    tilesRect.x2 = Math.floor(spaceRect.x2 / 32);
+    tilesRect.y2 = Math.floor(spaceRect.y2 / 32);
+
+    chunkRect.x1 = Math.floor(spaceRect.x1 / 1024);
+    chunkRect.y1 = Math.floor(spaceRect.y1 / 1024);
+    chunkRect.x2 = Math.floor(spaceRect.x2 / 1024);
+    chunkRect.y2 = Math.floor(spaceRect.y2 / 1024);
 
     const mx = -x + halfSize.x;
     const my = +y + halfSize.y;
@@ -42,8 +59,8 @@ export class Viewport {
     fromTranslation(viewMatrix, mx, my, mz);
   }
 
-  public setDepth(depth: number): void {
-    this.depth = depth;
+  public setLayer(layer: number): void {
+    this.layer = layer;
   }
 
   public setSpaceId(spaceId: number): void {

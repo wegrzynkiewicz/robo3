@@ -33,7 +33,7 @@ export const debugSetViewportDepthUAHandlerService = registerService({
   async provider(resolver: ServiceResolver): Promise<UAHandler<number>> {
     const viewport = await resolver.resolve(viewportService);
     const handle = async (_Def: UADefinition<number>, data: number): Promise<void> => {
-      viewport.setDepth(viewport.depth + data);
+      viewport.setLayer(viewport.layer + data);
     };
     return { handle };
   },

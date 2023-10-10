@@ -1,7 +1,7 @@
 import { assertNonNull } from "../../../common/asserts.ts";
 import { formatBytes } from "../../../common/useful.ts";
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
-import { SCREEN_MAX_VISIBLE_TILE_Y,SCREEN_MAX_VISIBLE_TILE_X } from "../../../core/vars.ts";
+import { SCREEN_MAX_VISIBLE_TILE_Y, SCREEN_MAX_VISIBLE_TILE_X } from "../../../core/vars.ts";
 import { ChunkManager, chunkManagerService } from "../../../domain-client/chunk/chunkManager.ts";
 import { Display, displayService } from "../graphic/Display.ts";
 import { DynamicDrawBuffer } from "../graphic/DynamicDrawBuffer.ts";
@@ -9,13 +9,14 @@ import { Viewport, viewportService } from "../graphic/Viewport.ts";
 import { TilesSceneBuilder, tilesSceneBuilderService } from "../graphic/tiles/TilesSceneBuilder.ts";
 import { tilesBufferService } from "../graphic/tiles/tilesBuffer.ts";
 import { DebugBufferPreview } from "./DebugBufferPreview.ts";
+import { DepthDebugBufferPreviewColorizer } from "./DepthDebugBufferPreviewColorizer.ts";
 import { TerrainDebugBufferPreviewColorizer } from "./TerrainDebugBufferPreviewColorizer.ts";
 
 export class DebugInfo {
   public readonly left: HTMLElement;
   public readonly right: HTMLElement;
   public isEnabled = false;
-  preview: DebugBufferPreview<Uint8Array>;
+  public previews: DebugBufferPreview<any>[] = [];
 
   public constructor(
     public readonly display: Display,
@@ -31,13 +32,24 @@ export class DebugInfo {
     this.left = left;
     this.right = right;
 
-    this.preview = new DebugBufferPreview(
+    const preview = new DebugBufferPreview(
       tilesSceneBuilder.depthMap,
       SCREEN_MAX_VISIBLE_TILE_X,
       SCREEN_MAX_VISIBLE_TILE_Y,
-      new TerrainDebugBufferPreviewColorizer(),
+      new DepthDebugBufferPreviewColorizer(),
     );
-    right.append(this.preview.canvas);
+    this.previews.push(preview);
+
+    for (let z = 0; z < 3; z++) {
+      const preview = new DebugBufferPreview(
+        tilesSceneBuilder.layers[z],
+        SCREEN_MAX_VISIBLE_TILE_X,
+        SCREEN_MAX_VISIBLE_TILE_Y,
+        new TerrainDebugBufferPreviewColorizer(),
+      );
+      this.previews.push(preview);
+    }
+    right.append(...this.previews.map(e => e.canvas));
   }
 
   public enable() {
@@ -68,18 +80,20 @@ export class DebugInfo {
     out.push(`  Size: ${client.x} ${client.y}`);
     out.push(`  Scale: ${this.display.getScale()}`);
 
-    const { size, centerChunk, centerPoint, depth, spaceId, spaceRect: sr } = this.viewport;
+    const { size, centerChunk, centerPoint, chunkRect, layer, spaceId, spaceRect, tilesRect } = this.viewport;
     out.push(`Viewport`);
     out.push(`  Axis: ${size.x / 32} ${size.y / 32}`);
-    out.push(`  CenterChunk: ${centerChunk.x} ${centerChunk.y}`);
-    out.push(`  CenterPoint: ${centerPoint.x} ${centerPoint.y}`);
-    out.push(`  Depth: ${depth}`);
     out.push(`  Size: ${size.x} ${size.y}`);
+    out.push(`  CenterPoint: ${centerPoint.x} ${centerPoint.y}`);
+    out.push(`  CenterChunk: ${centerChunk.x} ${centerChunk.y}`);
     out.push(`  SpaceId: ${spaceId}`);
-    out.push(`  SpaceRect: ${sr.x1} ${sr.y1} ${sr.x2} ${sr.y2}`);
+    out.push(`  Layer: ${layer}`);
+    out.push(`  SpaceRect: ${spaceRect.x1} ${spaceRect.y1} ${spaceRect.x2} ${spaceRect.y2}`);
+    out.push(`  ChunkRect: ${chunkRect.x1} ${chunkRect.y1} ${chunkRect.x2} ${chunkRect.y2}`);
+    out.push(`  TilesRect: ${tilesRect.x1} ${tilesRect.y1} ${tilesRect.x2} ${tilesRect.y2}`);
 
     out.push(`Scene`);
-    out.push(`  AvgBuildTime: ${(this.tilesSceneBuilder.performance.value * 1000).toFixed(0)}µs`);
+    out.push(`  AvgBuildTime: ${(this.tilesSceneBuilder.performance.value * 1000).toFixed(0)} µs`);
     out.push(`  VisibleTiles: ${this.tilesSceneBuilder.visibleTiles}`);
     const bs = this.tilesBuffer.bytesSent;
     out.push(`  BytesSent: ${bs} (${formatBytes(bs)})`);
@@ -98,7 +112,9 @@ export class DebugInfo {
 
     this.left.textContent = out.join("\n");
 
-    this.preview.update();
+    for (const preview of this.previews) {
+      preview.update();
+    }
   }
 }
 
