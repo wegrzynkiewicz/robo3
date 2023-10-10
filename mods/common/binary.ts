@@ -1,3 +1,12 @@
+export type TypedArray =
+  | Float32Array
+  | Int8Array
+  | Int16Array
+  | Int32Array
+  | Uint8Array
+  | Uint16Array
+  | Uint32Array;
+
 export interface BinarySerializable {
   toDataView(dv: DataView): void;
 }

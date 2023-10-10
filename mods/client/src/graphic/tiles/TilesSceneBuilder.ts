@@ -1,3 +1,4 @@
+import { PerformanceCounter } from "../../../../common/PerformanceCounter.ts";
 import { ChunkId } from "../../../../core/chunk/chunkId.ts";
 import { registerService, ServiceResolver } from "../../../../core/dependency/service.ts";
 import { index2coords } from "../../../../core/numbers.ts";
@@ -12,10 +13,10 @@ export class TilesSceneBuilder {
   public visibleTiles = 0;
   public readonly visibleChunks: Chunk[] = [];
   public readonly depthMap: Uint8Array;
-  a = 0;
-  c = 0;
+  public readonly performance = new PerformanceCounter('scene-builder', 60);
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
+  levels: Uint8Array[];
   public constructor(
     public readonly chunkManager: ChunkManager,
     public readonly viewport: Viewport,
@@ -24,13 +25,19 @@ export class TilesSceneBuilder {
     this.depthMap = new Uint8Array(
       (SCREEN_MAX_VISIBLE_TILE_Y) * (SCREEN_MAX_VISIBLE_TILE_X)
     );
+
+    this.levels = [
+      new Uint8Array((SCREEN_MAX_VISIBLE_TILE_Y) * (SCREEN_MAX_VISIBLE_TILE_X)),
+      new Uint8Array((SCREEN_MAX_VISIBLE_TILE_Y) * (SCREEN_MAX_VISIBLE_TILE_X)),
+    ];
+
     this.canvas = document.createElement('canvas');
     this.canvas.width = SCREEN_MAX_VISIBLE_TILE_X;
     this.canvas.height = SCREEN_MAX_VISIBLE_TILE_Y;
     this.context = this.canvas.getContext('2d', { willReadFrequently: true })!;
     document.body.appendChild(this.canvas);
-    this.canvas.style.width = `${SCREEN_MAX_VISIBLE_TILE_X * 4}px`;
-    this.canvas.style.height = `${SCREEN_MAX_VISIBLE_TILE_Y * 4}px`;
+    this.canvas.style.width = `${SCREEN_MAX_VISIBLE_TILE_X * 8}px`;
+    this.canvas.style.height = `${SCREEN_MAX_VISIBLE_TILE_Y * 8}px`;
     this.canvas.style.imageRendering = 'pixelated';
   }
 
@@ -71,6 +78,7 @@ export class TilesSceneBuilder {
   }
 
   public build() {
+    this.performance.start();
     const view = this.tilesBuffer.typedArray;
     const { spaceRect, depth } = this.viewport;
     this.visibleTiles = 0;
@@ -78,7 +86,6 @@ export class TilesSceneBuilder {
     let index = 0;
     this.depthMap.fill(0);
 
-    const s = performance.now();
     const tilesView = cornerRect(
       Math.floor(spaceRect.x1 / 32),
       Math.floor(spaceRect.y1 / 32),
@@ -108,62 +115,43 @@ export class TilesSceneBuilder {
       yLevel.push(xLevel);
     }
 
-    let dstY = 0;
-    for (let y = tilesView.y1; y < tilesView.y2; y++) {
-      if (y < 0) {
-        dstY++;
+    let dstZ = 0;
+    for (let z = depth; z >= 0; z--) {
+      if (dstZ > this.levels.length - 1) {
         continue;
       }
-      let dstX = 0;
-      for (let x = tilesView.x1; x < tilesView.x2; x++) {
-        if (x < 0) {
-          dstX++;
+      let dstY = 0;
+      for (let y = tilesView.y1; y < tilesView.y2; y++) {
+        if (y < 0) {
+          dstY++;
           continue;
         }
-        const chunkX = Math.floor(x / 32) - chunksView.x1;
-        const chunkY = Math.floor(y / 32) - chunksView.y1;
-        const tileX = x % 32;
-        const tileY = y % 32;
-        const srcIndex = tileY * 32 + tileX;
-        const dstIndex = dstY * SCREEN_MAX_VISIBLE_TILE_X + dstX;
-        const chunk = yLevel?.[chunkY]?.[chunkX];
-        if (chunk) {
-          const value = chunk.segment!.grid.view[srcIndex];
-          this.depthMap[dstIndex] = value;
+        let dstX = 0;
+        for (let x = tilesView.x1; x < tilesView.x2; x++) {
+          if (x < 0) {
+            dstX++;
+            continue;
+          }
+          const chunkX = Math.floor(x / 32) - chunksView.x1;
+          const chunkY = Math.floor(y / 32) - chunksView.y1;
+          const tileX = x % 32;
+          const tileY = y % 32;
+          const srcIndex = tileY * 32 + tileX;
+          const dstIndex = dstY * SCREEN_MAX_VISIBLE_TILE_X + dstX;
+          const chunk = yLevel?.[chunkY]?.[chunkX];
+          if (chunk) {
+            const value = chunk.segment!.grid.view[srcIndex];
+            this.depthMap[dstIndex] = value > 8 ? 0xff : value;
+            this.levels[dstZ][dstIndex] = value;
+          }
+          dstX++;
         }
-        dstX++;
+        dstY++;
       }
-      dstY++;
+      dstZ++;
     }
 
-    const e = performance.now();
-    const r = e - s;
-    this.a += r;
-    if (this.c > 100) {
-      console.log(this.a / 100);
-      this.a = 0;
-      this.c = 0;
-    }
-    this.c++;
-
-    const image = this.context.getImageData(0, 0, SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y);
-    let offset = 0;
-    const colors: Record<number, number[]> = {
-      1: [0x00, 0xFF, 0x00],
-      6: [0x96, 0x4B, 0x00],
-    };
-    for (let y = 0; y < SCREEN_MAX_VISIBLE_TILE_Y; y++) {
-      for (let x = 0; x < SCREEN_MAX_VISIBLE_TILE_X; x++) {
-        const index = y * SCREEN_MAX_VISIBLE_TILE_X + x;
-        const value = this.depthMap[index];
-        const [r, g, b] = colors[value] ?? [0, 0, 0];
-        image.data[offset++] = r;
-        image.data[offset++] = g;
-        image.data[offset++] = b;
-        image.data[offset++] = 255;
-      }
-    }
-    this.context.putImageData(image, 0, 0);
+    this.performance.end();
 
     for (const chunk of this.getChunks()) {
       if (intersectsNonStrict(chunk.worldSpaceRect, spaceRect)) {

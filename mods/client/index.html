@@ -45,6 +45,21 @@
       white-space: pre;
     }
 
+    .debug.left {
+      top: 0;
+      left: 0;
+    }
+
+    .debug.right {
+      top: 0;
+      right: 0;
+    }
+
+    .debug-buffer-preview {
+      image-rendering: pixelated;
+      border: 1px solid black;
+      margin: 10px;
+    }
   </style>
 </head>
 
@@ -53,7 +68,8 @@
     <div class="viewport">
       <canvas id="primary-canvas" class="primary-canvas"></canvas>
     </div>
-    <div id="debug-info" class="debug"></div>
+    <div id="debug-info-left" class="debug left"></div>
+    <div id="debug-info-right" class="debug right"></div>
   </div>
   <script src="./dist/main.js"></script>
 </body>

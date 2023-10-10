@@ -1,16 +1,21 @@
 import { assertNonNull } from "../../../common/asserts.ts";
 import { formatBytes } from "../../../common/useful.ts";
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { SCREEN_MAX_VISIBLE_TILE_Y,SCREEN_MAX_VISIBLE_TILE_X } from "../../../core/vars.ts";
 import { ChunkManager, chunkManagerService } from "../../../domain-client/chunk/chunkManager.ts";
 import { Display, displayService } from "../graphic/Display.ts";
 import { DynamicDrawBuffer } from "../graphic/DynamicDrawBuffer.ts";
 import { Viewport, viewportService } from "../graphic/Viewport.ts";
 import { TilesSceneBuilder, tilesSceneBuilderService } from "../graphic/tiles/TilesSceneBuilder.ts";
 import { tilesBufferService } from "../graphic/tiles/tilesBuffer.ts";
+import { DebugBufferPreview } from "./DebugBufferPreview.ts";
+import { TerrainDebugBufferPreviewColorizer } from "./TerrainDebugBufferPreviewColorizer.ts";
 
 export class DebugInfo {
-  public readonly element: HTMLElement;
+  public readonly left: HTMLElement;
+  public readonly right: HTMLElement;
   public isEnabled = false;
+  preview: DebugBufferPreview<Uint8Array>;
 
   public constructor(
     public readonly display: Display,
@@ -19,9 +24,20 @@ export class DebugInfo {
     public readonly tilesBuffer: DynamicDrawBuffer,
     public readonly chunkManager: ChunkManager,
   ) {
-    const element = document.getElementById("debug-info");
-    assertNonNull(element);
-    this.element = element;
+    const left = document.getElementById("debug-info-left");
+    const right = document.getElementById("debug-info-right");
+    assertNonNull(left);
+    assertNonNull(right);
+    this.left = left;
+    this.right = right;
+
+    this.preview = new DebugBufferPreview(
+      tilesSceneBuilder.depthMap,
+      SCREEN_MAX_VISIBLE_TILE_X,
+      SCREEN_MAX_VISIBLE_TILE_Y,
+      new TerrainDebugBufferPreviewColorizer(),
+    );
+    right.append(this.preview.canvas);
   }
 
   public enable() {
@@ -30,7 +46,7 @@ export class DebugInfo {
 
   public disable() {
     this.isEnabled = false;
-    this.element.innerText = "";
+    this.left.innerText = "";
   }
 
   public toggle() {
@@ -63,6 +79,7 @@ export class DebugInfo {
     out.push(`  SpaceRect: ${sr.x1} ${sr.y1} ${sr.x2} ${sr.y2}`);
 
     out.push(`Scene`);
+    out.push(`  AvgBuildTime: ${(this.tilesSceneBuilder.performance.value * 1000).toFixed(0)}µs`);
     out.push(`  VisibleTiles: ${this.tilesSceneBuilder.visibleTiles}`);
     const bs = this.tilesBuffer.bytesSent;
     out.push(`  BytesSent: ${bs} (${formatBytes(bs)})`);
@@ -79,7 +96,9 @@ export class DebugInfo {
       }
     }
 
-    this.element.textContent = out.join("\n");
+    this.left.textContent = out.join("\n");
+
+    this.preview.update();
   }
 }
 
