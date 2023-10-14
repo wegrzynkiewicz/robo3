@@ -17,7 +17,8 @@ export class TilesSceneBuilder {
   public readonly performance = new PerformanceCounter('scene-builder', 60);
   public readonly layers: Uint8Array[];
   protected paintedLayerCount = 0;
-  protected cellCountPerLayer = 0;
+  protected totalCellCountPerLayer = 0;
+  protected currentCellCountPerLayer = 0;
   protected paintedDepthCellCount = 0;
   protected layerSize: Point;
   public constructor(
@@ -26,13 +27,13 @@ export class TilesSceneBuilder {
     public readonly tilesBuffer: DynamicDrawBuffer,
   ) {
     this.layerSize = { x: SCREEN_MAX_VISIBLE_TILE_X, y: SCREEN_MAX_VISIBLE_TILE_Y };
-    this.cellCountPerLayer = (SCREEN_MAX_VISIBLE_TILE_Y) * (SCREEN_MAX_VISIBLE_TILE_X);
-    this.depthMap = new Uint8Array(this.cellCountPerLayer);
+    this.totalCellCountPerLayer = (SCREEN_MAX_VISIBLE_TILE_Y) * (SCREEN_MAX_VISIBLE_TILE_X);
+    this.depthMap = new Uint8Array(this.totalCellCountPerLayer);
 
     this.layers = [
-      new Uint8Array(this.cellCountPerLayer),
-      new Uint8Array(this.cellCountPerLayer),
-      new Uint8Array(this.cellCountPerLayer),
+      new Uint8Array(this.totalCellCountPerLayer),
+      new Uint8Array(this.totalCellCountPerLayer),
+      new Uint8Array(this.totalCellCountPerLayer),
     ];
   }
 
@@ -72,51 +73,55 @@ export class TilesSceneBuilder {
     }
   }
 
+  public buildChunk(z: number, chunk: Chunk) {
+    const { tilesRect } = this.viewport;
+    const { chunkId, segment } = chunk;
+    const layer = this.layers[z];
+    const view = segment!.grid.view;
+    const chunkTileX = chunkId.x * 32;
+    const chunkTileY = chunkId.y * 32;
+
+    const srcX1 = Math.max(tilesRect.x1 - chunkTileX, 0)
+    const srcY1 = Math.max(tilesRect.y1 - chunkTileY, 0);
+    const srcX2 = Math.min(tilesRect.x2 - chunkTileX, 32);
+    const srcY2 = Math.min(tilesRect.y2 - chunkTileY, 32);
+    const dstX1 = Math.max(chunkTileX - tilesRect.x1, 0);
+    const dstY1 = Math.max(chunkTileY - tilesRect.y1, 0);
+
+    let dstY = dstY1;
+    for (let y = srcY1; y < srcY2; y++) {
+      let dstX = dstX1;
+      for (let x = srcX1; x < srcX2; x++) {
+        const dstIndex = dstY * SCREEN_MAX_VISIBLE_TILE_X + dstX;
+        if (this.depthMap[dstIndex] === 0) {
+          const srcIndex = y * 32 + x;
+          const goTypeId = view[srcIndex];
+          if (goTypeId !== 0) {
+            this.paintedDepthCellCount++;
+            this.depthMap[dstIndex] = z + 1;
+          }
+          layer[dstIndex] = goTypeId;
+        }
+        dstX++;
+      }
+      dstY++;
+    }
+  }
+
   public buildLayer(z: number) {
-    const { chunkRect, layer, spaceId, tilesRect } = this.viewport;
+    const { chunkRect, layer, spaceId } = this.viewport;
     const buffer = this.layers[z];
     buffer.fill(0);
 
-    const chunks: Record<number, Record<number, Chunk>> = {};
     for (let chunkY = chunkRect.y1; chunkY <= chunkRect.y2; chunkY++) {
-      chunks[chunkY] = {};
       for (let chunkX = chunkRect.x1; chunkX <= chunkRect.x2; chunkX++) {
         const chunkId = new ChunkId(spaceId, chunkX, chunkY, layer - z);
         const chunk = this.chunkManager.chunks.get(chunkId.toHex());
         if (chunk === undefined || chunk.segment === undefined) {
           continue;
         }
-        chunks[chunkY][chunkX] = chunk;
+        this.buildChunk(z, chunk);
       }
-    }
-
-    let dstY = 0;
-    for (let y = tilesRect.y1; y < tilesRect.y2; y++) {
-      let dstX = 0;
-      for (let x = tilesRect.x1; x < tilesRect.x2; x++) {
-        const dstIndex = dstY * SCREEN_MAX_VISIBLE_TILE_X + dstX;
-        if (this.depthMap[dstIndex] === 0) {
-          const chunkX = Math.floor(x / 32);
-          const chunkY = Math.floor(y / 32);
-          const chunk = chunks?.[chunkY]?.[chunkX];
-          if (chunk) {
-            const tileX = x % 32;
-            const tileY = y % 32;
-            const srcIndex = tileY * 32 + tileX;
-            const value = chunk.segment!.grid.view[srcIndex];
-            if (value < 10) {
-              this.depthMap[dstIndex] = z + 1;
-              this.paintedDepthCellCount++;
-            }
-            buffer[dstIndex] = value;
-          } else {
-            this.depthMap[dstIndex] = 1;
-            this.paintedDepthCellCount++;
-          }
-        }
-        dstX++;
-      }
-      dstY++;
     }
   }
 
@@ -128,20 +133,24 @@ export class TilesSceneBuilder {
 
     for (let y = 0; y < this.layerSize.y; y++) {
       for (let x = 0; x < this.layerSize.x; x++) {
-        const index = y * this.layerSize.x + ;
         const value = layer;
       }
     }
   }
 
   public build() {
+    const { tilesRect } = this.viewport;
     this.performance.start();
     const view = this.tilesBuffer.typedArray;
     const { layer, spaceRect } = this.viewport;
     this.visibleTiles = 0;
     this.visibleChunks.splice(0);
-    let index = 0;
     this.depthMap.fill(0);
+
+    const tilesCountY = Math.max(tilesRect.y2, 0) - Math.max(tilesRect.y1, 0);
+    const tilesCountX = Math.max(tilesRect.x2, 0) - Math.max(tilesRect.x1, 0);
+    const overflow = (this.totalCellCountPerLayer - tilesCountY * tilesCountX);
+    this.currentCellCountPerLayer = this.totalCellCountPerLayer - overflow;
 
     this.paintedLayerCount = 0;
     this.paintedDepthCellCount = 0;
@@ -149,7 +158,7 @@ export class TilesSceneBuilder {
     for (let z = 0; z <= end; z++) {
       this.buildLayer(z);
       this.paintedLayerCount++;
-      if (this.paintedDepthCellCount === this.cellCountPerLayer) {
+      if (this.paintedDepthCellCount === this.currentCellCountPerLayer) {
         break;
       }
     }
@@ -160,6 +169,7 @@ export class TilesSceneBuilder {
 
     this.performance.end();
 
+    let index = 0;
     for (const chunk of this.getChunks()) {
       if (intersectsNonStrict(chunk.worldSpaceRect, spaceRect)) {
         this.visibleChunks.push(chunk);
