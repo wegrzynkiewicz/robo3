@@ -4,7 +4,6 @@ import { registerService, ServiceResolver } from "../../../../core/dependency/se
 import { index2coords } from "../../../../core/numbers.ts";
 import { SCREEN_MAX_VISIBLE_TILE_Y, SCREEN_MAX_VISIBLE_TILE_X } from "../../../../core/vars.ts";
 import { Chunk, ChunkManager, chunkManagerService } from "../../../../domain-client/chunk/chunkManager.ts";
-import { intersectsNonStrict } from "../../../../math/CornerRectangle.ts";
 import { Point } from "../../../../math/Point.ts";
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
 import { Viewport, viewportService } from "../Viewport.ts";
@@ -125,23 +124,42 @@ export class TilesSceneBuilder {
     }
   }
 
+  index = 0;
+
   public processLayer(z: number) {
+
+    const view = this.tilesBuffer.typedArray;
     const { tilesRect } = this.viewport;
-    let startX = tilesRect.x1;
-    let startY = tilesRect.y1;
+    const startX = tilesRect.x1;
+    const startY = tilesRect.y1;
     const layer = this.layers[z];
 
     for (let y = 0; y < this.layerSize.y; y++) {
       for (let x = 0; x < this.layerSize.x; x++) {
-        const value = layer;
+        const spaceTilePosX = (startX + x) * 32;
+        const spaceTilePosY = (startY + y) * 32;
+        const index = y * this.layerSize.x + x;
+        const value = layer[index];
+        if (value === 0) {
+          continue;
+        }
+        view[this.index++] = spaceTilePosX;
+        view[this.index++] = spaceTilePosY;
+        view[this.index++] = 32.0;
+        view[this.index++] = 32.0;
+        view[this.index++] = index2coords(value)[0] * 32.0;
+        view[this.index++] = index2coords(value)[1] * 32.0;
+        view[this.index++] = 0;
+        view[this.index++] = 0;
+        this.visibleTiles++;
       }
     }
+
   }
 
   public build() {
     const { tilesRect } = this.viewport;
     this.performance.start();
-    const view = this.tilesBuffer.typedArray;
     const { layer, spaceRect } = this.viewport;
     this.visibleTiles = 0;
     this.visibleChunks.splice(0);
@@ -163,45 +181,12 @@ export class TilesSceneBuilder {
       }
     }
 
+    this.index = 0;
     for (let z = this.paintedLayerCount; z > 0; z--) {
-      this.processLayer(z);
-    }
-
-    this.performance.end();
-
-    let index = 0;
-    for (const chunk of this.getChunks()) {
-      if (intersectsNonStrict(chunk.worldSpaceRect, spaceRect)) {
-        this.visibleChunks.push(chunk);
-        for (const go of chunk.gos) {
-          if (intersectsNonStrict(go.worldSpaceRect, spaceRect)) {
-            const { goTypeId, spacePosition } = go;
-            view[index++] = spacePosition.x;
-            view[index++] = spacePosition.y;
-            view[index++] = 32.0;
-            view[index++] = 32.0;
-            view[index++] = index2coords(goTypeId)[0] * 32.0;
-            view[index++] = index2coords(goTypeId)[1] * 32.0;
-            view[index++] = 0;
-            view[index++] = 0;
-            this.visibleTiles++;
-
-            if (goTypeId > 64 && goTypeId !== 75) {
-              view[index++] = spacePosition.x;
-              view[index++] = spacePosition.y;
-              view[index++] = 32.0;
-              view[index++] = 32.0;
-              view[index++] = index2coords(75)[0] * 32.0;
-              view[index++] = index2coords(75)[1] * 32.0;
-              view[index++] = 0;
-              view[index++] = 0;
-              this.visibleTiles++;
-            }
-          }
-        }
-      }
+      this.processLayer(z - 1);
     }
     this.tilesBuffer.update(this.visibleTiles * 32);
+    this.performance.end();
   }
 }
 
