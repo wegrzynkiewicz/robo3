@@ -4,6 +4,7 @@ import { registerService, ServiceResolver } from "../../../../core/dependency/se
 import { index2coords } from "../../../../core/numbers.ts";
 import { SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y } from "../../../../core/vars.ts";
 import { Chunk, ChunkManager, chunkManagerService } from "../../../../domain-client/chunk/chunkManager.ts";
+import { cornerRect } from "../../../../math/CornerRectangle.ts";
 import { Point } from "../../../../math/Point.ts";
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
 import { Viewport, viewportService } from "../Viewport.ts";
@@ -59,14 +60,19 @@ export class TilesSceneBuilder {
   protected totalCellCountPerLayer = 0;
   protected currentCellCountPerLayer = 0;
   protected paintedDepthCellCount = 0;
-  protected layerSize: Point;
+  public layerSize: Point;
+  public tilesRect = cornerRect(0, 0, 0, 0);
+  public chunkRect = cornerRect(0, 0, 0, 0);
   public constructor(
     public readonly chunkManager: ChunkManager,
     public readonly viewport: Viewport,
     public readonly tilesBuffer: DynamicDrawBuffer,
   ) {
-    this.layerSize = { x: SCREEN_MAX_VISIBLE_TILE_X, y: SCREEN_MAX_VISIBLE_TILE_Y };
-    this.totalCellCountPerLayer = SCREEN_MAX_VISIBLE_TILE_Y * SCREEN_MAX_VISIBLE_TILE_X;
+    this.layerSize = {
+      x: SCREEN_MAX_VISIBLE_TILE_X + 3,
+      y: SCREEN_MAX_VISIBLE_TILE_Y + 3,
+    };
+    this.totalCellCountPerLayer = this.layerSize.y * this.layerSize.x;
     this.depthMap = new Uint8Array(this.totalCellCountPerLayer);
 
     this.layers = [
@@ -118,26 +124,25 @@ export class TilesSceneBuilder {
   }
 
   public buildChunk(chunk: Chunk) {
-    const { tilesRect } = this.viewport;
     const { chunkId, segment } = chunk;
     const layer = this.activeLayer;
     const view = segment!.grid.view;
     const chunkTileX = chunkId.x * 32;
     const chunkTileY = chunkId.y * 32;
 
-    const srcX1 = Math.max(tilesRect.x1 - chunkTileX, 0);
-    const srcY1 = Math.max(tilesRect.y1 - chunkTileY, 0);
-    const srcX2 = Math.min(tilesRect.x2 - chunkTileX, 32);
-    const srcY2 = Math.min(tilesRect.y2 - chunkTileY, 32);
-    const dstX1 = Math.max(chunkTileX - tilesRect.x1, 0);
-    const dstY1 = Math.max(chunkTileY - tilesRect.y1, 0);
+    const srcX1 = Math.max(this.tilesRect.x1 - chunkTileX, 0);
+    const srcY1 = Math.max(this.tilesRect.y1 - chunkTileY, 0);
+    const srcX2 = Math.min(this.tilesRect.x2 - chunkTileX, 32);
+    const srcY2 = Math.min(this.tilesRect.y2 - chunkTileY, 32);
+    const dstX1 = Math.max(chunkTileX - this.tilesRect.x1, 0);
+    const dstY1 = Math.max(chunkTileY - this.tilesRect.y1, 0);
 
     let dstY = dstY1;
     for (let y = srcY1; y < srcY2; y++) {
       let dstX = dstX1;
       for (let x = srcX1; x < srcX2; x++) {
-        const dstIndex = dstY * SCREEN_MAX_VISIBLE_TILE_X + dstX;
-        if (this.depthMap[dstIndex] === 0) {
+        const dstIndex = dstY * this.layerSize.x + dstX;
+        if (this.depthMap[dstIndex] === 255) {
           const srcIndex = y * 32 + x;
           const goTypeId = view[srcIndex];
           if (goTypeId !== 0) {
@@ -153,7 +158,8 @@ export class TilesSceneBuilder {
   }
 
   public buildLayer() {
-    const { chunkRect, layer, spaceId } = this.viewport;
+    const { chunkRect } = this;
+    const { layer, spaceId } = this.viewport;
     this.activeLayer.fill(0);
 
     for (let chunkY = chunkRect.y1; chunkY <= chunkRect.y2; chunkY++) {
@@ -176,9 +182,9 @@ export class TilesSceneBuilder {
   row = 0;
 
   public pushTile(x: number, y: number, z: number, v: number): void {
-    const { tilesRect, layer: depth } = this.viewport;
-    const startX = tilesRect.x1;
-    const startY = tilesRect.y1;
+    const { layer: depth } = this.viewport;
+    const startX = this.tilesRect.x1;
+    const startY = this.tilesRect.y1;
     this.tiles.push({
       x: (startX + x) * 32,
       y: (startY + y) * 32,
@@ -189,6 +195,14 @@ export class TilesSceneBuilder {
 
   public processTile(x: number, y: number) {
     const z = this.currentLayerIndex;
+
+    if (y === 0 || y === this.layerSize.y - 1) {
+      return;
+    }
+    if (x === 0 || x === this.layerSize.x - 1) {
+      return;
+    }
+
     const vs = this.activeLayer[(y + 0) * this.row + (x + 0)];
 
     if (vs === 0) {
@@ -249,14 +263,13 @@ export class TilesSceneBuilder {
       }
 
 
-      this.pushTile(x, y, z, ter['FS']);
+      //   this.pushTile(x, y, z, ter['FS']);
     } else {
       this.pushTile(x, y, z, vs);
     }
   }
 
   public processLayer() {
-    const { layer } = this.viewport;
     for (let y = 0; y < this.layerSize.y; y++) {
       for (let x = 0; x < this.layerSize.x; x++) {
         const index = y * this.layerSize.x + x;
@@ -277,10 +290,20 @@ export class TilesSceneBuilder {
     this.visibleTiles = 0;
     this.visibleChunks.splice(0);
     this.tiles.splice(0);
-    this.depthMap.fill(0);
+    this.depthMap.fill(255);
 
-    const tilesCountY = Math.max(tilesRect.y2, 0) - Math.max(tilesRect.y1, 0);
-    const tilesCountX = Math.max(tilesRect.x2, 0) - Math.max(tilesRect.x1, 0);
+    this.tilesRect.x1 = tilesRect.x1 - 1;
+    this.tilesRect.y1 = tilesRect.y1 - 1;
+    this.tilesRect.x2 = tilesRect.x2 + 2;
+    this.tilesRect.y2 = tilesRect.y2 + 2;
+
+    this.chunkRect.x1 = Math.floor(this.tilesRect.x1 / 32);
+    this.chunkRect.y1 = Math.floor(this.tilesRect.y1 / 32);
+    this.chunkRect.x2 = Math.floor(this.tilesRect.x2 / 32);
+    this.chunkRect.y2 = Math.floor(this.tilesRect.y2 / 32);
+
+    const tilesCountY = Math.max(this.tilesRect.y2, 0) - Math.max(this.tilesRect.y1, 0);
+    const tilesCountX = Math.max(this.tilesRect.x2, 0) - Math.max(this.tilesRect.x1, 0);
     const overflow = this.totalCellCountPerLayer - tilesCountY * tilesCountX;
     this.currentCellCountPerLayer = this.totalCellCountPerLayer - overflow;
 

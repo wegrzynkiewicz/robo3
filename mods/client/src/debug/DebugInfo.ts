@@ -34,8 +34,8 @@ export class DebugInfo {
 
     const preview = new DebugBufferPreview(
       tilesSceneBuilder.depthMap,
-      SCREEN_MAX_VISIBLE_TILE_X,
-      SCREEN_MAX_VISIBLE_TILE_Y,
+      tilesSceneBuilder.layerSize.x,
+      tilesSceneBuilder.layerSize.y,
       new DepthDebugBufferPreviewColorizer(),
     );
     this.previews.push(preview);
@@ -43,8 +43,8 @@ export class DebugInfo {
     for (let z = 0; z < 3; z++) {
       const preview = new DebugBufferPreview(
         tilesSceneBuilder.layers[z],
-        SCREEN_MAX_VISIBLE_TILE_X,
-        SCREEN_MAX_VISIBLE_TILE_Y,
+        tilesSceneBuilder.layerSize.x,
+        tilesSceneBuilder.layerSize.y,
         new TerrainDebugBufferPreviewColorizer(),
       );
       this.previews.push(preview);
