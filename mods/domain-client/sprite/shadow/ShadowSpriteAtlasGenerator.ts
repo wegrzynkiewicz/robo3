@@ -116,7 +116,7 @@ export class ShadowSpriteAtlasGenerator {
 export const shadowSpriteAtlasGeneratorService = registerService({
   async provider(): Promise<ShadowSpriteAtlasGenerator> {
     return new ShadowSpriteAtlasGenerator(
-      128,
+      80,
     );
   },
 });
