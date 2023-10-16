@@ -40,7 +40,7 @@ export class DebugInfo {
     );
     this.previews.push(preview);
 
-    for (let z = 0; z < 3; z++) {
+    for (let z = 0; z < tilesSceneBuilder.layers.length; z++) {
       const preview = new DebugBufferPreview(
         tilesSceneBuilder.layers[z],
         tilesSceneBuilder.layerSize.x,

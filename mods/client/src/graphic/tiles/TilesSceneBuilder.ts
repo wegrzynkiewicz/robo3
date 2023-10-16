@@ -81,46 +81,15 @@ export class TilesSceneBuilder {
       new Uint8Array(this.totalCellCountPerLayer),
       new Uint8Array(this.totalCellCountPerLayer),
       new Uint8Array(this.totalCellCountPerLayer),
+      new Uint8Array(this.totalCellCountPerLayer),
+      new Uint8Array(this.totalCellCountPerLayer),
+      new Uint8Array(this.totalCellCountPerLayer),
+      new Uint8Array(this.totalCellCountPerLayer),
+      new Uint8Array(this.totalCellCountPerLayer),
     ];
 
     this.activeLayer = this.layers[0];
     this.row = this.layerSize.x;
-  }
-
-  public getChunks() {
-    const { centerChunk: { x, y }, layer: z } = this.viewport;
-    const spaceId = 1;
-    const ids = [
-      new ChunkId(spaceId, x - 1, y - 1, z - 0),
-      new ChunkId(spaceId, x + 0, y - 1, z - 0),
-      new ChunkId(spaceId, x + 1, y - 1, z - 0),
-      new ChunkId(spaceId, x - 1, y + 0, z - 0),
-      new ChunkId(spaceId, x + 0, y + 0, z - 0),
-      new ChunkId(spaceId, x + 1, y + 0, z - 0),
-      new ChunkId(spaceId, x - 1, y + 1, z - 0),
-      new ChunkId(spaceId, x + 0, y + 1, z - 0),
-      new ChunkId(spaceId, x + 1, y + 1, z - 0),
-    ];
-
-    const chunks: Chunk[] = [];
-    for (const id of ids) {
-      this.addChunk(chunks, id);
-    }
-    return chunks;
-  }
-
-  public addChunk(chunks: Chunk[], chunkId: ChunkId): void {
-    const chunk = this.chunkManager.chunks.get(chunkId.toHex());
-    if (chunk && chunk.segment) {
-      chunks.unshift(chunk);
-      const deepChunkId = new ChunkId(
-        chunkId.spaceId,
-        chunkId.x,
-        chunkId.y,
-        chunkId.z - 1,
-      );
-      this.addChunk(chunks, deepChunkId);
-    }
   }
 
   public buildChunk(chunk: Chunk) {
@@ -196,13 +165,6 @@ export class TilesSceneBuilder {
   public processTile(x: number, y: number) {
     const z = this.currentLayerIndex;
 
-    if (y === 0 || y === this.layerSize.y - 1) {
-      return;
-    }
-    if (x === 0 || x === this.layerSize.x - 1) {
-      return;
-    }
-
     const vs = this.activeLayer[(y + 0) * this.row + (x + 0)];
 
     if (vs === 0) {
@@ -262,16 +224,15 @@ export class TilesSceneBuilder {
           break;
       }
 
-
-      //   this.pushTile(x, y, z, ter['FS']);
+      this.pushTile(x, y, z, ter['FS']);
     } else {
       this.pushTile(x, y, z, vs);
     }
   }
 
   public processLayer() {
-    for (let y = 0; y < this.layerSize.y; y++) {
-      for (let x = 0; x < this.layerSize.x; x++) {
+    for (let y = 1; y < this.layerSize.y - 1; y++) {
+      for (let x = 1; x < this.layerSize.x - 1; x++) {
         const index = y * this.layerSize.x + x;
         const depth = this.depthMap[index];
         if (depth <= this.currentLayerIndex) {
@@ -286,7 +247,7 @@ export class TilesSceneBuilder {
   public build() {
     const { tilesRect } = this.viewport;
     this.performance.start();
-    const { layer, spaceRect } = this.viewport;
+    const { layer } = this.viewport;
     this.visibleTiles = 0;
     this.visibleChunks.splice(0);
     this.tiles.splice(0);
@@ -310,7 +271,7 @@ export class TilesSceneBuilder {
     this.paintedLayerCount = 0;
     this.paintedDepthCellCount = 0;
 
-    const end = Math.min(4, layer);
+    const end = Math.min(9, layer);
     for (let z = 0; z <= end; z++) {
       this.activeLayer = this.layers[z];
       this.currentLayerIndex = layer - z;

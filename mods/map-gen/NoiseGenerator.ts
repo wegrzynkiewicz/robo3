@@ -18,8 +18,8 @@ export class NoiseGenerator {
     let e = 0;
     for (let y = 0; y < axis; y++) {
       for (let x = 0; x < axis; x++) {
-        const nx = (x + offsetX * axis) / 1024;
-        const ny = (y + offsetY * axis) / 1024;
+        const nx = (x + offsetX * axis) / 64;
+        const ny = (y + offsetY * axis) / 64;
 
         const e1 = 4.0 * noise(0.20 * nx, 0.20 * ny);
         const e2 = 2.0 * noise(2.00 * nx, 2.00 * ny);
@@ -28,7 +28,7 @@ export class NoiseGenerator {
 
         e = (e1 + e2 + e3 + e4) / (4.0 + 2.0 + 1.0 + 0.1);
         e = e / 2 + 0.5;
-        e = Math.round(e * 16) / 16;
+        e = Math.round(e * 256) / 256;
         e = e * 255;
 
         buffer[i++] = e;

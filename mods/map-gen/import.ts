@@ -12,7 +12,7 @@ function generateChunkSegment(noise: Uint8Array, chunkId: ChunkId): ChunkSegment
   const segment = ChunkSegment.createEmpty(0);
   for (let x = 0; x < 1024; x++) {
     const value = noise[x];
-    const depth = Math.floor(value / 255 * 8);
+    const depth = Math.floor(value / 255 * 16);
     const goTypeId = z < depth ? 6 : z === depth ? 1 : 0;
     segment.grid.view[x] = goTypeId;
   }
@@ -38,7 +38,7 @@ function generateChunkSegment(noise: Uint8Array, chunkId: ChunkId): ChunkSegment
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
       noiseGenerator.genChunkTerrain(noise, x, y);
-      for (let z = 0; z < 8; z++) {
+      for (let z = 0; z < 16; z++) {
         const chunkId = new ChunkId(spaceId, x, y, z);
         const chunkSegment = generateChunkSegment(noise, chunkId);
         const buffer = new Uint8Array(chunkSegment.buffer);
