@@ -61,8 +61,9 @@ export class TilesSceneBuilder {
   protected currentCellCountPerLayer = 0;
   protected paintedDepthCellCount = 0;
   public layerSize: Point;
-  public tilesRect = cornerRect(0, 0, 0, 0);
   public chunkRect = cornerRect(0, 0, 0, 0);
+  public tilesRect = cornerRect(0, 0, 0, 0);
+
   public constructor(
     public readonly chunkManager: ChunkManager,
     public readonly viewport: Viewport,
@@ -128,7 +129,7 @@ export class TilesSceneBuilder {
 
   public buildLayer() {
     const { chunkRect } = this;
-    const { layer, spaceId } = this.viewport;
+    const { spaceId } = this.viewport;
     this.activeLayer.fill(0);
 
     for (let chunkY = chunkRect.y1; chunkY <= chunkRect.y2; chunkY++) {
@@ -151,13 +152,13 @@ export class TilesSceneBuilder {
   row = 0;
 
   public pushTile(x: number, y: number, z: number, v: number): void {
-    const { layer: depth } = this.viewport;
+    const { level } = this.viewport;
     const startX = this.tilesRect.x1;
     const startY = this.tilesRect.y1;
     this.tiles.push({
       x: (startX + x) * 32,
       y: (startY + y) * 32,
-      z: depth - z,
+      z: level - z,
       v,
     });
   }
@@ -245,9 +246,8 @@ export class TilesSceneBuilder {
   currentLayerIndex = 0;
 
   public build() {
-    const { tilesRect } = this.viewport;
     this.performance.start();
-    const { layer } = this.viewport;
+    const { level, tilesRect } = this.viewport;
     this.visibleTiles = 0;
     this.visibleChunks.splice(0);
     this.tiles.splice(0);
@@ -271,10 +271,10 @@ export class TilesSceneBuilder {
     this.paintedLayerCount = 0;
     this.paintedDepthCellCount = 0;
 
-    const end = Math.min(9, layer);
+    const end = Math.min(9, level);
     for (let z = 0; z <= end; z++) {
       this.activeLayer = this.layers[z];
-      this.currentLayerIndex = layer - z;
+      this.currentLayerIndex = level - z;
       this.buildLayer();
       this.paintedLayerCount++;
       if (this.paintedDepthCellCount === this.currentCellCountPerLayer) {
@@ -283,7 +283,7 @@ export class TilesSceneBuilder {
     }
 
     for (let z = this.paintedLayerCount - 1; z >= 0; z--) {
-      this.currentLayerIndex = layer - z;
+      this.currentLayerIndex = level - z;
       this.activeLayer = this.layers[z];
       this.processLayer();
     }

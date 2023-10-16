@@ -80,14 +80,14 @@ export class DebugInfo {
     out.push(`  Size: ${client.x} ${client.y}`);
     out.push(`  Scale: ${this.display.getScale()}`);
 
-    const { size, centerChunk, centerPoint, chunkRect, layer, spaceId, spaceRect, tilesRect } = this.viewport;
+    const { size, centerChunk, centerPoint, chunkRect, level, spaceId, spaceRect, tilesRect } = this.viewport;
     out.push(`Viewport`);
     out.push(`  Axis: ${size.x / 32} ${size.y / 32}`);
     out.push(`  Size: ${size.x} ${size.y}`);
     out.push(`  CenterPoint: ${centerPoint.x} ${centerPoint.y}`);
     out.push(`  CenterChunk: ${centerChunk.x} ${centerChunk.y}`);
     out.push(`  SpaceId: ${spaceId}`);
-    out.push(`  Layer: ${layer}`);
+    out.push(`  Level: ${level}`);
     out.push(`  SpaceRect: ${spaceRect.x1} ${spaceRect.y1} ${spaceRect.x2} ${spaceRect.y2}`);
     out.push(`  ChunkRect: ${chunkRect.x1} ${chunkRect.y1} ${chunkRect.x2} ${chunkRect.y2}`);
     out.push(`  TilesRect: ${tilesRect.x1} ${tilesRect.y1} ${tilesRect.x2} ${tilesRect.y2}`);

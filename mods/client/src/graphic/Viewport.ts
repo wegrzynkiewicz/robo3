@@ -8,13 +8,13 @@ import { primaryUBOService } from "./PrimaryUBO.ts";
 export class Viewport {
   public readonly centerPoint = point(0, 0);
   public readonly centerChunk = point(0, 0);
-  public layer = 0;
   public readonly halfSize = point(0, 0);
   public readonly size = point(0, 0);
-  public readonly chunkRect = cornerRect(0, 0, 0, 0);
-  public readonly spaceRect = cornerRect(0, 0, 0, 0);
-  public readonly tilesRect = cornerRect(0, 0, 0, 0);
+  public level = 0;
   public spaceId = 1;
+  public readonly spaceRect = cornerRect(0, 0, 0, 0);
+  public readonly chunkRect = cornerRect(0, 0, 0, 0);
+  public readonly tilesRect = cornerRect(0, 0, 0, 0);
 
   public constructor(
     public readonly projectionMatrix: Float32Array,
@@ -57,14 +57,6 @@ export class Viewport {
     const mz = 0;
 
     fromTranslation(viewMatrix, mx, my, mz);
-  }
-
-  public setLayer(layer: number): void {
-    this.layer = layer;
-  }
-
-  public setSpaceId(spaceId: number): void {
-    this.spaceId = spaceId;
   }
 
   public setWorldSize(x: number, y: number): void {
