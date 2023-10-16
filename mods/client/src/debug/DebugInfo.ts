@@ -1,7 +1,6 @@
 import { assertNonNull } from "../../../common/asserts.ts";
 import { formatBytes } from "../../../common/useful.ts";
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
-import { SCREEN_MAX_VISIBLE_TILE_Y, SCREEN_MAX_VISIBLE_TILE_X } from "../../../core/vars.ts";
 import { ChunkManager, chunkManagerService } from "../../../domain-client/chunk/chunkManager.ts";
 import { Display, displayService } from "../graphic/Display.ts";
 import { DynamicDrawBuffer } from "../graphic/DynamicDrawBuffer.ts";
@@ -32,10 +31,12 @@ export class DebugInfo {
     this.left = left;
     this.right = right;
 
+    const { x, y } = tilesSceneBuilder.sceneViewport.grid.available.size;
+
     const preview = new DebugBufferPreview(
       tilesSceneBuilder.depthMap,
-      tilesSceneBuilder.layerSize.x,
-      tilesSceneBuilder.layerSize.y,
+      x,
+      y,
       new DepthDebugBufferPreviewColorizer(),
     );
     this.previews.push(preview);
@@ -43,8 +44,8 @@ export class DebugInfo {
     for (let z = 0; z < tilesSceneBuilder.layers.length; z++) {
       const preview = new DebugBufferPreview(
         tilesSceneBuilder.layers[z],
-        tilesSceneBuilder.layerSize.x,
-        tilesSceneBuilder.layerSize.y,
+        x,
+        y,
         new TerrainDebugBufferPreviewColorizer(),
       );
       this.previews.push(preview);
