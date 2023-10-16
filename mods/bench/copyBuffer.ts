@@ -1,10 +1,12 @@
-const src = new Uint16Array(1024);
-const dst = new Uint16Array(1024);
+const size = 32;
+
+const src = new Uint16Array(size ** 2);
+const dst = new Uint16Array(size ** 2);
 
 Deno.bench("total", () => {
-  for (let y = 0; y < 32; y++) {
-    for (let x = 0; x < 32; x++) {
-      const index = y * 32 + x;
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const index = y * size + x;
       const value = src[index];
       dst[index] = value;
     }
@@ -12,11 +14,18 @@ Deno.bench("total", () => {
 });
 
 Deno.bench("partial", () => {
-  for (let y = 16; y < 32; y++) {
-    for (let x = 16; x < 32; x++) {
-      const index = y * 32 + x;
+  for (let y = size / 2; y < size; y++) {
+    for (let x = size / 2; x < size; x++) {
+      const index = y * size + x;
       const value = src[index];
       dst[index] = value;
     }
+  }
+});
+
+Deno.bench("subarray", () => {
+  for (let y = 0; y < size; y++) {
+    const index = y * size;
+    dst.set(src.subarray(index, index + size), index);
   }
 });
