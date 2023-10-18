@@ -81,33 +81,53 @@ export class DebugInfo {
     out.push(`  Size: ${client.x} ${client.y}`);
     out.push(`  Scale: ${this.display.getScale()}`);
 
-    const { size, centerChunk, centerPoint, chunkRect, level, spaceId, spaceRect, tilesRect } = this.viewport;
     out.push(`Viewport`);
-    out.push(`  Axis: ${size.x / 32} ${size.y / 32}`);
-    out.push(`  Size: ${size.x} ${size.y}`);
-    out.push(`  CenterPoint: ${centerPoint.x} ${centerPoint.y}`);
-    out.push(`  CenterChunk: ${centerChunk.x} ${centerChunk.y}`);
-    out.push(`  SpaceId: ${spaceId}`);
-    out.push(`  Level: ${level}`);
-    out.push(`  SpaceRect: ${spaceRect.x1} ${spaceRect.y1} ${spaceRect.x2} ${spaceRect.y2}`);
-    out.push(`  ChunkRect: ${chunkRect.x1} ${chunkRect.y1} ${chunkRect.x2} ${chunkRect.y2}`);
-    out.push(`  TilesRect: ${tilesRect.x1} ${tilesRect.y1} ${tilesRect.x2} ${tilesRect.y2}`);
+    {
+      const { size, centerChunk, centerPoint, chunkRect, level, spaceId, spaceRect, tilesRect } = this.viewport;
+      out.push(`  Axis: ${size.x / 32} ${size.y / 32}`);
+      out.push(`  Size: ${size.x} ${size.y}`);
+      out.push(`  CenterPoint: ${centerPoint.x} ${centerPoint.y}`);
+      out.push(`  CenterChunk: ${centerChunk.x} ${centerChunk.y}`);
+      out.push(`  SpaceId: ${spaceId}`);
+      out.push(`  Level: ${level}`);
+      out.push(`  SpaceRect: ${spaceRect.x1} ${spaceRect.y1} ${spaceRect.x2} ${spaceRect.y2}`);
+      out.push(`  ChunkRect: ${chunkRect.x1} ${chunkRect.y1} ${chunkRect.x2} ${chunkRect.y2}`);
+      out.push(`  TilesRect: ${tilesRect.x1} ${tilesRect.y1} ${tilesRect.x2} ${tilesRect.y2}`);
+    }
 
     out.push(`Scene`);
-    out.push(`  AvgBuildTime: ${(this.tilesSceneBuilder.performance.value * 1000).toFixed(0)} µs`);
-    out.push(`  VisibleTiles: ${this.tilesSceneBuilder.visibleTiles}`);
-    const bs = this.tilesBuffer.bytesSent;
-    out.push(`  BytesSent: ${bs} (${formatBytes(bs)})`);
+    {
+      const {
+        performance,
+        sceneViewport: {
+          chunkRect,
+          grid: {
+            available,
+            printable,
+          },
+          tilesRect,
+        },
+        visibleTiles
+      } = this.tilesSceneBuilder;
+      out.push(`  AvgBuildTime: ${(performance.value * 1000).toFixed(0)} µs`);
+      out.push(`  Grid.available: ${available.size.x} * ${available.size.y} = ${available.cellCount}`);
+      out.push(`  Grid.printable: ${printable.size.x} * ${printable.size.y} = ${printable.cellCount}`);
+      const bs = this.tilesBuffer.bytesSent;
+      out.push(`  ChunkRect: ${chunkRect.x1} ${chunkRect.y1} ${chunkRect.x2} ${chunkRect.y2} `);
+      out.push(`  TilesRect: ${tilesRect.x1} ${tilesRect.y1} ${tilesRect.x2} ${tilesRect.y2} `);
+      out.push(`  VisibleTiles: ${visibleTiles} `);
+      out.push(`  BytesSent: ${bs} (${formatBytes(bs)})`);
+    }
 
     out.push(`Chunks`);
-    out.push(`  Loaded: ${this.chunkManager.chunks.size}`);
+    out.push(`  Loaded: ${this.chunkManager.chunks.size} `);
     if (this.tilesSceneBuilder.visibleChunks.length > 0) {
       out.push(`  Visible`);
       for (const chunk of this.tilesSceneBuilder.visibleChunks) {
         const { chunkId, chunkId: { x, y, z }, worldSpaceRect: r } = chunk;
-        out.push(`    Id: ${chunkId.toHex()}`);
-        out.push(`      Position: ${x} ${y} ${z}`);
-        out.push(`      SpaceRect: ${r.x1} ${r.y1} ${r.x2} ${r.y2}`);
+        out.push(`    Id: ${chunkId.toHex()} `);
+        out.push(`      Position: ${x} ${y} ${z} `);
+        out.push(`      SpaceRect: ${r.x1} ${r.y1} ${r.x2} ${r.y2} `);
       }
     }
 

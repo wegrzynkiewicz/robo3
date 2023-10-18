@@ -48,6 +48,279 @@ shadow[0b1101] = ter["ED"];
 shadow[0b1110] = ter["EA"];
 shadow[0b1111] = ter["FS"];
 
+const DEPTH_LAYERS_COUNT = 1;
+const TERRAIN_CELL_BYTE_LENGTH = 2;
+
+export class SceneLayerManager {
+  protected currentLayerIndex = 0;
+  protected currentTerrainLevel = 0;
+  protected paintedLayerCount = 0;
+  protected readonly terrainLayers: SceneTerrainLayer[] = [];
+  public readonly depthLayer: SceneDepthLayer;
+
+  public constructor(
+    protected readonly availableLayerCount: number,
+    public readonly chunkManager: ChunkManager,
+    public readonly sceneViewport: SceneViewport,
+  ) {
+    const cellCount = this.sceneViewport.grid.available.cellCount;
+    const totalByteLength = this.calcLayerByteLength(availableLayerCount + DEPTH_LAYERS_COUNT);
+    const buffer = new ArrayBuffer(totalByteLength);
+    const depthLayerView = new Uint16Array(buffer, 0, cellCount);
+    const depthLayer = new SceneDepthLayer(depthLayerView);
+    for (let layerIndex = 0; layerIndex < availableLayerCount; layerIndex++) {
+      const byteOffset = this.calcLayerByteLength(layerIndex + 1);
+      const layerTypedArray = new Uint16Array(buffer, byteOffset, cellCount);
+      const layer = new SceneTerrainLayer(
+        chunkManager,
+        depthLayer,
+        layerIndex,
+        sceneViewport,
+        layerTypedArray
+      );
+      this.terrainLayers.push(layer);
+    }
+    this.depthLayer = depthLayer;
+  }
+
+  public build(): void {
+    this.clear();
+    const level = this.sceneViewport.level;
+    const currentMaxLevel = Math.min(this.availableLayerCount, level);
+    for (let layerIndex = 0; layerIndex <= currentMaxLevel; layerIndex++) {
+      const currentTerrainLevel = level - layerIndex;
+      this.currentLayerIndex = layerIndex;
+      const layer = this.terrainLayers[layerIndex];
+      layer.build(currentTerrainLevel);
+      this.paintedLayerCount++;
+      if (this.depthLayer.paintedCellCount === this.sceneViewport.grid.printable.cellCount) {
+        break;
+      }
+    }
+  }
+
+  protected calcLayerByteLength(layerIndex: number) {
+    return this.sceneViewport.grid.available.cellCount * layerIndex * TERRAIN_CELL_BYTE_LENGTH;
+  }
+
+  public clear(): void {
+    this.depthLayer.clear();
+    this.paintedLayerCount = 0;
+  }
+
+  public process() {
+    for (let layerIndex = this.paintedLayerCount - 1; layerIndex >= 0; layerIndex--) {
+      const layer = this.terrainLayers[layerIndex];
+      layer.process();
+    }
+  }
+}
+
+export class SceneDepthLayer {
+
+  public static readonly EMPTY_CELL_VALUE = 0xFF;
+
+  public paintedCellCount = 0;
+
+  public constructor(
+    protected readonly view: Uint16Array,
+    protected readonly sceneViewport: SceneViewport,
+  ) {
+
+  }
+
+  protected get availableCellsPerRow(): number {
+    return this.sceneViewport.grid.available.size.x;
+  }
+
+  public canPaint(x: number, y: number, layerIndex: number): boolean {
+    const cellIndex = y * this.availableCellsPerRow + x;
+    const depth = this.view[cellIndex];
+    return depth <= layerIndex;
+  }
+
+  public clear(): void {
+    this.view.fill(SceneDepthLayer.EMPTY_CELL_VALUE);
+    this.paintedCellCount = 0;
+  }
+
+  public isEmpty(x: number, y: number): boolean {
+    const cellIndex = y * this.availableCellsPerRow + x;
+    const empty = this.view[cellIndex] === SceneDepthLayer.EMPTY_CELL_VALUE;
+    return empty;
+  }
+
+  public paint(x: number, y: number, layerIndex: number): void {
+    const cellIndex = y * this.availableCellsPerRow + x;
+    this.view[cellIndex] = layerIndex;
+  }
+}
+
+export class SceneTerrainLayer {
+
+  public constructor(
+    public readonly layerIndex: number,
+    public readonly sceneLayerManager: SceneLayerManager,
+    public readonly typedArray: Uint16Array,
+  ) {
+  }
+
+  public build(level: number) {
+    this.clear();
+
+    const { chunkManager, sceneViewport: { chunkRect, spaceId } } = this.sceneLayerManager;
+    for (let chunkY = chunkRect.y1; chunkY <= chunkRect.y2; chunkY++) {
+      for (let chunkX = chunkRect.x1; chunkX <= chunkRect.x2; chunkX++) {
+        const chunkId = new ChunkId(spaceId, chunkX, chunkY, level);
+        const chunk = chunkManager.chunks.get(chunkId.toHex());
+        if (chunk === undefined || chunk.segment === undefined) {
+          continue;
+        }
+        this.buildChunk(chunk);
+      }
+    }
+  }
+
+  public buildChunk(chunk: Chunk) {
+    const {
+      availableCellsPerRow,
+      sceneLayerManager: {
+        depthLayer,
+        sceneViewport: { tilesRect },
+      },
+      typedArray,
+    } = this;
+    const { chunkId, segment } = chunk;
+
+    const view = segment!.grid.view;
+    const chunkTileX = chunkId.x * 32;
+    const chunkTileY = chunkId.y * 32;
+
+    const srcX1 = Math.max(tilesRect.x1 - chunkTileX, 0);
+    const srcY1 = Math.max(tilesRect.y1 - chunkTileY, 0);
+    const srcX2 = Math.min(tilesRect.x2 - chunkTileX, 32);
+    const srcY2 = Math.min(tilesRect.y2 - chunkTileY, 32);
+    const dstX1 = Math.max(chunkTileX - tilesRect.x1, 0);
+    const dstY1 = Math.max(chunkTileY - tilesRect.y1, 0);
+
+    let dstY = dstY1;
+    for (let y = srcY1; y < srcY2; y++) {
+      let dstX = dstX1;
+      for (let x = srcX1; x < srcX2; x++) {
+        const dstIndex = dstY * availableCellsPerRow + dstX;
+        if (depthLayer.isEmpty(dstX, dstY)) {
+          const srcIndex = y * 32 + x;
+          const goTypeId = view[srcIndex];
+          if (goTypeId !== 0) {
+            depthLayer.paint(x, y, this.layerIndex);
+          }
+          typedArray[dstIndex] = goTypeId;
+        }
+        dstX++;
+      }
+      dstY++;
+    }
+  }
+
+  protected get availableRows(): number {
+    return this.sceneLayerManager.sceneViewport.grid.available.size.y;
+  }
+
+  protected get availableCellsPerRow(): number {
+    return this.sceneLayerManager.sceneViewport.grid.available.size.x;
+  }
+
+  public clear(): void {
+    this.typedArray.fill(0);
+  }
+
+  public process(): void {
+    const {
+      availableCellsPerRow,
+      availableRows,
+      sceneLayerManager: {
+        depthLayer,
+      },
+      layerIndex,
+    } = this;
+    for (let y = 1; y < availableRows - 1; y++) {
+      for (let x = 1; x < availableCellsPerRow - 1; x++) {
+        if (depthLayer.canPaint(x, y, layerIndex)) {
+          this.processTile(x, y);
+        }
+      }
+    }
+  }
+
+  public processTile(x: number, y: number) {
+    const z = this.layerIndex;
+
+    const vs = this.activeLayer[(y + 0) * this.row + (x + 0)];
+
+    if (vs === 0) {
+      const vw = this.activeLayer[(y - 1) * this.row + (x + 0)] === 0 ? 0b1000 : 0;
+      const vx = this.activeLayer[(y + 1) * this.row + (x + 0)] === 0 ? 0b0100 : 0;
+      const va = this.activeLayer[(y + 0) * this.row + (x - 1)] === 0 ? 0b0010 : 0;
+      const vd = this.activeLayer[(y + 0) * this.row + (x + 1)] === 0 ? 0b0001 : 0;
+
+      const vq = this.activeLayer[(y - 1) * this.row + (x - 1)] === 0 ? 0 : 1;
+      const ve = this.activeLayer[(y - 1) * this.row + (x + 1)] === 0 ? 0 : 1;
+      const vz = this.activeLayer[(y + 1) * this.row + (x - 1)] === 0 ? 0 : 1;
+      const vc = this.activeLayer[(y + 1) * this.row + (x + 1)] === 0 ? 0 : 1;
+
+      if (vw && va && vq) {
+        this.pushTile(x, y, z, ter['CC']);
+      }
+      if (vw && vd && ve) {
+        this.pushTile(x, y, z, ter['CZ']);
+      }
+      if (vx && va && vz) {
+        this.pushTile(x, y, z, ter['CE']);
+      }
+      if (vx && vd && vc) {
+        this.pushTile(x, y, z, ter['CQ']);
+      }
+
+      const v = vw | vx | va | vd;
+
+      switch (v) {
+        case 0b0000:
+        case 0b0001:
+        case 0b0010:
+        case 0b0100:
+        case 0b0101:
+        case 0b0110:
+        case 0b0111:
+        case 0b1000:
+        case 0b1001:
+        case 0b1010:
+        case 0b1011:
+        case 0b1101:
+        case 0b1110: {
+          this.pushTile(x, y, z, shadow[v]);
+          break;
+        }
+        case 0b1100: {
+          this.pushTile(x, y, z, ter['EA']);
+          this.pushTile(x, y, z, ter['ED']);
+          break;
+        }
+        case 0b0011: {
+          this.pushTile(x, y, z, ter['EW']);
+          this.pushTile(x, y, z, ter['ES']);
+          break;
+        }
+        case 0b1111:
+          break;
+      }
+
+      this.pushTile(x, y, z, ter['FS']);
+    } else {
+      this.pushTile(x, y, z, vs);
+    }
+  }
+}
+
 export class TilesSceneBuilder {
   public visibleTiles = 0;
   public readonly visibleChunks: Chunk[] = [];
@@ -56,6 +329,8 @@ export class TilesSceneBuilder {
   public readonly layers: Uint8Array[];
   protected paintedLayerCount = 0;
   protected paintedDepthCellCount = 0;
+  sceneLayerManager: SceneLayerManager;
+  this: any;
 
   public constructor(
     public readonly chunkManager: ChunkManager,
@@ -63,6 +338,7 @@ export class TilesSceneBuilder {
     public readonly viewport: Viewport,
     public readonly tilesBuffer: DynamicDrawBuffer,
   ) {
+    this.sceneLayerManager = new SceneLayerManager(10, chunkManager, sceneViewport);
     const { cellCount } = this.sceneViewport.grid.available;
     this.depthMap = new Uint8Array(cellCount);
 
@@ -244,6 +520,8 @@ export class TilesSceneBuilder {
     this.visibleChunks.splice(0);
     this.tiles.splice(0);
     this.depthMap.fill(255);
+
+    this.sceneLayerManager.build();
 
     this.paintedLayerCount = 0;
     this.paintedDepthCellCount = 0;

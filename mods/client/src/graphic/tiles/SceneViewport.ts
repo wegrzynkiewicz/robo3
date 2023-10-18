@@ -56,6 +56,14 @@ export class SceneViewport {
       max(tilesRect.x2, 0) - max(tilesRect.x1, 0),
     )
   }
+
+  public get level(): number {
+    return this.viewport.level;
+  }
+
+  public get spaceId(): number {
+    return this.viewport.spaceId;
+  }
 }
 
 export const sceneViewportService = registerService({
