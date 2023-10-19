@@ -34,16 +34,16 @@ export class DebugInfo {
     const { x, y } = tilesSceneBuilder.sceneViewport.grid.available.size;
 
     const preview = new DebugBufferPreview(
-      tilesSceneBuilder.depthMap,
+      tilesSceneBuilder.depthLayer,
       x,
       y,
       new DepthDebugBufferPreviewColorizer(),
     );
     this.previews.push(preview);
 
-    for (let z = 0; z < tilesSceneBuilder.layers.length; z++) {
+    for (let z = 0; z < tilesSceneBuilder.terrainLayers.length; z++) {
       const preview = new DebugBufferPreview(
-        tilesSceneBuilder.layers[z],
+        tilesSceneBuilder.terrainLayers[z].typedArray,
         x,
         y,
         new TerrainDebugBufferPreviewColorizer(),

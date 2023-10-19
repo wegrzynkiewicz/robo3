@@ -52,8 +52,8 @@ export class SceneViewport {
     chunkRect.y2 = floor(tilesRect.y2 / 32);
 
     printable.update(
-      max(tilesRect.y2, 0) - max(tilesRect.y1, 0),
       max(tilesRect.x2, 0) - max(tilesRect.x1, 0),
+      max(tilesRect.y2, 0) - max(tilesRect.y1, 0),
     )
   }
 
