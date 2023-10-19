@@ -11,12 +11,12 @@ class ChunkId {
 
   public toBigInt(): bigint {
     const { x, y, z } = this;
-    return BigInt(z * 4294967296 & y << 16 & x);
+    return BigInt(z * 4294967296 + y * 65536 + x);
   }
 
   public toNumber(): number {
     const { x, y, z } = this;
-    return z * 4294967296 & y << 16 & x;
+    return z * 4294967296 + y * 65536 + x
   }
 
   public toHex(): string {
@@ -24,7 +24,7 @@ class ChunkId {
     return `${hex(x, 4)}${hex(y, 4)}${hex(z, 4)}`;
   }
 }
-const chunkId = new ChunkId(0xffff, 0xffff, 0xffff);
+const chunkId = new ChunkId(0x0fff, 0x0fff, 0x0fff);
 
 const mapString = new Map<string, unknown>();
 Deno.bench("String: fill map with .toHex()", () => {
@@ -52,6 +52,17 @@ Deno.bench("Number: fill map with .toNumber()", () => {
     mapNumber.set(chunkId.toNumber(), chunkId);
   }
 });
+
+Deno.bench("String: .toHex()", () => {
+  chunkId.toHex();
+});
+Deno.bench("BigInt: .toBigInt()", () => {
+  chunkId.toBigInt();
+});
+Deno.bench("Number: .toNumber()", () => {
+  chunkId.toNumber();
+});
+
 
 Deno.bench("String: basic set", () => {
   mapString.set("1", {});
