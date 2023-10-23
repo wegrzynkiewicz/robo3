@@ -1,19 +1,15 @@
 import { CornerRectangle } from "../../math/CornerRectangle.ts";
-import { Position } from "../../math/Position.ts";
 import { BinaryBYOBCodec } from "../codec.ts";
 import { PIXELS_PER_CHUNK_GRID_AXIS } from "../vars.ts";
 
 export class ChunkId {
-  public readonly position: Position;
 
   public constructor(
     public readonly spaceId: number,
     public readonly x: number,
     public readonly y: number,
     public readonly z: number,
-  ) {
-    this.position = { x, y, z };
-  }
+  ) { }
 
   public getWorldSpaceCornerRect(): CornerRectangle {
     const x1 = this.x * PIXELS_PER_CHUNK_GRID_AXIS;
