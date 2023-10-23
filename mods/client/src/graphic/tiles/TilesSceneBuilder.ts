@@ -1,8 +1,8 @@
 import { PerformanceCounter } from "../../../../common/PerformanceCounter.ts";
-import { ChunkId } from "../../../../core/chunk/chunkId.ts";
 import { registerService, ServiceResolver } from "../../../../core/dependency/service.ts";
 import { index2coords } from "../../../../core/numbers.ts";
-import { Chunk, ChunkManager, chunkManagerService } from "../../../../domain-client/chunk/chunkManager.ts";
+import { SpaceManager, spaceManagerService } from "../../../../core/space/SpaceManager.ts";
+import { Chunk } from "../../../../domain-client/chunk/chunkManager.ts";
 import { cornerRect } from "../../../../math/CornerRectangle.ts";
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
 import { Viewport, viewportService } from "../Viewport.ts";
@@ -87,7 +87,7 @@ export class TilesSceneBuilder {
 
   public constructor(
     public readonly availableLayerCount: number,
-    public readonly chunkManager: ChunkManager,
+    public readonly spaceManager: SpaceManager,
     public readonly sceneViewport: SceneViewport,
     public readonly viewport: Viewport,
     public readonly tilesBuffer: DynamicDrawBuffer,
@@ -151,11 +151,11 @@ export class TilesSceneBuilder {
 
   public buildLayer() {
     const { chunkRect, spaceId } = this.sceneViewport;
+    const space = this.spaceManager.obtain(spaceId);
     this.activeLayer.clear();
     for (let chunkY = chunkRect.y1; chunkY <= chunkRect.y2; chunkY++) {
       for (let chunkX = chunkRect.x1; chunkX <= chunkRect.x2; chunkX++) {
-        const chunkId = new ChunkId(spaceId, chunkX, chunkY, this.currentTerrainLevel);
-        const chunk = this.chunkManager.chunks.get(chunkId.toHex());
+        const chunk = space.chunkManager.getByCoords(chunkX, chunkY, this.currentTerrainLevel);
         if (chunk === undefined || chunk.segment === undefined) {
           continue;
         }
@@ -323,7 +323,7 @@ export const tilesSceneBuilderService = registerService({
   async provider(resolver: ServiceResolver): Promise<TilesSceneBuilder> {
     return new TilesSceneBuilder(
       10,
-      await resolver.resolve(chunkManagerService),
+      await resolver.resolve(spaceManagerService),
       await resolver.resolve(sceneViewportService),
       await resolver.resolve(viewportService),
       await resolver.resolve(tilesBufferService),

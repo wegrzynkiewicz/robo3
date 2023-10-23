@@ -11,6 +11,11 @@ export class ChunkId {
     public readonly z: number,
   ) { }
 
+  public toSpacePosIndex(): number {
+    const { x, y, z } = this;
+    return z * 4294967296 + y * 65536 + x
+  }
+
   public getWorldSpaceCornerRect(): CornerRectangle {
     const x1 = this.x * PIXELS_PER_CHUNK_GRID_AXIS;
     const y1 = this.y * PIXELS_PER_CHUNK_GRID_AXIS;

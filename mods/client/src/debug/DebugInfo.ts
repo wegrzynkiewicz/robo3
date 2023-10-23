@@ -1,7 +1,6 @@
 import { assertNonNull } from "../../../common/asserts.ts";
 import { formatBytes } from "../../../common/useful.ts";
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
-import { ChunkManager, chunkManagerService } from "../../../domain-client/chunk/chunkManager.ts";
 import { Display, displayService } from "../graphic/Display.ts";
 import { DynamicDrawBuffer } from "../graphic/DynamicDrawBuffer.ts";
 import { Viewport, viewportService } from "../graphic/Viewport.ts";
@@ -22,7 +21,6 @@ export class DebugInfo {
     public readonly viewport: Viewport,
     public readonly tilesSceneBuilder: TilesSceneBuilder,
     public readonly tilesBuffer: DynamicDrawBuffer,
-    public readonly chunkManager: ChunkManager,
   ) {
     const left = document.getElementById("debug-info-left");
     const right = document.getElementById("debug-info-right");
@@ -120,7 +118,7 @@ export class DebugInfo {
     }
 
     out.push(`Chunks`);
-    out.push(`  Loaded: ${this.chunkManager.chunks.size} `);
+    out.push(`  Loaded: 0 `);
     if (this.tilesSceneBuilder.visibleChunks.length > 0) {
       out.push(`  Visible`);
       for (const chunk of this.tilesSceneBuilder.visibleChunks) {
@@ -146,7 +144,6 @@ export const debugInfoService = registerService({
       await resolver.resolve(viewportService),
       await resolver.resolve(tilesSceneBuilderService),
       await resolver.resolve(tilesBufferService),
-      await resolver.resolve(chunkManagerService),
     );
   },
 });

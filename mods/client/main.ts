@@ -1,4 +1,3 @@
-import "./src/else/wss.ts";
 import "../canvas/UnifiedOffscreenCanvas.ts";
 import "../core/bootstrap.ts";
 import { assertNonNull } from "../common/asserts.ts";
@@ -20,6 +19,12 @@ import { appService } from "./src/App.ts";
 import { tilesTexture2DArrayService } from "./src/graphic/tiles/TilesTexture2DArray.ts";
 import { clientSpriteAtlasLoaderService } from "../domain-client/sprite/allocation/clientSpriteAtlasLoader.ts";
 import { SpriteImageExtractor } from "../core/sprite/SpriteImageDataExtractor.ts";
+import { logger } from "../common/logger.ts";
+import { gaCommunicator } from "../core/action/communication.ts";
+import { gaProcessorService } from "../core/action/processor.ts";
+import { gaSenderWebSocketService } from "../core/action/sender.ts";
+import { clientGAProcessor } from "../domain-client/clientGAProcessor.ts";
+import { loginGARequestDef,loginGAResponseDef } from "../domain/loginGA.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -94,6 +99,37 @@ async function start() {
   for (const context of res.contexts) {
     // document.body.appendChild(context.canvas);
   }
+
+  const { hostname } = window.location;
+  const ws = new WebSocket(`ws://${hostname}:8000/wss/token`);
+  ws.binaryType = "arraybuffer";
+
+  resolver.inject(gaSenderWebSocketService, ws);
+  const processor = await resolver.resolve(clientGAProcessor);
+  resolver.inject(gaProcessorService, processor);
+  const communicator = await resolver.resolve(gaCommunicator);
+
+  ws.addEventListener("open", async (event) => {
+    const { status } = await communicator.requestor.request(
+      loginGARequestDef,
+      loginGAResponseDef,
+      { token: "test" },
+    );
+    const data = new Uint8Array(8);
+  });
+
+  // Listen for messages
+  ws.addEventListener("message", async (message) => {
+    try {
+      await communicator.receiver.receive(message.data);
+    } catch (error) {
+      logger.error("error-when-processing-wss-message", { error });
+    }
+  });
+
+  ws.addEventListener("close", (event) => {
+    console.log("Close", event);
+  });
 
   mainLoop.run();
 }
