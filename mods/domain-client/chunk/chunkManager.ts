@@ -37,7 +37,14 @@ export class Chunk {
 }
 
 export class ChunkManager {
+  public readonly byPositionIndex = new Map<number, Chunk>();
   public readonly chunks = new Map<string, Chunk>();
+
+  public getByCoords(x: number, y: number, z: number): Chunk | undefined {
+    const index = z * 4294967296 + y * 65536 + x
+    const chunk = this.byPositionIndex.get(index);
+    return chunk;
+  } 
 
   public update(chunkDTO: ChunkDTO) {
     const { chunkId: hex } = chunkDTO;
