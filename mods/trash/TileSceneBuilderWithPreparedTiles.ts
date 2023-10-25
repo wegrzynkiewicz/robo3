@@ -30,6 +30,22 @@ const ter = {
   "CC": 82,
 };
 
+const shadow = new Uint16Array(18);
+
+shadow[0b0000] = ter["HS"];
+shadow[0b0001] = ter["UD"];
+shadow[0b0010] = ter["UA"];
+shadow[0b0100] = ter["UX"];
+shadow[0b0101] = ter["LC"];
+shadow[0b0110] = ter["LZ"];
+shadow[0b0111] = ter["ES"];
+shadow[0b1000] = ter["UW"];
+shadow[0b1001] = ter["LE"];
+shadow[0b1010] = ter["LQ"];
+shadow[0b1011] = ter["EW"];
+shadow[0b1101] = ter["ED"];
+shadow[0b1110] = ter["EA"];
+
 const TERRAIN_CELL_BYTE_LENGTH = 2;
 const DEPTH_LAYERS_COUNT = 1;
 const EMPTY_CELL_VALUE = 0xff;
@@ -50,10 +66,11 @@ export class SceneTerrainLayer {
   }
 }
 
+const sortTiles = (a: any, b: any) => a.z - b.z;
+
 export class TilesSceneBuilder {
   public visibleTiles = 0;
   protected activeLayer: SceneTerrainLayer;
-  protected activeChunk!: Chunk;
   public readonly visibleChunks: Chunk[] = [];
   public readonly performance = new PerformanceCounter("scene-builder", 60);
   protected paintedLayerCount = 0;
@@ -64,8 +81,6 @@ export class TilesSceneBuilder {
   currentTerrainLevel = 0;
   availableRowsPerLayerCount: number;
   currentLayerIndex = 0;
-  tileX = 0;
-  tileY = 0;
 
   public constructor(
     public readonly availableLayerCount: number,
@@ -74,6 +89,8 @@ export class TilesSceneBuilder {
     public readonly viewport: Viewport,
     public readonly tilesBuffer: DynamicDrawBuffer,
   ) {
+
+
     const { cellCount } = this.sceneViewport.grid.available;
     const totalByteLength = cellCount * (availableLayerCount + DEPTH_LAYERS_COUNT) * TERRAIN_CELL_BYTE_LENGTH
     const buffer = new ArrayBuffer(totalByteLength);
@@ -89,9 +106,11 @@ export class TilesSceneBuilder {
     this.availableCellsPerRowCount = this.sceneViewport.grid.available.size.x;
   }
 
-  public buildChunk() {
-    const chunkTileX = this.activeChunk.chunkId.x * 32;
-    const chunkTileY = this.activeChunk.chunkId.y * 32;
+  public buildChunk(chunk: Chunk) {
+    const { chunkId, segment } = chunk;
+    const view = segment!.grid.view;
+    const chunkTileX = chunkId.x * 32;
+    const chunkTileY = chunkId.y * 32;
 
     const tilesRect = this.sceneViewport.tilesRect;
     const srcX1 = Math.max(tilesRect.x1 - chunkTileX, 0);
@@ -101,14 +120,27 @@ export class TilesSceneBuilder {
     const dstX1 = Math.max(chunkTileX - tilesRect.x1, 0);
     const dstY1 = Math.max(chunkTileY - tilesRect.y1, 0);
 
-    this.visibleChunks.push(this.activeChunk);
+    this.visibleChunks.push(chunk);
 
     let dstY = dstY1;
-    for (let srcY = srcY1; srcY < srcY2; srcY++) {
+    for (let y = srcY1; y < srcY2; y++) {
       let dstX = dstX1;
-      for (let srcX = srcX1; srcX < srcX2; srcX++) {
+      for (let x = srcX1; x < srcX2; x++) {
+        const dstIndex = dstY * this.availableCellsPerRowCount + dstX;
+        if (this.depthLayer[dstIndex] === EMPTY_CELL_VALUE) {
+          const srcIndex = y * 32 + x;
+          const goTypeId = view[srcIndex];
+          if (goTypeId !== 0) {
+            this.activeLayer.paintRect.x1 = Math.min(dstX, this.activeLayer.paintRect.x1);
+            this.activeLayer.paintRect.y1 = Math.min(dstY, this.activeLayer.paintRect.y1);
+            this.activeLayer.paintRect.x2 = Math.max(dstX, this.activeLayer.paintRect.x2);
+            this.activeLayer.paintRect.y2 = Math.max(dstY, this.activeLayer.paintRect.y2);
+            this.depthLayer[dstIndex] = this.currentTerrainLevel;
+            this.paintedDepthCellCount++;
+          }
+          this.activeLayer.typedArray[dstIndex] = goTypeId;
+        }
         dstX++;
-        this.buildTile(srcX, srcY, dstX, dstY);
       }
       dstY++;
     }
@@ -121,122 +153,105 @@ export class TilesSceneBuilder {
     for (let chunkY = chunkRect.y1; chunkY <= chunkRect.y2; chunkY++) {
       for (let chunkX = chunkRect.x1; chunkX <= chunkRect.x2; chunkX++) {
         const chunk = space.chunkManager.getByCoords(chunkX, chunkY, this.currentTerrainLevel);
-        if (chunk === undefined || chunk.segment === undefined) {
+        if (chunk === undefined || chunk.segment === undefined || chunk.tiles === undefined) {
           continue;
         }
-        this.activeChunk = chunk;
-        this.buildChunk();
+
+        this.visibleChunks.push(chunk);
+        // this.buildChunk(chunk);
+        const len = chunk.tiles.length / 3;
+        for (let i = 0; i < len; i++) {
+          const index = i * 3;
+          const x = chunk.tiles[index + 0] + (chunkX * 32);
+          const y = chunk.tiles[index + 1] + (chunkY * 32);
+          const spriteIndex = chunk.tiles[index + 2];
+          this.pushTile(x, y, spriteIndex);
+        }
       }
     }
   }
 
-  public buildTile(srcX: number, srcY: number, dstX: number, dstY: number) {
-    const dstIndex = dstY * this.availableCellsPerRowCount + dstX;
-    if (this.depthLayer[dstIndex] === EMPTY_CELL_VALUE) {
-      const srcIndex = srcY * 32 + srcX;
-      const goTypeId = this.activeChunk.segment!.grid.view[srcIndex];
-      if (goTypeId !== 0) {
-        this.activeLayer.paintRect.x1 = Math.min(dstX, this.activeLayer.paintRect.x1);
-        this.activeLayer.paintRect.y1 = Math.min(dstY, this.activeLayer.paintRect.y1);
-        this.activeLayer.paintRect.x2 = Math.max(dstX, this.activeLayer.paintRect.x2);
-        this.activeLayer.paintRect.y2 = Math.max(dstY, this.activeLayer.paintRect.y2);
-        this.depthLayer[dstIndex] = this.currentTerrainLevel;
-        this.paintedDepthCellCount++;
-      }
-      this.activeLayer.typedArray[dstIndex] = goTypeId;
-    }
+  tiles: unknown[] = [];
+
+  public pushTile(x: number, y: number, v: number): void {
+    const { tilesRect } = this.sceneViewport;
+    const startX = tilesRect.x1;
+    const startY = tilesRect.y1;
+    this.tiles.push({
+      x: (x) * 32,
+      y: (y) * 32,
+      z: this.currentTerrainLevel,
+      v,
+    });
   }
 
-  protected processTile(x: number, y: number): void {
+  public processTile(x: number, y: number) {
     const {
       activeLayer: { typedArray: view },
       availableCellsPerRowCount: row,
     } = this;
-    this.tileY = y;
-    this.tileX = x;
-    const vq = view[(y - 1) * row + (x - 1)];
-    const vw = view[(y - 1) * row + (x + 0)];
-    const ve = view[(y - 1) * row + (x + 1)];
-    const va = view[(y + 0) * row + (x - 1)];
+
     const vs = view[(y + 0) * row + (x + 0)];
-    const vd = view[(y + 0) * row + (x + 1)];
-    const vz = view[(y + 1) * row + (x - 1)];
-    const vx = view[(y + 1) * row + (x + 0)];
-    const vc = view[(y + 1) * row + (x + 1)];
     if (vs === 0) {
-      this.processShadow(vq, vw, ve, va, vs, vd, vz, vx, vc);
+      const vw = view[(y - 1) * row + (x + 0)] === 0 ? 0b1000 : 0;
+      const vx = view[(y + 1) * row + (x + 0)] === 0 ? 0b0100 : 0;
+      const va = view[(y + 0) * row + (x - 1)] === 0 ? 0b0010 : 0;
+      const vd = view[(y + 0) * row + (x + 1)] === 0 ? 0b0001 : 0;
+      const vq = view[(y - 1) * row + (x - 1)] === 0 ? 0 : 1;
+      const ve = view[(y - 1) * row + (x + 1)] === 0 ? 0 : 1;
+      const vz = view[(y + 1) * row + (x - 1)] === 0 ? 0 : 1;
+      const vc = view[(y + 1) * row + (x + 1)] === 0 ? 0 : 1;
+
+      if (vw && va && vq) {
+        this.pushTile(x, y, ter['CC']);
+      }
+      if (vw && vd && ve) {
+        this.pushTile(x, y, ter['CZ']);
+      }
+      if (vx && va && vz) {
+        this.pushTile(x, y, ter['CE']);
+      }
+      if (vx && vd && vc) {
+        this.pushTile(x, y, ter['CQ']);
+      }
+
+      const v = vw | vx | va | vd;
+
+      switch (v) {
+        case 0b0000:
+        case 0b0001:
+        case 0b0010:
+        case 0b0100:
+        case 0b0101:
+        case 0b0110:
+        case 0b0111:
+        case 0b1000:
+        case 0b1001:
+        case 0b1010:
+        case 0b1011:
+        case 0b1101:
+        case 0b1110: {
+          this.pushTile(x, y, shadow[v]);
+          break;
+        }
+        case 0b1100: {
+          this.pushTile(x, y, ter['EA']);
+          this.pushTile(x, y, ter['ED']);
+          break;
+        }
+        case 0b0011: {
+          this.pushTile(x, y, ter['EW']);
+          this.pushTile(x, y, ter['ES']);
+          break;
+        }
+        case 0b1111:
+          break;
+      }
+
+      //   this.pushTile(x, y, ter['FS']);
     } else {
-      this.processTerrain(vq, vw, ve, va, vs, vd, vz, vx, vc);
+      this.pushTile(x, y, vs);
     }
-  }
-
-  protected processShadow(
-    vq: number,
-    vw: number,
-    ve: number,
-    va: number,
-    _s: number,
-    vd: number,
-    vz: number,
-    vx: number,
-    vc: number,
-  ): void {
-    const pw = vw === 0 ? 0 : 0b1000;
-    const px = vx === 0 ? 0 : 0b0100;
-    const pa = va === 0 ? 0 : 0b0010;
-    const pd = vd === 0 ? 0 : 0b0001;
-    const pq = vq === 0 ? 0 : 1;
-    const pe = ve === 0 ? 0 : 1;
-    const pz = vz === 0 ? 0 : 1;
-    const pc = vc === 0 ? 0 : 1;
-
-    if (pw === 0 && pa === 0 && pq) {
-      this.put(ter["CC"]);
-    }
-    if (pw === 0 && pd === 0 && pe) {
-      this.put(ter["CZ"]);
-    }
-    if (px === 0 && pa === 0 && pz) {
-      this.put(ter["CE"]);
-    }
-    if (px === 0 && pd === 0 && pc) {
-      this.put(ter["CQ"]);
-    }
-
-    const p = pw | px | pa | pd;
-
-    // deno-fmt-ignore
-    switch (p) {
-      case 0b0001: { this.put(ter["EA"]); break; }
-      case 0b0010: { this.put(ter["ED"]); break; }
-      case 0b0011: { this.put(ter['EA']); this.put(ter['ED']); break; }
-      case 0b0100: { this.put(ter["EW"]); break; }
-      case 0b0101: { this.put(ter["LQ"]); break; }
-      case 0b0110: { this.put(ter["LE"]); break; }
-      case 0b0111: { this.put(ter["UW"]); break; }
-      case 0b1000: { this.put(ter["ES"]); break; }
-      case 0b1001: { this.put(ter["LZ"]); break; }
-      case 0b1010: { this.put(ter["LC"]); break; }
-      case 0b1011: { this.put(ter["UX"]); break; }
-      case 0b1100: { this.put(ter['ES']); this.put(ter['EW']); break; }
-      case 0b1101: { this.put(ter["UA"]); break; }
-      case 0b1110: { this.put(ter["UD"]); break; }
-      case 0b1111: { this.put(ter["HS"]); break; }
-    }
-  }
-
-  protected processTerrain(
-    _vq: number,
-    _vw: number,
-    _ve: number,
-    _va: number,
-    vs: number,
-    _vd: number,
-    _vz: number,
-    _vx: number,
-    _vc: number,
-  ): void {
-    this.put(vs);
   }
 
   public processLayer(): void {
@@ -252,36 +267,17 @@ export class TilesSceneBuilder {
       for (let x = x1; x <= x2; x++) {
         const cellIndex = y * this.availableCellsPerRowCount + x;
         if (this.depthLayer[cellIndex] <= this.currentTerrainLevel) {
-          this.processTile(x, y);
+        //   this.processTile(x, y);
         }
       }
     }
   }
 
-  public index = 0;
-
-  protected put(tileIndex: number): void {
-    const view = this.tilesBuffer.typedArray;
-    const { tilesRect } = this.sceneViewport;
-    const startX = tilesRect.x1;
-    const startY = tilesRect.y1;
-
-    view[this.index++] = (startX + this.tileX) * 32;
-    view[this.index++] = (startY + this.tileY) * 32;
-    view[this.index++] = 32.0;
-    view[this.index++] = 32.0;
-    view[this.index++] = index2coords(tileIndex)[0] * 32.0;
-    view[this.index++] = index2coords(tileIndex)[1] * 32.0;
-    view[this.index++] = 0;
-    view[this.index++] = 0;
-    this.visibleTiles++;
-  }
-
   public clear() {
-    this.index = 0;
     this.depthLayer.fill(EMPTY_CELL_VALUE);
     this.visibleTiles = 0;
     this.visibleChunks.splice(0);
+    this.tiles.splice(0);
     this.paintedLayerCount = 0;
   }
 
@@ -303,11 +299,26 @@ export class TilesSceneBuilder {
       }
     }
 
-    for (let layerIndex = this.paintedLayerCount - 1; layerIndex >= 0; layerIndex--) {
-      this.currentLayerIndex = layerIndex;
-      this.currentTerrainLevel = level - layerIndex;
-      this.activeLayer = this.terrainLayers[layerIndex];
-      this.processLayer();
+    // for (let layerIndex = this.paintedLayerCount - 1; layerIndex >= 0; layerIndex--) {
+    //   this.currentLayerIndex = layerIndex;
+    //   this.currentTerrainLevel = level - layerIndex;
+    //   this.activeLayer = this.terrainLayers[layerIndex];
+    //   this.processLayer();
+    // }
+
+    let index = 0;
+    const view = this.tilesBuffer.typedArray;
+    this.tiles.sort(sortTiles);
+    for (const tile of this.tiles as any) {
+      view[index++] = tile.x;
+      view[index++] = tile.y;
+      view[index++] = 32.0;
+      view[index++] = 32.0;
+      view[index++] = index2coords(tile.v)[0] * 32.0;
+      view[index++] = index2coords(tile.v)[1] * 32.0;
+      view[index++] = 0;
+      view[index++] = 0;
+      this.visibleTiles++;
     }
 
     this.tilesBuffer.update(this.visibleTiles * 32);

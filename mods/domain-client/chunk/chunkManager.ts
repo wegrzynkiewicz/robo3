@@ -29,6 +29,13 @@ export class Chunk {
 export class ChunkManager {
   public readonly byPositionIndex = new Map<number, Chunk>();
 
+  public getByChunkId(chunkId: ChunkId): Chunk | undefined {
+    const { x, y, z } = chunkId;
+    const index = z * 4294967296 + y * 65536 + x
+    const chunk = this.byPositionIndex.get(index);
+    return chunk;
+  }
+
   public getByCoords(x: number, y: number, z: number): Chunk | undefined {
     const index = z * 4294967296 + y * 65536 + x
     const chunk = this.byPositionIndex.get(index);
