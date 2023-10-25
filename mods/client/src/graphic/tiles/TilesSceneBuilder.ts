@@ -1,4 +1,4 @@
-import { PerformanceCounter } from "../../../../common/PerformanceCounter.ts";
+import { createPerformanceCounter } from "../../../../common/PerformanceCounter.ts";
 import { registerService, ServiceResolver } from "../../../../core/dependency/service.ts";
 import { index2coords } from "../../../../core/numbers.ts";
 import { SpaceManager, spaceManagerService } from "../../../../core/space/SpaceManager.ts";
@@ -55,7 +55,7 @@ export class TilesSceneBuilder {
   protected activeLayer: SceneTerrainLayer;
   protected activeChunk!: Chunk;
   public readonly visibleChunks: Chunk[] = [];
-  public readonly performance = new PerformanceCounter("scene-builder", 60);
+  public readonly performance = createPerformanceCounter("scene-builder", 60);
   protected paintedLayerCount = 0;
   protected paintedDepthCellCount = 0;
   depthLayer: Uint16Array;
@@ -281,7 +281,7 @@ export class TilesSceneBuilder {
     this.index = 0;
     this.depthLayer.fill(EMPTY_CELL_VALUE);
     this.visibleTiles = 0;
-    this.visibleChunks.splice(0);
+    this.visibleChunks.length = 0;
     this.paintedLayerCount = 0;
   }
 

@@ -107,7 +107,7 @@ export class DebugInfo {
         },
         visibleTiles
       } = this.tilesSceneBuilder;
-      out.push(`  AvgBuildTime: ${(performance.value * 1000).toFixed(0)} µs`);
+      out.push(`  AvgBuildTime: ${(performance.avgTime * 1000).toFixed(0)} µs`);
       out.push(`  Grid.available: ${available.size.x} * ${available.size.y} = ${available.cellCount}`);
       out.push(`  Grid.printable: ${printable.size.x} * ${printable.size.y} = ${printable.cellCount}`);
       const bs = this.tilesBuffer.bytesSent;
