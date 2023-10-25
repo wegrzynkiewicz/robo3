@@ -107,8 +107,8 @@ export class TilesSceneBuilder {
     for (let srcY = srcY1; srcY < srcY2; srcY++) {
       let dstX = dstX1;
       for (let srcX = srcX1; srcX < srcX2; srcX++) {
-        dstX++;
         this.buildTile(srcX, srcY, dstX, dstY);
+        dstX++;
       }
       dstY++;
     }
