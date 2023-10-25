@@ -119,6 +119,7 @@ export class DebugInfo {
 
     out.push(`Chunks`);
     out.push(`  Loaded: 0 `);
+    out.push(`  Visible: ${this.tilesSceneBuilder.visibleChunks.length} `);
     if (this.tilesSceneBuilder.visibleChunks.length > 0) {
       out.push(`  Visible`);
       for (const chunk of this.tilesSceneBuilder.visibleChunks) {
