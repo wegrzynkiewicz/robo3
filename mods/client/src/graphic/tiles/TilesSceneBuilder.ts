@@ -31,7 +31,6 @@ const ter = {
 };
 
 const TERRAIN_CELL_BYTE_LENGTH = 2;
-const DEPTH_LAYERS_COUNT = 1;
 const EMPTY_CELL_VALUE = 0xff;
 
 export class SceneTerrainLayer {
@@ -42,7 +41,6 @@ export class SceneTerrainLayer {
   }
 
   public clear(): void {
-    this.typedArray.fill(0);
     this.paintRect.x1 = 255;
     this.paintRect.y1 = 255;
     this.paintRect.x2 = 0;
@@ -66,6 +64,8 @@ export class TilesSceneBuilder {
   currentLayerIndex = 0;
   tileX = 0;
   tileY = 0;
+  view: Uint16Array;
+  processedTile = 0;
 
   public constructor(
     public readonly availableLayerCount: number,
@@ -75,11 +75,12 @@ export class TilesSceneBuilder {
     public readonly tilesBuffer: DynamicDrawBuffer,
   ) {
     const { cellCount } = this.sceneViewport.grid.available;
-    const totalByteLength = cellCount * (availableLayerCount + DEPTH_LAYERS_COUNT) * TERRAIN_CELL_BYTE_LENGTH
+    const totalByteLength = cellCount * availableLayerCount * TERRAIN_CELL_BYTE_LENGTH
+    this.depthLayer = new Uint16Array(cellCount);
     const buffer = new ArrayBuffer(totalByteLength);
-    this.depthLayer = new Uint16Array(buffer, 0, cellCount);
+    this.view = new Uint16Array(buffer);
     for (let layerIndex = 0; layerIndex < availableLayerCount; layerIndex++) {
-      const byteOffset = cellCount * (layerIndex + 1) * TERRAIN_CELL_BYTE_LENGTH
+      const byteOffset = cellCount * layerIndex * TERRAIN_CELL_BYTE_LENGTH
       const layerTypedArray = new Uint16Array(buffer, byteOffset, cellCount);
       const layer = new SceneTerrainLayer(layerTypedArray);
       this.terrainLayers.push(layer);
@@ -117,7 +118,6 @@ export class TilesSceneBuilder {
   public buildLayer() {
     const { chunkRect, spaceId } = this.sceneViewport;
     const space = this.spaceManager.obtain(spaceId);
-    this.activeLayer.clear();
     for (let chunkY = chunkRect.y1; chunkY <= chunkRect.y2; chunkY++) {
       for (let chunkX = chunkRect.x1; chunkX <= chunkRect.x2; chunkX++) {
         const chunk = space.chunkManager.getByCoords(chunkX, chunkY, this.currentTerrainLevel);
@@ -168,6 +168,7 @@ export class TilesSceneBuilder {
     } else {
       this.processTerrain(vq, vw, ve, va, vs, vd, vz, vx, vc);
     }
+    this.processedTile++;
   }
 
   protected processShadow(
@@ -279,10 +280,15 @@ export class TilesSceneBuilder {
 
   public clear() {
     this.index = 0;
-    this.depthLayer.fill(EMPTY_CELL_VALUE);
     this.visibleTiles = 0;
-    this.visibleChunks.length = 0;
     this.paintedLayerCount = 0;
+    this.processedTile = 0;
+    this.visibleChunks.length = 0;
+    this.depthLayer.fill(EMPTY_CELL_VALUE);
+    this.view.fill(0);
+    for (const layer of this.terrainLayers) {
+      layer.clear();
+    }
   }
 
   public build() {

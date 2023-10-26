@@ -113,6 +113,7 @@ export class DebugInfo {
       const bs = this.tilesBuffer.bytesSent;
       out.push(`  ChunkRect: ${chunkRect.x1} ${chunkRect.y1} ${chunkRect.x2} ${chunkRect.y2} `);
       out.push(`  TilesRect: ${tilesRect.x1} ${tilesRect.y1} ${tilesRect.x2} ${tilesRect.y2} `);
+      out.push(`  ProcessedTiles: ${this.tilesSceneBuilder.processedTile} `);
       out.push(`  VisibleTiles: ${visibleTiles} `);
       out.push(`  BytesSent: ${bs} (${formatBytes(bs)})`);
     }
