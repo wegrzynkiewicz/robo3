@@ -31,7 +31,7 @@ const ter = {
 };
 
 const TERRAIN_CELL_BYTE_LENGTH = 2;
-const EMPTY_CELL_VALUE = 0xff;
+const EMPTY_CELL_VALUE = 0x00;
 
 export class SceneTerrainLayer {
   public paintRect = cornerRect(0, 0, 0, 0);
@@ -66,6 +66,7 @@ export class TilesSceneBuilder {
   tileY = 0;
   view: Uint16Array;
   processedTile = 0;
+  mainLayer: Uint16Array;
 
   public constructor(
     public readonly availableLayerCount: number,
@@ -77,6 +78,7 @@ export class TilesSceneBuilder {
     const { cellCount } = this.sceneViewport.grid.available;
     const totalByteLength = cellCount * availableLayerCount * TERRAIN_CELL_BYTE_LENGTH
     this.depthLayer = new Uint16Array(cellCount);
+    this.mainLayer = new Uint16Array(cellCount);
     const buffer = new ArrayBuffer(totalByteLength);
     this.view = new Uint16Array(buffer);
     for (let layerIndex = 0; layerIndex < availableLayerCount; layerIndex++) {
@@ -93,6 +95,8 @@ export class TilesSceneBuilder {
   public buildChunk() {
     const chunkTileX = this.activeChunk.chunkId.x * 32;
     const chunkTileY = this.activeChunk.chunkId.y * 32;
+    const view = this.mainLayer;
+    const grid = this.activeChunk.segment!.grid.view;
 
     const tilesRect = this.sceneViewport.tilesRect;
     const srcX1 = Math.max(tilesRect.x1 - chunkTileX, 0);
@@ -108,7 +112,13 @@ export class TilesSceneBuilder {
     for (let srcY = srcY1; srcY < srcY2; srcY++) {
       let dstX = dstX1;
       for (let srcX = srcX1; srcX < srcX2; srcX++) {
-        this.buildTile(srcX, srcY, dstX, dstY);
+        const dstIndex = dstY * this.availableCellsPerRowCount + dstX;
+        const srcIndex = srcY * 32 + srcX;
+        const goTypeId = grid[srcIndex];
+        if (goTypeId !== 0) {
+          this.depthLayer[dstIndex] = this.currentTerrainLevel;
+          view[dstIndex] = goTypeId;
+        }
         dstX++;
       }
       dstY++;
@@ -132,28 +142,46 @@ export class TilesSceneBuilder {
 
   public buildTile(srcX: number, srcY: number, dstX: number, dstY: number) {
     const dstIndex = dstY * this.availableCellsPerRowCount + dstX;
-    if (this.depthLayer[dstIndex] === EMPTY_CELL_VALUE) {
-      const srcIndex = srcY * 32 + srcX;
-      const goTypeId = this.activeChunk.segment!.grid.view[srcIndex];
-      if (goTypeId !== 0) {
-        this.activeLayer.paintRect.x1 = Math.min(dstX, this.activeLayer.paintRect.x1);
-        this.activeLayer.paintRect.y1 = Math.min(dstY, this.activeLayer.paintRect.y1);
-        this.activeLayer.paintRect.x2 = Math.max(dstX, this.activeLayer.paintRect.x2);
-        this.activeLayer.paintRect.y2 = Math.max(dstY, this.activeLayer.paintRect.y2);
-        this.depthLayer[dstIndex] = this.currentTerrainLevel;
-        this.paintedDepthCellCount++;
-      }
-      this.activeLayer.typedArray[dstIndex] = goTypeId;
+    const srcIndex = srcY * 32 + srcX;
+    const goTypeId = this.activeChunk.segment!.grid.view[srcIndex];
+    if (goTypeId !== 0) {
+      this.activeLayer.paintRect.x1 = Math.min(dstX, this.activeLayer.paintRect.x1);
+      this.activeLayer.paintRect.y1 = Math.min(dstY, this.activeLayer.paintRect.y1);
+      this.activeLayer.paintRect.x2 = Math.max(dstX, this.activeLayer.paintRect.x2);
+      this.activeLayer.paintRect.y2 = Math.max(dstY, this.activeLayer.paintRect.y2);
+      this.depthLayer[dstIndex] = this.currentTerrainLevel;
+      this.paintedDepthCellCount++;
     }
+    this.activeLayer.typedArray[dstIndex] = goTypeId;
   }
 
   protected processTile(x: number, y: number): void {
     const {
-      activeLayer: { typedArray: view },
+      mainLayer,
       availableCellsPerRowCount: row,
     } = this;
     this.tileY = y;
     this.tileX = x;
+
+    const vs = mainLayer[(y + 0) * row + (x + 0)];
+    if (vs === 0) {
+      return;
+    }
+    this.put(vs);
+
+    this.processShadow();
+    this.processedTile++;
+  }
+
+  protected processShadow(): void {
+    const {
+      availableCellsPerRowCount: row,
+    } = this;
+    const view = this.depthLayer;
+
+    const y = this.tileY;
+    const x = this.tileX;
+
     const vq = view[(y - 1) * row + (x - 1)];
     const vw = view[(y - 1) * row + (x + 0)];
     const ve = view[(y - 1) * row + (x + 1)];
@@ -163,33 +191,15 @@ export class TilesSceneBuilder {
     const vz = view[(y + 1) * row + (x - 1)];
     const vx = view[(y + 1) * row + (x + 0)];
     const vc = view[(y + 1) * row + (x + 1)];
-    if (vs === 0) {
-      this.processShadow(vq, vw, ve, va, vs, vd, vz, vx, vc);
-    } else {
-      this.processTerrain(vq, vw, ve, va, vs, vd, vz, vx, vc);
-    }
-    this.processedTile++;
-  }
 
-  protected processShadow(
-    vq: number,
-    vw: number,
-    ve: number,
-    va: number,
-    _s: number,
-    vd: number,
-    vz: number,
-    vx: number,
-    vc: number,
-  ): void {
-    const pw = vw === 0 ? 0 : 0b1000;
-    const px = vx === 0 ? 0 : 0b0100;
-    const pa = va === 0 ? 0 : 0b0010;
-    const pd = vd === 0 ? 0 : 0b0001;
-    const pq = vq === 0 ? 0 : 1;
-    const pe = ve === 0 ? 0 : 1;
-    const pz = vz === 0 ? 0 : 1;
-    const pc = vc === 0 ? 0 : 1;
+    const pw = vw <= vs ? 0 : 0b1000;
+    const px = vx <= vs ? 0 : 0b0100;
+    const pa = va <= vs ? 0 : 0b0010;
+    const pd = vd <= vs ? 0 : 0b0001;
+    const pq = vq <= vs ? 0 : 1;
+    const pe = ve <= vs ? 0 : 1;
+    const pz = vz <= vs ? 0 : 1;
+    const pc = vc <= vs ? 0 : 1;
 
     if (pw === 0 && pa === 0 && pq) {
       this.put(ter["CC"]);
@@ -224,37 +234,17 @@ export class TilesSceneBuilder {
       case 0b1110: { this.put(ter["UD"]); break; }
       case 0b1111: { this.put(ter["HS"]); break; }
     }
+    if (vs < this.sceneViewport.level) {
+      for (let i = 0; i < this.sceneViewport.level - vs; i++) {
+        this.put(ter["FS"]);
+      }
+    }
   }
 
-  protected processTerrain(
-    _vq: number,
-    _vw: number,
-    _ve: number,
-    _va: number,
-    vs: number,
-    _vd: number,
-    _vz: number,
-    _vx: number,
-    _vc: number,
-  ): void {
-    this.put(vs);
-  }
-
-  public processLayer(): void {
-    const p = this.activeLayer.paintRect;
-    const y1 = Math.max(p.y1 - 1, 1);
-    const y2 = Math.min(p.y2 + 1, this.availableRowsPerLayerCount - 1);
-    const x1 = Math.max(p.x1 - 1, 1);
-    const x2 = Math.min(p.x2 + 1, this.availableCellsPerRowCount - 1);
-
-    // for (let y = 1; y < this.availableRowsPerLayerCount - 1; y++) {
-    //   for (let x = 1; x < this.availableCellsPerRowCount - 1; x++) {
-    for (let y = y1; y <= y2; y++) {
-      for (let x = x1; x <= x2; x++) {
-        const cellIndex = y * this.availableCellsPerRowCount + x;
-        if (this.depthLayer[cellIndex] <= this.currentTerrainLevel) {
-          this.processTile(x, y);
-        }
+  public processMainLayer(): void {
+    for (let y = 1; y < this.availableRowsPerLayerCount - 1; y++) {
+      for (let x = 1; x < this.availableCellsPerRowCount - 1; x++) {
+        this.processTile(x, y);
       }
     }
   }
@@ -295,26 +285,25 @@ export class TilesSceneBuilder {
     this.performance.start();
     this.clear();
     this.sceneViewport.update();
+    this.mainLayer.fill(0);
 
     const { level } = this.sceneViewport;
     const currentMaxLayerIndex = Math.min(this.availableLayerCount - 1, level);
-    for (let layerIndex = 0; layerIndex <= currentMaxLayerIndex; layerIndex++) {
+    for (let layerIndex = currentMaxLayerIndex; layerIndex >= 0; layerIndex--) {
       this.currentLayerIndex = layerIndex;
       this.currentTerrainLevel = level - layerIndex;
       this.activeLayer = this.terrainLayers[layerIndex];
       this.buildLayer();
-      this.paintedLayerCount++;
-      if (this.paintedDepthCellCount === this.sceneViewport.grid.printable.cellCount) {
-        break;
-      }
     }
 
-    for (let layerIndex = this.paintedLayerCount - 1; layerIndex >= 0; layerIndex--) {
+    for (let layerIndex = currentMaxLayerIndex; layerIndex >= 0; layerIndex--) {
       this.currentLayerIndex = layerIndex;
       this.currentTerrainLevel = level - layerIndex;
       this.activeLayer = this.terrainLayers[layerIndex];
-      this.processLayer();
+      //   this.processLayer();
     }
+
+    this.processMainLayer();
 
     this.tilesBuffer.update(this.visibleTiles * 32);
     this.performance.end();
@@ -324,7 +313,7 @@ export class TilesSceneBuilder {
 export const tilesSceneBuilderService = registerService({
   async provider(resolver: ServiceResolver): Promise<TilesSceneBuilder> {
     return new TilesSceneBuilder(
-      10,
+      6,
       await resolver.resolve(spaceManagerService),
       await resolver.resolve(sceneViewportService),
       await resolver.resolve(viewportService),

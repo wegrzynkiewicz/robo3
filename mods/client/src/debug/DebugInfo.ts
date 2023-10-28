@@ -31,6 +31,14 @@ export class DebugInfo {
 
     const { x, y } = tilesSceneBuilder.sceneViewport.grid.available.size;
 
+    const main = new DebugBufferPreview(
+      tilesSceneBuilder.mainLayer,
+      x,
+      y,
+      new TerrainDebugBufferPreviewColorizer(),
+    );
+    this.previews.push(main);
+
     const preview = new DebugBufferPreview(
       tilesSceneBuilder.depthLayer,
       x,
