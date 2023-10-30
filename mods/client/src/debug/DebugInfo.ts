@@ -47,15 +47,6 @@ export class DebugInfo {
     );
     this.previews.push(preview);
 
-    for (let z = 0; z < tilesSceneBuilder.terrainLayers.length; z++) {
-      const preview = new DebugBufferPreview(
-        tilesSceneBuilder.terrainLayers[z].typedArray,
-        x,
-        y,
-        new TerrainDebugBufferPreviewColorizer(),
-      );
-      this.previews.push(preview);
-    }
     right.append(...this.previews.map(e => e.canvas));
   }
 

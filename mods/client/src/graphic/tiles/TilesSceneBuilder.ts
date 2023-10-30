@@ -30,34 +30,13 @@ const ter = {
   "CC": 82,
 };
 
-const TERRAIN_CELL_BYTE_LENGTH = 2;
-const EMPTY_CELL_VALUE = 0x00;
-
-export class SceneTerrainLayer {
-  public paintRect = cornerRect(0, 0, 0, 0);
-  public constructor(
-    public readonly typedArray: Uint16Array,
-  ) {
-  }
-
-  public clear(): void {
-    this.paintRect.x1 = 255;
-    this.paintRect.y1 = 255;
-    this.paintRect.x2 = 0;
-    this.paintRect.y2 = 0;
-  }
-}
-
 export class TilesSceneBuilder {
   public visibleTiles = 0;
-  protected activeLayer: SceneTerrainLayer;
   protected activeChunk!: Chunk;
   public readonly visibleChunks: Chunk[] = [];
   public readonly performance = createPerformanceCounter("scene-builder", 60);
-  protected paintedLayerCount = 0;
   protected paintedDepthCellCount = 0;
   depthLayer: Uint16Array;
-  terrainLayers: SceneTerrainLayer[] = [];
   availableCellsPerRowCount: number;
   currentTerrainLevel = 0;
   availableRowsPerLayerCount: number;
@@ -75,21 +54,14 @@ export class TilesSceneBuilder {
     public readonly viewport: Viewport,
     public readonly tilesBuffer: DynamicDrawBuffer,
   ) {
-    const { cellCount } = this.sceneViewport.grid.available;
-    const totalByteLength = cellCount * availableLayerCount * TERRAIN_CELL_BYTE_LENGTH
-    this.depthLayer = new Uint16Array(cellCount);
-    this.mainLayer = new Uint16Array(cellCount);
+    const { cellCount, size } = this.sceneViewport.grid.available;
+    const totalByteLength = cellCount * 2 * 2;
     const buffer = new ArrayBuffer(totalByteLength);
     this.view = new Uint16Array(buffer);
-    for (let layerIndex = 0; layerIndex < availableLayerCount; layerIndex++) {
-      const byteOffset = cellCount * layerIndex * TERRAIN_CELL_BYTE_LENGTH
-      const layerTypedArray = new Uint16Array(buffer, byteOffset, cellCount);
-      const layer = new SceneTerrainLayer(layerTypedArray);
-      this.terrainLayers.push(layer);
-    }
-    this.activeLayer = this.terrainLayers[0];
-    this.availableRowsPerLayerCount = this.sceneViewport.grid.available.size.y;
-    this.availableCellsPerRowCount = this.sceneViewport.grid.available.size.x;
+    this.depthLayer = new Uint16Array(cellCount);
+    this.mainLayer = new Uint16Array(cellCount);
+    this.availableRowsPerLayerCount = size.y;
+    this.availableCellsPerRowCount = size.x;
   }
 
   public buildChunk() {
@@ -145,14 +117,9 @@ export class TilesSceneBuilder {
     const srcIndex = srcY * 32 + srcX;
     const goTypeId = this.activeChunk.segment!.grid.view[srcIndex];
     if (goTypeId !== 0) {
-      this.activeLayer.paintRect.x1 = Math.min(dstX, this.activeLayer.paintRect.x1);
-      this.activeLayer.paintRect.y1 = Math.min(dstY, this.activeLayer.paintRect.y1);
-      this.activeLayer.paintRect.x2 = Math.max(dstX, this.activeLayer.paintRect.x2);
-      this.activeLayer.paintRect.y2 = Math.max(dstY, this.activeLayer.paintRect.y2);
       this.depthLayer[dstIndex] = this.currentTerrainLevel;
       this.paintedDepthCellCount++;
     }
-    this.activeLayer.typedArray[dstIndex] = goTypeId;
   }
 
   protected processTile(x: number, y: number): void {
@@ -241,7 +208,7 @@ export class TilesSceneBuilder {
     }
   }
 
-  public processMainLayer(): void {
+  public processLayer(): void {
     for (let y = 1; y < this.availableRowsPerLayerCount - 1; y++) {
       for (let x = 1; x < this.availableCellsPerRowCount - 1; x++) {
         this.processTile(x, y);
@@ -271,14 +238,9 @@ export class TilesSceneBuilder {
   public clear() {
     this.index = 0;
     this.visibleTiles = 0;
-    this.paintedLayerCount = 0;
     this.processedTile = 0;
     this.visibleChunks.length = 0;
-    this.depthLayer.fill(EMPTY_CELL_VALUE);
     this.view.fill(0);
-    for (const layer of this.terrainLayers) {
-      layer.clear();
-    }
   }
 
   public build() {
@@ -292,18 +254,9 @@ export class TilesSceneBuilder {
     for (let layerIndex = currentMaxLayerIndex; layerIndex >= 0; layerIndex--) {
       this.currentLayerIndex = layerIndex;
       this.currentTerrainLevel = level - layerIndex;
-      this.activeLayer = this.terrainLayers[layerIndex];
       this.buildLayer();
     }
-
-    for (let layerIndex = currentMaxLayerIndex; layerIndex >= 0; layerIndex--) {
-      this.currentLayerIndex = layerIndex;
-      this.currentTerrainLevel = level - layerIndex;
-      this.activeLayer = this.terrainLayers[layerIndex];
-      //   this.processLayer();
-    }
-
-    this.processMainLayer();
+    this.processLayer();
 
     this.tilesBuffer.update(this.visibleTiles * 32);
     this.performance.end();
