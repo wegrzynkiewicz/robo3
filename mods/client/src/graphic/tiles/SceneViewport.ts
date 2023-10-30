@@ -39,7 +39,7 @@ export class SceneViewport {
     public readonly viewport: Viewport,
   ) { }
 
-  public update() {
+  public loop() {
     const { chunkRect, grid: { printable }, tilesRect, viewport } = this;
     tilesRect.x1 = viewport.tilesRect.x1 - 1;
     tilesRect.y1 = viewport.tilesRect.y1 - 1;

@@ -69,7 +69,7 @@ export class DebugInfo {
     }
   }
 
-  public update() {
+  public loop() {
     if (this.isEnabled === false) {
       return;
     }

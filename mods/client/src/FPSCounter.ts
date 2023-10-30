@@ -6,7 +6,7 @@ export class FPSCounter {
   protected then = 0;
   protected timeAccumulator = 0;
 
-  public update(now: DOMHighResTimeStamp) {
+  public loop(now: DOMHighResTimeStamp) {
     const deltaTime = now - this.then;
     this.timeAccumulator += deltaTime;
     if (this.frameCount === 60) {

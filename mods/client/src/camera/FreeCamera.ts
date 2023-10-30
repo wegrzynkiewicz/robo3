@@ -34,7 +34,7 @@ export class FreeCamera {
     public readonly keyboard: Keyboard,
   ) {}
 
-  public update() {
+  public loop() {
     for (const holder of holders) {
       if (this.isHold(holder.kaDefinition)) {
         this.x += this.speed * holder.vector.x;

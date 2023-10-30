@@ -2,7 +2,7 @@ import { registerService, ServiceResolver } from "../../../core/dependency/servi
 import { freeCameraService } from "./FreeCamera.ts";
 
 export interface Camera {
-  update(): void;
+  loop(): void;
 }
 
 export class CameraManager {
@@ -14,8 +14,8 @@ export class CameraManager {
     this.currentCamera = camera;
   }
 
-  public update(): void {
-    this.currentCamera.update();
+  public loop(): void {
+    this.currentCamera.loop();
   }
 }
 

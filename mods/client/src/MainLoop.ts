@@ -5,8 +5,8 @@ import { debugInfoService } from "./debug/DebugInfo.ts";
 import { sceneViewportService } from "./graphic/tiles/SceneViewport.ts";
 import { tilesRendererService } from "./graphic/tiles/TilesRenderer.ts";
 
-export interface Updatable {
-  update(now: DOMHighResTimeStamp): void;
+export interface Looper {
+  loop(now: DOMHighResTimeStamp): void;
 }
 
 export class MainLoop {
@@ -15,7 +15,7 @@ export class MainLoop {
   protected isRunning = false;
 
   public constructor(
-    public readonly updaters: Updatable[],
+    public readonly loopers: Looper[],
   ) {
     this.boundLoop = this.loop.bind(this);
   }
@@ -31,8 +31,8 @@ export class MainLoop {
   }
 
   public loop(now: DOMHighResTimeStamp) {
-    for (const updatable of this.updaters) {
-      updatable.update(now);
+    for (const looper of this.loopers) {
+      looper.loop(now);
     }
     if (this.isRunning === true) {
       this.animationFrameId = requestAnimationFrame(this.boundLoop);

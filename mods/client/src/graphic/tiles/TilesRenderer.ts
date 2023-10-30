@@ -7,7 +7,7 @@ import { TilesSceneBuilder, tilesSceneBuilderService } from "./TilesSceneBuilder
 const { COLOR_BUFFER_BIT, TRIANGLES } = WebGL2RenderingContext;
 
 export interface Renderer {
-  update(): void;
+  loop(): void;
 }
 
 export const SINGLE_TILE_VERTICES_COUNT = 6;
@@ -20,7 +20,7 @@ export class TilesRenderer implements Renderer {
     public readonly tilesSceneBuilder: TilesSceneBuilder,
   ) {}
 
-  public update(): void {
+  public loop(): void {
     this.gl.clear(COLOR_BUFFER_BIT);
     this.tilesSceneBuilder.build();
     this.tilesProgram.bind();
