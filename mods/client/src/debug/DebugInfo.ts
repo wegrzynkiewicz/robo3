@@ -1,6 +1,7 @@
 import { assertNonNull } from "../../../common/asserts.ts";
 import { formatBytes } from "../../../common/useful.ts";
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { FPSCounter, fpsCounterService } from "../FPSCounter.ts";
 import { Display, displayService } from "../graphic/Display.ts";
 import { DynamicDrawBuffer } from "../graphic/DynamicDrawBuffer.ts";
 import { Viewport, viewportService } from "../graphic/Viewport.ts";
@@ -18,9 +19,10 @@ export class DebugInfo {
 
   public constructor(
     public readonly display: Display,
-    public readonly viewport: Viewport,
-    public readonly tilesSceneBuilder: TilesSceneBuilder,
+    public readonly fpsCounter: FPSCounter,
     public readonly tilesBuffer: DynamicDrawBuffer,
+    public readonly tilesSceneBuilder: TilesSceneBuilder,
+    public readonly viewport: Viewport,
   ) {
     const left = document.getElementById("debug-info-left");
     const right = document.getElementById("debug-info-right");
@@ -32,7 +34,7 @@ export class DebugInfo {
     const { x, y } = tilesSceneBuilder.sceneViewport.grid.available.size;
 
     const main = new DebugBufferPreview(
-      tilesSceneBuilder.mainLayer,
+      tilesSceneBuilder.tilesLayer,
       x,
       y,
       new TerrainDebugBufferPreviewColorizer(),
@@ -67,14 +69,14 @@ export class DebugInfo {
     }
   }
 
-  public update(fps: number) {
+  public update() {
     if (this.isEnabled === false) {
       return;
     }
     const out = [];
     const { client } = this.display;
     out.push(`Display`);
-    out.push(`  FPS: ${fps.toFixed(2)}`);
+    out.push(`  FPS: ${this.fpsCounter.fps.toFixed(2)}`);
     out.push(`  Size: ${client.x} ${client.y}`);
     out.push(`  Scale: ${this.display.getScale()}`);
 
@@ -104,7 +106,9 @@ export class DebugInfo {
           },
           tilesRect,
         },
-        visibleTiles
+        tiles: {
+          visibleTiles,
+        },
       } = this.tilesSceneBuilder;
       out.push(`  AvgBuildTime: ${(performance.avgTime * 1000).toFixed(0)} µs`);
       out.push(`  Grid.available: ${available.size.x} * ${available.size.y} = ${available.cellCount}`);
@@ -142,9 +146,10 @@ export const debugInfoService = registerService({
   async provider(resolver: ServiceResolver): Promise<DebugInfo> {
     return new DebugInfo(
       await resolver.resolve(displayService),
-      await resolver.resolve(viewportService),
-      await resolver.resolve(tilesSceneBuilderService),
+      await resolver.resolve(fpsCounterService),
       await resolver.resolve(tilesBufferService),
+      await resolver.resolve(tilesSceneBuilderService),
+      await resolver.resolve(viewportService),
     );
   },
 });

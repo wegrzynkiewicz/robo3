@@ -1,20 +1,18 @@
 import { registerService, ServiceResolver } from "../../core/dependency/service.ts";
+import { fpsCounterService } from "./FPSCounter.ts";
 import { cameraManagerService } from "./camera/CameraManager.ts";
 import { debugInfoService } from "./debug/DebugInfo.ts";
+import { sceneViewportService } from "./graphic/tiles/SceneViewport.ts";
 import { tilesRendererService } from "./graphic/tiles/TilesRenderer.ts";
 
 export interface Updatable {
-  update(fps: number): void;
+  update(now: DOMHighResTimeStamp): void;
 }
 
 export class MainLoop {
   protected animationFrameId = 0;
   protected readonly boundLoop: (now: DOMHighResTimeStamp) => void;
-  public fps = 0;
-  protected frameCount = 0;
   protected isRunning = false;
-  protected then = 0;
-  protected timeAccumulator = 0;
 
   public constructor(
     public readonly updaters: Updatable[],
@@ -33,20 +31,8 @@ export class MainLoop {
   }
 
   public loop(now: DOMHighResTimeStamp) {
-    const deltaTime = now - this.then;
-    if (deltaTime > 0) {
-      this.timeAccumulator += deltaTime;
-      if (this.frameCount === 60) {
-        const averageFrameTime = this.timeAccumulator / this.frameCount;
-        this.fps = 1000 / averageFrameTime;
-        this.frameCount = 0;
-        this.timeAccumulator = 0;
-      }
-      this.then = now;
-      this.frameCount++;
-      for (const updatable of this.updaters) {
-        updatable.update(this.fps);
-      }
+    for (const updatable of this.updaters) {
+      updatable.update(now);
     }
     if (this.isRunning === true) {
       this.animationFrameId = requestAnimationFrame(this.boundLoop);
@@ -57,7 +43,9 @@ export class MainLoop {
 export const mainLoopService = registerService({
   async provider(resolver: ServiceResolver): Promise<MainLoop> {
     return new MainLoop([
+      await resolver.resolve(fpsCounterService),
       await resolver.resolve(cameraManagerService),
+      await resolver.resolve(sceneViewportService),
       await resolver.resolve(tilesRendererService),
       await resolver.resolve(debugInfoService),
     ]);

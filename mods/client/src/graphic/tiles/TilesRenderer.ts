@@ -25,7 +25,7 @@ export class TilesRenderer implements Renderer {
     this.tilesSceneBuilder.build();
     this.tilesProgram.bind();
     this.primaryUBO.update();
-    this.gl.drawArraysInstanced(TRIANGLES, 0, SINGLE_TILE_VERTICES_COUNT, this.tilesSceneBuilder.visibleTiles);
+    this.gl.drawArraysInstanced(TRIANGLES, 0, SINGLE_TILE_VERTICES_COUNT, this.tilesSceneBuilder.tiles.visibleTiles);
   }
 }
 
