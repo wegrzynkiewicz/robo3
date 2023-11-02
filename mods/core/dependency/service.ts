@@ -42,8 +42,8 @@ export class ServiceResolver {
       if (singleton) {
         singletons.set(service, instance);
       }
-      this.promises.set(service, promise);
       this.instances.set(service, instance);
+      this.promises.delete(service);
       return promise;
     } catch (error) {
       throw new Breaker("error-when-resolving-service", { service, error });
