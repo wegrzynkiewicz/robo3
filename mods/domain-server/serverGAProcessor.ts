@@ -1,6 +1,6 @@
 import { GAProcessor, UniversalGAProcessor } from "../core/action/processor.ts";
 import { gaSenderService } from "../core/action/sender.ts";
-import { registerService, ServiceResolver } from "../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../dependency/service.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../domain/loginGA.ts";
 import { loginGARequestHandlerService } from "./loginGAHandler.ts";
 

@@ -1,5 +1,5 @@
 import { Breaker } from "../../common/asserts.ts";
-import { registerService } from "../dependency/service.ts";
+import { registerService } from "../../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
 import { AnyGADefinition, GADefinition } from "./foundation.ts";
 import { GASender } from "./sender.ts";

@@ -1,5 +1,5 @@
 import { MapList } from "../../../common/useful.ts";
-import { registerService } from "../../../core/dependency/service.ts";
+import { registerService } from "../../../dependency/service.ts";
 import { AnyUADefinition, UADefinition } from "../ua/foundation.ts";
 import { KeyShortCut } from "./KeyShortCut.ts";
 

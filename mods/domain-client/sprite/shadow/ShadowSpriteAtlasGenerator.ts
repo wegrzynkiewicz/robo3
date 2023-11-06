@@ -1,5 +1,5 @@
 import { UnifiedCanvasContext } from "../../../canvas/UnifiedCanvasContext.ts";
-import { registerService } from "../../../core/dependency/service.ts";
+import { registerService } from "../../../dependency/service.ts";
 
 type ShadowSampler = (x: number, y: number) => number;
 

@@ -1,6 +1,6 @@
 import { isGreaterThenZero, isObject } from "../../common/asserts.ts";
 import { Deferred, deferred } from "../../deps.ts";
-import { registerService, ServiceResolver } from "../dependency/service.ts";
+import { registerService, ServiceResolver } from "../../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
 import { GAProcessor } from "./processor.ts";

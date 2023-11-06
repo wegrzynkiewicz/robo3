@@ -1,4 +1,4 @@
-import { registerService } from "../../../core/dependency/service.ts";
+import { registerService } from "../../../dependency/service.ts";
 import { AnyUADefinition } from "../ua/foundation.ts";
 import { debugActions } from "./actions.ts";
 

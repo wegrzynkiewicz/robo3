@@ -1,5 +1,5 @@
 import { assertNonNull, Breaker } from "../../../common/asserts.ts";
-import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 
 const { TEXTURE0, TEXTURE_2D, TEXTURE_2D_ARRAY } = WebGL2RenderingContext;
 

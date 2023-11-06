@@ -1,5 +1,5 @@
 import { createPerformanceCounter } from "../../../../common/PerformanceCounter.ts";
-import { registerService, ServiceResolver } from "../../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
 import { SpaceManager, spaceManagerService } from "../../../../core/space/SpaceManager.ts";
 import { Chunk } from "../../../../domain-client/chunk/chunkManager.ts";
 import { SceneViewport, sceneViewportService } from "./SceneViewport.ts";

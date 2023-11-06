@@ -1,5 +1,5 @@
 import { Breaker } from "../../../../common/asserts.ts";
-import { registerService, ServiceResolver } from "../../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
 import { dim3D } from "../../../../math/Dim3D.ts";
 import { webGLService } from "../WebGL.ts";
 import { Texture2DArray } from "../textures/Texture2DArray.ts";

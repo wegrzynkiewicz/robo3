@@ -1,5 +1,5 @@
 import { GAHandler } from "../../core/action/processor.ts";
-import { registerService, ServiceResolver } from "../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../dependency/service.ts";
 import { spaceManagerService } from "../../core/space/SpaceManager.ts";
 import { ChunkSegmentUpdateGA } from "../../domain/chunk/chunkSegmentUpdateGA.ts";
 

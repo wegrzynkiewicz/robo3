@@ -7,7 +7,7 @@ import { ChunkId } from "../core/chunk/chunkId.ts";
 import { ChunkDTO } from "../core/chunk/chunk.ts";
 import { serverGAProcessor } from "../domain-server/serverGAProcessor.ts";
 import { gaSenderWebSocketService } from "../core/action/sender.ts";
-import { ServiceResolver } from "../core/dependency/service.ts";
+import { ServiceResolver } from "../dependency/service.ts";
 import { gaCommunicator } from "../core/action/communication.ts";
 import { gaProcessorService } from "../core/action/processor.ts";
 import { chunkSegmentUpdateGADef } from "../domain/chunk/chunkSegmentUpdateGA.ts";

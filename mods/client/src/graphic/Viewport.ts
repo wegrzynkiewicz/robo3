@@ -1,4 +1,4 @@
-import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 import { SPRITES_TEXTURE_SIZE } from "../../../core/vars.ts";
 import { cornerRect } from "../../../math/CornerRectangle.ts";
 import { point } from "../../../math/Point.ts";

@@ -1,6 +1,6 @@
 import { Breaker } from "../../common/asserts.ts";
 import { Logger, logger } from "../../common/logger.ts";
-import { registerService, ServiceResolver } from "../dependency/service.ts";
+import { registerService, ServiceResolver } from "../../dependency/service.ts";
 import { GACodec, gaCodecService } from "./codec.ts";
 import { GAProcessor, gaProcessorService } from "./processor.ts";
 import { gaRequestorService } from "./requestor.ts";

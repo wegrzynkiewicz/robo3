@@ -1,4 +1,4 @@
-import { registerService,ServiceResolver } from "../../../../core/dependency/service.ts";
+import { registerService,ServiceResolver } from "../../../../dependency/service.ts";
 import { index2coords } from "../../../../core/numbers.ts";
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
 import { SceneViewport,sceneViewportService } from "./SceneViewport.ts";

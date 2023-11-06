@@ -1,4 +1,4 @@
-import { registerService } from "../../../core/dependency/service.ts";
+import { registerService } from "../../../dependency/service.ts";
 import { KeyState } from "./KeyShortCut.ts";
 
 export class Keyboard {

@@ -1,4 +1,4 @@
-import { registerService, ServiceResolver } from "../../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
 import { webGLService } from "../WebGL.ts";
 

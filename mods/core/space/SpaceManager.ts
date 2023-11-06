@@ -1,4 +1,4 @@
-import { registerService } from "../dependency/service.ts";
+import { registerService } from "../../dependency/service.ts";
 import { Space } from "./Space.ts";
 
 export class SpaceManager {

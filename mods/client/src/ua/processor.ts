@@ -1,5 +1,5 @@
 import { Breaker } from "../../../common/asserts.ts";
-import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 import { debugDisplayScaleUA, debugDisplayScaleUAHandlerService } from "../debug/debugDisplayScaleUA.ts";
 import { debugOpenInfoUA, debugOpenInfoUAHandlerService } from "../debug/debugOpenInfoUA.ts";
 import { debugSetViewportDepthUA, debugSetViewportDepthUAHandlerService } from "../debug/debugSetViewportDepthUA.ts";

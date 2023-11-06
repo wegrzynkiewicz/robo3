@@ -1,5 +1,5 @@
-import { Breaker } from "../../common/asserts.ts";
-import { WithOptional } from "../../common/useful.ts";
+import { Breaker } from "../common/asserts.ts";
+import { WithOptional } from "../common/useful.ts";
 
 export type Service<TInstance> = {
   provider(resolver: ServiceResolver): Promise<TInstance>;

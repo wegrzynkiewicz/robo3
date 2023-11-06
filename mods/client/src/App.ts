@@ -1,4 +1,4 @@
-import { registerService, ServiceResolver } from "../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../dependency/service.ts";
 import { spaceManagerService } from "../../core/space/SpaceManager.ts";
 import { debugInfoService } from "./debug/DebugInfo.ts";
 import { keyboardService } from "./keyboard/Keyboard.ts";

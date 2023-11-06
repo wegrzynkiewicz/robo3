@@ -1,4 +1,4 @@
-import { registerService, ServiceResolver } from "../../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
 import { PrimaryUBO, primaryUBOService } from "../PrimaryUBO.ts";
 import { webGLService } from "../WebGL.ts";
 import { TilesProgram, tilesProgramService } from "./TilesProgram.ts";

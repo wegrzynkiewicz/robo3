@@ -1,4 +1,4 @@
-import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
 import { registerUADefinition } from "../ua/foundation.ts";

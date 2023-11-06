@@ -1,4 +1,4 @@
-import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 import { SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y, TILE_SIZE } from "../../../core/vars.ts";
 import { point } from "../../../math/Point.ts";
 import { Viewport, viewportService } from "./Viewport.ts";

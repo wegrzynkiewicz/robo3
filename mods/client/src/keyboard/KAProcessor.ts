@@ -1,5 +1,5 @@
 import { Breaker } from "../../../common/asserts.ts";
-import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 import { UAProcessor, uaProcessorService } from "../ua/processor.ts";
 import { KADefinition } from "./foundation.ts";
 

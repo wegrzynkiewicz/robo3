@@ -1,6 +1,6 @@
 import { ChunkId } from "../core/chunk/chunkId.ts";
 import { ChunkSegment } from "../core/chunk/chunkSegment.ts";
-import { ServiceResolver } from "../core/dependency/service.ts";
+import { ServiceResolver } from "../dependency/service.ts";
 import { GONormChunkPosition } from "../core/game-object/position.ts";
 import { dbClient } from "../server/db.ts";
 import { ChunkDoc } from "../storage/chunk.ts";

@@ -1,4 +1,4 @@
-import { registerService, ServiceResolver } from "../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../dependency/service.ts";
 import { fpsCounterService } from "./FPSCounter.ts";
 import { cameraManagerService } from "./camera/CameraManager.ts";
 import { debugInfoService } from "./debug/DebugInfo.ts";

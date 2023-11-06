@@ -4,7 +4,7 @@ import { assertNonNull } from "../common/asserts.ts";
 import { processMap } from "../tiled-map/types.ts";
 import { cgotdRegistry, sgotdRegistry } from "../core/game-object/defining.ts";
 import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../core/game-object/resolving.ts";
-import { ServiceResolver } from "../core/dependency/service.ts";
+import { ServiceResolver } from "../dependency/service.ts";
 import { displayService } from "./src/graphic/Display.ts";
 import { canvasService } from "./src/graphic/WebGL.ts";
 import { mainLoopService } from "./src/MainLoop.ts";

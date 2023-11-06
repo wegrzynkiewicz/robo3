@@ -1,5 +1,5 @@
 import { Breaker } from "../common/asserts.ts";
-import { registerService } from "./dependency/service.ts";
+import { registerService } from "../dependency/service.ts";
 
 export interface Identifier {
   key: number;

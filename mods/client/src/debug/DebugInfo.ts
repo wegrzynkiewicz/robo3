@@ -1,6 +1,6 @@
 import { assertNonNull } from "../../../common/asserts.ts";
 import { formatBytes } from "../../../common/useful.ts";
-import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 import { FPSCounter, fpsCounterService } from "../FPSCounter.ts";
 import { Display, displayService } from "../graphic/Display.ts";
 import { DynamicDrawBuffer } from "../graphic/DynamicDrawBuffer.ts";

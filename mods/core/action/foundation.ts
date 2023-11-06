@@ -1,4 +1,4 @@
-import { registerService } from "../dependency/service.ts";
+import { registerService } from "../../dependency/service.ts";
 import { registerIdentifier } from "../identifier.ts";
 import { GAEncodingDefinition } from "./codec.ts";
 

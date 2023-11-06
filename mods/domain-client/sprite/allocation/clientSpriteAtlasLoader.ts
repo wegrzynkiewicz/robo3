@@ -1,4 +1,4 @@
-import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 import { ExternalSpriteAtlasProvider } from "../../../sprite-atlas/ExternalSpriteAtlasProvider.ts";
 import { SpriteAtlasLoader } from "../../../sprite-atlas/SpriteAtlasLoader.ts";
 import { SpriteAtlasSource } from "../../../sprite-atlas/atlas.ts";

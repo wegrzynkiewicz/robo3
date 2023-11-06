@@ -1,4 +1,4 @@
-import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 import { KAProcessor, kaProcessorService } from "./KAProcessor.ts";
 import { Keyboard, keyboardService } from "./Keyboard.ts";
 import { AnyKADefinition } from "./foundation.ts";
