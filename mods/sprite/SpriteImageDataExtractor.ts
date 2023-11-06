@@ -1,4 +1,4 @@
-import { UnifiedCanvasContext, UnifiedCanvasContextBase } from "../canvas/UnifiedCanvasContext.ts";
+import { UnifiedCanvasContext, createUnifiedCanvas } from "../canvas/mod.ts";
 import { dimRect } from "../math/DimensionalRectangle.ts";
 import { SpriteAtlasImage } from "../sprite-atlas/atlas.ts";
 import { SpriteImage, SpriteOrigin, SpriteSource } from "./sprite.ts";
@@ -10,12 +10,12 @@ const terrains = [
 ];
 
 export class SpriteImageExtractor {
-  public readonly context: UnifiedCanvasContextBase;
+  public readonly context: UnifiedCanvasContext;
   public constructor(
     public readonly atlas: SpriteAtlasImage,
   ) {
     const { image, image: { width, height } } = atlas;
-    this.context = new UnifiedCanvasContext(width, height);
+    this.context = createUnifiedCanvas(width, height);
     this.context.putImageData(image, 0, 0);
   }
 
