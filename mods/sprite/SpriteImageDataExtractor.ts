@@ -1,6 +1,6 @@
-import { UnifiedCanvasContext, UnifiedCanvasContextBase } from "../../canvas/UnifiedCanvasContext.ts";
-import { dimRect } from "../../math/DimensionalRectangle.ts";
-import { SpriteAtlasImage } from "./atlas.ts";
+import { UnifiedCanvasContext, UnifiedCanvasContextBase } from "../canvas/UnifiedCanvasContext.ts";
+import { dimRect } from "../math/DimensionalRectangle.ts";
+import { SpriteAtlasImage } from "../sprite-atlas/atlas.ts";
 import { SpriteImage, SpriteOrigin, SpriteSource } from "./sprite.ts";
 
 const terrains = [

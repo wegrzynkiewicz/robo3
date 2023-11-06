@@ -1,5 +1,5 @@
-import { UnifiedCanvasContext } from "../../canvas/UnifiedCanvasContext.ts";
-import { Breaker } from "../../common/asserts.ts";
+import { UnifiedCanvasContext } from "../canvas/UnifiedCanvasContext.ts";
+import { Breaker } from "../common/asserts.ts";
 import { SpriteAtlasImage, SpriteAtlasProvider, SpriteAtlasSource } from "./atlas.ts";
 
 export class ExternalSpriteAtlasProvider implements SpriteAtlasProvider {

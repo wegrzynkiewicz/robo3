@@ -18,7 +18,7 @@ import { phaseManagerService } from "./src/phase/PhaseManager.ts";
 import { appService } from "./src/App.ts";
 import { tilesTexture2DArrayService } from "./src/graphic/tiles/TilesTexture2DArray.ts";
 import { clientSpriteAtlasLoaderService } from "../domain-client/sprite/allocation/clientSpriteAtlasLoader.ts";
-import { SpriteImageExtractor } from "../core/sprite/SpriteImageDataExtractor.ts";
+import { SpriteImageExtractor } from "../sprite/SpriteImageDataExtractor.ts";
 import { logger } from "../common/logger.ts";
 import { gaCommunicator } from "../core/action/communication.ts";
 import { gaProcessorService } from "../core/action/processor.ts";

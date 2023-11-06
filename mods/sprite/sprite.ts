@@ -1,5 +1,5 @@
-import { DimensionalRectangle } from "../../math/DimensionalRectangle.ts";
-import { SpriteAtlasSource } from "./atlas.ts";
+import { DimensionalRectangle } from "../math/DimensionalRectangle.ts";
+import { SpriteAtlasSource } from "../sprite-atlas/atlas.ts";
 
 export interface StaticSpriteAllocation {
   type: "static";

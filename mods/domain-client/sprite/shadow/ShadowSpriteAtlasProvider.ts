@@ -1,5 +1,5 @@
 import { registerService, ServiceResolver } from "../../../core/dependency/service.ts";
-import { SpriteAtlasImage, SpriteAtlasProvider, SpriteAtlasSource } from "../../../core/sprite/atlas.ts";
+import { SpriteAtlasImage, SpriteAtlasProvider, SpriteAtlasSource } from "../../../sprite-atlas/atlas.ts";
 import { dim2D } from "../../../math/Dim2D.ts";
 import { ShadowSpriteAtlasGenerator, shadowSpriteAtlasGeneratorService } from "./ShadowSpriteAtlasGenerator.ts";
 

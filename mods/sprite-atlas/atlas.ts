@@ -1,6 +1,6 @@
-import { Dim2D } from "../../math/Dim2D.ts";
-import { DimensionalRectangle } from "../../math/DimensionalRectangle.ts";
-import { SpriteAllocation } from "./sprite.ts";
+import { Dim2D } from "../math/Dim2D.ts";
+import { DimensionalRectangle } from "../math/DimensionalRectangle.ts";
+import { SpriteAllocation } from "../sprite/sprite.ts";
 
 export interface ExternalSpriteAtlasOrigin {
   type: "external";
