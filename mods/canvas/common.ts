@@ -1,6 +1,6 @@
 import { Dim2D, dim2D } from "../math/Dim2D.ts";
 
-export interface UnifiedCanvasContextBase {
+export interface UnifiedCanvasContext {
   dim: Dim2D,
   dispose(): void;
   drawImage(image: CanvasImageSource, x: number, y: number): void;
@@ -12,12 +12,11 @@ export interface UnifiedCanvasContextBase {
 }
 
 export interface UnifiedCanvasContextConstructor {
-  new(w: number, h: number): UnifiedCanvasContextBase;
-  createFromImageURL(url: URL): Promise<UnifiedCanvasContextBase>
+  new(w: number, h: number): UnifiedCanvasContext;
+  createFromImageURL(url: URL): Promise<UnifiedCanvasContext>
 }
 
 export abstract class AbstractUnifiedCanvasContext {
-  //   abstract readonly context: CanvasRenderingContext2D;
   abstract readonly context: any;
   public readonly dim: Dim2D;
 
@@ -46,7 +45,7 @@ function fail() {
 }
 fail.createFromImageURL = fail;
 
-export let UnifiedCanvasContext: UnifiedCanvasContextConstructor = fail as any;
-export function initialize(em: UnifiedCanvasContextConstructor) {
-  UnifiedCanvasContext = em;
+export let unifiedCanvasContextConstructor: UnifiedCanvasContextConstructor = fail as any;
+export function initialize(constructor: UnifiedCanvasContextConstructor) {
+  unifiedCanvasContextConstructor = constructor;
 }

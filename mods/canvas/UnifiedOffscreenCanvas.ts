@@ -1,8 +1,7 @@
-import { assertObject } from "../common/asserts.ts";
 import { loadImage } from "../common/useful.ts";
-import { AbstractUnifiedCanvasContext, UnifiedCanvasContextBase, initialize } from "./UnifiedCanvasContext.ts";
+import { AbstractUnifiedCanvasContext, UnifiedCanvasContext, initialize } from "./common.ts";
 
-export class UnifiedOffscreenCanvasContext extends AbstractUnifiedCanvasContext implements UnifiedCanvasContextBase {
+export class UnifiedOffscreenCanvasContext extends AbstractUnifiedCanvasContext implements UnifiedCanvasContext {
   public readonly canvas: OffscreenCanvas;
   public readonly context: OffscreenCanvasRenderingContext2D;
 
@@ -10,7 +9,9 @@ export class UnifiedOffscreenCanvasContext extends AbstractUnifiedCanvasContext 
     super(width, height);
     this.canvas = new OffscreenCanvas(width, height);
     const context = this.canvas.getContext("2d", { alpha: true, willReadFrequently: true });
-    assertObject(context);
+    if (typeof context !== "object" || context === null) {
+      throw new Error('cannot-get-2d-context-from-canvas');
+    }
     this.context = context;
   }
 
