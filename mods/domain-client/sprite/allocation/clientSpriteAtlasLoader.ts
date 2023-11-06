@@ -17,11 +17,11 @@ export const clientSpriteAtlasLoaderService = registerService({
       },
       origin: {
         type: "external",
-        url: `${window.location.origin}/assets/tileset.png`, // TODO: hardcode
+        url: `${window.location.origin}/assets/3.png`, // TODO: hardcode
       },
       spriteAtlasId: 'build-in',
     }
-    // loader.addProvider(new ExternalSpriteAtlasProvider(build));
+    loader.addProvider(new ExternalSpriteAtlasProvider(build));
     loader.addProvider(await resolver.resolve(shadowSpriteAtlasProviderService));
     return loader;
   },

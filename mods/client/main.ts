@@ -1,7 +1,6 @@
 import "../canvas/UnifiedOffscreenCanvas.ts";
 import "../core/bootstrap.ts";
 import { assertNonNull } from "../common/asserts.ts";
-import { processMap } from "../tiled-map/types.ts";
 import { cgotdRegistry, sgotdRegistry } from "../core/game-object/defining.ts";
 import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../core/game-object/resolving.ts";
 import { ServiceResolver } from "../dependency/service.ts";
@@ -20,7 +19,9 @@ import { gaCommunicator } from "../core/action/communication.ts";
 import { gaProcessorService } from "../core/action/processor.ts";
 import { gaSenderWebSocketService } from "../core/action/sender.ts";
 import { clientGAProcessor } from "../domain-client/clientGAProcessor.ts";
-import { loginGARequestDef,loginGAResponseDef } from "../domain/loginGA.ts";
+import { loginGARequestDef, loginGAResponseDef } from "../domain/loginGA.ts";
+import { SpriteAllocator } from "../sprite/SpriteAllocator.ts";
+import { SpriteImage } from "../sprite/sprite.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -66,17 +67,21 @@ async function start() {
 
   debugInfo.enable();
 
-  const { dataSource, ctx } = await processMap();
-  let x = 0;
 
-  for (const i of spriteAtlasImages) {
-    const spriteImageExtractor = new SpriteImageExtractor(i);
-    for (const sprite of spriteImageExtractor.extract(i)) {
-      ctx.tilesTextureAllocator.insert(sprite.image);
-      // ctx.tilesTextureAllocator.contexts.map((c) => document.body.appendChild(c.canvas));
+  function* unpack(): Generator<SpriteImage, void, unknown> {
+    for (const i of spriteAtlasImages) {
+      const spriteImageExtractor = new SpriteImageExtractor(i);
+      yield* spriteImageExtractor.extract(i);
     }
   }
-  for (const context of dataSource) {
+
+  let x = 0;
+  const spriteAllocator = new SpriteAllocator(1024, 1024);
+  const sprites = [...unpack()];
+  const allocation = spriteAllocator.allocate(sprites);
+  (window as any).bindings = [undefined, ...allocation.bindings];
+  for (const context of allocation.canvases) {
+    document.body.appendChild(context.canvas);
     const data = context.getImageData(0, 0, 1024, 1024);
     tilesTexture2DArray.update(x++, data);
   }

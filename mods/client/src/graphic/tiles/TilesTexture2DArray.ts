@@ -15,13 +15,13 @@ export const tilesTexture2DArrayService = registerService({
     const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
     const textureSize = Math.min(maxTextureSize, requiredTextureSize);
     if (textureSize < requiredTextureSize) {
-      throw new Breaker("engine-require-min-array-texture-layers", { requiredArrayLayers });
+      throw new Breaker("engine-require-min-texture-size", { maxTextureSize, requiredTextureSize });
     }
 
     const maxArrayTextureLayers = gl.getParameter(gl.MAX_ARRAY_TEXTURE_LAYERS);
     const depth = Math.min(maxArrayTextureLayers, requiredArrayLayers);
     if (depth < requiredArrayLayers) {
-      throw new Breaker("engine-require-min-array-texture-layers", { requiredArrayLayers });
+      throw new Breaker("engine-require-min-array-texture-layers", { maxArrayTextureLayers, requiredArrayLayers });
     }
 
     const dim = dim3D(textureSize, textureSize, depth);

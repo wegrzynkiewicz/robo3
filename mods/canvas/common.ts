@@ -1,6 +1,8 @@
 import { Dim2D, dim2D } from "../math/Dim2D.ts";
 
 export interface UnifiedCanvasContext {
+  canvas: any,
+  context: any,
   dim: Dim2D,
   dispose(): void;
   drawImage(image: CanvasImageSource, x: number, y: number): void;
