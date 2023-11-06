@@ -2,12 +2,8 @@ import "../canvas/UnifiedOffscreenCanvas.ts";
 import "../core/bootstrap.ts";
 import { assertNonNull } from "../common/asserts.ts";
 import { processMap } from "../tiled-map/types.ts";
-import { spriteAtlasRegistry, spriteRegistry } from "../core/sprite/defining.ts";
 import { cgotdRegistry, sgotdRegistry } from "../core/game-object/defining.ts";
 import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../core/game-object/resolving.ts";
-import { resolveSpriteAtlases, resolveSprites } from "../core/sprite/resolving.ts";
-import { createSpriteIndexTable } from "../core/sprite/binding.ts";
-import { allocateSpritesInCanvas } from "./src/graphic/texture.ts";
 import { ServiceResolver } from "../core/dependency/service.ts";
 import { displayService } from "./src/graphic/Display.ts";
 import { canvasService } from "./src/graphic/WebGL.ts";
@@ -90,15 +86,6 @@ async function start() {
 
   const c = new ComplexGameObjectResolver({ registry: cgotdRegistry });
   const cgoMap = c.resolveGameObjectTypes();
-
-  const atlases = resolveSpriteAtlases(spriteAtlasRegistry);
-  const spritesMap = resolveSprites({ atlases, spriteRegistry });
-  const sprites = createSpriteIndexTable({ spritesMap });
-
-  const res = await allocateSpritesInCanvas({ sprites });
-  for (const context of res.contexts) {
-    // document.body.appendChild(context.canvas);
-  }
 
   const { hostname } = window.location;
   const ws = new WebSocket(`ws://${hostname}:8000/wss/token`);

@@ -1,4 +1,3 @@
-import { defineSprite } from "../../sprite/defining.ts";
 import { defineSimpleGameObjectType } from "../defining.ts";
 
 import "./usable/door.ts";
@@ -11,11 +10,6 @@ function define(
   },
 ) {
   const spriteKey = `${key}.spr`;
-  defineSprite({
-    sourceRect: { x, y },
-    spriteAtlasKey: "test1",
-    spriteKey,
-  });
   defineSimpleGameObjectType({
     gotKey: `${key}.sgo`,
     spriteKey,
