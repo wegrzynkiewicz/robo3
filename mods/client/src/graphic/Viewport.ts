@@ -28,10 +28,6 @@ export class Viewport {
   public lookAt(x: number, y: number): void {
     const { centerPoint, centerChunk, chunkRect, halfSize, spaceRect, tilesRect, viewMatrix } = this;
 
-    if (centerPoint.x === x && centerPoint.y === y) {
-      return;
-    }
-
     centerPoint.x = x;
     centerPoint.y = y;
     centerChunk.x = Math.floor(x / SPRITES_TEXTURE_SIZE);
@@ -60,11 +56,12 @@ export class Viewport {
   }
 
   public setWorldSize(x: number, y: number): void {
-    const { halfSize, projectionMatrix, size } = this;
+    const { centerPoint, halfSize, projectionMatrix, size } = this;
     size.x = x;
     size.y = y;
     halfSize.x = x / 2;
     halfSize.y = y / 2;
+    this.lookAt(centerPoint.x, centerPoint.y);
     ortho(projectionMatrix, 0, x, 0, y, 0, 1);
   }
 }
