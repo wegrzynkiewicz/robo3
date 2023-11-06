@@ -81,7 +81,6 @@ async function start() {
   const allocation = spriteAllocator.allocate(sprites);
   (window as any).bindings = [undefined, ...allocation.bindings];
   for (const context of allocation.canvases) {
-    document.body.appendChild(context.canvas);
     const data = context.getImageData(0, 0, 1024, 1024);
     tilesTexture2DArray.update(x++, data);
   }
