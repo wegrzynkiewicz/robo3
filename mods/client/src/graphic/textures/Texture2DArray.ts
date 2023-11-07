@@ -29,7 +29,7 @@ export class Texture2DArray {
     gl.samplerParameteri(this.glSampler, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.samplerParameteri(this.glSampler, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.samplerParameteri(this.glSampler, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    this.gl.bindSampler(this.textureUnit, this.glSampler);
+    this.gl.bindSampler(textureUnit, this.glSampler);
   }
 
   public bind(): void {

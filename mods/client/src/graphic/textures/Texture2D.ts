@@ -1,3 +1,4 @@
+import { TypedArray } from "../../../../common/binary.ts";
 import { Dim2D } from "../../../../math/Dim2D.ts";
 import { createTexture, createSampler } from "../utilities.ts";
 import { TextureFormatConfig } from "./format.ts";
@@ -27,7 +28,7 @@ export class Texture2D {
     gl.samplerParameteri(this.glSampler, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.samplerParameteri(this.glSampler, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.samplerParameteri(this.glSampler, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    this.gl.bindSampler(this.textureUnit, this.glSampler);
+    this.gl.bindSampler(textureUnit, this.glSampler);
   }
 
   public bind(): void {
@@ -41,7 +42,7 @@ export class Texture2D {
     gl.deleteTexture(glTexture);
   }
 
-  public update(data: ImageData) {
+  public update(data: TypedArray | ImageData) {
     this.bind();
     const { dim: {h, w }, formatConfig: { format, type }, gl } = this;
     gl.texSubImage2D(
@@ -53,6 +54,7 @@ export class Texture2D {
       h,
       format,
       type,
+      // @ts-ignore: any type here
       data,
     );
   }

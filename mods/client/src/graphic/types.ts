@@ -51,6 +51,30 @@ export function float(): VertexAttributeType {
   };
 }
 
+export function u16(): VertexAttributeType {
+  return {
+    accessor: Uint16Array,
+    axes: 1,
+    byteLength: 2,
+    glType: WebGL2RenderingContext["UNSIGNED_SHORT"],
+    isInteger: true,
+    isSigned: false,
+    shaderType: `uint`,
+  };
+}
+
+export function i16(): VertexAttributeType {
+  return {
+    accessor: Int16Array,
+    axes: 1,
+    byteLength: 2,
+    glType: WebGL2RenderingContext["INT"],
+    isInteger: true,
+    isSigned: true,
+    shaderType: `int`,
+  };
+}
+
 export type SignedType = "i16" | "i32" | "i8";
 export type UnsignedType = "u16" | "u32" | "u8";
 export type MapEntry = { accessor: Accessor; glType: GLType; size: number };
