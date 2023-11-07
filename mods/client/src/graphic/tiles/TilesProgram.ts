@@ -50,6 +50,9 @@ const vec2 textures[6] = vec2[6](
 uniform Primary {
   uniform mat4 u_Projection;
   uniform mat4 u_View;
+  uniform vec2 u_texSpriteGraphicSize;
+  uniform vec2 u_texSpriteIndicesSize;
+  uniform vec2 u_tileOffset;
 };
 
 uniform highp sampler2DArray spriteIndices;
@@ -87,10 +90,10 @@ in highp float v_alpha;
 
 out highp vec4 outputColor;
 
-uniform highp sampler2DArray textures;
+uniform highp sampler2DArray spriteGraphic;
 
 void main(void) {
-  outputColor = texture(textures, v_texCoords);
+  outputColor = texture(spriteGraphic, v_texCoords);
 }
 `;
 
@@ -114,7 +117,7 @@ export class TilesProgram {
 
     gl.uniformBlockBinding(this.glProgram, gl.getUniformBlockIndex(this.glProgram, "Primary"), 0);
 
-    this.setTexture('textures', tilesTexture.textureUnit);
+    this.setTexture('spriteGraphic', tilesTexture.textureUnit);
     this.setTexture('spriteIndices', spriteIndicesTexture.textureUnit);
   }
 
