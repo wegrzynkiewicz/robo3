@@ -9,7 +9,6 @@ import { tilesTexture2DArrayService } from "./TilesTexture2DArray.ts";
 import { tilesBufferService } from "./tilesBuffer.ts";
 import { assertNonNull } from "../../../../common/asserts.ts";
 import { spriteIndicesTextureService } from "./SpriteIndicesTexture.ts";
-import { Texture2D } from "../textures/Texture2D.ts";
 
 const byteStride = (2 * 4) + (2 * 4) + (3 * 4) + (1 * 4);
 const tilePos = new VertexAttribute({ byteOffset: 0, byteStride, divisor: 1, location: 0, name: "tilePos", type: vec(2) });
@@ -25,9 +24,9 @@ ${tileAlpha.toShaderLine()}
 out vec3 v_texCoords;
 out float v_alpha;
 
-//    4 - 6
+//    3 - 5
 // 0    \ |
-// | \    5
+// | \    4
 // 1 _ 2
 
 const vec2 vertices[6] = vec2[6](
@@ -64,10 +63,11 @@ void main(void) {
   int y = tileAlpha / 256;
   int x = tileAlpha % 256;
   vec4 layer1 = texelFetch(spriteIndices, ivec3(x - 1, y, 0), 0);
-  vec3  layer2 = texelFetch(spriteIndices, ivec3(x - 1, y, 1), 0);
-  vec3 texMapping = vec3(layer1.xy, layer2.z);
-  vec2 texSize = layer1.zw;
-  vec2 tileSize = layer2.xy;
+  vec4 layer2 = texelFetch(spriteIndices, ivec3(x - 1, y, 1), 0);
+
+  vec3 texMapping = layer1.xyz;
+  vec2 texSize    = layer2.xy;
+  vec2 tileSize   = layer2.zw;
 
   vec2 localSpace = vertices[gl_VertexID] * tileSize.xy;
   vec2 worldSpace = vec2(localSpace.x + tilePos.x, localSpace.y - tilePos.y);

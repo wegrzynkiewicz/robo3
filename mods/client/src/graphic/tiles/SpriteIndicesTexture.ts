@@ -2,7 +2,13 @@ import { registerService, ServiceResolver } from "../../../../dependency/service
 import { dim3D } from "../../../../math/Dim3D.ts";
 import { webGLService } from "../WebGL.ts";
 import { Texture2DArray } from "../textures/Texture2DArray.ts";
-import { spriteIndexPullingTextureFormatConfig } from "../textures/format.ts";
+import { TextureFormatConfig } from "../textures/format.ts";
+
+export const spriteIndexPullingTextureFormatConfig: TextureFormatConfig = {
+  format: WebGL2RenderingContext["RGBA"],
+  internal: WebGL2RenderingContext["RGBA32F"],
+  type: WebGL2RenderingContext["FLOAT"],
+};
 
 export const spriteIndicesTextureService = registerService({
   async provider(resolver: ServiceResolver): Promise<Texture2DArray> {

@@ -97,15 +97,3 @@ export interface TextureFormatConfig {
   internal: TextureInternalFormat;
   type: TextureFormatType;
 }
-
-export const fromCanvasTextureFormatConfig: TextureFormatConfig = {
-  format: WebGL2RenderingContext["RGBA"],
-  internal: WebGL2RenderingContext["RGBA8"],
-  type: WebGL2RenderingContext["UNSIGNED_BYTE"],
-};
-
-export const spriteIndexPullingTextureFormatConfig: TextureFormatConfig = {
-  format: WebGL2RenderingContext["RGBA"],
-  internal: WebGL2RenderingContext["RGBA32F"],
-  type: WebGL2RenderingContext["FLOAT"],
-};

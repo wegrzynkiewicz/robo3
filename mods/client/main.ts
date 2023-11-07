@@ -98,13 +98,13 @@ async function start() {
     // v[i++] = 1024;
     v1[i1++] = binding.texture.mapping.x;
     v1[i1++] = binding.texture.mapping.y;
-    v1[i1++] = binding.texture.size.w; // 1024; //;
-    v1[i1++] = binding.texture.size.h; // 0; //;
+    v1[i1++] = binding.texture.atlasIndex;
+    v1[i1++] = 0;
 
+    v2[i2++] = binding.texture.size.w;
+    v2[i2++] = binding.texture.size.h;
     v2[i2++] = binding.tile.size.w;
     v2[i2++] = binding.tile.size.h;
-    v2[i2++] = binding.texture.atlasIndex;
-    v2[i2++] = 0;
   }
   spriteIndicesTexture.update(0, v1);
   spriteIndicesTexture.update(1, v2);

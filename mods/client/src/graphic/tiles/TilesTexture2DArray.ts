@@ -3,10 +3,16 @@ import { registerService, ServiceResolver } from "../../../../dependency/service
 import { dim3D } from "../../../../math/Dim3D.ts";
 import { webGLService } from "../WebGL.ts";
 import { Texture2DArray } from "../textures/Texture2DArray.ts";
-import { fromCanvasTextureFormatConfig } from "../textures/format.ts";
+import { TextureFormatConfig } from "../textures/format.ts";
 
 const requiredTextureSize = 1024;
 const requiredArrayLayers = 4;
+
+export const fromCanvasTextureFormatConfig: TextureFormatConfig = {
+  format: WebGL2RenderingContext["RGBA"],
+  internal: WebGL2RenderingContext["RGBA8"],
+  type: WebGL2RenderingContext["UNSIGNED_BYTE"],
+};
 
 export const tilesTexture2DArrayService = registerService({
   async provider(resolver: ServiceResolver): Promise<Texture2DArray> {
