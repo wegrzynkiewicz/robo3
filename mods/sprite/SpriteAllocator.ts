@@ -50,14 +50,15 @@ export class SpriteAllocator {
       this.canvases.push(this.currentTargetCanvas);
       [x, y] = index2coords(this.spriteIndex);
     }
-    const [dstX, dstY] = coords2ImageRect(x, y);
+    // const [dstX, dstY] = coords2ImageRect(x, y);
+    const [dstX, dstY] = [x * 32, y * 32];
     this.currentTargetCanvas!.putImageData(sprite.image, dstX, dstY);
     const spriteBinding: SpriteBinding = {
       spriteIndex: this.spriteIndex,
       spriteId: sprite.source.spriteId,
       texture: {
         atlasIndex: this.currentZ,
-        mapping: point(dstX, this.height - dstY - 32),
+        mapping: point(dstX, dstY),
         size: dim2D(32, 32),
       },
       tile: {

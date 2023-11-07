@@ -68,6 +68,18 @@ export function i16(): VertexAttributeType {
     accessor: Int16Array,
     axes: 1,
     byteLength: 2,
+    glType: WebGL2RenderingContext["SHORT"],
+    isInteger: true,
+    isSigned: true,
+    shaderType: `int`,
+  };
+}
+
+export function i32(): VertexAttributeType {
+  return {
+    accessor: Int16Array,
+    axes: 1,
+    byteLength: 4,
     glType: WebGL2RenderingContext["INT"],
     isInteger: true,
     isSigned: true,

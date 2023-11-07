@@ -22,6 +22,7 @@ export class TilesCollector {
 
   public put(x: number, y: number, z: number, tileIndex: number): void {
     const view = this.tilesBuffer.typedArray;
+    const v1 = new Uint32Array(this.tilesBuffer.typedArray.buffer);
     view[this.index++] = (this.sceneViewport.tilesRect.x1 + x) * 32;
     view[this.index++] = (this.sceneViewport.tilesRect.y1 + y) * 32;
     view[this.index++] = 32.0;
@@ -30,7 +31,7 @@ export class TilesCollector {
     view[this.index++] = binding.texture.mapping.x;
     view[this.index++] = binding.texture.mapping.y;
     view[this.index++] = 0;
-    view[this.index++] = z;
+    v1[this.index++] = tileIndex;
     this.visibleTiles++;
   }
 

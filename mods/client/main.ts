@@ -5,7 +5,7 @@ import { cgotdRegistry, sgotdRegistry } from "../core/game-object/defining.ts";
 import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../core/game-object/resolving.ts";
 import { ServiceResolver } from "../dependency/service.ts";
 import { displayService } from "./src/graphic/Display.ts";
-import { canvasService } from "./src/graphic/WebGL.ts";
+import { canvasService, webGLService } from "./src/graphic/WebGL.ts";
 import { mainLoopService } from "./src/MainLoop.ts";
 import { debugInfoService } from "./src/debug/DebugInfo.ts";
 import { keyboardService } from "./src/keyboard/Keyboard.ts";
@@ -22,6 +22,7 @@ import { clientGAProcessor } from "../domain-client/clientGAProcessor.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../domain/loginGA.ts";
 import { SpriteAllocator } from "../sprite/SpriteAllocator.ts";
 import { SpriteImage } from "../sprite/sprite.ts";
+import { spriteIndicesTextureService } from "./src/graphic/tiles/SpriteIndicesTexture.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -30,12 +31,14 @@ async function start() {
   resolver.inject(canvasService, canvas);
 
   (globalThis as any).app = await resolver.resolve(appService);
+  const gl = await resolver.resolve(webGLService);
   const display = await resolver.resolve(displayService);
   const keyboard = await resolver.resolve(keyboardService);
   const mainLoop = await resolver.resolve(mainLoopService);
   const debugInfo = await resolver.resolve(debugInfoService);
   const phaseManager = await resolver.resolve(phaseManagerService);
   const tilesTexture2DArray = await resolver.resolve(tilesTexture2DArrayService);
+  const spriteIndicesTexture = await resolver.resolve(spriteIndicesTextureService);
   const clientSpriteAtlasLoader = await resolver.resolve(clientSpriteAtlasLoaderService);
   const spriteAtlasImages = await clientSpriteAtlasLoader.loadSpriteAtlasImages();
 
@@ -81,9 +84,31 @@ async function start() {
   const allocation = spriteAllocator.allocate(sprites);
   (window as any).bindings = [undefined, ...allocation.bindings];
   for (const context of allocation.canvases) {
+    document.body.appendChild(context.toHTMLCanvas());
     const data = context.getImageData(0, 0, 1024, 1024);
     tilesTexture2DArray.update(x++, data);
   }
+
+  const v1 = new Float32Array(256*256*4);
+  const v2 = new Float32Array(256*256*4);
+  let i1 = 0;
+  let i2 = 0;
+  for (const binding of allocation.bindings) {
+    console.log(binding);
+    // v[i++] = 1024;
+    v1[i1++] = binding.texture.mapping.x;
+    v1[i1++] = binding.texture.mapping.y;
+    v1[i1++] = binding.texture.size.w; // 1024; //;
+    v1[i1++] = binding.texture.size.h; // 0; //;
+
+    v2[i2++] = binding.tile.size.w;
+    v2[i2++] = binding.tile.size.h;
+    v2[i2++] = binding.texture.atlasIndex;
+    v2[i2++] = 0;
+  }
+  spriteIndicesTexture.update(0, v1);
+  spriteIndicesTexture.update(1, v2);
+
 
   const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
   const sgoMap = s.resolveGameObjectTypes();

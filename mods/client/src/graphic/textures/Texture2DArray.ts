@@ -1,4 +1,5 @@
 import { Breaker } from "../../../../common/asserts.ts";
+import { TypedArray } from "../../../../common/binary.ts";
 import { Dim3D } from "../../../../math/Dim3D.ts";
 import { createSampler, createTexture } from "../utilities.ts";
 import { TextureFormatConfig } from "./format.ts";
@@ -43,7 +44,7 @@ export class Texture2DArray {
     gl.deleteTexture(glTexture);
   }
 
-  public update(offsetZ: number, data: ImageData) {
+  public update(offsetZ: number, data: TypedArray | ImageData) {
     this.bind();
     const { dim, dim: { d, h, w }, formatConfig: { format, type }, gl } = this;
     if (offsetZ > d) {
@@ -60,6 +61,7 @@ export class Texture2DArray {
       1,
       format,
       type,
+      // @ts-ignore: accept any data type
       data,
     );
   }

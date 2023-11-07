@@ -1,15 +1,15 @@
 import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
-import { dim2D } from "../../../../math/Dim2D.ts";
+import { dim3D } from "../../../../math/Dim3D.ts";
 import { webGLService } from "../WebGL.ts";
-import { Texture2D } from "../textures/Texture2D.ts";
+import { Texture2DArray } from "../textures/Texture2DArray.ts";
 import { spriteIndexPullingTextureFormatConfig } from "../textures/format.ts";
 
 export const spriteIndicesTextureService = registerService({
-  async provider(resolver: ServiceResolver): Promise<Texture2D> {
+  async provider(resolver: ServiceResolver): Promise<Texture2DArray> {
     const gl = await resolver.resolve(webGLService);
-    return new Texture2D(
+    return new Texture2DArray(
       gl,
-      dim2D(256, 256),
+      dim3D(256, 256, 2),
       1,
       spriteIndexPullingTextureFormatConfig,
     );
