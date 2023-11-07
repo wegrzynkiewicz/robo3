@@ -27,7 +27,6 @@ export class DynamicDrawBuffer {
 
   public update(byteLength: number) {
     this.bytesSent = byteLength;
-    console.log(this.dataView.buffer);
     this.gl.bindBuffer(ARRAY_BUFFER, this.glBuffer);
     this.gl.bufferSubData(ARRAY_BUFFER, 0, this.dataView, 0, byteLength);
   }

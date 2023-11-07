@@ -27,16 +27,6 @@ export class TilesCollector {
     dv.setInt16(index + 2, (this.sceneViewport.tilesRect.y1 + y) * 32, true);
     dv.setInt32(index + 4, tileIndex, true);
     this.visibleTiles++;
-
-    // view[this.index++] = (this.sceneViewport.tilesRect.x1 + x) * 32;
-    // view[this.index++] = (this.sceneViewport.tilesRect.y1 + y) * 32;
-    // view[this.index++] = 32.0;
-    // view[this.index++] = 32.0;
-    // const binding = (window as any).bindings[tileIndex]
-    // view[this.index++] = binding.texture.mapping.x;
-    // view[this.index++] = binding.texture.mapping.y;
-    // view[this.index++] = 0;
-    // v1[this.index++] = tileIndex;
   }
 
   public flush() {
