@@ -92,9 +92,9 @@ export type UnsignedType = "u16" | "u32" | "u8";
 export type MapEntry = { accessor: Accessor; glType: GLType; size: number };
 
 const map: Record<SignedType | UnsignedType, MapEntry> = {
-  "i16": { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 1 },
-  "i32": { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 2 },
-  "i8": { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 4 },
+  "i16": { accessor: Int16Array, glType: WebGL2RenderingContext["SHORT"], size: 1 },
+  "i32": { accessor: Int32Array, glType: WebGL2RenderingContext["INT"], size: 2 },
+  "i8": { accessor: Int8Array, glType: WebGL2RenderingContext["INT"], size: 4 },
   "u16": { accessor: Uint16Array, glType: WebGL2RenderingContext["UNSIGNED_SHORT"], size: 1 },
   "u32": { accessor: Uint32Array, glType: WebGL2RenderingContext["UNSIGNED_INT"], size: 2 },
   "u8": { accessor: Uint8Array, glType: WebGL2RenderingContext["UNSIGNED_BYTE"], size: 4 },

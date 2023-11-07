@@ -3,18 +3,16 @@ import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
 import { webGLService } from "../WebGL.ts";
 import { VertexAttribute } from "../attribute.ts";
 import { Texture2DArray } from "../textures/Texture2DArray.ts";
-import { i32, vec } from "../types.ts";
+import { i32, ivec } from "../types.ts";
 import { createProgram, createVertexArray } from "../utilities.ts";
 import { tilesTexture2DArrayService } from "./TilesTexture2DArray.ts";
 import { tilesBufferService } from "./tilesBuffer.ts";
 import { assertNonNull } from "../../../../common/asserts.ts";
 import { spriteIndicesTextureService } from "./SpriteIndicesTexture.ts";
 
-const byteStride = (2 * 4) + (2 * 4) + (3 * 4) + (1 * 4);
-const tilePos = new VertexAttribute({ byteOffset: 0, byteStride, divisor: 1, location: 0, name: "tilePos", type: vec(2) });
-const tileSize = new VertexAttribute({ byteOffset: 8, byteStride, divisor: 1, location: 1, name: "tileSize", type: vec(2) });
-const tileTex = new VertexAttribute({ byteOffset: 16, byteStride, divisor: 1, location: 2, name: "tileTex", type: vec(3) });
-const tileAlpha = new VertexAttribute({ byteOffset: 28, byteStride, divisor: 1, location: 3, name: "tileAlpha", type: i32() });
+const byteStride = (2 * 2) + (1 * 4);
+const tilePos = new VertexAttribute({ byteOffset: 0, byteStride, divisor: 1, location: 0, name: "tilePosE", type: ivec(2, "i16") });
+const tileAlpha = new VertexAttribute({ byteOffset: 4, byteStride, divisor: 1, location: 1, name: "tileAlpha", type: i32() });
 
 const vertexShader = `#version 300 es
 
@@ -60,6 +58,8 @@ float TEXTURE_SIZE = 1024.0;
 
 void main(void) {
 
+  vec2 tilePos = vec2(float(tilePosE.x), float(tilePosE.y));
+
   int y = tileAlpha / 256;
   int x = tileAlpha % 256;
   vec4 layer1 = texelFetch(spriteIndices, ivec3(x - 1, y, 0), 0);
@@ -76,7 +76,7 @@ void main(void) {
 
   gl_Position = u_Projection * u_View * vec4(worldSpace.x, worldSpace.y, 0.0, 1.0);
   v_texCoords = vec3(textureUVN.xy, texMapping.z);
-  v_alpha = float(texMapping.x);
+  v_alpha = float(tilePos.x);
 }
 `;
 
@@ -109,8 +109,6 @@ export class TilesProgram {
     this.glVAO = createVertexArray(gl);
     tilesBuffer.bind();
     tilePos.enableVertexAttribute(gl, this.glProgram);
-    tileSize.enableVertexAttribute(gl, this.glProgram);
-    tileTex.enableVertexAttribute(gl, this.glProgram);
     tileAlpha.enableVertexAttribute(gl, this.glProgram);
     gl.bindVertexArray(null);
 
