@@ -4,14 +4,14 @@ import { webGLService } from "../WebGL.ts";
 import { VertexAttribute } from "../attribute.ts";
 import { Texture2DArray } from "../textures/Texture2DArray.ts";
 import { i32, ivec } from "../types.ts";
-import { createProgram, createVertexArray } from "../utilities.ts";
+import { createProgram, createVertexArray, getUniformInfo } from "../utilities.ts";
 import { tilesTexture2DArrayService } from "./TilesTexture2DArray.ts";
 import { tilesBufferService } from "./tilesBuffer.ts";
 import { assertNonNull } from "../../../../common/asserts.ts";
 import { spriteIndicesTextureService } from "./SpriteIndicesTexture.ts";
 
 const byteStride = (2 * 2) + (1 * 4);
-const tilePos = new VertexAttribute({ byteOffset: 0, byteStride, divisor: 1, location: 0, name: "tilePosE", type: ivec(2, "i16") });
+const tilePos = new VertexAttribute({ byteOffset: 0, byteStride, divisor: 1, location: 0, name: "tilePos", type: ivec(2, "i16") });
 const tileAlpha = new VertexAttribute({ byteOffset: 4, byteStride, divisor: 1, location: 1, name: "tileAlpha", type: i32() });
 
 const vertexShader = `#version 300 es
@@ -27,7 +27,7 @@ out float v_alpha;
 // | \    4
 // 1 _ 2
 
-const vec2 vertices[6] = vec2[6](
+const vec2 u_vertices[6] = vec2[6](
   vec2(0.0, 0.0),
   vec2(0.0, -1.0),
   vec2(1.0, -1.0),
@@ -37,49 +37,51 @@ const vec2 vertices[6] = vec2[6](
   vec2(1.0, 0.0)
 );
 
-const vec2 textures[6] = vec2[6](
-  vec2(0.0, 0.0),
-  vec2(0.0, 1.0),
-  vec2(1.0, 1.0),
+const vec3 u_textures[6] = vec3[6](
+  vec3(0.0, 0.0, 0.0),
+  vec3(0.0, 1.0, 0.0),
+  vec3(1.0, 1.0, 0.0),
 
-  vec2(0.0, 0.0),
-  vec2(1.0, 1.0),
-  vec2(1.0, 0.0)
+  vec3(0.0, 0.0, 0.0),
+  vec3(1.0, 1.0, 0.0),
+  vec3(1.0, 0.0, 0.0)
 );
 
 uniform Primary {
-  uniform mat4 u_Projection;
-  uniform mat4 u_View;
-  uniform vec2 u_texSpriteGraphicSize;
-  uniform vec2 u_texSpriteIndicesSize;
-  uniform vec2 u_tileOffset;
+  uniform mat4 u_projection;
+  uniform mat4 u_view;
+  uniform vec4 u_texSpriteGraphicSize;
+  uniform vec4 u_texSpriteIndicesSize;
+  uniform vec4 u_pixelOffset;
 };
 
-uniform highp sampler2DArray spriteIndices;
+uniform highp sampler2DArray u_spriteIndices;
 
 float TEXTURE_SIZE = 1024.0;
 
 void main(void) {
 
-  vec2 tilePos = vec2(float(tilePosE.x), float(tilePosE.y));
-
   int y = tileAlpha / 256;
   int x = tileAlpha % 256;
-  vec4 layer1 = texelFetch(spriteIndices, ivec3(x - 1, y, 0), 0);
-  vec4 layer2 = texelFetch(spriteIndices, ivec3(x - 1, y, 1), 0);
+  vec4 layer1 = texelFetch(u_spriteIndices, ivec3(x - 1, y, 0), 0);
+  vec4 layer2 = texelFetch(u_spriteIndices, ivec3(x - 1, y, 1), 0);
 
   vec3 texMapping = layer1.xyz;
-  vec2 texSize    = layer2.xy;
+  vec3 texSize    = vec3(layer2.xy, 0.0);
   vec2 tileSize   = layer2.zw;
 
-  vec2 localSpace = vertices[gl_VertexID] * tileSize.xy;
-  vec2 worldSpace = vec2(localSpace.x + tilePos.x, localSpace.y - tilePos.y);
-  vec2 texelSpace = textures[gl_VertexID] * texSize.xy + texMapping.xy;
-  vec2 textureUVN = texelSpace.xy / TEXTURE_SIZE;
+  vec2 localSpace = u_vertices[gl_VertexID] * tileSize.xy;
+  vec4 worldSpace = vec4(
+    localSpace.x + u_pixelOffset.x + float(tilePos.x),
+    localSpace.y - u_pixelOffset.y - float(tilePos.y),
+    0.0,
+    1.0
+  );
+  gl_Position = u_projection * u_view * worldSpace;
 
-  gl_Position = u_Projection * u_View * vec4(worldSpace.x, worldSpace.y, 0.0, 1.0);
-  v_texCoords = vec3(textureUVN.xy, texMapping.z);
-  v_alpha = float(tilePos.x);
+  vec3 textureSpace = u_textures[gl_VertexID] * texSize + texMapping;
+  vec3 texNormSpace = textureSpace / u_texSpriteGraphicSize.xyz;
+  v_texCoords = texNormSpace;
 }
 `;
 
@@ -90,10 +92,10 @@ in highp float v_alpha;
 
 out highp vec4 outputColor;
 
-uniform highp sampler2DArray spriteGraphic;
+uniform highp sampler2DArray u_spriteGraphic;
 
 void main(void) {
-  outputColor = texture(spriteGraphic, v_texCoords);
+  outputColor = texture(u_spriteGraphic, v_texCoords);
 }
 `;
 
@@ -117,8 +119,8 @@ export class TilesProgram {
 
     gl.uniformBlockBinding(this.glProgram, gl.getUniformBlockIndex(this.glProgram, "Primary"), 0);
 
-    this.setTexture('spriteGraphic', tilesTexture.textureUnit);
-    this.setTexture('spriteIndices', spriteIndicesTexture.textureUnit);
+    this.setTexture('u_spriteGraphic', tilesTexture.textureUnit);
+    this.setTexture('u_spriteIndices', spriteIndicesTexture.textureUnit);
   }
 
   public setTexture(uniformName: string, textureUnit: number): void {
@@ -143,7 +145,3 @@ export const tilesProgramService = registerService({
     );
   },
 });
-
-function uint(): import("../types.ts").VertexAttributeType {
-  throw new Error("Function not implemented.");
-}

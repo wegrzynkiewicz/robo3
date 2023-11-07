@@ -23,8 +23,8 @@ export class TilesCollector {
   public put(x: number, y: number, z: number, tileIndex: number): void {
     const dv = this.tilesBuffer.dataView;
     const index = this.index++ * 8;
-    dv.setInt16(index + 0, (this.sceneViewport.tilesRect.x1 + x) * 32, true);
-    dv.setInt16(index + 2, (this.sceneViewport.tilesRect.y1 + y) * 32, true);
+    dv.setInt16(index + 0, x * 32, true);
+    dv.setInt16(index + 2, y * 32, true);
     dv.setInt32(index + 4, tileIndex, true);
     this.visibleTiles++;
   }

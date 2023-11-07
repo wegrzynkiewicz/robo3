@@ -3,6 +3,7 @@ import { SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y } from "../../../.
 import { cornerRect } from "../../../../math/CornerRectangle.ts";
 import { point } from "../../../../math/Point.ts";
 import { Viewport, viewportService } from "../Viewport.ts";
+import { PrimaryUBO, primaryUBOService } from "../PrimaryUBO.ts";
 
 const { floor, max } = Math;
 
@@ -37,6 +38,7 @@ export class SceneViewport {
 
   public constructor(
     public readonly viewport: Viewport,
+    public readonly primaryUBO: PrimaryUBO,
   ) { }
 
   public loop() {
@@ -55,6 +57,11 @@ export class SceneViewport {
       max(tilesRect.x2, 0) - max(tilesRect.x1, 0),
       max(tilesRect.y2, 0) - max(tilesRect.y1, 0),
     )
+
+    this.primaryUBO.pixelOffset[0] = tilesRect.x1 * 32;
+    this.primaryUBO.pixelOffset[1] = tilesRect.y1 * 32;
+    this.primaryUBO.pixelOffset[2] = tilesRect.x2 * 32;
+    this.primaryUBO.pixelOffset[3] = tilesRect.y2 * 32;
   }
 
   public get level(): number {
@@ -70,6 +77,7 @@ export const sceneViewportService = registerService({
   async provider(resolver: ServiceResolver): Promise<SceneViewport> {
     return new SceneViewport(
       await resolver.resolve(viewportService),
+      await resolver.resolve(primaryUBOService),
     );
   },
 });

@@ -5,7 +5,7 @@ import { cgotdRegistry, sgotdRegistry } from "../core/game-object/defining.ts";
 import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../core/game-object/resolving.ts";
 import { ServiceResolver } from "../dependency/service.ts";
 import { displayService } from "./src/graphic/Display.ts";
-import { canvasService, webGLService } from "./src/graphic/WebGL.ts";
+import { canvasService } from "./src/graphic/WebGL.ts";
 import { mainLoopService } from "./src/MainLoop.ts";
 import { debugInfoService } from "./src/debug/DebugInfo.ts";
 import { keyboardService } from "./src/keyboard/Keyboard.ts";
@@ -31,7 +31,6 @@ async function start() {
   resolver.inject(canvasService, canvas);
 
   (globalThis as any).app = await resolver.resolve(appService);
-  const gl = await resolver.resolve(webGLService);
   const display = await resolver.resolve(displayService);
   const keyboard = await resolver.resolve(keyboardService);
   const mainLoop = await resolver.resolve(mainLoopService);
@@ -94,8 +93,6 @@ async function start() {
   let i1 = 0;
   let i2 = 0;
   for (const binding of allocation.bindings) {
-    console.log(binding);
-    // v[i++] = 1024;
     v1[i1++] = binding.texture.mapping.x;
     v1[i1++] = binding.texture.mapping.y;
     v1[i1++] = binding.texture.atlasIndex;
@@ -108,7 +105,6 @@ async function start() {
   }
   spriteIndicesTexture.update(0, v1);
   spriteIndicesTexture.update(1, v2);
-
 
   const s = new SimpleGameObjectResolver({ registry: sgotdRegistry });
   const sgoMap = s.resolveGameObjectTypes();

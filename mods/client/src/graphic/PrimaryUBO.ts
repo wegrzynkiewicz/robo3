@@ -8,9 +8,9 @@ export class PrimaryUBO {
 
   public readonly projectionMatrix: Float32Array;
   public readonly viewMatrix: Float32Array;
-  public readonly textureSpriteGraphicSize: Float32Array;
-  public readonly textureSpriteIndicesSize: Float32Array;
-  public readonly tileOffset: Float32Array;
+  public readonly texSpriteGraphicSize: Float32Array;
+  public readonly texSpriteIndicesSize: Float32Array;
+  public readonly pixelOffset: Float32Array;
 
   protected readonly buffer: ArrayBuffer;
   protected readonly byteLength: number;
@@ -18,7 +18,7 @@ export class PrimaryUBO {
   protected readonly dataView: DataView;
 
   public constructor(
-    public readonly gl: WebGL2RenderingContext,
+    protected readonly gl: WebGL2RenderingContext,
     protected readonly uniformBufferBase: number,
   ) {
     this.glBuffer = createBuffer(gl);
@@ -29,9 +29,9 @@ export class PrimaryUBO {
     [
       this.projectionMatrix,
       this.viewMatrix,
-      this.textureSpriteGraphicSize,
-      this.textureSpriteIndicesSize,
-      this.tileOffset,
+      this.texSpriteGraphicSize,
+      this.texSpriteIndicesSize,
+      this.pixelOffset,
     ] = [
       new Float32Array(this.buffer, 0x00 * 16, 16),
       new Float32Array(this.buffer, 0x04 * 16, 16),
@@ -39,6 +39,11 @@ export class PrimaryUBO {
       new Float32Array(this.buffer, 0x09 * 16, 4),
       new Float32Array(this.buffer, 0x0a * 16, 4),
     ];
+
+    // TODO: hardcode
+    this.texSpriteGraphicSize[0] = 1024;
+    this.texSpriteGraphicSize[1] = 1024;
+    this.texSpriteGraphicSize[2] = 1;
 
     this.bind();
     this.gl.bufferData(UNIFORM_BUFFER, this.byteLength, DYNAMIC_DRAW);
