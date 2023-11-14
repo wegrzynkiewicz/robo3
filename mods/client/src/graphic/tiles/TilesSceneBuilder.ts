@@ -99,12 +99,15 @@ export class TilesSceneBuilder {
     }
   }
 
-  protected processTile(x: number, y: number): void {
+  protected processTile(x: number, y: number, z: number): void {
     const {
       cells: row,
     } = this;
 
     const ds = this.depthLayer[(y + 0) * row + (x + 0)];
+    if (ds !== z) {
+      return;
+    }
     const vs = this.tilesLayer[(y + 0) * row + (x + 0)];
     if (vs === 0) {
       return;
@@ -116,20 +119,17 @@ export class TilesSceneBuilder {
   }
 
   protected processShadow(x: number, y: number, z: number): void {
-    const {
-      cells: row,
-    } = this;
-    const view = this.depthLayer;
+    const { cells, depthLayer } = this;
 
-    const vq = view[(y - 1) * row + (x - 1)];
-    const vw = view[(y - 1) * row + (x + 0)];
-    const ve = view[(y - 1) * row + (x + 1)];
-    const va = view[(y + 0) * row + (x - 1)];
-    const vs = view[(y + 0) * row + (x + 0)];
-    const vd = view[(y + 0) * row + (x + 1)];
-    const vz = view[(y + 1) * row + (x - 1)];
-    const vx = view[(y + 1) * row + (x + 0)];
-    const vc = view[(y + 1) * row + (x + 1)];
+    const vq = depthLayer[(y - 1) * cells + (x - 1)];
+    const vw = depthLayer[(y - 1) * cells + (x + 0)];
+    const ve = depthLayer[(y - 1) * cells + (x + 1)];
+    const va = depthLayer[(y + 0) * cells + (x - 1)];
+    const vs = depthLayer[(y + 0) * cells + (x + 0)];
+    const vd = depthLayer[(y + 0) * cells + (x + 1)];
+    const vz = depthLayer[(y + 1) * cells + (x - 1)];
+    const vx = depthLayer[(y + 1) * cells + (x + 0)];
+    const vc = depthLayer[(y + 1) * cells + (x + 1)];
 
     const pw = vw <= vs ? 0 : 0b1000;
     const px = vx <= vs ? 0 : 0b0100;
@@ -173,17 +173,13 @@ export class TilesSceneBuilder {
       case 0b1110: { this.tiles.put(x, y, z, ter["UD"]); break; }
       case 0b1111: { this.tiles.put(x, y, z, ter["HS"]); break; }
     }
-    if (vs < this.sceneViewport.level) {
-      for (let i = 0; i < this.sceneViewport.level - vs; i++) {
-        this.tiles.put(x, y, z, ter["FS"]);
-      }
-    }
   }
 
-  public processLayer(): void {
+  public processLayer(currentTerrainLevel: number): void {
+    this.tiles.put(0, 0, 0, ter["FS"]);
     for (let y = 1; y < this.rows - 1; y++) {
       for (let x = 1; x < this.cells - 1; x++) {
-        this.processTile(x, y);
+        this.processTile(x, y, currentTerrainLevel);
       }
     }
   }
@@ -206,7 +202,10 @@ export class TilesSceneBuilder {
       const currentTerrainLevel = level - layerIndex;
       this.buildLayer(currentTerrainLevel);
     }
-    this.processLayer();
+    for (let layerIndex = currentMaxLayerIndex; layerIndex >= 0; layerIndex--) {
+      const currentTerrainLevel = level - layerIndex;
+      this.processLayer(currentTerrainLevel);
+    }
     this.tiles.flush();
     this.performance.end();
   }
@@ -215,7 +214,7 @@ export class TilesSceneBuilder {
 export const tilesSceneBuilderService = registerService({
   async provider(resolver: ServiceResolver): Promise<TilesSceneBuilder> {
     return new TilesSceneBuilder(
-      6,
+      10,
       await resolver.resolve(spaceManagerService),
       await resolver.resolve(sceneViewportService),
       await resolver.resolve(tilesCollectorService),

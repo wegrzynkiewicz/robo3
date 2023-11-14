@@ -88,6 +88,10 @@ async function start() {
     tilesTexture2DArray.update(x++, data);
   }
 
+
+  allocation.bindings[74].tile.size.w = 1024 * 2;
+  allocation.bindings[74].tile.size.h = 1024 * 2;
+
   const v1 = new Float32Array(256*256*4);
   const v2 = new Float32Array(256*256*4);
   let i1 = 0;
