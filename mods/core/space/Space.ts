@@ -1,8 +1,6 @@
-import { ChunkManager } from "../../domain-client/chunk/chunkManager.ts";
 import { Cube, Dimension } from "../numbers.ts";
 
 export class Space {
-  public readonly chunkManager = new ChunkManager();
 }
 
 // export interface Space {

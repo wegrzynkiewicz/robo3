@@ -6,7 +6,7 @@ export const tilesBufferService = registerService({
   async provider(resolver: ServiceResolver): Promise<DynamicDrawBuffer> {
     return new DynamicDrawBuffer(
       await resolver.resolve(webGLService),
-      65536 * 8,
+      8192 * 8,
     );
   },
 });

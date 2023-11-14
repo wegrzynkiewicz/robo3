@@ -1,6 +1,7 @@
 import { ChunkId } from "../../core/chunk/chunkId.ts";
 import { ChunkSegment } from "../../core/chunk/chunkSegment.ts";
 import { GONormChunkPosition } from "../../core/game-object/position.ts";
+import { registerService } from "../../dependency/service.ts";
 import { CornerRectangle } from "../../math/CornerRectangle.ts";
 import { Position } from "../../math/Position.ts";
 
@@ -27,27 +28,18 @@ export class Chunk {
 }
 
 export class ChunkManager {
-  public readonly byPositionIndex = new Map<number, Chunk>();
+  public readonly byKey = new Map<string, Chunk>();
 
   public getByChunkId(chunkId: ChunkId): Chunk | undefined {
-    const { x, y, z } = chunkId;
-    const index = z * 4294967296 + y * 65536 + x
-    const chunk = this.byPositionIndex.get(index);
-    return chunk;
-  }
-
-  public getByCoords(x: number, y: number, z: number): Chunk | undefined {
-    const index = z * 4294967296 + y * 65536 + x
-    const chunk = this.byPositionIndex.get(index);
+    const chunk = this.byKey.get(chunkId.key);
     return chunk;
   }
 
   public obtain(chunkId: ChunkId): Chunk {
-    const index = chunkId.toSpacePosIndex();
-    const probablyChunk = this.byPositionIndex.get(index);
+    const probablyChunk = this.byKey.get(chunkId.key);
     if (probablyChunk === undefined) {
       const chunk = new Chunk(chunkId);
-      this.byPositionIndex.set(index, chunk);
+      this.byKey.set(chunkId.key, chunk);
       return chunk;
     }
     return probablyChunk;
@@ -58,3 +50,10 @@ export class ChunkManager {
     chunk.segment = segment;
   }
 }
+
+export const chunkManagerService = registerService({
+  async provider(): Promise<ChunkManager> {
+    return new ChunkManager();
+  },
+  singleton: true,
+});

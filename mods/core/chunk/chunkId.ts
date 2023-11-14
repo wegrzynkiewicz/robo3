@@ -2,19 +2,23 @@ import { CornerRectangle } from "../../math/CornerRectangle.ts";
 import { BinaryBYOBCodec } from "../codec.ts";
 import { PIXELS_PER_CHUNK_GRID_AXIS } from "../vars.ts";
 
+function toHex(number: number, pad: number): string {
+  return number.toString(16).padStart(pad, "0");
+}
+
+function chunkScalarsToHex(spaceId: number, x: number, y: number, z: number): string {
+  return `${toHex(spaceId, 8)}${toHex(x, 4)}${toHex(y, 4)}${toHex(z, 4)}`;
+}
+
 export class ChunkId {
 
-  public constructor(
+  protected constructor(
+    public readonly key: string,
     public readonly spaceId: number,
     public readonly x: number,
     public readonly y: number,
     public readonly z: number,
   ) { }
-
-  public toSpacePosIndex(): number {
-    const { x, y, z } = this;
-    return z * 4294967296 + y * 65536 + x
-  }
 
   public getWorldSpaceCornerRect(): CornerRectangle {
     const x1 = this.x * PIXELS_PER_CHUNK_GRID_AXIS;
@@ -24,23 +28,19 @@ export class ChunkId {
     return { x1, y1, x2, y2 };
   }
 
-  public toHex(): string {
-    const { spaceId, x, y, z } = this;
-    const parts = [
-      spaceId.toString(16).padStart(8, "0"),
-      z.toString(16).padStart(4, "0"),
-      y.toString(16).padStart(4, "0"),
-      x.toString(16).padStart(4, "0"),
-    ];
-    return parts.join("");
+  public static fromScalars(spaceId: number, x: number, y: number, z: number) {
+    const key = chunkScalarsToHex(spaceId, x, y, z);
+    const chunkId = new ChunkId(key, spaceId, x, y, z);
+    return chunkId;
   }
 
-  public static fromHex(hex: string) {
-    const spaceId = parseInt(hex.substring(0, 8), 16);
-    const z = parseInt(hex.substring(8, 12), 16);
-    const y = parseInt(hex.substring(12, 16), 16);
-    const x = parseInt(hex.substring(16, 20), 16);
-    return new ChunkId(spaceId, x, y, z);
+  public static fromHex(key: string) {
+    const spaceId = parseInt(key.substring(0, 8), 16);
+    const z = parseInt(key.substring(8, 12), 16);
+    const y = parseInt(key.substring(12, 16), 16);
+    const x = parseInt(key.substring(16, 20), 16);
+    const chunkId = new ChunkId(key, spaceId, x, y, z);
+    return chunkId;
   }
 }
 
@@ -54,7 +54,7 @@ export const chunkIdCodec: BinaryBYOBCodec<ChunkId> = {
     const z = dv.getUint16(4, true);
     const y = dv.getUint16(6, true);
     const x = dv.getUint16(8, true);
-    const chunkId = new ChunkId(spaceId, x, y, z);
+    const chunkId = ChunkId.fromScalars(spaceId, x, y, z);
     return chunkId;
   },
   encode(buffer: ArrayBuffer, byteOffset: number, data: ChunkId): void {

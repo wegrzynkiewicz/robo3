@@ -1,9 +1,9 @@
 import { createPerformanceCounter } from "../../../../common/PerformanceCounter.ts";
 import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
-import { SpaceManager, spaceManagerService } from "../../../../core/space/SpaceManager.ts";
-import { Chunk } from "../../../../domain-client/chunk/chunkManager.ts";
+import { Chunk, ChunkManager, chunkManagerService } from "../../../../domain-client/chunk/chunkManager.ts";
 import { SceneViewport, sceneViewportService } from "./SceneViewport.ts";
 import { TilesCollector, tilesCollectorService } from "./TilesCollector.ts";
+import { ChunkId } from "../../../../core/chunk/chunkId.ts";
 
 const ter = {
   "LQ": 65,
@@ -37,7 +37,7 @@ export class TilesSceneBuilder {
 
   public constructor(
     public readonly availableLayerCount: number,
-    public readonly spaceManager: SpaceManager,
+    public readonly chunkManager: ChunkManager,
     public readonly sceneViewport: SceneViewport,
     public readonly tiles: TilesCollector,
   ) {
@@ -54,11 +54,8 @@ export class TilesSceneBuilder {
 
   public buildChunk(chunkX: number, chunkY: number, chunkZ: number) {
     const { tilesRect, spaceId } = this.sceneViewport;
-    const space = this.spaceManager.byId.get(spaceId);
-    if (space === undefined) {
-      return;
-    }
-    const chunk = space.chunkManager.getByCoords(chunkX, chunkY, chunkZ);
+    const chunkId = ChunkId.fromScalars(spaceId, chunkX, chunkY, chunkZ);
+    const chunk = this.chunkManager.getByChunkId(chunkId);
     if (chunk === undefined || chunk.segment === undefined) {
       return;
     }
@@ -215,7 +212,7 @@ export const tilesSceneBuilderService = registerService({
   async provider(resolver: ServiceResolver): Promise<TilesSceneBuilder> {
     return new TilesSceneBuilder(
       10,
-      await resolver.resolve(spaceManagerService),
+      await resolver.resolve(chunkManagerService),
       await resolver.resolve(sceneViewportService),
       await resolver.resolve(tilesCollectorService),
     );

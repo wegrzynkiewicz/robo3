@@ -128,7 +128,7 @@ export class DebugInfo {
       out.push(`  Visible`);
       for (const chunk of this.tilesSceneBuilder.visibleChunks) {
         const { chunkId, chunkId: { x, y, z }, worldSpaceRect: r } = chunk;
-        out.push(`    Id: ${chunkId.toHex()} `);
+        out.push(`    Id: ${chunkId.key} `);
         out.push(`      Position: ${x} ${y} ${z} `);
         out.push(`      SpaceRect: ${r.x1} ${r.y1} ${r.x2} ${r.y2} `);
       }
