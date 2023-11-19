@@ -38,6 +38,7 @@
   - Duration - ile trwa pełny proces zepsucia
 - View - wizualna reprezentacja obiektu
 - Size - rozmiar obiektu
+- FreePosition - obiekt można umieścić w dowolnym miejscu na mapie
 
 - Processor - obiekt posiada processor, który steruje zachowaniem tego obiektu
 
@@ -50,6 +51,57 @@
 - eX - obiekt posiada stan, współdzieli właściwości 
 - complex - obiekt posiada stan, jest przetwarzany 
 - being - obiekt posiada stan, nie jest doklejany do chunka, ani magazynu
+
+### Byty
+
+Wynikowe atrybutów
+
+  - Poziom
+
+  - HP
+  - Prędkość regeneracji HP
+
+  - MP
+  - Prędkość regeneracji MP
+
+  - EnergyP
+  - Prędkość regeneracji EP
+
+  - Zmęczenie jako pomniejszenie ilości dostępnej energii
+
+  - Udźwig
+  - Sytości
+  - Ilość run
+  - Prędkość poruszania się
+  
+  - Interwał między atakami wręcz
+  - Interwał między atakami dystansowymi
+  - Interwał między atakami czarowanymi
+  
+
+
+Rodzaje magii
+
+Szkoły magii:
+  - Harmonia
+  - Chaos
+  - Życie
+  - Śmierć
+  - Światło
+  - Ciemność
+  - Ogień
+  - Woda
+  - Ziemia
+  - Powietrze
+
+Obrażenia
+  Fizyczne
+    - kłute
+    - cięte
+    - obuchowe
+    - od trucizn
+  Magiczne
+    - Jak szkoły
 
 ### Example game objects
 
@@ -65,7 +117,11 @@ ua - User Action
 
 # TODO
 
+- [X] Upakowanie danych o teksturze kafelka w teksturze "danych"
 - [ ] Zaprojektowanie modelu przedmiotów w grze
-- [ ] Upakowanie danych o teksturze kafelka w teksturze "danych"
 - [ ] Dekonstrukcja mapy z GRIDa na kafelki o zaokrąglonych kształtach
 - [ ] Informacje w DebugInfo o wyświetlanych chunkach i ilościach kafelków
+- [ ] Aktualizacja pojedynczego tile w chunku
+- [ ] Kontrola gracza
+- [ ] Narzędzie admina
+- [ ] Mechanizm kolizji
