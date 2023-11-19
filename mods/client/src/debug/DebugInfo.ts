@@ -102,7 +102,6 @@ export class DebugInfo {
           chunkRect,
           grid: {
             available,
-            printable,
           },
           tilesRect,
         },
@@ -112,7 +111,6 @@ export class DebugInfo {
       } = this.tilesSceneBuilder;
       out.push(`  AvgBuildTime: ${(performance.avgTime * 1000).toFixed(0)} µs`);
       out.push(`  Grid.available: ${available.size.x} * ${available.size.y} = ${available.cellCount}`);
-      out.push(`  Grid.printable: ${printable.size.x} * ${printable.size.y} = ${printable.cellCount}`);
       const bs = this.tilesBuffer.bytesSent;
       out.push(`  ChunkRect: ${chunkRect.x1} ${chunkRect.y1} ${chunkRect.x2} ${chunkRect.y2} `);
       out.push(`  TilesRect: ${tilesRect.x1} ${tilesRect.y1} ${tilesRect.x2} ${tilesRect.y2} `);

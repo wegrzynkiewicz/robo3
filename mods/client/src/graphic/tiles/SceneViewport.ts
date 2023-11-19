@@ -5,8 +5,6 @@ import { point } from "../../../../math/Point.ts";
 import { Viewport, viewportService } from "../Viewport.ts";
 import { PrimaryUBO, primaryUBOService } from "../PrimaryUBO.ts";
 
-const { floor, max } = Math;
-
 class SceneGridVariant {
   public cellCount = 0;
   public readonly size = point(0, 0);
@@ -27,7 +25,6 @@ class SceneGrid {
     SCREEN_MAX_VISIBLE_TILE_X + 3,
     SCREEN_MAX_VISIBLE_TILE_Y + 3,
   );
-  public readonly printable = new SceneGridVariant(0, 0);
 }
 
 export class SceneViewport {
@@ -42,26 +39,21 @@ export class SceneViewport {
   ) { }
 
   public loop() {
-    const { chunkRect, grid: { printable }, tilesRect, viewport } = this;
+    const { chunkRect, primaryUBO, tilesRect, viewport } = this;
     tilesRect.x1 = viewport.tilesRect.x1 - 1;
     tilesRect.y1 = viewport.tilesRect.y1 - 1;
     tilesRect.x2 = viewport.tilesRect.x2 + 2;
     tilesRect.y2 = viewport.tilesRect.y2 + 2;
 
-    chunkRect.x1 = floor(tilesRect.x1 / 32);
-    chunkRect.y1 = floor(tilesRect.y1 / 32);
-    chunkRect.x2 = floor(tilesRect.x2 / 32);
-    chunkRect.y2 = floor(tilesRect.y2 / 32);
+    chunkRect.x1 = Math.floor(tilesRect.x1 / 32);
+    chunkRect.y1 = Math.floor(tilesRect.y1 / 32);
+    chunkRect.x2 = Math.floor(tilesRect.x2 / 32);
+    chunkRect.y2 = Math.floor(tilesRect.y2 / 32);
 
-    printable.update(
-      max(tilesRect.x2, 0) - max(tilesRect.x1, 0),
-      max(tilesRect.y2, 0) - max(tilesRect.y1, 0),
-    )
-
-    this.primaryUBO.pixelOffset[0] = tilesRect.x1 * 32;
-    this.primaryUBO.pixelOffset[1] = tilesRect.y1 * 32;
-    this.primaryUBO.pixelOffset[2] = tilesRect.x2 * 32;
-    this.primaryUBO.pixelOffset[3] = tilesRect.y2 * 32;
+    primaryUBO.pixelOffset[0] = tilesRect.x1 * 32;
+    primaryUBO.pixelOffset[1] = tilesRect.y1 * 32;
+    primaryUBO.pixelOffset[2] = tilesRect.x2 * 32;
+    primaryUBO.pixelOffset[3] = tilesRect.y2 * 32;
   }
 
   public get level(): number {
