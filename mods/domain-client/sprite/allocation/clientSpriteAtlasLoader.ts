@@ -23,6 +23,23 @@ export const clientSpriteAtlasLoaderService = registerService({
     }
     loader.addProvider(new ExternalSpriteAtlasProvider(build));
     loader.addProvider(await resolver.resolve(shadowSpriteAtlasProviderService));
+
+    const mage: SpriteAtlasSource = {
+      allocation: {
+        type: 'static',
+      },
+      layout: {
+        spriteDim: { h: 32, w: 32 },
+        type: "numbers",
+      },
+      origin: {
+        type: "external",
+        url: `${window.location.origin}/assets/mage-cyan.png`, // TODO: hardcode
+      },
+      spriteAtlasId: 'mage',
+    }
+    loader.addProvider(new ExternalSpriteAtlasProvider(mage));
+
     return loader;
   },
 });
