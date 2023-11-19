@@ -7,7 +7,7 @@ function toHex(number: number, pad: number): string {
 }
 
 function chunkScalarsToHex(spaceId: number, x: number, y: number, z: number): string {
-  return `${toHex(spaceId, 8)}${toHex(x, 4)}${toHex(y, 4)}${toHex(z, 4)}`;
+  return `${toHex(spaceId, 8)}${toHex(z, 4)}${toHex(y, 4)}${toHex(x, 4)}`;
 }
 
 export class ChunkId {
