@@ -1,18 +1,17 @@
 import { Breaker } from "../../common/asserts.ts";
+import { logger } from "../../common/logger.ts";
 import { registerService } from "../../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
 import { AnyGADefinition, GADefinition } from "./foundation.ts";
 import { GASender } from "./sender.ts";
 
 export interface GAProcessor {
-  canProcess<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): boolean;
   process<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void>;
 }
 
 export interface GAHandler<TRequest, TResponse> {
   handle(envelope: TRequest): Promise<TResponse>;
 }
-
 export type AnyGAHandler = GAHandler<any, any>;
 
 export interface HandlerBinding<TRequest, TResponse> {
@@ -27,7 +26,7 @@ export class UniversalGAProcessor implements GAProcessor {
 
   public constructor(
     public readonly sender: GASender,
-  ) {}
+  ) { }
 
   public registerHandler<TRequest, TResponse>(
     request: GADefinition<TRequest>,
@@ -38,26 +37,23 @@ export class UniversalGAProcessor implements GAProcessor {
     this.handlers.set(request, binding);
   }
 
-  public canProcess<TData>(definition: GADefinition<TData>): boolean {
-    return this.handlers.has(definition);
-  }
-
   public async process<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
     const binding = this.handlers.get(definition);
     if (!binding) {
-      throw new Breaker("game-action-handler-not-found", { definition, envelope });
+      logger.warn("game-action-handler-not-found", { definition, envelope });
+      return;
     }
     const { id, params } = envelope;
     const { handler, response } = binding;
     try {
       const result = await handler.handle(params);
-      if (response !== undefined) {
+      if (response) {
         const { kind } = response;
         const resultEnvelope: GAEnvelope<unknown> = { id, kind, params: result };
         this.sender.sendEnvelope(response, resultEnvelope);
       }
     } catch (error) {
-      throw new Breaker("error-inside-game-action-handler", { definition, envelope: { id }, error });
+      throw new Breaker("error-inside-game-action-handler", { definition, envelope, error });
     }
   }
 }

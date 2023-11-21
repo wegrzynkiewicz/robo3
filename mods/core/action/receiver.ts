@@ -14,30 +14,21 @@ export class UniversalGAReceiver implements GAReceiver {
     public readonly codec: GACodec,
     public readonly logger: Logger,
     public readonly processors: GAProcessor[],
-  ) {}
+  ) { }
 
   public async receive(message: unknown): Promise<void> {
     const [definition, envelope] = this.codec.decode(message);
-    let processed = false;
     for (const processor of this.processors) {
-      if (!processor.canProcess(definition, envelope)) {
-        continue;
-      }
-      const { id } = envelope;
       try {
         await processor.process(definition, envelope);
       } catch (error) {
-        const isBreaker = error instanceof Breaker;
-        const errorOptions = { definition, envelope: { id }, error };
-        this.logger.error("error-then-receiving-game-action-envelope", errorOptions);
-        if (!isBreaker) {
+        const errorOptions = { definition, envelope, error };
+        if (error instanceof Breaker) {
+          this.logger.error("error-then-receiving-game-action-envelope", errorOptions);
+        } else {
           throw new Breaker("unknown-error-then-processing-game-request", errorOptions);
         }
       }
-      processed = true;
-    }
-    if (processed === false) {
-      throw new Breaker("received-message-for-unknown-processor", { definition, envelope });
     }
   }
 }

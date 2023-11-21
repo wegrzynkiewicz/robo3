@@ -1,4 +1,3 @@
-import { isGreaterThenZero, isObject } from "../../common/asserts.ts";
 import { Deferred, deferred } from "../../deps.ts";
 import { registerService, ServiceResolver } from "../../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
@@ -34,28 +33,13 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
     public readonly sender: GASender,
   ) {}
 
-  public canProcess<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): boolean {
-    if (!isObject<WithId<TData>>(envelope)) {
-      return false;
-    }
-    const id = envelope.id as unknown;
-    if (!isGreaterThenZero(id)) {
-      return false;
-    }
-    const request = this.requests.get(id);
-    if (request === undefined) {
-      return false;
-    }
-    if (request.responseDefinition !== definition) {
-      return false;
-    }
-    return true;
-  }
-
   public async process<TData>(_definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
     const id = envelope.id;
     const request = this.requests.get(id);
-    const { promise } = request!;
+    if (request === undefined) {
+      return;
+    }
+    const { promise } = request;
     promise.resolve(envelope);
     this.requests.delete(id);
   }
