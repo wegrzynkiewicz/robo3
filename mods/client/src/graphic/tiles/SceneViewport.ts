@@ -28,7 +28,6 @@ class SceneGrid {
 }
 
 export class SceneViewport {
-
   public readonly grid = new SceneGrid();
   public readonly tilesRect = cornerRect(0, 0, 0, 0);
   public readonly chunkRect = cornerRect(0, 0, 0, 0);
@@ -36,7 +35,7 @@ export class SceneViewport {
   public constructor(
     public readonly viewport: Viewport,
     public readonly primaryUBO: PrimaryUBO,
-  ) { }
+  ) {}
 
   public loop() {
     const { chunkRect, primaryUBO, tilesRect, viewport } = this;

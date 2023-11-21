@@ -1,4 +1,4 @@
-import { unifiedCanvasContextConstructor, UnifiedCanvasContext } from "./common.ts";
+import { UnifiedCanvasContext, unifiedCanvasContextConstructor } from "./common.ts";
 
 export type { UnifiedCanvasContext };
 

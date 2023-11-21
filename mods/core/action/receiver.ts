@@ -14,7 +14,7 @@ export class UniversalGAReceiver implements GAReceiver {
     public readonly codec: GACodec,
     public readonly logger: Logger,
     public readonly processors: GAProcessor[],
-  ) { }
+  ) {}
 
   public async receive(message: unknown): Promise<void> {
     const [definition, envelope] = this.codec.decode(message);

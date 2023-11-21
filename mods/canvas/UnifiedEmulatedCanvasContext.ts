@@ -1,5 +1,5 @@
 import { AbstractUnifiedCanvasContext, initialize, UnifiedCanvasContext } from "./common.ts";
-import { EmulatedCanvasRenderingContext2D, createCanvas, EmulatedCanvas2D, loadImage } from "./deps.ts";
+import { createCanvas, EmulatedCanvas2D, EmulatedCanvasRenderingContext2D, loadImage } from "./deps.ts";
 
 export class UnifiedEmulatedCanvasContext extends AbstractUnifiedCanvasContext implements UnifiedCanvasContext {
   public readonly canvas: EmulatedCanvas2D;

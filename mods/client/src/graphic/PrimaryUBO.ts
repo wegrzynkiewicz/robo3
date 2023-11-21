@@ -5,7 +5,6 @@ import { createBuffer } from "./utilities.ts";
 const { DYNAMIC_DRAW, UNIFORM_BUFFER } = WebGL2RenderingContext;
 
 export class PrimaryUBO {
-
   public readonly projectionMatrix: Float32Array;
   public readonly viewMatrix: Float32Array;
   public readonly texSpriteGraphicSize: Float32Array;

@@ -15,13 +15,13 @@ export class DebugBufferPreview<T extends TypedArray> {
     public readonly height: number,
     public readonly colorizer: DebugBufferPreviewColorizer,
   ) {
-    this.canvas = document.createElement('canvas');
+    this.canvas = document.createElement("canvas");
     this.canvas.width = width;
     this.canvas.height = height;
-    this.canvas.classList.add('debug-buffer-preview');
+    this.canvas.classList.add("debug-buffer-preview");
     this.canvas.style.width = `${width * 6}px`;
     this.canvas.style.height = `${height * 6}px`;
-    this.context = this.canvas.getContext('2d', { willReadFrequently: true })!;
+    this.context = this.canvas.getContext("2d", { willReadFrequently: true })!;
   }
 
   public update(): void {

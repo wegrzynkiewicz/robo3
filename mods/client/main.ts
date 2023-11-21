@@ -69,7 +69,6 @@ async function start() {
 
   debugInfo.enable();
 
-
   function* unpack(): Generator<SpriteImage, void, unknown> {
     for (const i of spriteAtlasImages) {
       const spriteImageExtractor = new SpriteImageExtractor(i);
@@ -88,12 +87,11 @@ async function start() {
     tilesTexture2DArray.update(x++, data);
   }
 
-
   allocation.bindings[74].tile.size.w = 1024 * 2;
   allocation.bindings[74].tile.size.h = 1024 * 2;
 
-  const v1 = new Float32Array(256*256*4);
-  const v2 = new Float32Array(256*256*4);
+  const v1 = new Float32Array(256 * 256 * 4);
+  const v2 = new Float32Array(256 * 256 * 4);
   let i1 = 0;
   let i2 = 0;
   for (const binding of allocation.bindings) {

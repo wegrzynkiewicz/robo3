@@ -89,14 +89,12 @@ export class TilesSceneBuilder {
     public readonly viewport: Viewport,
     public readonly tilesBuffer: DynamicDrawBuffer,
   ) {
-
-
     const { cellCount } = this.sceneViewport.grid.available;
-    const totalByteLength = cellCount * (availableLayerCount + DEPTH_LAYERS_COUNT) * TERRAIN_CELL_BYTE_LENGTH
+    const totalByteLength = cellCount * (availableLayerCount + DEPTH_LAYERS_COUNT) * TERRAIN_CELL_BYTE_LENGTH;
     const buffer = new ArrayBuffer(totalByteLength);
     this.depthLayer = new Uint16Array(buffer, 0, cellCount);
     for (let layerIndex = 0; layerIndex < availableLayerCount; layerIndex++) {
-      const byteOffset = cellCount * (layerIndex + 1) * TERRAIN_CELL_BYTE_LENGTH
+      const byteOffset = cellCount * (layerIndex + 1) * TERRAIN_CELL_BYTE_LENGTH;
       const layerTypedArray = new Uint16Array(buffer, byteOffset, cellCount);
       const layer = new SceneTerrainLayer(layerTypedArray);
       this.terrainLayers.push(layer);
@@ -178,8 +176,8 @@ export class TilesSceneBuilder {
     const startX = tilesRect.x1;
     const startY = tilesRect.y1;
     this.tiles.push({
-      x: (x) * 32,
-      y: (y) * 32,
+      x: x * 32,
+      y: y * 32,
       z: this.currentTerrainLevel,
       v,
     });
@@ -203,16 +201,16 @@ export class TilesSceneBuilder {
       const vc = view[(y + 1) * row + (x + 1)] === 0 ? 0 : 1;
 
       if (vw && va && vq) {
-        this.pushTile(x, y, ter['CC']);
+        this.pushTile(x, y, ter["CC"]);
       }
       if (vw && vd && ve) {
-        this.pushTile(x, y, ter['CZ']);
+        this.pushTile(x, y, ter["CZ"]);
       }
       if (vx && va && vz) {
-        this.pushTile(x, y, ter['CE']);
+        this.pushTile(x, y, ter["CE"]);
       }
       if (vx && vd && vc) {
-        this.pushTile(x, y, ter['CQ']);
+        this.pushTile(x, y, ter["CQ"]);
       }
 
       const v = vw | vx | va | vd;
@@ -235,13 +233,13 @@ export class TilesSceneBuilder {
           break;
         }
         case 0b1100: {
-          this.pushTile(x, y, ter['EA']);
-          this.pushTile(x, y, ter['ED']);
+          this.pushTile(x, y, ter["EA"]);
+          this.pushTile(x, y, ter["ED"]);
           break;
         }
         case 0b0011: {
-          this.pushTile(x, y, ter['EW']);
-          this.pushTile(x, y, ter['ES']);
+          this.pushTile(x, y, ter["EW"]);
+          this.pushTile(x, y, ter["ES"]);
           break;
         }
         case 0b1111:
@@ -267,7 +265,7 @@ export class TilesSceneBuilder {
       for (let x = x1; x <= x2; x++) {
         const cellIndex = y * this.availableCellsPerRowCount + x;
         if (this.depthLayer[cellIndex] <= this.currentTerrainLevel) {
-        //   this.processTile(x, y);
+          //   this.processTile(x, y);
         }
       }
     }

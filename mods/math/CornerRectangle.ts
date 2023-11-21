@@ -18,7 +18,7 @@ export function intersectsNonStrict(r1: CornerRectangle, r2: CornerRectangle): b
   );
 }
 
-export function getIntersection(r1: CornerRectangle, r2: CornerRectangle): CornerRectangle{
+export function getIntersection(r1: CornerRectangle, r2: CornerRectangle): CornerRectangle {
   const x1 = Math.max(r1.x1, r2.x1);
   const y1 = Math.max(r1.y1, r2.y1);
   const x2 = Math.min(r1.x2, r2.x2);

@@ -1,6 +1,6 @@
 import { TypedArray } from "../../../../common/binary.ts";
 import { Dim2D } from "../../../../math/Dim2D.ts";
-import { createTexture, createSampler } from "../utilities.ts";
+import { createSampler, createTexture } from "../utilities.ts";
 import { TextureFormatConfig } from "./format.ts";
 
 export class Texture2D {
@@ -44,7 +44,7 @@ export class Texture2D {
 
   public update(data: TypedArray | ImageData) {
     this.bind();
-    const { dim: {h, w }, formatConfig: { format, type }, gl } = this;
+    const { dim: { h, w }, formatConfig: { format, type }, gl } = this;
     gl.texSubImage2D(
       gl.TEXTURE_2D,
       0,

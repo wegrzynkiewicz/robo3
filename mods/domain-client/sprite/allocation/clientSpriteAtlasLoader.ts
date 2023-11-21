@@ -9,7 +9,7 @@ export const clientSpriteAtlasLoaderService = registerService({
     const loader = new SpriteAtlasLoader();
     const build: SpriteAtlasSource = {
       allocation: {
-        type: 'static',
+        type: "static",
       },
       layout: {
         spriteDim: { h: 32, w: 32 },
@@ -19,14 +19,14 @@ export const clientSpriteAtlasLoaderService = registerService({
         type: "external",
         url: `${window.location.origin}/assets/3.png`, // TODO: hardcode
       },
-      spriteAtlasId: 'build-in',
-    }
+      spriteAtlasId: "build-in",
+    };
     loader.addProvider(new ExternalSpriteAtlasProvider(build));
     loader.addProvider(await resolver.resolve(shadowSpriteAtlasProviderService));
 
     const mage: SpriteAtlasSource = {
       allocation: {
-        type: 'static',
+        type: "static",
       },
       layout: {
         spriteDim: { h: 32, w: 32 },
@@ -36,8 +36,8 @@ export const clientSpriteAtlasLoaderService = registerService({
         type: "external",
         url: `${window.location.origin}/assets/mage-cyan.png`, // TODO: hardcode
       },
-      spriteAtlasId: 'mage',
-    }
+      spriteAtlasId: "mage",
+    };
     loader.addProvider(new ExternalSpriteAtlasProvider(mage));
 
     return loader;

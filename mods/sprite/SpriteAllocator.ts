@@ -1,6 +1,6 @@
 import { UnifiedCanvasContext } from "../canvas/common.ts";
 import { createUnifiedCanvas } from "../canvas/mod.ts";
-import { index2coords, coords2ImageRect } from "../core/numbers.ts";
+import { index2coords } from "../core/numbers.ts";
 import { Dim2D, dim2D } from "../math/Dim2D.ts";
 import { Point, point } from "../math/Point.ts";
 import { SpriteImage } from "./sprite.ts";
@@ -9,13 +9,13 @@ export interface SpriteBinding {
   spriteId: string;
   spriteIndex: number;
   tile: {
-    size: Dim2D,
-  },
+    size: Dim2D;
+  };
   texture: {
     atlasIndex: number;
-    mapping: Point,
-    size: Dim2D,
-  },
+    mapping: Point;
+    size: Dim2D;
+  };
 }
 
 export interface AllocationResult {
@@ -33,7 +33,7 @@ export class SpriteAllocator {
   public constructor(
     public readonly width: number,
     public readonly height: number,
-  ) { }
+  ) {}
 
   public allocate(sprites: SpriteImage[]): AllocationResult {
     for (const sprite of sprites) {
@@ -50,7 +50,6 @@ export class SpriteAllocator {
       this.canvases.push(this.currentTargetCanvas);
       [x, y] = index2coords(this.spriteIndex);
     }
-    // const [dstX, dstY] = coords2ImageRect(x, y);
     const [dstX, dstY] = [x * 32, y * 32];
     this.currentTargetCanvas!.putImageData(sprite.image, dstX, dstY);
     const spriteBinding: SpriteBinding = {

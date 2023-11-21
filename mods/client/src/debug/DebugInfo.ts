@@ -49,7 +49,7 @@ export class DebugInfo {
     );
     this.previews.push(preview);
 
-    right.append(...this.previews.map(e => e.canvas));
+    right.append(...this.previews.map((e) => e.canvas));
   }
 
   public enable() {

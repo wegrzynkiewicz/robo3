@@ -36,8 +36,8 @@ class MeasurePerformanceCounter implements PerformanceCounter {
 
 class NullPerformanceCounter implements PerformanceCounter {
   public readonly avgTime = 0;
-  public start(): void { }
-  public end(): void { }
+  public start(): void {}
+  public end(): void {}
 }
 
 export interface PerformanceCounter {

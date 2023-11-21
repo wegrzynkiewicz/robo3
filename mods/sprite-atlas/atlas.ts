@@ -19,7 +19,6 @@ export interface SpriteInListSpriteAtlasLayout {
   sourceRect: DimensionalRectangle;
 }
 
-
 export interface GridNumbersSpriteAtlasLayout {
   spriteDim: Dim2D;
   type: "numbers";

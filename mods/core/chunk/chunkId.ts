@@ -11,14 +11,13 @@ function chunkScalarsToHex(spaceId: number, x: number, y: number, z: number): st
 }
 
 export class ChunkId {
-
   protected constructor(
     public readonly key: string,
     public readonly spaceId: number,
     public readonly x: number,
     public readonly y: number,
     public readonly z: number,
-  ) { }
+  ) {}
 
   public getWorldSpaceCornerRect(): CornerRectangle {
     const x1 = this.x * PIXELS_PER_CHUNK_GRID_AXIS;

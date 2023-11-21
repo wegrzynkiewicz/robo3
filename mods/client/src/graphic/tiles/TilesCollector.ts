@@ -1,10 +1,9 @@
-import { registerService,ServiceResolver } from "../../../../dependency/service.ts";
+import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
-import { SceneViewport,sceneViewportService } from "./SceneViewport.ts";
+import { SceneViewport, sceneViewportService } from "./SceneViewport.ts";
 import { tilesBufferService } from "./tilesBuffer.ts";
 
 export class TilesCollector {
-
   protected index = 0;
   protected tiles = [];
   public visibleTiles = 0;
@@ -12,7 +11,7 @@ export class TilesCollector {
   public constructor(
     public readonly sceneViewport: SceneViewport,
     public readonly tilesBuffer: DynamicDrawBuffer,
-  ) { }
+  ) {}
 
   public clear(): void {
     this.index = 0;

@@ -119,8 +119,8 @@ export class TilesProgram {
 
     gl.uniformBlockBinding(this.glProgram, gl.getUniformBlockIndex(this.glProgram, "Primary"), 0);
 
-    this.setTexture('u_spriteGraphic', tilesTexture.textureUnit);
-    this.setTexture('u_spriteIndices', spriteIndicesTexture.textureUnit);
+    this.setTexture("u_spriteGraphic", tilesTexture.textureUnit);
+    this.setTexture("u_spriteIndices", spriteIndicesTexture.textureUnit);
   }
 
   public setTexture(uniformName: string, textureUnit: number): void {

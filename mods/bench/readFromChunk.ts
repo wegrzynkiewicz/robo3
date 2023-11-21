@@ -7,9 +7,9 @@ const chunk = {
   segment: {
     grid: {
       view: basicView,
-    }
-  }
-}
+    },
+  },
+};
 
 const chunks: Record<number, Record<number, typeof chunk>> = {
   0: {
@@ -20,7 +20,7 @@ const chunks: Record<number, Record<number, typeof chunk>> = {
     0: chunk,
     1: chunk,
   },
-}
+};
 
 Deno.bench("read chunk", () => {
   for (let y = 1; y < size - 1; y++) {
@@ -50,6 +50,3 @@ Deno.bench("read chunk2", () => {
     }
   }
 });
-
-
-

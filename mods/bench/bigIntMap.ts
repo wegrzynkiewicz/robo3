@@ -16,7 +16,7 @@ class ChunkId {
 
   public toNumber(): number {
     const { x, y, z } = this;
-    return z * 4294967296 + y * 65536 + x
+    return z * 4294967296 + y * 65536 + x;
   }
 
   public toHex(): string {
@@ -62,7 +62,6 @@ Deno.bench("BigInt: .toBigInt()", () => {
 Deno.bench("Number: .toNumber()", () => {
   chunkId.toNumber();
 });
-
 
 Deno.bench("String: basic set", () => {
   mapString.set("1", {});

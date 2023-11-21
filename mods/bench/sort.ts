@@ -17,7 +17,7 @@ Deno.bench("sort", () => {
   array.sort((a, b) => a.z - b.z);
 });
 
-const sort = (a: Example, b: Example) => a.z - b.z
+const sort = (a: Example, b: Example) => a.z - b.z;
 Deno.bench("sort with function", () => {
   array.sort(sort);
 });
