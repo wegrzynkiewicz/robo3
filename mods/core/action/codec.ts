@@ -37,7 +37,7 @@ export interface GABinaryHeader {
   readonly id: number;
 }
 
-export const GA_BINARY_HEADER_BYTE_LENGTH = 8;
+export const GA_BINARY_HEADER_BYTE_LENGTH = 4;
 
 export const gaBinaryHeaderCodec: BinaryBYOBCodec<GABinaryHeader> = {
   calcByteLength(): number {
@@ -45,22 +45,22 @@ export const gaBinaryHeaderCodec: BinaryBYOBCodec<GABinaryHeader> = {
   },
   decode: function (buffer: ArrayBuffer, byteOffset: number): GABinaryHeader {
     const dv = new DataView(buffer, byteOffset);
-    const key = dv.getUint32(0, true);
-    const id = dv.getUint32(4, true);
+    const key = dv.getUint16(0, true);
+    const id = dv.getUint16(2, true);
     return { key, id };
   },
   encode: function (buffer: ArrayBuffer, byteOffset: number, data: GABinaryHeader): void {
     const { id, key } = data;
     const dv = new DataView(buffer, byteOffset);
-    dv.setUint32(0, key, true);
-    dv.setUint32(4, id, true);
+    dv.setUint16(0, key, true);
+    dv.setUint16(2, id, true);
   },
 };
 
 export class GACodec {
   public constructor(
     public manager: GAManager,
-  ) {}
+  ) { }
 
   public decode<TData>(message: unknown): [GADefinition<TData>, GAEnvelope<TData>] {
     if (isRequiredString(message)) {
@@ -74,9 +74,7 @@ export class GACodec {
       }
       return [definition, envelope];
     } else if (message instanceof ArrayBuffer) {
-      const dv = new DataView(message);
-      const key = dv.getUint32(0, true);
-      const id = dv.getUint32(4, true);
+      const { id, key } = gaBinaryHeaderCodec.decode(message, 0);
       const definition = this.manager.byKey.get(key);
       assertObject(definition, "cannot-decode-envelope-with-unknown-key", { definition, key });
       const { encoding, kind } = definition;
