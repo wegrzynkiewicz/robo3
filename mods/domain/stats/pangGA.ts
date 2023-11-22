@@ -7,17 +7,17 @@ export interface PangGA {
 
 const codec: BinaryBYOBCodec<PangGA> = {
   calcByteLength(): number {
-    return 4;
+    return 8;
   },
   decode(buffer: ArrayBuffer, byteOffset: number): PangGA {
     const dv = new DataView(buffer, byteOffset);
-    const serverHighResTimestamp = dv.getFloat32(0, true);
+    const serverHighResTimestamp = dv.getFloat64(0, true);
     return { serverHighResTimestamp };
   },
   encode(buffer: ArrayBuffer, byteOffset: number, data: PangGA): void {
     const { serverHighResTimestamp } = data;
     const dv = new DataView(buffer, byteOffset);
-    dv.setFloat32(0, serverHighResTimestamp, true);
+    dv.setFloat64(0, serverHighResTimestamp, true);
   },
 };
 

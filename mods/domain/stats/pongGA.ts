@@ -8,19 +8,19 @@ export interface PongGA {
 
 const codec: BinaryBYOBCodec<PongGA> = {
   calcByteLength(): number {
-    return 8;
+    return 16;
   },
   decode(buffer: ArrayBuffer, byteOffset: number): PongGA {
     const dv = new DataView(buffer, byteOffset);
-    const clientHighResTimestamp = dv.getFloat32(0, true);
-    const serverHighResTimestamp = dv.getFloat32(4, true);
+    const clientHighResTimestamp = dv.getFloat64(0, true);
+    const serverHighResTimestamp = dv.getFloat64(8, true);
     return { clientHighResTimestamp, serverHighResTimestamp };
   },
   encode(buffer: ArrayBuffer, byteOffset: number, data: PongGA): void {
     const { clientHighResTimestamp, serverHighResTimestamp } = data;
     const dv = new DataView(buffer, byteOffset);
-    dv.setFloat32(0, clientHighResTimestamp, true);
-    dv.setFloat32(4, serverHighResTimestamp, true);
+    dv.setFloat64(0, clientHighResTimestamp, true);
+    dv.setFloat64(8, serverHighResTimestamp, true);
   },
 };
 
