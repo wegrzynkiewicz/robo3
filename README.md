@@ -118,6 +118,7 @@ ua - User Action
 # TODO
 
 - [X] Upakowanie danych o teksturze kafelka w teksturze "danych"
+- [X] Ping Pong Pang
 - [ ] Zaprojektowanie modelu przedmiotów w grze
 - [ ] Dekonstrukcja mapy z GRIDa na kafelki o zaokrąglonych kształtach
 - [ ] Informacje w DebugInfo o wyświetlanych chunkach i ilościach kafelków

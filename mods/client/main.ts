@@ -23,6 +23,7 @@ import { loginGARequestDef, loginGAResponseDef } from "../domain/loginGA.ts";
 import { SpriteAllocator } from "../sprite/SpriteAllocator.ts";
 import { SpriteImage } from "../sprite/sprite.ts";
 import { spriteIndicesTextureService } from "./src/graphic/tiles/SpriteIndicesTexture.ts";
+import { networkLatencyDaemonService } from "../domain-client/stats/NetworkLatencyDaemon.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -122,6 +123,7 @@ async function start() {
   const processor = await resolver.resolve(clientGAProcessor);
   resolver.inject(gaProcessorService, processor);
   const communicator = await resolver.resolve(gaCommunicator);
+  const networkLatencyDaemon = await resolver.resolve(networkLatencyDaemonService);
 
   ws.addEventListener("open", async (event) => {
     const { status } = await communicator.requestor.request(
@@ -130,6 +132,7 @@ async function start() {
       { token: "test" },
     );
     const data = new Uint8Array(8);
+    networkLatencyDaemon.start();
   });
 
   // Listen for messages

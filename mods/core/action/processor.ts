@@ -10,7 +10,7 @@ export interface GAProcessor {
 }
 
 export interface GAHandler<TRequest, TResponse> {
-  handle(envelope: TRequest): Promise<TResponse>;
+  handle(request: TRequest): Promise<TResponse>;
 }
 export type AnyGAHandler = GAHandler<any, any>;
 
@@ -40,7 +40,6 @@ export class UniversalGAProcessor implements GAProcessor {
   public async process<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
     const binding = this.handlers.get(definition);
     if (!binding) {
-      logger.warn("game-action-handler-not-found", { definition, envelope });
       return;
     }
     const { id, params } = envelope;

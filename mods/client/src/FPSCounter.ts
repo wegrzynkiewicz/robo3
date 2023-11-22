@@ -9,6 +9,7 @@ export class FPSCounter {
   public loop(now: DOMHighResTimeStamp) {
     const deltaTime = now - this.then;
     this.timeAccumulator += deltaTime;
+    this.frameCount++;
     if (this.frameCount === 60) {
       const averageFrameTime = this.timeAccumulator / this.frameCount;
       this.fps = 1000 / averageFrameTime;
@@ -16,7 +17,6 @@ export class FPSCounter {
       this.timeAccumulator = 0;
     }
     this.then = now;
-    this.frameCount++;
   }
 }
 

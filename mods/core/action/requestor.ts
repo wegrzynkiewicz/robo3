@@ -35,6 +35,9 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
 
   public async process<TData>(_definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
     const id = envelope.id;
+    if (id <= 0) {
+      return;
+    }
     const request = this.requests.get(id);
     if (request === undefined) {
       return;

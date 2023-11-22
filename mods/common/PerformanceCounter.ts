@@ -25,12 +25,12 @@ class MeasurePerformanceCounter implements PerformanceCounter {
     performance.measure(this.name, this.startMark, this.endMark);
     const diff = endTime - this.startTime;
     this.accumulator += diff;
-    if (this.counter === this.frequency - 1) {
+    this.counter++;
+    if (this.counter === this.frequency) {
       this.avgTime = this.accumulator / this.frequency;
       this.accumulator = 0;
       this.counter = 0;
     }
-    this.counter++;
   }
 }
 

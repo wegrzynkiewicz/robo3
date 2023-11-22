@@ -1,6 +1,7 @@
 import { assertNonNull } from "../../../common/asserts.ts";
 import { formatBytes } from "../../../common/useful.ts";
 import { registerService, ServiceResolver } from "../../../dependency/service.ts";
+import { NetworkLatencyCounter, networkLatencyCounterService } from "../../../domain-client/stats/NetworkLatencyCounter.ts";
 import { FPSCounter, fpsCounterService } from "../FPSCounter.ts";
 import { Display, displayService } from "../graphic/Display.ts";
 import { DynamicDrawBuffer } from "../graphic/DynamicDrawBuffer.ts";
@@ -20,6 +21,7 @@ export class DebugInfo {
   public constructor(
     public readonly display: Display,
     public readonly fpsCounter: FPSCounter,
+    public readonly networkLatencyCounter: NetworkLatencyCounter,
     public readonly tilesBuffer: DynamicDrawBuffer,
     public readonly tilesSceneBuilder: TilesSceneBuilder,
     public readonly viewport: Viewport,
@@ -79,6 +81,11 @@ export class DebugInfo {
     out.push(`  FPS: ${this.fpsCounter.fps.toFixed(2)}`);
     out.push(`  Size: ${client.x} ${client.y}`);
     out.push(`  Scale: ${this.display.getScale()}`);
+
+    out.push(`Network`);
+    {
+      out.push(`  Ping: ${this.networkLatencyCounter.ping.toFixed(2)} ms`);
+    }
 
     out.push(`Viewport`);
     {
@@ -145,6 +152,7 @@ export const debugInfoService = registerService({
     return new DebugInfo(
       await resolver.resolve(displayService),
       await resolver.resolve(fpsCounterService),
+      await resolver.resolve(networkLatencyCounterService),
       await resolver.resolve(tilesBufferService),
       await resolver.resolve(tilesSceneBuilderService),
       await resolver.resolve(viewportService),
