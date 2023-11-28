@@ -1,5 +1,6 @@
 import { registerService } from "../../../dependency/service.ts";
 import { KeyState } from "./KeyShortCut.ts";
+import { AnyKADefinition } from "./foundation.ts";
 
 export class Keyboard {
   public static readonly IGNORE_CODES = [
@@ -62,6 +63,15 @@ export class Keyboard {
     this.states["AltRight"] = false;
     this.states["ControlRight"] = false;
     this.states["ShiftRight"] = false;
+  }
+
+  public isHold(kaDefinition: AnyKADefinition): boolean {
+    for (const shortCut of kaDefinition.currentShortCuts) {
+      if (shortCut.isHold(this)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 

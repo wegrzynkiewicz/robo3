@@ -3,7 +3,7 @@ import { Point } from "../../../math/Point.ts";
 import { Viewport, viewportService } from "../graphic/Viewport.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
 import { Keyboard, keyboardService } from "../keyboard/Keyboard.ts";
-import { AnyKADefinition, registerKADefinition } from "../keyboard/foundation.ts";
+import { registerKADefinition } from "../keyboard/foundation.ts";
 
 function createHolder(code: string, name: string, vector: Point) {
   const kaDefinition = registerKADefinition({
@@ -36,21 +36,12 @@ export class FreeCamera {
 
   public loop() {
     for (const holder of holders) {
-      if (this.isHold(holder.kaDefinition)) {
+      if (this.keyboard.isHold(holder.kaDefinition)) {
         this.x += this.speed * holder.vector.x;
         this.y += this.speed * holder.vector.y;
       }
     }
     this.viewport.lookAt(this.x, this.y);
-  }
-
-  protected isHold(kaDefinition: AnyKADefinition): boolean {
-    for (const shortCut of kaDefinition.currentShortCuts) {
-      if (shortCut.isHold(this.keyboard)) {
-        return true;
-      }
-    }
-    return false;
   }
 }
 
