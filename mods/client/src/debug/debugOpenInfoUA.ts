@@ -1,9 +1,9 @@
 import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
-import { registerUADefinition } from "../ua/foundation.ts";
+import { UADefinition, registerUADefinition } from "../ua/foundation.ts";
 import { UAHandler } from "../ua/processor.ts";
-import { debugInfoService } from "./DebugInfo.ts";
+import { DebugInfo, debugInfoService } from "./DebugInfo.ts";
 import { debugKeyShortCut } from "./common.ts";
 
 export const debugOpenInfoUA = registerUADefinition<null>({
@@ -24,12 +24,20 @@ export const debugOpenInfoKA = registerKADefinition({
   },
 });
 
+export class DebugOpenInfoUAHandler implements UAHandler<null> {
+  public constructor(
+    protected debugInfo: DebugInfo,
+  ) { }
+
+  public async handle(_definition: UADefinition<null>, _data: null): Promise<void> {
+    this.debugInfo.toggle();
+  }
+}
+
 export const debugOpenInfoUAHandlerService = registerService({
   async provider(resolver: ServiceResolver): Promise<UAHandler<null>> {
-    const debugInfo = await resolver.resolve(debugInfoService);
-    const handle = async (): Promise<void> => {
-      debugInfo.toggle();
-    };
-    return { handle };
+    return new DebugOpenInfoUAHandler(
+      await resolver.resolve(debugInfoService),
+    )
   },
 });

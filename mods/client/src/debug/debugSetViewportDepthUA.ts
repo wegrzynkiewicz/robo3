@@ -1,5 +1,5 @@
 import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { viewportService } from "../graphic/Viewport.ts";
+import { Viewport, viewportService } from "../graphic/Viewport.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
 import { registerUADefinition, UADefinition } from "../ua/foundation.ts";
@@ -29,12 +29,20 @@ for (const { data, key, name } of keys) {
   });
 }
 
+export class DebugSetViewportDepthUAHandler implements UAHandler<number> {
+  public constructor(
+    private viewport: Viewport,
+  ) { }
+
+  public async handle(_definition: UADefinition<number>, data: number): Promise<void> {
+    this.viewport.level = this.viewport.level + data;
+  }
+}
+
 export const debugSetViewportDepthUAHandlerService = registerService({
   async provider(resolver: ServiceResolver): Promise<UAHandler<number>> {
-    const viewport = await resolver.resolve(viewportService);
-    const handle = async (_Def: UADefinition<number>, data: number): Promise<void> => {
-      viewport.level = viewport.level + data;
-    };
-    return { handle };
+    return new DebugSetViewportDepthUAHandler(
+      await resolver.resolve(viewportService)
+    );
   },
 });

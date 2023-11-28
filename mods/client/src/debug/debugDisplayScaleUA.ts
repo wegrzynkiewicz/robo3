@@ -1,5 +1,5 @@
 import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { displayService } from "../graphic/Display.ts";
+import { Display, displayService } from "../graphic/Display.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
 import { registerUADefinition, UADefinition } from "../ua/foundation.ts";
@@ -27,12 +27,20 @@ for (const data of [1, 2, 3]) {
   });
 }
 
+export class DebugDisplayScaleUAHandler implements UAHandler<number> {
+  public constructor(
+    protected display: Display,
+  ) { }
+
+  public async handle(_definition: UADefinition<number>, data: number): Promise<void> {
+    this.display.setScale(data);
+  }
+}
+
 export const debugDisplayScaleUAHandlerService = registerService({
-  async provider(resolver: ServiceResolver): Promise<UAHandler<number>> {
-    const display = await resolver.resolve(displayService);
-    const handle = async (_definition: UADefinition<number>, data: number): Promise<void> => {
-      display.setScale(data);
-    };
-    return { handle };
+  async provider(resolver: ServiceResolver): Promise<DebugDisplayScaleUAHandler> {
+    return new DebugDisplayScaleUAHandler(
+      await resolver.resolve(displayService),
+    );
   },
 });
