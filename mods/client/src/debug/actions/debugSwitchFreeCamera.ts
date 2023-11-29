@@ -37,7 +37,6 @@ export class DebugSwitchFreeCameraUAHandler implements UAHandler<null> {
 
   public async handle(_definition: UADefinition<null>, _data: null): Promise<void> {
     this.phaseManager.setCurrentPhase(this.getPhase());
-    console.log(this);
   }
 
   public getPhase(): PhaseController {

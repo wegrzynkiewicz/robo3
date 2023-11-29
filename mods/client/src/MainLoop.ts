@@ -10,7 +10,7 @@ export interface Looper {
   loop(now: DOMHighResTimeStamp): void;
 }
 
-export class MainLoop {
+export class MainLoop implements Looper {
   protected animationFrameId = 0;
   protected readonly boundLoop: (now: DOMHighResTimeStamp) => void;
   protected isRunning = false;
@@ -31,7 +31,7 @@ export class MainLoop {
     cancelAnimationFrame(this.animationFrameId);
   }
 
-  public loop(now: DOMHighResTimeStamp) {
+  public loop(now: DOMHighResTimeStamp): void {
     for (const looper of this.loopers) {
       looper.loop(now);
     }

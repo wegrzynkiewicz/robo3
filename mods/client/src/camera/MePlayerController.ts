@@ -7,7 +7,7 @@ import { registerKADefinition } from "../keyboard/foundation.ts";
 
 function createHolder(code: string, name: string, direct: MoveDirection) {
   const kaDefinition = registerKADefinition({
-    name: `ka.self-player-controller.movement.${name}`,
+    name: `ka.me-player-controller.movement.${name}`,
     shortCuts: [
       new KeyShortCut(
         new KeyState(code),
@@ -24,7 +24,7 @@ const holders = [
   createHolder("KeyD", "right", MoveDirection.D),
 ];
 
-export class SelfPlayerController implements Looper {
+export class MePlayerController implements Looper {
   public previousDirect: MoveDirection = MoveDirection.S;
 
   public constructor(
@@ -53,10 +53,10 @@ export class SelfPlayerController implements Looper {
   }
 }
 
-export const selfPlayerControllerService = registerService({
-  name: "selfPlayerController",
-  async provider(resolver: ServiceResolver): Promise<SelfPlayerController> {
-    return new SelfPlayerController(
+export const mePlayerControllerService = registerService({
+  name: "mePlayerController",
+  async provider(resolver: ServiceResolver): Promise<MePlayerController> {
+    return new MePlayerController(
       await resolver.resolve(keyboardService),
     );
   },

@@ -8,7 +8,7 @@ import { FreeCamera, freeCameraService } from "./FreeCamera.ts";
 
 function createHolder(code: string, name: string, vector: Point) {
   const kaDefinition = registerKADefinition({
-    name: `ka.free-camera.movement.${name}`,
+    name: `ka.free-camera-controller.movement.${name}`,
     shortCuts: [
       new KeyShortCut(
         new KeyState(code),
@@ -25,7 +25,7 @@ const holders = [
   createHolder("KeyD", "right", { x: 1, y: 0 }),
 ];
 
-export class FreeViewportController implements Looper {
+export class FreeCameraController implements Looper {
   public speed = 32;
   public x = 1800;
   public y = 1800;
@@ -35,7 +35,7 @@ export class FreeViewportController implements Looper {
     public readonly keyboard: Keyboard,
   ) {}
 
-  public loop() {
+  public loop(): void {
     for (const holder of holders) {
       if (this.keyboard.isHold(holder.kaDefinition)) {
         this.x += this.speed * holder.vector.x;
@@ -46,10 +46,10 @@ export class FreeViewportController implements Looper {
   }
 }
 
-export const freeViewportControllerService = registerService({
-  name: "freeViewportController",
-  async provider(resolver: ServiceResolver): Promise<FreeViewportController> {
-    return new FreeViewportController(
+export const freeCameraControllerService = registerService({
+  name: "freeCameraController",
+  async provider(resolver: ServiceResolver): Promise<FreeCameraController> {
+    return new FreeCameraController(
       await resolver.resolve(freeCameraService),
       await resolver.resolve(keyboardService),
     );
