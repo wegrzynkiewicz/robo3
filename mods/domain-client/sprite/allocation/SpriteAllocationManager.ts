@@ -22,6 +22,7 @@ export class SpriteAllocManager {
 }
 
 export const spriteAllocManagerService = registerService({
+  name: 'spriteAllocManager',
   async provider(): Promise<SpriteAllocManager> {
     return new SpriteAllocManager();
   },

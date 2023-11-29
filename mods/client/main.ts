@@ -24,6 +24,7 @@ import { SpriteAllocator } from "../sprite/SpriteAllocator.ts";
 import { SpriteImage } from "../sprite/sprite.ts";
 import { spriteIndicesTextureService } from "./src/graphic/tiles/SpriteIndicesTexture.ts";
 import { networkLatencyDaemonService } from "../domain-client/stats/NetworkLatencyDaemon.ts";
+import { kaProcessorService } from "./src/keyboard/KAProcessor.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -37,6 +38,7 @@ async function start() {
   const mainLoop = await resolver.resolve(mainLoopService);
   const debugInfo = await resolver.resolve(debugInfoService);
   const phaseManager = await resolver.resolve(phaseManagerService);
+  const kaProcessor = await resolver.resolve(kaProcessorService);
   const tilesTexture2DArray = await resolver.resolve(tilesTexture2DArrayService);
   const spriteIndicesTexture = await resolver.resolve(spriteIndicesTextureService);
   const clientSpriteAtlasLoader = await resolver.resolve(clientSpriteAtlasLoaderService);
@@ -56,7 +58,7 @@ async function start() {
       keyboard.keyDown(event);
     }
     if (event.repeat === false) {
-      phaseManager.processKeyboard();
+      phaseManager.checkKAShortCuts(kaProcessor);
     }
   }
   document.addEventListener("keydown", onKeyDown);
@@ -148,6 +150,6 @@ async function start() {
     console.log("Close", event);
   });
 
-  mainLoop.run();
+  mainLoop.start();
 }
 document.addEventListener("DOMContentLoaded", start);

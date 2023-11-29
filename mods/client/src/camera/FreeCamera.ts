@@ -1,55 +1,26 @@
 import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { Point } from "../../../math/Point.ts";
 import { Viewport, viewportService } from "../graphic/Viewport.ts";
-import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
-import { Keyboard, keyboardService } from "../keyboard/Keyboard.ts";
-import { registerKADefinition } from "../keyboard/foundation.ts";
+import { Camera } from "./CameraManager.ts";
 
-function createHolder(code: string, name: string, vector: Point) {
-  const kaDefinition = registerKADefinition({
-    name: `ka.free-camera.movement.${name}`,
-    shortCuts: [
-      new KeyShortCut(
-        new KeyState(code),
-      ),
-    ],
-  });
-  return { kaDefinition, vector };
-}
-
-const holders = [
-  createHolder("KeyW", "up", { x: 0, y: -1 }),
-  createHolder("KeyS", "down", { x: 0, y: 1 }),
-  createHolder("KeyA", "left", { x: -1, y: 0 }),
-  createHolder("KeyD", "right", { x: 1, y: 0 }),
-];
-
-export class FreeCamera {
-  public speed = 32;
-  public x = 1800;
-  public y = 1800;
-
+export class FreeCamera implements Camera {
   public constructor(
     public readonly viewport: Viewport,
-    public readonly keyboard: Keyboard,
-  ) {}
+  ) { }
 
-  public loop() {
-    for (const holder of holders) {
-      if (this.keyboard.isHold(holder.kaDefinition)) {
-        this.x += this.speed * holder.vector.x;
-        this.y += this.speed * holder.vector.y;
-      }
-    }
-    this.viewport.lookAt(this.x, this.y);
+  public loop(): void {
+    // nothing
+  }
+
+  public update(x: number, y: number) {
+    this.viewport.lookAt(x, y);
   }
 }
 
 export const freeCameraService = registerService({
+  name: 'freeCameraManager',
   async provider(resolver: ServiceResolver): Promise<FreeCamera> {
     return new FreeCamera(
       await resolver.resolve(viewportService),
-      await resolver.resolve(keyboardService),
     );
   },
 });

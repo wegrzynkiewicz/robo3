@@ -10,6 +10,7 @@ import { pangGAHandlerService } from "./stats/pangGAHandler.ts";
 import { pingGAHandlerService } from "./stats/pingGAHandler.ts";
 
 export const serverGAProcessor = registerService({
+  name: 'serverGAProcessor',
   provider: async (resolver: ServiceResolver): Promise<GAProcessor> => {
     const processor = new UniversalGAProcessor(
       await resolver.resolve(gaSenderService),

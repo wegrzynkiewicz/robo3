@@ -34,6 +34,7 @@ export class UniversalGAReceiver implements GAReceiver {
 }
 
 export const gaReceiverService = registerService({
+  name: 'gaReceiver',
   async provider(resolver: ServiceResolver): Promise<GAReceiver> {
     return new UniversalGAReceiver(
       await resolver.resolve(gaCodecService),

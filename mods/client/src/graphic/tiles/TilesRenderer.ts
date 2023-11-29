@@ -30,6 +30,7 @@ export class TilesRenderer implements Renderer {
 }
 
 export const tilesRendererService = registerService({
+  name: 'tilesRenderer',
   async provider(resolver: ServiceResolver): Promise<TilesRenderer> {
     return new TilesRenderer(
       await resolver.resolve(webGLService),

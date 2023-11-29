@@ -10,6 +10,7 @@ import { chunksUpdateGAHandlerService } from "./chunk/chunksUpdateGAHandler.ts";
 import { pongGAHandlerService } from "./stats/pongGAHandler.ts";
 
 export const clientGAProcessor = registerService({
+  name: 'clientGAProcessor',
   async provider(resolver: ServiceResolver) {
     const sender = await resolver.resolve(gaSenderService);
     const processor = new UniversalGAProcessor(sender);

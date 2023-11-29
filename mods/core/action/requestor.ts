@@ -71,6 +71,7 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
 }
 
 export const gaRequestorService = registerService({
+  name: 'gaRequestor',
   provider: async (resolver: ServiceResolver): Promise<UniversalGARequestor> => {
     const sender = await resolver.resolve(gaSenderService);
     return new UniversalGARequestor(sender);

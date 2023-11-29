@@ -15,6 +15,7 @@ export const fromCanvasTextureFormatConfig: TextureFormatConfig = {
 };
 
 export const tilesTexture2DArrayService = registerService({
+  name: 'tilesTexture2DArray',
   async provider(resolver: ServiceResolver): Promise<Texture2DArray> {
     const gl = await resolver.resolve(webGLService);
 

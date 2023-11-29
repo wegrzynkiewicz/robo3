@@ -27,6 +27,7 @@ const manager = new UAManager();
 export const registerUADefinition = manager.registerUADefinition.bind(manager);
 
 export const uaManagerService = registerService({
+  name: 'uaManager',
   async provider(): Promise<UAManager> {
     return manager;
   },

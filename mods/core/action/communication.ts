@@ -10,6 +10,7 @@ export interface GACommunicator {
 }
 
 export const gaCommunicator = registerService({
+  name: 'gaCommunicator',
   async provider(resolver: ServiceResolver): Promise<GACommunicator> {
     const communicator: GACommunicator = {
       sender: await resolver.resolve(gaSenderService),

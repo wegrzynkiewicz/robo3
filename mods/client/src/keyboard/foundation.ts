@@ -1,6 +1,5 @@
-import { MapList } from "../../../common/useful.ts";
 import { registerService } from "../../../dependency/service.ts";
-import { AnyUADefinition, UADefinition } from "../ua/foundation.ts";
+import { UADefinition } from "../ua/foundation.ts";
 import { KeyShortCut } from "./KeyShortCut.ts";
 
 export interface KACommon<TData> {
@@ -24,7 +23,6 @@ export type AnyKADefinition = KADefinition<any>;
 
 export class KAManager {
   public readonly byName = new Map<string, AnyKADefinition>();
-  public readonly byUADefinition = new MapList<AnyUADefinition, AnyKADefinition>();
 
   public registerKADefinition<TData>(definition: KAInput<TData>): KADefinition<TData> {
     const { name, shortCuts, ua } = definition;
@@ -34,9 +32,6 @@ export class KAManager {
       originalShortCuts: shortCuts,
       ua,
     };
-    if (ua) {
-      this.byUADefinition.push(ua.definition, action);
-    }
     this.byName.set(name, action);
     return action;
   }
@@ -46,6 +41,7 @@ const manager = new KAManager();
 export const registerKADefinition = manager.registerKADefinition.bind(manager);
 
 export const kaManagerService = registerService({
+  name: 'kaManager',
   async provider(): Promise<KAManager> {
     return manager;
   },

@@ -11,6 +11,7 @@ export const spriteIndexPullingTextureFormatConfig: TextureFormatConfig = {
 };
 
 export const spriteIndicesTextureService = registerService({
+  name: 'spriteIndicesTexture',
   async provider(resolver: ServiceResolver): Promise<Texture2DArray> {
     const gl = await resolver.resolve(webGLService);
     return new Texture2DArray(

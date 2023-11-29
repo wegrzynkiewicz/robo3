@@ -5,6 +5,7 @@ import { keyboardService } from "./keyboard/Keyboard.ts";
 import { kaManagerService } from "./keyboard/foundation.ts";
 
 export const appService = registerService({
+  name: 'app',
   async provider(resolver: ServiceResolver): Promise<unknown> {
     const app: Record<string, unknown> = {
       debugInfo: await resolver.resolve(debugInfoService),

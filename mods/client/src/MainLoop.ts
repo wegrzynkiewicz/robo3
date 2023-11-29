@@ -4,6 +4,7 @@ import { cameraManagerService } from "./camera/CameraManager.ts";
 import { debugInfoService } from "./debug/DebugInfo.ts";
 import { sceneViewportService } from "./graphic/tiles/SceneViewport.ts";
 import { tilesRendererService } from "./graphic/tiles/TilesRenderer.ts";
+import { phaseManagerService } from "./phase/PhaseManager.ts";
 
 export interface Looper {
   loop(now: DOMHighResTimeStamp): void;
@@ -20,12 +21,12 @@ export class MainLoop {
     this.boundLoop = this.loop.bind(this);
   }
 
-  public run(): void {
+  public start(): void {
     this.isRunning = true;
     this.boundLoop(0);
   }
 
-  public pause(): void {
+  public stop(): void {
     this.isRunning = false;
     cancelAnimationFrame(this.animationFrameId);
   }
@@ -41,12 +42,14 @@ export class MainLoop {
 }
 
 export const mainLoopService = registerService({
+  name: 'mainLoop',
   async provider(resolver: ServiceResolver): Promise<MainLoop> {
     return new MainLoop([
-      await resolver.resolve(fpsCounterService),
+      await resolver.resolve(phaseManagerService),
       await resolver.resolve(cameraManagerService),
       await resolver.resolve(sceneViewportService),
       await resolver.resolve(tilesRendererService),
+      await resolver.resolve(fpsCounterService),
       await resolver.resolve(debugInfoService),
     ]);
   },

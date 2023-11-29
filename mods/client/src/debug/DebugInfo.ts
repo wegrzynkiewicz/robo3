@@ -148,6 +148,7 @@ export class DebugInfo {
 }
 
 export const debugInfoService = registerService({
+  name: 'debugInfo',
   async provider(resolver: ServiceResolver): Promise<DebugInfo> {
     return new DebugInfo(
       await resolver.resolve(displayService),

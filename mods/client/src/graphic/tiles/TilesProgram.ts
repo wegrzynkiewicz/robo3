@@ -136,6 +136,7 @@ export class TilesProgram {
 }
 
 export const tilesProgramService = registerService({
+  name: 'tilesProgram',
   async provider(resolver: ServiceResolver): Promise<TilesProgram> {
     return new TilesProgram(
       await resolver.resolve(webGLService),

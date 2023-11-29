@@ -1,31 +1,31 @@
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { Display, displayService } from "../graphic/Display.ts";
-import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
-import { registerKADefinition } from "../keyboard/foundation.ts";
-import { registerUADefinition, UADefinition } from "../ua/foundation.ts";
-import { UAHandler } from "../ua/processor.ts";
+import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
+import { Display, displayService } from "../../graphic/Display.ts";
+import { KeyShortCut, KeyState } from "../../keyboard/KeyShortCut.ts";
+import { registerKADefinition } from "../../keyboard/foundation.ts";
+import { registerUADefinition, UADefinition } from "../../ua/foundation.ts";
+import { UAHandler } from "../../ua/processor.ts";
 import { debugKeyShortCut } from "./common.ts";
 
 export const debugDisplayScaleUA = registerUADefinition<number>({
   name: "ua.debug.display-scale",
 });
 
-for (const data of [1, 2, 3]) {
-  registerKADefinition({
+export const debugDisplayScaleKAs = [1, 2, 3].map((data)=> {
+  return registerKADefinition({
     name: `ka.debug.display-scale.${data}`,
     shortCuts: [
       new KeyShortCut(
         ...debugKeyShortCut,
-        new KeyState("KeyS"),
+        new KeyState("KeyV"),
         new KeyState(`Digit${data}`),
       ),
     ],
     ua: {
-      definition: debugDisplayScaleUA,
       data,
+      definition: debugDisplayScaleUA,
     },
   });
-}
+});
 
 export class DebugDisplayScaleUAHandler implements UAHandler<number> {
   public constructor(
@@ -38,6 +38,7 @@ export class DebugDisplayScaleUAHandler implements UAHandler<number> {
 }
 
 export const debugDisplayScaleUAHandlerService = registerService({
+  name: 'debugDisplayScaleUAHandler',
   async provider(resolver: ServiceResolver): Promise<DebugDisplayScaleUAHandler> {
     return new DebugDisplayScaleUAHandler(
       await resolver.resolve(displayService),

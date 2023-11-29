@@ -4,6 +4,7 @@ import { ChunkSegmentUpdateGA } from "../../domain/chunk/chunkSegmentUpdateGA.ts
 import { chunkManagerService } from "./chunkManager.ts";
 
 export const chunkSegmentUpdateGAHandlerService = registerService({
+  name: 'chunkSegmentUpdateGAHandler',
   async provider(resolver: ServiceResolver) {
     const chunkManager = await resolver.resolve(chunkManagerService);
     const chunkSegmentUpdateGAHandler: GAHandler<ChunkSegmentUpdateGA, void> = {

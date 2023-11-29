@@ -3,6 +3,7 @@ import { registerService, ServiceResolver } from "../../dependency/service.ts";
 import { ChunksUpdateGA } from "../../domain/chunk/chunksUpdateGA.ts";
 
 export const chunksUpdateGAHandlerService = registerService({
+  name: 'chunksUpdateGAHandler',
   async provider(resolver: ServiceResolver) {
     const chunksUpdateGAHandler: GAHandler<ChunksUpdateGA, void> = {
       async handle(request: ChunksUpdateGA): Promise<void> {

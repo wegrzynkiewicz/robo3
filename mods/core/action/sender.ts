@@ -40,12 +40,14 @@ export class OnlineGASender implements GASender {
 }
 
 export const gaSenderWebSocketService = registerService({
+  name: 'gaSenderWebSocket',
   async provider(): Promise<WebSocket> {
     throw new Breaker("sender-websocket-service-should-be-injected");
   },
 });
 
 export const gaSenderService = registerService({
+  name: 'gaSender',
   async provider(resolver: ServiceResolver): Promise<GASender> {
     return new OnlineGASender(
       await resolver.resolve(gaCodecService),

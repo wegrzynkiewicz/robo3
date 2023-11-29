@@ -30,6 +30,7 @@ export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
 }
 
 export const shadowSpriteAtlasProviderService = registerService({
+  name: 'shadowSpriteAtlasProvider',
   async provider(resolver: ServiceResolver): Promise<ShadowSpriteAtlasProvider> {
     return new ShadowSpriteAtlasProvider(
       await resolver.resolve(shadowSpriteAtlasGeneratorService),

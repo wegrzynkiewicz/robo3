@@ -1,17 +1,14 @@
-import { registerService } from "../../../dependency/service.ts";
-import { AnyUADefinition } from "../ua/foundation.ts";
-import { debugActions } from "./actions.ts";
-
-export class GamePhase {
-  public getAvailableUADefinition(): AnyUADefinition[] {
-    return [
-      ...debugActions,
-    ];
-  }
-}
+import { ServiceResolver, registerService } from "../../../dependency/service.ts";
+import { selfPlayerControllerService } from "../camera/SelfPlayerController.ts";
+import { debugControllerService } from "../debug/DebugController.ts";
+import { PhaseConnector } from "./Phase.ts";
 
 export const gamePhaseService = registerService({
-  async provider(): Promise<GamePhase> {
-    return new GamePhase();
+  name: 'gamePhase',
+  async provider(resolver: ServiceResolver): Promise<PhaseConnector> {
+    const phase = new PhaseConnector('game');
+    phase.kaShortCutCheckers.push(await resolver.resolve(debugControllerService));
+    phase.loopers.push(await resolver.resolve(selfPlayerControllerService));
+    return phase;
   },
 });

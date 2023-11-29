@@ -325,6 +325,7 @@ export class TilesSceneBuilder {
 }
 
 export const tilesSceneBuilderService = registerService({
+  name: 'tilesSceneBuilderService',
   async provider(resolver: ServiceResolver): Promise<TilesSceneBuilder> {
     return new TilesSceneBuilder(
       10,

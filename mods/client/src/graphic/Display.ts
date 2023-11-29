@@ -51,6 +51,7 @@ export class Display {
 }
 
 export const displayService = registerService({
+  name: 'display',
   async provider(resolver: ServiceResolver) {
     return new Display(
       await resolver.resolve(webGLService),

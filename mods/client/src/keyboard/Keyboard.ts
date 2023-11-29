@@ -23,6 +23,10 @@ export class Keyboard {
     this.clearSequenceBound = this.clearSequence.bind(this);
   }
 
+  public cloneSequence(): KeyState[] {
+    return [...this.sequence];
+  }
+
   public keyDown(event: KeyboardEvent): void {
     const { clearSequenceBound, sequence, states } = this;
     states[event.code] = true;
@@ -76,6 +80,7 @@ export class Keyboard {
 }
 
 export const keyboardService = registerService({
+  name: 'keyboard',
   async provider(): Promise<Keyboard> {
     return new Keyboard();
   },

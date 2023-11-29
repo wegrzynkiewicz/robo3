@@ -1,40 +1,39 @@
+import { Breaker } from "../../../common/asserts.ts";
 import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { KAShortCutProcessor, kaShortCutProcessorService } from "../keyboard/KAShortCutProcessor.ts";
-import { AnyKADefinition, kaManagerService } from "../keyboard/foundation.ts";
-import { KAManager } from "../keyboard/foundation.ts";
-import { AnyUADefinition } from "../ua/foundation.ts";
+import { KAProcessor } from "../keyboard/KAProcessor.ts";
 import { gamePhaseService } from "./GamePhase.ts";
-
-export interface Phase {
-  getAvailableUADefinition(): AnyUADefinition[];
-}
+import { PhaseController } from "./Phase.ts";
 
 export class PhaseManager {
   public constructor(
-    public readonly kaManager: KAManager,
-    public readonly kaShortCutProcessor: KAShortCutProcessor,
-    protected currentPhase: Phase,
-  ) {}
+    public currentPhase: PhaseController,
+  ) { }
 
-  public setCurrentPhase(phase: Phase) {
+  public setCurrentPhase(phase: PhaseController) {
     this.currentPhase = phase;
   }
 
-  public processKeyboard(): void {
-    const kaDefs: AnyKADefinition[] = [];
-    for (const def of this.currentPhase.getAvailableUADefinition()) {
-      const list = this.kaManager.byUADefinition.fetch(def);
-      kaDefs.push(...list);
+  public loop(now: DOMHighResTimeStamp): void {
+    try {
+      this.currentPhase.loop(now);
+    } catch (error: unknown) {
+      throw new Breaker('error-in-phase-manager', { error });
     }
-    this.kaShortCutProcessor.process(kaDefs);
+  }
+
+  public async checkKAShortCuts(processor: KAProcessor): Promise<void> {
+    try {
+      await this.currentPhase.checkKAShortCuts(processor);
+    } catch (error: unknown) {
+      throw new Breaker('error-in-phase-manager', { error });
+    }
   }
 }
 
 export const phaseManagerService = registerService({
+  name: 'phaseManager',
   async provider(resolver: ServiceResolver): Promise<PhaseManager> {
     return new PhaseManager(
-      await resolver.resolve(kaManagerService),
-      await resolver.resolve(kaShortCutProcessorService),
       await resolver.resolve(gamePhaseService),
     );
   },

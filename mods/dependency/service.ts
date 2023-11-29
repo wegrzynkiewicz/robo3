@@ -2,6 +2,7 @@ import { Breaker } from "../common/asserts.ts";
 import { WithOptional } from "../common/useful.ts";
 
 export type Service<TInstance> = {
+  name: string;
   provider(resolver: ServiceResolver): Promise<TInstance>;
   singleton: boolean;
 };
@@ -11,17 +12,17 @@ export type AnyService = Service<any>;
 const singletons = new WeakMap<AnyService, unknown>();
 
 export class ServiceResolver {
-  protected readonly instances = new WeakMap<AnyService, unknown>();
-  protected readonly promises = new WeakMap<AnyService, Promise<unknown>>();
+  public readonly instances = new Map<AnyService, unknown>();
+  public readonly promises = new Map<AnyService, Promise<unknown>>();
 
-  inject<TInstance>(service: Service<TInstance>, instance: TInstance): void {
+  public inject<TInstance>(service: Service<TInstance>, instance: TInstance): void {
     this.instances.set(service, instance);
     if (service.singleton) {
       singletons.set(service, instance);
     }
   }
 
-  async resolve<TInstance>(service: Service<TInstance>): Promise<TInstance> {
+  public async resolve<TInstance>(service: Service<TInstance>): Promise<TInstance> {
     const singletonService = singletons.get(service);
     if (singletonService) {
       return singletonService as TInstance;
@@ -39,10 +40,10 @@ export class ServiceResolver {
       const promise = provider(this);
       this.promises.set(service, promise);
       const instance = await promise;
+      this.instances.set(service, instance);
       if (singleton) {
         singletons.set(service, instance);
       }
-      this.instances.set(service, instance);
       this.promises.delete(service);
       return promise;
     } catch (error) {
@@ -54,8 +55,9 @@ export class ServiceResolver {
 export function registerService<TInstance>(
   service: WithOptional<Service<TInstance>, "singleton">,
 ): Service<TInstance> {
-  const { provider, singleton } = service;
+  const { name, provider, singleton } = service;
   return {
+    name,
     provider,
     singleton: singleton ?? false,
   };

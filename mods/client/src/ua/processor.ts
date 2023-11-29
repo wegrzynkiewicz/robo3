@@ -1,9 +1,10 @@
 import { Breaker } from "../../../common/asserts.ts";
 import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { debugDisplayScaleUA, debugDisplayScaleUAHandlerService } from "../debug/debugDisplayScaleUA.ts";
-import { debugOpenInfoUA, debugOpenInfoUAHandlerService } from "../debug/debugOpenInfoUA.ts";
-import { debugSetViewportDepthUA, debugSetViewportDepthUAHandlerService } from "../debug/debugSetViewportDepthUA.ts";
+import { debugDisplayScaleUA, debugDisplayScaleUAHandlerService } from "../debug/actions/debugDisplayScaleUA.ts";
+import { debugOpenInfoUA, debugOpenInfoUAHandlerService } from "../debug/actions/debugOpenInfoUA.ts";
+import { debugChangeViewportLevelUA, debugChangeViewportLevelUAHandlerService } from "../debug/actions/debugChangeViewportLevelUA.ts";
 import { AnyUADefinition, UADefinition } from "./foundation.ts";
+import { debugSwitchFreeCameraUA, debugSwitchFreeCameraUAHandlerService } from "../debug/actions/debugSwitchFreeCamera.ts";
 
 export interface UAHandler<TData> {
   handle(definition: UADefinition<TData>, data: TData): Promise<void>;
@@ -32,11 +33,13 @@ export class UAProcessor {
 }
 
 export const uaProcessorService = registerService({
+  name: 'uaProcessor',
   async provider(resolver: ServiceResolver): Promise<UAProcessor> {
     const processor = new UAProcessor();
     processor.registerHandler(debugOpenInfoUA, await resolver.resolve(debugOpenInfoUAHandlerService));
     processor.registerHandler(debugDisplayScaleUA, await resolver.resolve(debugDisplayScaleUAHandlerService));
-    processor.registerHandler(debugSetViewportDepthUA, await resolver.resolve(debugSetViewportDepthUAHandlerService));
+    processor.registerHandler(debugChangeViewportLevelUA, await resolver.resolve(debugChangeViewportLevelUAHandlerService));
+    processor.registerHandler(debugSwitchFreeCameraUA, await resolver.resolve(debugSwitchFreeCameraUAHandlerService));
     return processor;
   },
 });

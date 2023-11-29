@@ -1,17 +1,14 @@
-import { registerService } from "../../../dependency/service.ts";
-import { AnyUADefinition } from "../ua/foundation.ts";
-import { debugActions } from "./actions.ts";
-
-export class FreeCameraPhase {
-  public getAvailableUADefinition(): AnyUADefinition[] {
-    return [
-      ...debugActions,
-    ];
-  }
-}
+import { ServiceResolver, registerService } from "../../../dependency/service.ts";
+import { freeViewportControllerService } from "../camera/FreeViewportController.ts";
+import { debugControllerService } from "../debug/DebugController.ts";
+import { PhaseConnector } from "./Phase.ts";
 
 export const freeCameraPhaseService = registerService({
-  async provider(): Promise<FreeCameraPhase> {
-    return new FreeCameraPhase();
+  name: 'freeCameraPhase',
+  async provider(resolver: ServiceResolver): Promise<PhaseConnector> {
+    const phase = new PhaseConnector('free-camera');
+    phase.loopers.push(await resolver.resolve(freeViewportControllerService));
+    phase.kaShortCutCheckers.push(await resolver.resolve(debugControllerService));
+    return phase;
   },
 });

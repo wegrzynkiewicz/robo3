@@ -1,4 +1,4 @@
-import { KeyState } from "../keyboard/KeyShortCut.ts";
+import { KeyState } from "../../keyboard/KeyShortCut.ts";
 
 export const debugKeyShortCut = [
   new KeyState("KeyV"),

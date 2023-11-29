@@ -13,6 +13,7 @@ export class PingGAHandler implements GAHandler<PingGA, PongGA> {
 }
 
 export const pingGAHandlerService = registerService({
+  name: 'pingGAHandler',
   async provider(): Promise<PingGAHandler> {
     return new PingGAHandler();
   },

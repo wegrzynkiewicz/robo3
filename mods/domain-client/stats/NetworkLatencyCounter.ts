@@ -11,6 +11,7 @@ export class NetworkLatencyCounter {
 }
 
 export const networkLatencyCounterService = registerService({
+  name: 'networkLatencyCounter',
   async provider(): Promise<NetworkLatencyCounter> {
     return new NetworkLatencyCounter();
   },
