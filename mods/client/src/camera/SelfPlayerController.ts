@@ -25,12 +25,11 @@ const holders = [
 ];
 
 export class SelfPlayerController implements Looper {
-
   public previousDirect: MoveDirection = MoveDirection.S;
 
   public constructor(
     public readonly keyboard: Keyboard,
-  ) { }
+  ) {}
 
   public loop(): void {
     let currentDirect = MoveDirection.S;
@@ -55,7 +54,7 @@ export class SelfPlayerController implements Looper {
 }
 
 export const selfPlayerControllerService = registerService({
-  name: 'selfPlayerController',
+  name: "selfPlayerController",
   async provider(resolver: ServiceResolver): Promise<SelfPlayerController> {
     return new SelfPlayerController(
       await resolver.resolve(keyboardService),

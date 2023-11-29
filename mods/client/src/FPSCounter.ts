@@ -21,7 +21,7 @@ export class FPSCounter {
 }
 
 export const fpsCounterService = registerService({
-  name: 'fpsCounter',
+  name: "fpsCounter",
   async provider(): Promise<FPSCounter> {
     return new FPSCounter();
   },

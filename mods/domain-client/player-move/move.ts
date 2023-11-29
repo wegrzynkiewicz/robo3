@@ -13,7 +13,7 @@ export const enum MoveDirection {
 }
 
 export interface PlayerMoveGM {
-  direction: MoveDirection,
+  direction: MoveDirection;
 }
 
 export const chunksUpdateGADef = registerGADefinition({

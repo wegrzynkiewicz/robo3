@@ -32,7 +32,7 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
 
   public constructor(
     public readonly sender: GASender,
-  ) { }
+  ) {}
 
   public async process<TData>(_definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
     const id = envelope.id;
@@ -71,7 +71,7 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
 }
 
 export const gaRequestorService = registerService({
-  name: 'gaRequestor',
+  name: "gaRequestor",
   provider: async (resolver: ServiceResolver): Promise<UniversalGARequestor> => {
     const sender = await resolver.resolve(gaSenderService);
     return new UniversalGARequestor(sender);

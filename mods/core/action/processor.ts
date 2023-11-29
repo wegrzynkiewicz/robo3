@@ -58,7 +58,7 @@ export class UniversalGAProcessor implements GAProcessor {
 }
 
 export const gaProcessorService = registerService({
-  name: 'gaProcessor',
+  name: "gaProcessor",
   async provider(): Promise<GAProcessor> {
     throw new Breaker("main-ga-processor-should-be-injected");
   },

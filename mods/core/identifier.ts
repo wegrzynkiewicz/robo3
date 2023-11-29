@@ -30,7 +30,7 @@ const identifierRegistry = new IdentifierRegistry();
 export const registerIdentifier = identifierRegistry.registerIdentifier.bind(identifierRegistry);
 
 export const identifierRegistryService = registerService({
-  name: 'identifierRegistry',
+  name: "identifierRegistry",
   provider: async (): Promise<IdentifierRegistry> => {
     return identifierRegistry;
   },

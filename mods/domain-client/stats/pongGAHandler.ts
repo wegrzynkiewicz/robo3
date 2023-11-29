@@ -1,5 +1,5 @@
 import { GAHandler } from "../../core/action/processor.ts";
-import { ServiceResolver, registerService } from "../../dependency/service.ts";
+import { registerService, ServiceResolver } from "../../dependency/service.ts";
 import { PangGA } from "../../domain/stats/pangGA.ts";
 import { PongGA } from "../../domain/stats/pongGA.ts";
 import { NetworkLatencyCounter } from "./NetworkLatencyCounter.ts";
@@ -8,7 +8,7 @@ import { networkLatencyCounterService } from "./NetworkLatencyCounter.ts";
 export class PongGAHandler implements GAHandler<PongGA, PangGA> {
   public constructor(
     protected networkLatencyCounter: NetworkLatencyCounter,
-  ) { }
+  ) {}
 
   async handle(request: PongGA): Promise<PangGA> {
     const { clientHighResTimestamp, serverHighResTimestamp } = request;
@@ -19,10 +19,10 @@ export class PongGAHandler implements GAHandler<PongGA, PangGA> {
 }
 
 export const pongGAHandlerService = registerService({
-  name: 'pongGAHandler',
+  name: "pongGAHandler",
   async provider(resolver: ServiceResolver): Promise<PongGAHandler> {
     return new PongGAHandler(
-      await resolver.resolve(networkLatencyCounterService)
+      await resolver.resolve(networkLatencyCounterService),
     );
   },
 });

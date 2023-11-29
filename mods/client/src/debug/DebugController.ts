@@ -9,7 +9,7 @@ export class DebugController implements KAShortCutChecker {
   public async checkKAShortCuts(processor: KAProcessor): Promise<void> {
     for (const kaDefinition of debugDisplayScaleKAs) {
       await processor.process(kaDefinition);
-    }    
+    }
     for (const kaDefinition of debugChangeViewportLevelKAs) {
       await processor.process(kaDefinition);
     }
@@ -19,7 +19,7 @@ export class DebugController implements KAShortCutChecker {
 }
 
 export const debugControllerService = registerService({
-  name: 'debugController',
+  name: "debugController",
   async provider(): Promise<DebugController> {
     return new DebugController();
   },

@@ -16,7 +16,7 @@ export class SpaceManager {
 }
 
 export const spaceManagerService = registerService({
-  name: 'spaceManager',
+  name: "spaceManager",
   async provider(): Promise<SpaceManager> {
     return new SpaceManager();
   },

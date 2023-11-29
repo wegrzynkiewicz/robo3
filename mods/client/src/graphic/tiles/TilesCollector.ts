@@ -34,7 +34,7 @@ export class TilesCollector {
 }
 
 export const tilesCollectorService = registerService({
-  name: 'tilesCollector',
+  name: "tilesCollector",
   async provider(resolver: ServiceResolver): Promise<TilesCollector> {
     return new TilesCollector(
       await resolver.resolve(sceneViewportService),

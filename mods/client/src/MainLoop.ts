@@ -42,7 +42,7 @@ export class MainLoop {
 }
 
 export const mainLoopService = registerService({
-  name: 'mainLoop',
+  name: "mainLoop",
   async provider(resolver: ServiceResolver): Promise<MainLoop> {
     return new MainLoop([
       await resolver.resolve(phaseManagerService),

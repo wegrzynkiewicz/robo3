@@ -80,7 +80,7 @@ export class Keyboard {
 }
 
 export const keyboardService = registerService({
-  name: 'keyboard',
+  name: "keyboard",
   async provider(): Promise<Keyboard> {
     return new Keyboard();
   },

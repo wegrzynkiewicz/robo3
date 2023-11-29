@@ -65,7 +65,7 @@ export class SceneViewport {
 }
 
 export const sceneViewportService = registerService({
-  name: 'sceneViewport',
+  name: "sceneViewport",
   async provider(resolver: ServiceResolver): Promise<SceneViewport> {
     return new SceneViewport(
       await resolver.resolve(viewportService),

@@ -32,7 +32,7 @@ export const debugChangeViewportLevelKAs = keys.map(({ data, key, name }) => {
 export class DebugChangeViewportLevelUAHandler implements UAHandler<number> {
   public constructor(
     private viewport: Viewport,
-  ) { }
+  ) {}
 
   public async handle(_definition: UADefinition<number>, data: number): Promise<void> {
     this.viewport.level = this.viewport.level + data;
@@ -40,10 +40,10 @@ export class DebugChangeViewportLevelUAHandler implements UAHandler<number> {
 }
 
 export const debugChangeViewportLevelUAHandlerService = registerService({
-  name: 'debugChangeViewportLevelUAHandler',
+  name: "debugChangeViewportLevelUAHandler",
   async provider(resolver: ServiceResolver): Promise<UAHandler<number>> {
     return new DebugChangeViewportLevelUAHandler(
-      await resolver.resolve(viewportService)
+      await resolver.resolve(viewportService),
     );
   },
 });

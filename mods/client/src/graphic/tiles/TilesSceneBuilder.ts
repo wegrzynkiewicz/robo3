@@ -209,7 +209,7 @@ export class TilesSceneBuilder {
 }
 
 export const tilesSceneBuilderService = registerService({
-  name: 'tilesSceneBuilder',
+  name: "tilesSceneBuilder",
   async provider(resolver: ServiceResolver): Promise<TilesSceneBuilder> {
     return new TilesSceneBuilder(
       10,

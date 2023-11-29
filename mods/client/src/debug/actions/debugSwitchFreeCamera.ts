@@ -6,7 +6,7 @@ import { gamePhaseService } from "../../phase/GamePhase.ts";
 import { PhaseController } from "../../phase/Phase.ts";
 import { PhaseManager } from "../../phase/PhaseManager.ts";
 import { phaseManagerService } from "../../phase/PhaseManager.ts";
-import { UADefinition, registerUADefinition } from "../../ua/foundation.ts";
+import { registerUADefinition, UADefinition } from "../../ua/foundation.ts";
 import { UAHandler } from "../../ua/processor.ts";
 import { debugKeyShortCut } from "./common.ts";
 
@@ -33,7 +33,7 @@ export class DebugSwitchFreeCameraUAHandler implements UAHandler<null> {
     protected phaseManager: PhaseManager,
     protected freeGamePhase: PhaseController,
     protected gamePhase: PhaseController,
-  ) { }
+  ) {}
 
   public async handle(_definition: UADefinition<null>, _data: null): Promise<void> {
     this.phaseManager.setCurrentPhase(this.getPhase());
@@ -53,7 +53,7 @@ export class DebugSwitchFreeCameraUAHandler implements UAHandler<null> {
 }
 
 export const debugSwitchFreeCameraUAHandlerService = registerService({
-  name: 'debugSwitchFreeCameraUAHandler',
+  name: "debugSwitchFreeCameraUAHandler",
   async provider(resolver: ServiceResolver): Promise<UAHandler<null>> {
     return new DebugSwitchFreeCameraUAHandler(
       await resolver.resolve(phaseManagerService),

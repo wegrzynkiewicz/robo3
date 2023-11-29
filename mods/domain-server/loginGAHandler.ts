@@ -4,7 +4,7 @@ import { registerService } from "../dependency/service.ts";
 import { LoginGARequest, LoginGAResponse } from "../domain/loginGA.ts";
 
 export const loginGARequestHandlerService = registerService({
-  name: 'loginGARequestHandler',
+  name: "loginGARequestHandler",
   async provider() {
     const loginGARequestHandler: GAHandler<LoginGARequest, LoginGAResponse> = {
       async handle(request: LoginGARequest): Promise<LoginGAResponse> {

@@ -33,7 +33,7 @@ export class FreeViewportController implements Looper {
   public constructor(
     public readonly freeCamera: FreeCamera,
     public readonly keyboard: Keyboard,
-  ) { }
+  ) {}
 
   public loop() {
     for (const holder of holders) {
@@ -47,7 +47,7 @@ export class FreeViewportController implements Looper {
 }
 
 export const freeViewportControllerService = registerService({
-  name: 'freeViewportController',
+  name: "freeViewportController",
   async provider(resolver: ServiceResolver): Promise<FreeViewportController> {
     return new FreeViewportController(
       await resolver.resolve(freeCameraService),

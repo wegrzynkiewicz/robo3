@@ -5,7 +5,7 @@ import { Camera } from "./CameraManager.ts";
 export class FreeCamera implements Camera {
   public constructor(
     public readonly viewport: Viewport,
-  ) { }
+  ) {}
 
   public loop(): void {
     // nothing
@@ -17,7 +17,7 @@ export class FreeCamera implements Camera {
 }
 
 export const freeCameraService = registerService({
-  name: 'freeCameraManager',
+  name: "freeCameraManager",
   async provider(resolver: ServiceResolver): Promise<FreeCamera> {
     return new FreeCamera(
       await resolver.resolve(viewportService),

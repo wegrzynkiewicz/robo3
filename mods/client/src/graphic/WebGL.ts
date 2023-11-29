@@ -4,7 +4,7 @@ import { registerService, ServiceResolver } from "../../../dependency/service.ts
 const { TEXTURE0, TEXTURE_2D, TEXTURE_2D_ARRAY } = WebGL2RenderingContext;
 
 export const canvasService = registerService({
-  name: 'canvas',
+  name: "canvas",
   async provider(): Promise<HTMLCanvasElement> {
     throw new Breaker("canvas-service-must-be-injected");
   },
@@ -40,7 +40,7 @@ function createTextureUnits(count: number): TextureUnit[] {
 }
 
 export const webGLService = registerService({
-  name: 'wegGL',
+  name: "wegGL",
   async provider(resolver: ServiceResolver): Promise<WebGL2RenderingContext> {
     const canvas = await resolver.resolve(canvasService);
     const gl = canvas.getContext("webgl2", {

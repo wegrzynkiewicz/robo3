@@ -5,7 +5,7 @@ import { SpriteAtlasSource } from "../../../sprite-atlas/atlas.ts";
 import { shadowSpriteAtlasProviderService } from "../shadow/ShadowSpriteAtlasProvider.ts";
 
 export const clientSpriteAtlasLoaderService = registerService({
-  name: 'clientSpriteAtlasLoader',
+  name: "clientSpriteAtlasLoader",
   async provider(resolver: ServiceResolver): Promise<SpriteAtlasLoader> {
     const loader = new SpriteAtlasLoader();
     const build: SpriteAtlasSource = {

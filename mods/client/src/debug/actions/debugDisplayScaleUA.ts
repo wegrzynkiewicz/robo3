@@ -10,7 +10,7 @@ export const debugDisplayScaleUA = registerUADefinition<number>({
   name: "ua.debug.display-scale",
 });
 
-export const debugDisplayScaleKAs = [1, 2, 3].map((data)=> {
+export const debugDisplayScaleKAs = [1, 2, 3].map((data) => {
   return registerKADefinition({
     name: `ka.debug.display-scale.${data}`,
     shortCuts: [
@@ -30,7 +30,7 @@ export const debugDisplayScaleKAs = [1, 2, 3].map((data)=> {
 export class DebugDisplayScaleUAHandler implements UAHandler<number> {
   public constructor(
     protected display: Display,
-  ) { }
+  ) {}
 
   public async handle(_definition: UADefinition<number>, data: number): Promise<void> {
     this.display.setScale(data);
@@ -38,7 +38,7 @@ export class DebugDisplayScaleUAHandler implements UAHandler<number> {
 }
 
 export const debugDisplayScaleUAHandlerService = registerService({
-  name: 'debugDisplayScaleUAHandler',
+  name: "debugDisplayScaleUAHandler",
   async provider(resolver: ServiceResolver): Promise<DebugDisplayScaleUAHandler> {
     return new DebugDisplayScaleUAHandler(
       await resolver.resolve(displayService),

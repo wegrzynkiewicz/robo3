@@ -11,7 +11,7 @@ export class PhaseConnector implements PhaseController {
 
   public constructor(
     public readonly name: string,
-  ) { }
+  ) {}
 
   public loop(now: DOMHighResTimeStamp): void {
     for (const controller of this.loopers) {

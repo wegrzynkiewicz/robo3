@@ -33,7 +33,7 @@ export class UAProcessor {
 }
 
 export const uaProcessorService = registerService({
-  name: 'uaProcessor',
+  name: "uaProcessor",
   async provider(resolver: ServiceResolver): Promise<UAProcessor> {
     const processor = new UAProcessor();
     processor.registerHandler(debugOpenInfoUA, await resolver.resolve(debugOpenInfoUAHandlerService));

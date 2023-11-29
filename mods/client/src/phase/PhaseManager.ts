@@ -7,7 +7,7 @@ import { PhaseController } from "./Phase.ts";
 export class PhaseManager {
   public constructor(
     public currentPhase: PhaseController,
-  ) { }
+  ) {}
 
   public setCurrentPhase(phase: PhaseController) {
     this.currentPhase = phase;
@@ -17,7 +17,7 @@ export class PhaseManager {
     try {
       this.currentPhase.loop(now);
     } catch (error: unknown) {
-      throw new Breaker('error-in-phase-manager', { error });
+      throw new Breaker("error-in-phase-manager", { error });
     }
   }
 
@@ -25,13 +25,13 @@ export class PhaseManager {
     try {
       await this.currentPhase.checkKAShortCuts(processor);
     } catch (error: unknown) {
-      throw new Breaker('error-in-phase-manager', { error });
+      throw new Breaker("error-in-phase-manager", { error });
     }
   }
 }
 
 export const phaseManagerService = registerService({
-  name: 'phaseManager',
+  name: "phaseManager",
   async provider(resolver: ServiceResolver): Promise<PhaseManager> {
     return new PhaseManager(
       await resolver.resolve(gamePhaseService),

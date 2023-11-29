@@ -41,7 +41,7 @@ const manager = new KAManager();
 export const registerKADefinition = manager.registerKADefinition.bind(manager);
 
 export const kaManagerService = registerService({
-  name: 'kaManager',
+  name: "kaManager",
   async provider(): Promise<KAManager> {
     return manager;
   },
