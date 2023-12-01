@@ -8,7 +8,7 @@ export const freeCameraPhaseService = registerService({
   async provider(resolver: ServiceResolver): Promise<PhaseConnector> {
     const phase = new PhaseConnector("free-camera");
     phase.loopers.push(await resolver.resolve(freeCameraControllerService));
-    phase.kaShortCutCheckers.push(await resolver.resolve(debugControllerService));
+    phase.kaShortCutsCheckers.push(await resolver.resolve(debugControllerService));
     return phase;
   },
 });

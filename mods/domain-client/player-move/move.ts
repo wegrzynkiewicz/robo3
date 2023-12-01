@@ -12,11 +12,11 @@ export const enum MoveDirection {
   C = 0b0101,
 }
 
-export interface PlayerMoveGM {
+export interface MePlayerMoveGA {
   direction: MoveDirection;
 }
 
-export const mePlayerMoveGADef = registerGADefinition<PlayerMoveGM>({
+export const mePlayerMoveGADef = registerGADefinition<MePlayerMoveGA>({
   encoding: {
     type: "json",
   },

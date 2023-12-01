@@ -1,13 +1,13 @@
 import { Looper } from "../MainLoop.ts";
-import { KAProcessor, KAShortCutChecker } from "../keyboard/KAProcessor.ts";
+import { KAMatcher, KAShortCutsChecker } from "../keyboard/KAMatcher.ts";
 
-export interface PhaseController extends Looper, KAShortCutChecker {
+export interface PhaseController extends Looper, KAShortCutsChecker {
   readonly name: string;
 }
 
 export class PhaseConnector implements PhaseController {
   public readonly loopers: Looper[] = [];
-  public readonly kaShortCutCheckers: KAShortCutChecker[] = [];
+  public readonly kaShortCutsCheckers: KAShortCutsChecker[] = [];
 
   public constructor(
     public readonly name: string,
@@ -19,9 +19,9 @@ export class PhaseConnector implements PhaseController {
     }
   }
 
-  public async checkKAShortCuts(processor: KAProcessor): Promise<void> {
-    for (const controller of this.kaShortCutCheckers) {
-      await controller.checkKAShortCuts(processor);
+  public async checkKAShortCuts(matcher: KAMatcher): Promise<void> {
+    for (const controller of this.kaShortCutsCheckers) {
+      await controller.checkKAShortCuts(matcher);
     }
   }
 }

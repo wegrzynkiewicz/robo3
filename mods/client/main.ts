@@ -24,8 +24,12 @@ import { SpriteAllocator } from "../sprite/SpriteAllocator.ts";
 import { SpriteImage } from "../sprite/sprite.ts";
 import { spriteIndicesTextureService } from "./src/graphic/tiles/SpriteIndicesTexture.ts";
 import { networkLatencyDaemonService } from "../domain-client/stats/NetworkLatencyDaemon.ts";
+import { resolveUAProcessHandlers, mainUAProcessorService } from "./src/ua/processor.ts";
 import { kaProcessorService } from "./src/keyboard/KAProcessor.ts";
-import { uaProcessorService, resolveUAProcessHandlers } from "./src/ua/processor.ts";
+import { mainKABusService } from "./src/keyboard/KABus.ts";
+import { mainUABusService } from "./src/ua/UABus.ts";
+import { mainGABusService } from "../domain/GABus.ts";
+import { mutationGABusSubscriberService } from "../domain/MutationGABusSubscriber.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -39,9 +43,18 @@ async function start() {
   const mainLoop = await resolver.resolve(mainLoopService);
   const debugInfo = await resolver.resolve(debugInfoService);
   const phaseManager = await resolver.resolve(phaseManagerService);
-  const kaProcessor = await resolver.resolve(kaProcessorService);
-  const uaProcessor = await resolver.resolve(uaProcessorService);
-  resolveUAProcessHandlers(resolver, uaProcessor);
+
+  const mainKABus = await resolver.resolve(mainKABusService);
+  const mainKAProcessor = await resolver.resolve(kaProcessorService);
+  mainKABus.subscribers.add(mainKAProcessor);
+
+  const mainUABus = await resolver.resolve(mainUABusService);
+  const mainUAProcessor = await resolver.resolve(mainUAProcessorService);
+  resolveUAProcessHandlers(resolver, mainUAProcessor);
+  mainUABus.subscribers.add(mainUAProcessor);
+
+  const mainGABus = await resolver.resolve(mainGABusService);
+
   const tilesTexture2DArray = await resolver.resolve(tilesTexture2DArrayService);
   const spriteIndicesTexture = await resolver.resolve(spriteIndicesTextureService);
   const clientSpriteAtlasLoader = await resolver.resolve(clientSpriteAtlasLoaderService);
@@ -61,7 +74,7 @@ async function start() {
       keyboard.keyDown(event);
     }
     if (event.repeat === false) {
-      phaseManager.checkKAShortCuts(kaProcessor);
+      phaseManager.processKeyboard();
     }
   }
   document.addEventListener("keydown", onKeyDown);
@@ -129,6 +142,9 @@ async function start() {
   resolver.inject(gaProcessorService, processor);
   const communicator = await resolver.resolve(gaCommunicator);
   const networkLatencyDaemon = await resolver.resolve(networkLatencyDaemonService);
+  const mutationGABusSubscriber = await resolver.resolve(mutationGABusSubscriberService);
+
+  mainGABus.subscribers.add(mutationGABusSubscriber);
 
   ws.addEventListener("open", async (event) => {
     const { status } = await communicator.requestor.request(
@@ -137,7 +153,7 @@ async function start() {
       { token: "test" },
     );
     const data = new Uint8Array(8);
-    networkLatencyDaemon.start();
+    networkLatencyDaemon.stop();
   });
 
   // Listen for messages

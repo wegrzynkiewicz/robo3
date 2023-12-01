@@ -28,7 +28,7 @@ export class NetworkLatencyDaemon {
     this.timer = setInterval(() => this.action(), 1000);
   }
 
-  public end() {
+  public stop() {
     clearInterval(this.timer);
   }
 }

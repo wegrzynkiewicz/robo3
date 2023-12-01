@@ -8,7 +8,7 @@ export const gamePhaseService = registerService({
   name: "gamePhase",
   async provider(resolver: ServiceResolver): Promise<PhaseConnector> {
     const phase = new PhaseConnector("game");
-    phase.kaShortCutCheckers.push(await resolver.resolve(debugControllerService));
+    phase.kaShortCutsCheckers.push(await resolver.resolve(debugControllerService));
     phase.loopers.push(await resolver.resolve(followingMePlayerCameraService));
     phase.loopers.push(await resolver.resolve(mePlayerControllerService));
     return phase;

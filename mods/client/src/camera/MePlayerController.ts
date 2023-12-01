@@ -5,7 +5,7 @@ import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
 import { Keyboard, keyboardService } from "../keyboard/Keyboard.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
 import { mePlayerMoveUA } from "../move/mePlayerMoveUA.ts";
-import { UAProcessor, uaProcessorService } from "../ua/processor.ts";
+import { UABus, mainUABusService } from "../ua/UABus.ts";
 
 function createHolder(code: string, name: string, direct: MoveDirection) {
   const kaDefinition = registerKADefinition({
@@ -31,7 +31,7 @@ export class MePlayerController implements Looper {
 
   public constructor(
     public readonly keyboard: Keyboard,
-    public readonly uaProcessor: UAProcessor,
+    public readonly uaBus: UABus,
   ) {}
 
   public loop(): void {
@@ -52,7 +52,7 @@ export class MePlayerController implements Looper {
 
     if (currentDirect !== this.previousDirect) {
       this.previousDirect = currentDirect;
-      void this.uaProcessor.process(mePlayerMoveUA, currentDirect);
+      void this.uaBus.dispatch(mePlayerMoveUA, currentDirect);
     }
   }
 }
@@ -62,7 +62,7 @@ export const mePlayerControllerService = registerService({
   async provider(resolver: ServiceResolver): Promise<MePlayerController> {
     return new MePlayerController(
       await resolver.resolve(keyboardService),
-      await resolver.resolve(uaProcessorService),
+      await resolver.resolve(mainUABusService),
     );
   },
 });

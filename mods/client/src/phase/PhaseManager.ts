@@ -1,12 +1,13 @@
 import { Breaker } from "../../../common/asserts.ts";
 import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { KAProcessor } from "../keyboard/KAProcessor.ts";
+import { KAMatcher, kaMatcherService } from "../keyboard/KAMatcher.ts";
 import { gamePhaseService } from "./GamePhase.ts";
 import { PhaseController } from "./Phase.ts";
 
 export class PhaseManager {
   public constructor(
     public currentPhase: PhaseController,
+    public kaMatcher: KAMatcher,
   ) { }
 
   public setCurrentPhase(phase: PhaseController) {
@@ -22,10 +23,10 @@ export class PhaseManager {
     }
   }
 
-  public async checkKAShortCuts(processor: KAProcessor): Promise<void> {
-    const { currentPhase } = this;
+  public async processKeyboard(): Promise<void> {
+    const { currentPhase, kaMatcher } = this;
     try {
-      await currentPhase.checkKAShortCuts(processor);
+      await currentPhase.checkKAShortCuts(kaMatcher);
     } catch (error: unknown) {
       throw new Breaker("error-in-phase-manager", { currentPhase, error });
     }
@@ -37,6 +38,7 @@ export const phaseManagerService = registerService({
   async provider(resolver: ServiceResolver): Promise<PhaseManager> {
     return new PhaseManager(
       await resolver.resolve(gamePhaseService),
+      await resolver.resolve(kaMatcherService),
     );
   },
 });
