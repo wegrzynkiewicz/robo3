@@ -16,10 +16,10 @@ export interface PlayerMoveGM {
   direction: MoveDirection;
 }
 
-export const chunksUpdateGADef = registerGADefinition({
+export const mePlayerMoveGADef = registerGADefinition<PlayerMoveGM>({
   encoding: {
     type: "json",
   },
-  kind: "player-move",
+  kind: "me-player-move",
   key: 0x0020,
 });

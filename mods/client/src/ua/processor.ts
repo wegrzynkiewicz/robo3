@@ -34,12 +34,15 @@ export class UAProcessor {
 
 export const uaProcessorService = registerService({
   name: "uaProcessor",
-  async provider(resolver: ServiceResolver): Promise<UAProcessor> {
-    const processor = new UAProcessor();
-    processor.registerHandler(debugOpenInfoUA, await resolver.resolve(debugOpenInfoUAHandlerService));
-    processor.registerHandler(debugDisplayScaleUA, await resolver.resolve(debugDisplayScaleUAHandlerService));
-    processor.registerHandler(debugChangeViewportLevelUA, await resolver.resolve(debugChangeViewportLevelUAHandlerService));
-    processor.registerHandler(debugSwitchFreeCameraUA, await resolver.resolve(debugSwitchFreeCameraUAHandlerService));
-    return processor;
+  async provider(): Promise<UAProcessor> {
+    return new UAProcessor();;
   },
 });
+
+export async function resolveUAProcessHandlers(resolver: ServiceResolver, processor: UAProcessor) {
+  processor.registerHandler(debugOpenInfoUA, await resolver.resolve(debugOpenInfoUAHandlerService));
+  processor.registerHandler(debugDisplayScaleUA, await resolver.resolve(debugDisplayScaleUAHandlerService));
+  processor.registerHandler(debugChangeViewportLevelUA, await resolver.resolve(debugChangeViewportLevelUAHandlerService));
+  processor.registerHandler(debugSwitchFreeCameraUA, await resolver.resolve(debugSwitchFreeCameraUAHandlerService));
+//   processor.registerHandler(mePlayerMoveUA, await resolver.resolve(mePlayerMoveUAHandlerService));
+}

@@ -25,6 +25,7 @@ import { SpriteImage } from "../sprite/sprite.ts";
 import { spriteIndicesTextureService } from "./src/graphic/tiles/SpriteIndicesTexture.ts";
 import { networkLatencyDaemonService } from "../domain-client/stats/NetworkLatencyDaemon.ts";
 import { kaProcessorService } from "./src/keyboard/KAProcessor.ts";
+import { uaProcessorService, resolveUAProcessHandlers } from "./src/ua/processor.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -39,6 +40,8 @@ async function start() {
   const debugInfo = await resolver.resolve(debugInfoService);
   const phaseManager = await resolver.resolve(phaseManagerService);
   const kaProcessor = await resolver.resolve(kaProcessorService);
+  const uaProcessor = await resolver.resolve(uaProcessorService);
+  resolveUAProcessHandlers(resolver, uaProcessor);
   const tilesTexture2DArray = await resolver.resolve(tilesTexture2DArrayService);
   const spriteIndicesTexture = await resolver.resolve(spriteIndicesTextureService);
   const clientSpriteAtlasLoader = await resolver.resolve(clientSpriteAtlasLoaderService);

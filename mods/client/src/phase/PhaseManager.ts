@@ -7,25 +7,27 @@ import { PhaseController } from "./Phase.ts";
 export class PhaseManager {
   public constructor(
     public currentPhase: PhaseController,
-  ) {}
+  ) { }
 
   public setCurrentPhase(phase: PhaseController) {
     this.currentPhase = phase;
   }
 
   public loop(now: DOMHighResTimeStamp): void {
+    const { currentPhase } = this;
     try {
-      this.currentPhase.loop(now);
+      currentPhase.loop(now);
     } catch (error: unknown) {
-      throw new Breaker("error-in-phase-manager", { error });
+      throw new Breaker("error-in-phase-manager", { currentPhase, error });
     }
   }
 
   public async checkKAShortCuts(processor: KAProcessor): Promise<void> {
+    const { currentPhase } = this;
     try {
-      await this.currentPhase.checkKAShortCuts(processor);
+      await currentPhase.checkKAShortCuts(processor);
     } catch (error: unknown) {
-      throw new Breaker("error-in-phase-manager", { error });
+      throw new Breaker("error-in-phase-manager", { currentPhase, error });
     }
   }
 }
