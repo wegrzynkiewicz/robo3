@@ -1,6 +1,8 @@
+import { BeingManager } from "../../domain-server/BeingManager.ts";
 import { Cube, Dimension } from "../numbers.ts";
 
 export class Space {
+  public readonly beingManager = new BeingManager();
 }
 
 // export interface Space {

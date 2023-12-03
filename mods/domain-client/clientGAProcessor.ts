@@ -7,6 +7,8 @@ import { pangGADef } from "../domain/stats/pangGA.ts";
 import { pongGADef } from "../domain/stats/pongGA.ts";
 import { chunkSegmentUpdateGAHandlerService } from "./chunk/chunkSegmentUpdateGAHandler.ts";
 import { chunksUpdateGAHandlerService } from "./chunk/chunksUpdateGAHandler.ts";
+import { beingUpdateGADef } from "./player-move/beingUpdate.ts";
+import { beingUpdateGAHandlerService } from "./player-move/BeingUpdateGAHandler.ts";
 import { pongGAHandlerService } from "./stats/pongGAHandler.ts";
 
 export const clientGAProcessor = registerService({
@@ -17,6 +19,7 @@ export const clientGAProcessor = registerService({
     processor.registerHandler(chunksUpdateGADef, undefined, await resolver.resolve(chunksUpdateGAHandlerService));
     processor.registerHandler(chunkSegmentUpdateGADef, undefined, await resolver.resolve(chunkSegmentUpdateGAHandlerService));
     processor.registerHandler(pongGADef, pangGADef, await resolver.resolve(pongGAHandlerService));
+    processor.registerHandler(beingUpdateGADef, undefined, await resolver.resolve(beingUpdateGAHandlerService));
     return processor;
   },
 });

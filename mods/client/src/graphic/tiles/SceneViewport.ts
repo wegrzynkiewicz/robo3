@@ -29,6 +29,7 @@ class SceneGrid {
 
 export class SceneViewport {
   public readonly grid = new SceneGrid();
+  public readonly absoluteRect = cornerRect(0, 0, 0, 0);
   public readonly tilesRect = cornerRect(0, 0, 0, 0);
   public readonly chunkRect = cornerRect(0, 0, 0, 0);
 
@@ -38,21 +39,26 @@ export class SceneViewport {
   ) {}
 
   public loop() {
-    const { chunkRect, primaryUBO, tilesRect, viewport } = this;
+    const { absoluteRect, chunkRect, primaryUBO, tilesRect, viewport } = this;
     tilesRect.x1 = viewport.tilesRect.x1 - 1;
     tilesRect.y1 = viewport.tilesRect.y1 - 1;
     tilesRect.x2 = viewport.tilesRect.x2 + 2;
     tilesRect.y2 = viewport.tilesRect.y2 + 2;
+
+    absoluteRect.x1 = tilesRect.x1 * 32;
+    absoluteRect.y1 = tilesRect.y1 * 32;
+    absoluteRect.x2 = tilesRect.x2 * 32;
+    absoluteRect.y2 = tilesRect.y2 * 32;
 
     chunkRect.x1 = Math.floor(tilesRect.x1 / 32);
     chunkRect.y1 = Math.floor(tilesRect.y1 / 32);
     chunkRect.x2 = Math.floor(tilesRect.x2 / 32);
     chunkRect.y2 = Math.floor(tilesRect.y2 / 32);
 
-    primaryUBO.pixelOffset[0] = tilesRect.x1 * 32;
-    primaryUBO.pixelOffset[1] = tilesRect.y1 * 32;
-    primaryUBO.pixelOffset[2] = tilesRect.x2 * 32;
-    primaryUBO.pixelOffset[3] = tilesRect.y2 * 32;
+    primaryUBO.pixelOffset[0] = absoluteRect.x1;
+    primaryUBO.pixelOffset[1] = absoluteRect.y1;
+    primaryUBO.pixelOffset[2] = absoluteRect.x2;
+    primaryUBO.pixelOffset[3] = absoluteRect.y2;
   }
 
   public get level(): number {

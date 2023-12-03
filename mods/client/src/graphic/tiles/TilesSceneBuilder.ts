@@ -4,6 +4,7 @@ import { Chunk, ChunkManager, chunkManagerService } from "../../../../domain-cli
 import { SceneViewport, sceneViewportService } from "./SceneViewport.ts";
 import { TilesCollector, tilesCollectorService } from "./TilesCollector.ts";
 import { ChunkId } from "../../../../core/chunk/chunkId.ts";
+import { SpaceManager, spaceManagerService } from "../../../../core/space/SpaceManager.ts";
 
 const ter = {
   "LQ": 65,
@@ -40,6 +41,7 @@ export class TilesSceneBuilder {
     public readonly chunkManager: ChunkManager,
     public readonly sceneViewport: SceneViewport,
     public readonly tiles: TilesCollector,
+    public readonly spaceManager: SpaceManager,
   ) {
     const { cellCount, size } = this.sceneViewport.grid.available;
     this.depthLayer = new Uint16Array(cellCount);
@@ -179,6 +181,11 @@ export class TilesSceneBuilder {
         this.processTile(x, y, currentTerrainLevel);
       }
     }
+    const space = this.spaceManager.obtain(1);
+    for (const being of space.beingManager.byId.values()) {
+      const { x, y } = being;
+      this.tiles.putAbsolute(x, y, currentTerrainLevel, 83);
+    }
   }
 
   public clear() {
@@ -216,6 +223,7 @@ export const tilesSceneBuilderService = registerService({
       await resolver.resolve(chunkManagerService),
       await resolver.resolve(sceneViewportService),
       await resolver.resolve(tilesCollectorService),
+      await resolver.resolve(spaceManagerService),
     );
   },
 });

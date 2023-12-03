@@ -50,17 +50,17 @@ export class DebugInfo {
       new DepthDebugBufferPreviewColorizer(),
     );
     this.previews.push(preview);
-
-    right.append(...this.previews.map((e) => e.canvas));
   }
 
   public enable() {
     this.isEnabled = true;
+    this.right.append(...this.previews.map((e) => e.canvas));
   }
 
   public disable() {
     this.isEnabled = false;
     this.left.innerText = "";
+    this.right.innerText = "";
   }
 
   public toggle() {

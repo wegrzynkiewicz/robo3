@@ -14,6 +14,8 @@ import { chunkSegmentUpdateGADef } from "../domain/chunk/chunkSegmentUpdateGA.ts
 import { chunksUpdateGADef } from "../domain/chunk/chunksUpdateGA.ts";
 import { decompress } from "../common/binary.ts";
 import { ChunkSegment } from "../core/chunk/chunkSegment.ts";
+import { spaceManagerService } from "../core/space/SpaceManager.ts";
+import { beingUpdateGADef } from "../domain-client/player-move/beingUpdate.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -75,10 +77,43 @@ Deno.addSignalListener(
     };
 
     const resolver = new ServiceResolver();
+    const spaceManager = await resolver.resolve(spaceManagerService);
+    const space = spaceManager.obtain(1);
+    const being = space.beingManager.obtain(1);
     resolver.inject(gaSenderWebSocketService, ws);
     const processor = await resolver.resolve(serverGAProcessor);
     resolver.inject(gaProcessorService, processor);
     const communicator = await resolver.resolve(gaCommunicator);
+
+    setInterval(() => {
+      //   if (being.updated == false) {
+      //     return;
+      //   }
+      let x = 0;
+      let y = 0;
+      const { direct } = being;
+      if (direct & 0b1000) {
+        y = -1;
+      }
+      if (direct & 0b0100) {
+        y = 1;
+      }
+      if (direct & 0b0010) {
+        x = -1;
+      }
+      if (direct & 0b0001) {
+        x = 1;
+      }
+      being.x += x * 16;
+      being.y += y * 16;
+      being.updated = false;
+      setTimeout(
+        () => {
+          communicator.sender.send(beingUpdateGADef, being);
+        },
+        0,
+      )
+    }, 100);
 
     ws.onmessage = async (message) => {
       try {
@@ -103,15 +138,8 @@ Deno.addSignalListener(
       }
     }, 500);
 
-    // let i = 1;
-    // const internal = setInterval(() => {
-    //   const counter = (i++).toString();
-    //   communicator.notify("tick", { counter });
-    // }, 1000);
-
     ws.onclose = (event) => {
       console.log("Disconncted from client");
-      //   clearInterval(internal);
     };
   });
 
