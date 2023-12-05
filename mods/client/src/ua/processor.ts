@@ -29,7 +29,7 @@ export class UAProcessor implements UABusSubscriber {
     try {
       await handler.handle(definition, data);
     } catch (error) {
-      throw new Breaker("error-inside-keyboard-action-handler", { definition, error });
+      throw new Breaker("error-inside-ua-action-handler", { definition, data, error });
     }
   }
 }

@@ -17,7 +17,6 @@ import { SpriteImageExtractor } from "../sprite/SpriteImageDataExtractor.ts";
 import { logger } from "../common/logger.ts";
 import { gaCommunicator } from "../core/action/communication.ts";
 import { gaProcessorService } from "../core/action/processor.ts";
-import { gaSenderWebSocketService } from "../core/action/sender.ts";
 import { clientGAProcessor } from "../domain-client/clientGAProcessor.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../domain/loginGA.ts";
 import { SpriteAllocator } from "../sprite/SpriteAllocator.ts";
@@ -30,6 +29,7 @@ import { mainKABusService } from "./src/keyboard/KABus.ts";
 import { mainUABusService } from "./src/ua/UABus.ts";
 import { mainGABusService } from "../domain/GABus.ts";
 import { mutationGABusSubscriberService } from "../domain/MutationGABusSubscriber.ts";
+import { webSocketService } from "../core/action/sender.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -137,7 +137,7 @@ async function start() {
   const ws = new WebSocket(`ws://${hostname}:8000/wss/token`);
   ws.binaryType = "arraybuffer";
 
-  resolver.inject(gaSenderWebSocketService, ws);
+  resolver.inject(webSocketService, ws);
   const processor = await resolver.resolve(clientGAProcessor);
   resolver.inject(gaProcessorService, processor);
   const communicator = await resolver.resolve(gaCommunicator);

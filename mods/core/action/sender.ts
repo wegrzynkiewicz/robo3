@@ -39,10 +39,10 @@ export class OnlineGASender implements GASender {
   }
 }
 
-export const gaSenderWebSocketService = registerService({
-  name: "gaSenderWebSocket",
+export const webSocketService = registerService({
+  name: "webSocket",
   async provider(): Promise<WebSocket> {
-    throw new Breaker("sender-websocket-service-should-be-injected");
+    throw new Breaker("websocket-service-should-be-injected");
   },
 });
 
@@ -51,7 +51,7 @@ export const gaSenderService = registerService({
   async provider(resolver: ServiceResolver): Promise<GASender> {
     return new OnlineGASender(
       await resolver.resolve(gaCodecService),
-      await resolver.resolve(gaSenderWebSocketService),
+      await resolver.resolve(webSocketService),
     );
   },
 });

@@ -1,12 +1,9 @@
-import { Breaker } from "../common/asserts.ts";
-import { logger } from "../common/logger.ts";
 import { Application, Router } from "./deps.ts";
 import { ChunkDoc } from "../storage/chunk.ts";
 import { dbClient } from "./db.ts";
 import { ChunkId } from "../core/chunk/chunkId.ts";
 import { ChunkDTO } from "../core/chunk/chunk.ts";
 import { serverGAProcessor } from "../domain-server/serverGAProcessor.ts";
-import { gaSenderWebSocketService } from "../core/action/sender.ts";
 import { ServiceResolver } from "../dependency/service.ts";
 import { gaCommunicator } from "../core/action/communication.ts";
 import { gaProcessorService } from "../core/action/processor.ts";
@@ -16,6 +13,9 @@ import { decompress } from "../common/binary.ts";
 import { ChunkSegment } from "../core/chunk/chunkSegment.ts";
 import { spaceManagerService } from "../core/space/SpaceManager.ts";
 import { beingUpdateGADef } from "../domain-client/player-move/beingUpdate.ts";
+import { clientChannelService } from "./ws.ts";
+import { gameClientManagerService } from "./GameClientManager.ts";
+import { webSocketService } from "../core/action/sender.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -41,8 +41,15 @@ Deno.addSignalListener(
 (async () => {
   const resolver = new ServiceResolver();
   const client = await resolver.resolve(dbClient);
-  const db = client.db("app");
-  const collection = db.collection("chunks");
+  const gameClientManager = await resolver.resolve(gameClientManagerService);
+
+  const db = client.db("app", );
+  const collection = db.collection("chunks", );
+
+  const spaceManager = await resolver.resolve(spaceManagerService);
+  const space = spaceManager.obtain(1);
+
+  let beingCounter = 0;
 
   router.get("/wss/:token", async (ctx) => {
     if (!ctx.isUpgradable) {
@@ -72,57 +79,40 @@ Deno.addSignalListener(
       });
     }
 
-    ws.onopen = (event) => {
-      console.log("new client");
-    };
+    const being = space.beingManager.obtain(beingCounter++);
 
     const resolver = new ServiceResolver();
-    const spaceManager = await resolver.resolve(spaceManagerService);
-    const space = spaceManager.obtain(1);
-    const being = space.beingManager.obtain(1);
-    resolver.inject(gaSenderWebSocketService, ws);
+    resolver.inject(webSocketService, ws);
     const processor = await resolver.resolve(serverGAProcessor);
     resolver.inject(gaProcessorService, processor);
     const communicator = await resolver.resolve(gaCommunicator);
+    const clientChannel = await resolver.resolve(clientChannelService);
+
+    clientChannel.attachListeners();
 
     setInterval(() => {
-      //   if (being.updated == false) {
-      //     return;
-      //   }
-      let x = 0;
-      let y = 0;
-      const { direct } = being;
-      if (direct & 0b1000) {
-        y = -1;
+      for (const being of space.beingManager.byId.values()) {
+        let x = 0;
+        let y = 0;
+        const { direct } = being;
+        if (direct & 0b1000) {
+          y = -1;
+        }
+        if (direct & 0b0100) {
+          y = 1;
+        }
+        if (direct & 0b0010) {
+          x = -1;
+        }
+        if (direct & 0b0001) {
+          x = 1;
+        }
+        being.x += x * 16;
+        being.y += y * 16;
+        being.updated = false;
+        communicator.sender.send(beingUpdateGADef, being);
       }
-      if (direct & 0b0100) {
-        y = 1;
-      }
-      if (direct & 0b0010) {
-        x = -1;
-      }
-      if (direct & 0b0001) {
-        x = 1;
-      }
-      being.x += x * 16;
-      being.y += y * 16;
-      being.updated = false;
-      setTimeout(
-        () => {
-          communicator.sender.send(beingUpdateGADef, being);
-        },
-        0,
-      )
     }, 100);
-
-    ws.onmessage = async (message) => {
-      try {
-        await communicator.receiver.receive(message.data);
-      } catch (error) {
-        logger.error("error-when-processing-wss-message", { error });
-        ws.close(4001, error instanceof Breaker ? error.message : "unknown-error");
-      }
-    };
 
     setTimeout(() => {
       communicator.sender.send(chunksUpdateGADef, { chunks });
@@ -138,9 +128,6 @@ Deno.addSignalListener(
       }
     }, 500);
 
-    ws.onclose = (event) => {
-      console.log("Disconncted from client");
-    };
   });
 
   app.use(router.routes());
