@@ -1,4 +1,5 @@
-import { assertArray, assertObject, assertPositiveNumber, assertRequiredString, assertTrue, Breaker } from "../common/asserts.ts";
+import { assertArray, assertObject, assertPositiveNumber, assertRequiredString, assertTrue } from "../common/asserts.ts";
+import { Breaker } from "../common/breaker.ts";
 import { BrowserImageManager } from "../core/image.ts";
 import { createContext2D, getTilesFromCanvasContext, Tile, TilesTextureAllocator } from "../core/tile.ts";
 import { SPRITE_SIZE, SPRITES_TEXTURE_SIZE, TILES_PER_CHUNK_GRID, TILES_PER_CHUNK_GRID_AXIS } from "../core/vars.ts";

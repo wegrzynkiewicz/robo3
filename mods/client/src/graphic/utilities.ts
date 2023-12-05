@@ -1,4 +1,5 @@
-import { assertNonNull, assertObject, Breaker } from "../../../common/asserts.ts";
+import { assertNonNull, assertObject } from "../../../common/asserts.ts";
+import { Breaker } from "../../../common/breaker.ts";
 
 export type GL = WebGL2RenderingContext;
 

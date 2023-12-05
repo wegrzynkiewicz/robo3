@@ -1,5 +1,5 @@
 import { Deferred, deferred } from "../deps.ts";
-import { Breaker } from "./asserts.ts";
+import { Breaker } from "./breaker.ts";
 
 export type UnknownData = Record<string, unknown>;
 export type NonEmptyObj<T extends Record<string, unknown>> = T extends Record<string, never> ? never : T;

@@ -1,4 +1,5 @@
-import { assertObject, assertPositiveNumber, assertRequiredString, Breaker, isRequiredString } from "../../common/asserts.ts";
+import { assertObject, assertPositiveNumber, assertRequiredString, isRequiredString } from "../../common/asserts.ts";
+import { Breaker } from "../../common/breaker.ts";
 import { BinaryBYOBCodec } from "../codec.ts";
 import { registerService, ServiceResolver } from "../../dependency/service.ts";
 import { GADefinition, GAManager, gaManagerService } from "./foundation.ts";

@@ -1,4 +1,4 @@
-import { Breaker } from "../../../common/asserts.ts";
+import { Breaker } from "../../../common/breaker.ts";
 import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 import { UABus, mainUABusService } from "../ua/UABus.ts";
 import { KABusSubscriber } from "./KABus.ts";

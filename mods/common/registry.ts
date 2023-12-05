@@ -1,4 +1,4 @@
-import { Breaker } from "./asserts.ts";
+import { Breaker } from "./breaker.ts";
 
 export type RegistryKeyResolver<T> = (entry: T) => string | symbol;
 

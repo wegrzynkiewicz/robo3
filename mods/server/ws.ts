@@ -1,4 +1,4 @@
-import { Breaker } from "../common/asserts.ts";
+import { Breaker } from "../common/breaker.ts";
 import { Logger } from "../common/logger.ts";
 import { GAReceiver, gaReceiverService } from "../core/action/receiver.ts";
 import { webSocketService } from "../core/action/sender.ts";

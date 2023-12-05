@@ -1,4 +1,4 @@
-import { Breaker } from "../../../../common/asserts.ts";
+import { Breaker } from "../../../../common/breaker.ts";
 import { TypedArray } from "../../../../common/binary.ts";
 import { Dim3D } from "../../../../math/Dim3D.ts";
 import { createSampler, createTexture } from "../utilities.ts";

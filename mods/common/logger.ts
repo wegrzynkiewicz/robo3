@@ -1,4 +1,4 @@
-import { Breaker } from "./asserts.ts";
+import { Breaker } from "./breaker.ts";
 
 export interface Logger {
   error(message: string, data?: Record<string, unknown>): void;

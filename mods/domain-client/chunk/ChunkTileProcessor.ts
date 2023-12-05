@@ -1,4 +1,4 @@
-import { Breaker } from "../../common/asserts.ts";
+import { Breaker } from "../../common/breaker.ts";
 import { registerService, ServiceResolver } from "../../dependency/service.ts";
 import { SpaceManager, spaceManagerService } from "../../core/space/SpaceManager.ts";
 import { Chunk } from "./chunkManager.ts";

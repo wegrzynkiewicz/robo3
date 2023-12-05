@@ -1,4 +1,4 @@
-import { Breaker } from "../../../common/asserts.ts";
+import { Breaker } from "../../../common/breaker.ts";
 import { registerService, ServiceResolver } from "../../../dependency/service.ts";
 import { debugDisplayScaleUA, debugDisplayScaleUAHandlerService } from "../debug/actions/debugDisplayScaleUA.ts";
 import { debugOpenInfoUA, debugOpenInfoUAHandlerService } from "../debug/actions/debugOpenInfoUA.ts";

@@ -1,4 +1,4 @@
-import { Breaker } from "../common/asserts.ts";
+import { Breaker } from "../common/breaker.ts";
 import { WithOptional } from "../common/useful.ts";
 
 export type Service<TInstance> = {
