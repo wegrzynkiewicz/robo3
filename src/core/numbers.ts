@@ -1,15 +1,5 @@
 import { SPRITE_SIZE, SPRITES_PER_TEXTURE_AXIS } from "./vars.ts";
 
-
-export interface Cube {
-  b: number;
-  f: number;
-  l: number;
-  n: number;
-  r: number;
-  t: number;
-}
-
 export function createIndexCalculator(width: number, height: number): (x: number, y: number, z: number) => number {
   const area = width * height;
   return function (x: number, y: number, z: number): number {
