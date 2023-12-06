@@ -18,7 +18,7 @@
     }
   },
   "tasks": {
-    "bundle": "deno bundle --watch ./src/pages/game-client/main.ts ./src/pages/game-client/dist/main.js",
+    "bundle": "deno bundle --watch ./src/pages/game-client/index.ts ./src/pages/game-client/dist/index.js",
     "db": "mongo -u root -p --authenticationDatabase admin app",
     "serve": "serve ./mods/client",
     "server": "deno run -A --watch ./src/apps/game-server/first.ts"

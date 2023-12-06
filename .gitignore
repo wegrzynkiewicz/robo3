@@ -1,3 +1,4 @@
 *.log
 **/dist/*.js
+!**/dist/!.gitkeep
 /data/*
