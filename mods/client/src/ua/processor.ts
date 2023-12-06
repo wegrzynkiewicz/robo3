@@ -6,7 +6,7 @@ import { debugChangeViewportLevelUA, provideDebugChangeViewportLevelUAHandler } 
 import { AnyUADefinition, UADefinition } from "./foundation.ts";
 import { debugSwitchFreeCameraUA, provideDebugSwitchFreeCameraUAHandler } from "../debug/actions/debugSwitchFreeCamera.ts";
 import { UABusSubscriber } from "./UABus.ts";
-import { mePlayerMoveUA } from "../move/mePlayerMoveUA.ts";
+import { mePlayerMoveUA, provideMePlayerMoveUAHandler } from "../move/mePlayerMoveUA.ts";
 
 export interface UAHandler<TData> {
   handle(definition: UADefinition<TData>, data: TData): Promise<void>;
@@ -43,5 +43,5 @@ export async function resolveUAProcessHandlers(resolver: ServiceResolver, proces
   processor.registerHandler(debugDisplayScaleUA, resolver.resolve(provideDebugDisplayScaleUAHandler));
   processor.registerHandler(debugChangeViewportLevelUA, resolver.resolve(provideDebugChangeViewportLevelUAHandler));
   processor.registerHandler(debugSwitchFreeCameraUA, resolver.resolve(provideDebugSwitchFreeCameraUAHandler));
-//   processor.registerHandler(mePlayerMoveUA, resolver.resolve(provideMePlayerMoveUAHandler));
+  processor.registerHandler(mePlayerMoveUA, resolver.resolve(provideMePlayerMoveUAHandler));
 }

@@ -18,7 +18,7 @@ export class MePlayerMoveHandler implements UAHandler<number> {
   }
 }
 
-export function provideMePlayerMoveHandler(resolver: ServiceResolver) {
+export function provideMePlayerMoveUAHandler(resolver: ServiceResolver) {
   return new MePlayerMoveHandler(
     resolver.resolve(provideMainGABus),
   );
