@@ -23,7 +23,7 @@ import { SpriteAllocator } from "../sprite/SpriteAllocator.ts";
 import { SpriteImage } from "../sprite/sprite.ts";
 import { spriteIndicesTextureService } from "./src/graphic/tiles/SpriteIndicesTexture.ts";
 import { networkLatencyDaemonService } from "../domain-client/stats/NetworkLatencyDaemon.ts";
-import { resolveUAProcessHandlers, mainUAProcessorService } from "./src/ua/processor.ts";
+import { mainUAProcessorService, resolveUAProcessHandlers } from "./src/ua/processor.ts";
 import { kaProcessorService } from "./src/keyboard/KAProcessor.ts";
 import { mainKABusService } from "./src/keyboard/KABus.ts";
 import { mainUABusService } from "./src/ua/UABus.ts";

@@ -2,17 +2,17 @@ import { registerService } from "../../dependency/service.ts";
 import { EPHandler } from "../../web/endpoint.ts";
 
 export interface LoginEPRequest {
-  username: string,
-  password: string,
+  username: string;
+  password: string;
 }
 
 export interface LoginEPResponse {
-  token: string,
+  token: string;
 }
 
 export class LoginEPHandler implements EPHandler {
   public async handle(req: Request): Promise<Response> {
-    const payload = { token: '1234567890' };
+    const payload = { token: "1234567890" };
     return Response.json(payload);
   }
 }

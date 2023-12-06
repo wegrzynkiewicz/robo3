@@ -1,12 +1,27 @@
-import { UnifiedCanvasContext, createUnifiedCanvas } from "../canvas/mod.ts";
+import { createUnifiedCanvas, UnifiedCanvasContext } from "../canvas/mod.ts";
 import { dimRect } from "../math/DimensionalRectangle.ts";
 import { SpriteAtlasImage } from "../sprite-atlas/atlas.ts";
 import { SpriteImage, SpriteOrigin, SpriteSource } from "./sprite.ts";
 
 const terrains = [
-  "LSE", "UN", "LSW", "CSE", "ES", "CSW",
-  "UW", "EMP", "UE", "EE", "FILL", "EW",
-  "LNE", "US", "LNW", "CNE", "EN", "CNW",
+  "LSE",
+  "UN",
+  "LSW",
+  "CSE",
+  "ES",
+  "CSW",
+  "UW",
+  "EMP",
+  "UE",
+  "EE",
+  "FILL",
+  "EW",
+  "LNE",
+  "US",
+  "LNW",
+  "CNE",
+  "EN",
+  "CNW",
 ];
 
 export class SpriteImageExtractor {
@@ -42,7 +57,7 @@ export class SpriteImageExtractor {
         break;
       }
       case "numbers": {
-        yield* this.extractMany((n) => `${spriteAtlasId}/${n.toString().padStart(5, '0')}`);
+        yield* this.extractMany((n) => `${spriteAtlasId}/${n.toString().padStart(5, "0")}`);
         break;
       }
       case "list": {
@@ -55,7 +70,7 @@ export class SpriteImageExtractor {
         yield {
           sourceRect: dimRect(0, 0, width, height),
           spriteId: spriteAtlasId,
-        }
+        };
         break;
       }
       case "terrain": {

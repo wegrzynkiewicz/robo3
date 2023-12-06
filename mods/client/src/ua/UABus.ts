@@ -7,7 +7,7 @@ export interface UABusSubscriber {
 }
 
 export interface UABus {
-  dispatch<TData>(definition: UADefinition<TData>, data: TData): Promise<void>
+  dispatch<TData>(definition: UADefinition<TData>, data: TData): Promise<void>;
 }
 
 export class MainUABus implements UABus {
@@ -17,7 +17,7 @@ export class MainUABus implements UABus {
       try {
         await subscriber.subscribe(definition, data);
       } catch (error) {
-        throw new Breaker('error-inside-ua-subscriber', { definition, data, error });
+        throw new Breaker("error-inside-ua-subscriber", { definition, data, error });
       }
     }
   }
@@ -26,6 +26,6 @@ export class MainUABus implements UABus {
 export const mainUABusService = registerService({
   name: "mainUABus",
   async provider(): Promise<MainUABus> {
-    return new MainUABus();;
+    return new MainUABus();
   },
 });

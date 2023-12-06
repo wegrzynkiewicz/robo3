@@ -6,7 +6,7 @@ export interface KABusSubscriber {
 }
 
 export interface KABus {
-  dispatch<TData>(definition: KADefinition<TData>): Promise<void>
+  dispatch<TData>(definition: KADefinition<TData>): Promise<void>;
 }
 
 export class MainKABus implements KABus {
@@ -21,6 +21,6 @@ export class MainKABus implements KABus {
 export const mainKABusService = registerService({
   name: "mainKABus",
   async provider(): Promise<MainKABus> {
-    return new MainKABus();;
+    return new MainKABus();
   },
 });

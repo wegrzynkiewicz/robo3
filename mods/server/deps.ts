@@ -5,10 +5,10 @@ export type { OpenAPIV3_1 as OpenAPI } from "npm:openapi-types";
 
 export type {
   JSONSchema7 as JSONSchema,
+  JSONSchema7Array as JSONSchemaArray,
   JSONSchema7Definition as JSONSchemaDefinition,
+  JSONSchema7Object as JSONSchemaObject,
   JSONSchema7Type as JSONSchemaType,
   JSONSchema7TypeName as JSONSchemaTypeName,
-  JSONSchema7Array as JSONSchemaArray,
-  JSONSchema7Object as JSONSchemaObject,
   JSONSchema7Version as JSONSchemaVersion,
 } from "npm:@types/json-schema";

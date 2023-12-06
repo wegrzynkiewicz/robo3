@@ -16,7 +16,7 @@ export class WebServer {
     private readonly config: WebServerConfig,
     private readonly handler: WebServerHandler,
     private readonly logger: Logger,
-  ) { }
+  ) {}
 
   public async listen(): Promise<void> {
     const promise = new Promise<Deno.HttpServer>((resolve) => {
@@ -37,7 +37,7 @@ export class WebServer {
 
   public close(reason: string): void {
     const { hostname, port } = this.config;
-    this.logger.info('Web-server-aborting', { date: new Date(), hostname, port });
+    this.logger.info("Web-server-aborting", { date: new Date(), hostname, port });
     this.abortController.abort(reason);
   }
 
@@ -46,14 +46,14 @@ export class WebServer {
       const response = await this.handler.handle(req);
       return response;
     } catch (error) {
-      throw new Breaker('error-inside-Web-server', { error, req });
+      throw new Breaker("error-inside-Web-server", { error, req });
     }
   }
 
   private async handleError(error: unknown): Promise<Response> {
     const payload = { error: "internal-server-error" };
     const response = Response.json(payload, { status: 500 });
-    const msg = 'error-inside-Web-server-handle-error';
+    const msg = "error-inside-Web-server-handle-error";
     const breaker = new Breaker(msg, { error });
     this.logger.error(msg, { error: breaker });
     return response;
@@ -61,6 +61,6 @@ export class WebServer {
 
   private handleListen(): void {
     const { hostname, port } = this.config;
-    this.logger.info('Web-server-listening', { date: new Date(), hostname, port });
+    this.logger.info("Web-server-listening", { date: new Date(), hostname, port });
   }
 }

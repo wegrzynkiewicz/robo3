@@ -1,11 +1,11 @@
 import { MoveDirection } from "../domain-client/player-move/move.ts";
 
 export interface Being {
-  x: number,
-  y: number,
-  z: number,
-  direct: MoveDirection,
-  id: number,
+  x: number;
+  y: number;
+  z: number;
+  direct: MoveDirection;
+  id: number;
 }
 
 export class BeingManager {

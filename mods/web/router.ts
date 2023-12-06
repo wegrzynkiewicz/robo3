@@ -6,12 +6,12 @@ export class URLNotMatchHandler implements EPHandler {
     const payload = {
       error: {
         data: {
-          url: req.url
+          url: req.url,
         },
-        message: 'url-not-match',
-      }
+        message: "url-not-match",
+      },
     };
-    const response = Response.json(payload, { status: 400, });
+    const response = Response.json(payload, { status: 400 });
     return response;
   }
 }
@@ -26,7 +26,7 @@ export class Router implements EPHandler {
       const response = await handler.handle(req);
       return response;
     } catch (error: unknown) {
-      throw new Breaker('error-inside-router', { error, req });
+      throw new Breaker("error-inside-router", { error, req });
     }
   }
 

@@ -37,7 +37,7 @@ export class UAProcessor implements UABusSubscriber {
 export const mainUAProcessorService = registerService({
   name: "mainUAProcessor",
   async provider(): Promise<UAProcessor> {
-    return new UAProcessor();;
+    return new UAProcessor();
   },
 });
 

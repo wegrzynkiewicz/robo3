@@ -42,14 +42,14 @@ router.get("/api.json", (ctx) => {
   ctx.response.type = "json";
   ctx.response.headers.set("Access-Control-Allow-Origin", "*");
   const info: OpenAPI.InfoObject = {
-    title: 'robo24',
-    version: '1',
-    summary: 'test summary'
+    title: "robo24",
+    version: "1",
+    summary: "test summary",
   };
   const document: OpenAPI.Document = {
     info,
     paths: {},
-    openapi: '3.0.0',
+    openapi: "3.0.0",
   };
   ctx.response.body = JSON.stringify(document);
 });
@@ -142,7 +142,6 @@ router.get("/api.json", (ctx) => {
         }, 50 * (j++));
       }
     }, 500);
-
   });
 
   app.use(router.routes());

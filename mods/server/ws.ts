@@ -3,14 +3,14 @@ import { Logger } from "../common/logger.ts";
 import { GAReceiver, gaReceiverService } from "../core/action/receiver.ts";
 import { webSocketService } from "../core/action/sender.ts";
 import { globalLoggerService } from "../core/logger.ts";
-import { ServiceResolver, registerService } from "../dependency/service.ts";
+import { registerService, ServiceResolver } from "../dependency/service.ts";
 
 export class ClientChannel {
   public constructor(
     public readonly logger: Logger,
     public readonly receiver: GAReceiver,
     public readonly ws: WebSocket,
-  ) { }
+  ) {}
 
   public attachListeners(): void {
     const { ws } = this;

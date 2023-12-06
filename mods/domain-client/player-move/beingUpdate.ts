@@ -1,9 +1,9 @@
 import { registerGADefinition } from "../../core/action/foundation.ts";
 
 export interface BeingUpdateGA {
-  id: number,
-  x: number,
-  y: number,
+  id: number;
+  x: number;
+  y: number;
 }
 
 export const beingUpdateGADef = registerGADefinition<BeingUpdateGA>({

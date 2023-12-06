@@ -1,6 +1,6 @@
 import { GACommunicator, gaCommunicator } from "../core/action/communication.ts";
 import { GADefinition } from "../core/action/foundation.ts";
-import { ServiceResolver, registerService } from "../dependency/service.ts";
+import { registerService, ServiceResolver } from "../dependency/service.ts";
 
 export interface GABusSubscriber {
   subscribe<TData>(definition: GADefinition<TData>, data: TData): Promise<void>;
@@ -9,7 +9,7 @@ export interface GABusSubscriber {
 export class MutationGABusSubscriber implements GABusSubscriber {
   public constructor(
     public communicator: GACommunicator,
-  ) { }
+  ) {}
 
   public async subscribe<TData>(definition: GADefinition<TData>, data: TData): Promise<void> {
     this.communicator.sender.send(definition, data);

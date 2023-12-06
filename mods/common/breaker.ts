@@ -24,9 +24,7 @@ export class Breaker extends Error {
     }
     if (error) {
       msg += `\nwith cause error:\n`;
-      msg += error instanceof Error
-        ? indent(error.stack ?? '')
-        : error;
+      msg += error instanceof Error ? indent(error.stack ?? "") : error;
     }
     msg += "\nwith stack trace:";
     super(msg);

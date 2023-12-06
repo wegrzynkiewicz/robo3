@@ -7,7 +7,7 @@ export class FollowingMePlayerCamera implements Camera {
   public constructor(
     public readonly viewport: Viewport,
     public readonly myPlayer: MyPlayer,
-  ) { }
+  ) {}
 
   public loop(): void {
     const { x, y } = this.myPlayer.being;

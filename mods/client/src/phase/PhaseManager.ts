@@ -8,7 +8,7 @@ export class PhaseManager {
   public constructor(
     public currentPhase: PhaseController,
     public kaMatcher: KAMatcher,
-  ) { }
+  ) {}
 
   public setCurrentPhase(phase: PhaseController) {
     this.currentPhase = phase;

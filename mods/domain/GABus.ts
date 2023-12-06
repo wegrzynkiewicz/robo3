@@ -6,7 +6,7 @@ export interface GABusSubscriber {
 }
 
 export interface GABus {
-  dispatch<TData>(definition: GADefinition<TData>, data: TData): Promise<void>
+  dispatch<TData>(definition: GADefinition<TData>, data: TData): Promise<void>;
 }
 
 export class MainGABus implements GABus {
@@ -21,6 +21,6 @@ export class MainGABus implements GABus {
 export const mainGABusService = registerService({
   name: "mainGABus",
   async provider(): Promise<MainGABus> {
-    return new MainGABus();;
+    return new MainGABus();
   },
 });
