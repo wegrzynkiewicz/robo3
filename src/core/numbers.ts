@@ -1,10 +1,5 @@
 import { SPRITE_SIZE, SPRITES_PER_TEXTURE_AXIS } from "./vars.ts";
 
-export interface Dimension {
-  d: number;
-  h: number;
-  w: number;
-}
 
 export interface Cube {
   b: number;

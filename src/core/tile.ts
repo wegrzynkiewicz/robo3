@@ -3,11 +3,6 @@ import { assertNonNull, assertTrue } from "../common/utils/asserts.ts";
 import { coords2ImageRect, index2coords } from "./numbers.ts";
 import { SPRITE_SIZE, SPRITES_TEXTURE_SIZE } from "./vars.ts";
 
-export interface Tile {
-  tileId: string;
-  spriteIndex: string;
-}
-
 export function createContext2D(width: number, height: number): CanvasRenderingContext2D {
   assertTrue(width % SPRITE_SIZE === 0, `canvas-width-must-be-multiples-of-${SPRITE_SIZE}`, { width });
   assertTrue(height % SPRITE_SIZE === 0, `canvas-height-must-be-multiples-of-${SPRITE_SIZE}`, { height });
