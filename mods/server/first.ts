@@ -38,6 +38,22 @@ Deno.addSignalListener(
   },
 );
 
+router.get("/api.json", (ctx) => {
+  ctx.response.type = "json";
+  ctx.response.headers.set("Access-Control-Allow-Origin", "*");
+  const info: OpenAPI.InfoObject = {
+    title: 'robo24',
+    version: '1',
+    summary: 'test summary'
+  };
+  const document: OpenAPI.Document = {
+    info,
+    paths: {},
+    openapi: '3.0.0',
+  };
+  ctx.response.body = JSON.stringify(document);
+});
+
 (async () => {
   const resolver = new ServiceResolver();
   const client = await resolver.resolve(dbClient);
