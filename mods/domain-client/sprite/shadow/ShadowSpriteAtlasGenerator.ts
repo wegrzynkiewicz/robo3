@@ -1,4 +1,4 @@
-import { createUnifiedCanvas } from "../../../canvas/mod.ts";
+import { createUnifiedCanvas } from "../../../common/canvas/mod.ts";
 
 type ShadowSampler = (x: number, y: number) => number;
 

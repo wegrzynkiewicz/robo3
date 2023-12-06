@@ -1,5 +1,5 @@
 import { Application, OpenAPI, Router } from "./deps.ts";
-import { ChunkDoc } from "../storage/chunk.ts";
+import { ChunkDoc } from "../common/storage/chunk.ts";
 import { ChunkId } from "../common/chunk/chunkId.ts";
 import { ChunkDTO } from "../common/chunk/chunk.ts";
 import { ServiceResolver } from "../common/dependency/service.ts";

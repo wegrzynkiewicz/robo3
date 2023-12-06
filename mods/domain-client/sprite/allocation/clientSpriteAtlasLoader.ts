@@ -1,7 +1,7 @@
 import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { ExternalSpriteAtlasProvider } from "../../../sprite-atlas/ExternalSpriteAtlasProvider.ts";
-import { SpriteAtlasLoader } from "../../../sprite-atlas/SpriteAtlasLoader.ts";
-import { SpriteAtlasSource } from "../../../sprite-atlas/atlas.ts";
+import { ExternalSpriteAtlasProvider } from "../../../common/sprite-atlas/ExternalSpriteAtlasProvider.ts";
+import { SpriteAtlasLoader } from "../../../common/sprite-atlas/SpriteAtlasLoader.ts";
+import { SpriteAtlasSource } from "../../../common/sprite-atlas/atlas.ts";
 import { provideShadowSpriteAtlasProvider } from "../shadow/ShadowSpriteAtlasProvider.ts";
 
 export function provideClientSpriteAtlasLoader(resolver: ServiceResolver) {
