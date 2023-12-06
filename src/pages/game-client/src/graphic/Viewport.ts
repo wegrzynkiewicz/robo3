@@ -1,8 +1,8 @@
-import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { SPRITES_TEXTURE_SIZE } from "../../../core/vars.ts";
-import { box2P } from "../../../common/math/Box2P.ts";
-import { pos2D } from "../../../common/math/Pos2D.ts";
-import { fromTranslation, identity, ortho } from "../../../common/math/mat4.ts";
+import { ServiceResolver } from "../../../../common/dependency/service.ts";
+import { SPRITES_TEXTURE_SIZE } from "../../../../core/vars.ts";
+import { box2P } from "../../../../common/math/Box2P.ts";
+import { pos2D } from "../../../../common/math/Pos2D.ts";
+import { fromTranslation, identity, ortho } from "../../../../common/math/mat4.ts";
 import { providePrimaryUBO } from "./PrimaryUBO.ts";
 
 export class Viewport {

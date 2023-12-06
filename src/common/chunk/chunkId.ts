@@ -1,4 +1,4 @@
-import { CornerRectangle } from "../math/CornerRectangle.ts";
+import { Box2P } from "../math/Box2P.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
 import { PIXELS_PER_CHUNK_GRID_AXIS } from "../../core/vars.ts";
 
@@ -19,7 +19,7 @@ export class ChunkId {
     public readonly z: number,
   ) {}
 
-  public getWorldSpaceCornerRect(): CornerRectangle {
+  public getWorldSpaceCornerRect(): Box2P {
     const x1 = this.x * PIXELS_PER_CHUNK_GRID_AXIS;
     const y1 = this.y * PIXELS_PER_CHUNK_GRID_AXIS;
     const x2 = x1 + PIXELS_PER_CHUNK_GRID_AXIS;

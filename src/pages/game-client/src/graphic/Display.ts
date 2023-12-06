@@ -1,6 +1,6 @@
-import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y, TILE_SIZE } from "../../../core/vars.ts";
-import { pos2D } from "../../../common/math/Pos2D.ts";
+import { ServiceResolver } from "../../../../common/dependency/service.ts";
+import { SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y, TILE_SIZE } from "../../../../core/vars.ts";
+import { pos2D } from "../../../../common/math/Pos2D.ts";
 import { Viewport, provideViewport } from "./Viewport.ts";
 import { provideWebGL } from "./WebGL.ts";
 

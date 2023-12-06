@@ -1,5 +1,5 @@
-import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { Pos2D } from "../../../common/math/Pos2D.ts";
+import { ServiceResolver } from "../../../../common/dependency/service.ts";
+import { Pos2D } from "../../../../common/math/Pos2D.ts";
 import { Looper } from "../MainLoop.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
 import { Keyboard, provideKeyboard } from "../keyboard/Keyboard.ts";

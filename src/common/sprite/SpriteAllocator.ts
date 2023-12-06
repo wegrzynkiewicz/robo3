@@ -2,7 +2,7 @@ import { UnifiedCanvasContext } from "../canvas/common.ts";
 import { createUnifiedCanvas } from "../canvas/mod.ts";
 import { index2coords } from "../../core/numbers.ts";
 import { Dim2D, dim2D } from "../math/Dim2D.ts";
-import { Point, point } from "../math/Point.ts";
+import { Pos2D, pos2D } from "../math/Pos2D.ts";
 import { SpriteImage } from "./sprite.ts";
 
 export interface SpriteBinding {
@@ -13,7 +13,7 @@ export interface SpriteBinding {
   };
   texture: {
     atlasIndex: number;
-    mapping: Point;
+    mapping: Pos2D;
     size: Dim2D;
   };
 }
@@ -57,7 +57,7 @@ export class SpriteAllocator {
       spriteId: sprite.source.spriteId,
       texture: {
         atlasIndex: this.currentZ,
-        mapping: point(dstX, dstY),
+        mapping: pos2D(dstX, dstY),
         size: dim2D(32, 32),
       },
       tile: {

@@ -1,5 +1,5 @@
 import { createUnifiedCanvas, UnifiedCanvasContext } from "../canvas/mod.ts";
-import { dimRect } from "../math/DimensionalRectangle.ts";
+import { box1P } from "../math/Box1P.ts";
 import { SpriteAtlasImage } from "../sprite-atlas/atlas.ts";
 import { SpriteImage, SpriteOrigin, SpriteSource } from "./sprite.ts";
 
@@ -42,7 +42,7 @@ export class SpriteImageExtractor {
     let i = 0;
     for (let y = 0; y < tilesPerHeight; y++) {
       for (let x = 0; x < tilesPerWidth; x++) {
-        const sourceRect = dimRect(x * w, y * h, w, h);
+        const sourceRect = box1P(x * w, y * h, w, h);
         const spriteId = callback(i++);
         yield { sourceRect, spriteId };
       }
@@ -68,7 +68,7 @@ export class SpriteImageExtractor {
       }
       case "single": {
         yield {
-          sourceRect: dimRect(0, 0, width, height),
+          sourceRect: box1P(0, 0, width, height),
           spriteId: spriteAtlasId,
         };
         break;

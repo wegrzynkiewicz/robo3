@@ -1,5 +1,5 @@
 import { Dim2D } from "../math/Dim2D.ts";
-import { DimensionalRectangle } from "../math/DimensionalRectangle.ts";
+import { Box1P } from "../math/Box1P.ts";
 import { SpriteAllocation } from "../sprite/sprite.ts";
 
 export interface ExternalSpriteAtlasOrigin {
@@ -16,7 +16,7 @@ export type SpriteAtlasOrigin = ExternalSpriteAtlasOrigin | GeneratedSpriteAtlas
 
 export interface SpriteInListSpriteAtlasLayout {
   spriteId: string;
-  sourceRect: DimensionalRectangle;
+  sourceRect: Box1P;
 }
 
 export interface GridNumbersSpriteAtlasLayout {

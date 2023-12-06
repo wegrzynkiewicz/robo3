@@ -2,22 +2,22 @@ import { ChunkId } from "../../common/chunk/chunkId.ts";
 import { ChunkSegment } from "../../common/chunk/chunkSegment.ts";
 import { GONormChunkPosition } from "../../common/game-object/position.ts";
 
-import { CornerRectangle } from "../../common/math/CornerRectangle.ts";
-import { Position } from "../../common/math/Position.ts";
+import { Box2P } from "../../common/math/Box2P.ts";
+import { Pos3D } from "../../common/math/Pos3D.ts";
 
 export interface GOView {
-  chunkPosition: Position;
+  chunkPosition: Pos3D;
   goTypeId: number;
   localId: number;
   normChunkPosition: GONormChunkPosition;
-  spacePosition: Position;
-  worldSpaceRect: CornerRectangle;
+  spacePosition: Pos3D;
+  worldSpaceRect: Box2P;
 }
 
 export class Chunk {
   public segment?: ChunkSegment;
-  public readonly worldSpaceRect: CornerRectangle;
-  public readonly worldSpaceBoundRect: CornerRectangle;
+  public readonly worldSpaceRect: Box2P;
+  public readonly worldSpaceBoundRect: Box2P;
   public transparent = false;
   public constructor(
     public chunkId: ChunkId,

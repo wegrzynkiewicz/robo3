@@ -1,4 +1,4 @@
-import { DimensionalRectangle } from "../math/DimensionalRectangle.ts";
+import { Box1P } from "../math/Box1P.ts";
 import { SpriteAtlasSource } from "../sprite-atlas/atlas.ts";
 
 export interface StaticSpriteAllocation {
@@ -18,7 +18,7 @@ export interface SpriteSource {
   origin: SpriteOrigin;
   allocation: SpriteAllocation;
   spriteId: string;
-  sourceRect: DimensionalRectangle;
+  sourceRect: Box1P;
 }
 
 export interface SpriteImage {
