@@ -1,9 +1,9 @@
-import { ChunkId } from "../../core/chunk/chunkId.ts";
-import { ChunkSegment } from "../../core/chunk/chunkSegment.ts";
-import { GONormChunkPosition } from "../../core/game-object/position.ts";
+import { ChunkId } from "../../common/chunk/chunkId.ts";
+import { ChunkSegment } from "../../common/chunk/chunkSegment.ts";
+import { GONormChunkPosition } from "../../common/game-object/position.ts";
 
-import { CornerRectangle } from "../../math/CornerRectangle.ts";
-import { Position } from "../../math/Position.ts";
+import { CornerRectangle } from "../../common/math/CornerRectangle.ts";
+import { Position } from "../../common/math/Position.ts";
 
 export interface GOView {
   chunkPosition: Position;

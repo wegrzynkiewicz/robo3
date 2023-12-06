@@ -1,5 +1,5 @@
 import { createUnifiedCanvas, UnifiedCanvasContext } from "../canvas/mod.ts";
-import { dimRect } from "../math/DimensionalRectangle.ts";
+import { dimRect } from "../common/math/DimensionalRectangle.ts";
 import { SpriteAtlasImage } from "../sprite-atlas/atlas.ts";
 import { SpriteImage, SpriteOrigin, SpriteSource } from "./sprite.ts";
 

@@ -1,4 +1,4 @@
-import { GAHandler } from "../../core/action/processor.ts";
+import { GAHandler } from "../../common/action/processor.ts";
 
 import { PingGA } from "../../domain/stats/pingGA.ts";
 import { PongGA } from "../../domain/stats/pongGA.ts";

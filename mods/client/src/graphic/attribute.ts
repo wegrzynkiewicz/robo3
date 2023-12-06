@@ -1,5 +1,5 @@
-import { isPositiveNumber } from "../../../common/asserts.ts";
-import { logger } from "../../../common/logger.ts";
+import { isPositiveNumber } from "../../../utils/asserts.ts";
+import { logger } from "../../../utils/logger.ts";
 import { VertexAttributeType } from "./types.ts";
 
 export class VertexAttribute {

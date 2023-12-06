@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { provideFollowingMePlayerCamera } from "../camera/FollowingMePlayerCamera.ts";
 import { provideMePlayerController } from "../camera/MePlayerController.ts";
 import { provideDebugController } from "../debug/DebugController.ts";

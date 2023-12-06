@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { MoveDirection } from "../../../domain-client/player-move/move.ts";
 import { Looper } from "../MainLoop.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";

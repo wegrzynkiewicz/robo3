@@ -1,4 +1,4 @@
-import { Breaker } from "../../common/breaker.ts";
+import { Breaker } from "../../utils/breaker.ts";
 import { GAEnvelope } from "./codec.ts";
 import { AnyGADefinition, GADefinition } from "./foundation.ts";
 import { GASender } from "./sender.ts";

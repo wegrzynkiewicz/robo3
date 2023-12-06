@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../dependency/service.ts";
+import { ServiceResolver } from "../dependency/service.ts";
 import { GAReceiver, provideGAReceiver } from "./receiver.ts";
 import { GARequestor, provideGARequestor } from "./requestor.ts";
 import { GASender, provideGASender } from "./sender.ts";

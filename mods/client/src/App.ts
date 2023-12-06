@@ -1,5 +1,5 @@
-import { provideSpaceManager } from "../../core/space/SpaceManager.ts";
-import { ServiceResolver } from "../../dependency/service.ts";
+import { provideSpaceManager } from "../../common/space/SpaceManager.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
 import { provideDebugInfo } from "./debug/DebugInfo.ts";
 import { provideKeyboard } from "./keyboard/Keyboard.ts";
 import { provideKAManager } from "./keyboard/foundation.ts";

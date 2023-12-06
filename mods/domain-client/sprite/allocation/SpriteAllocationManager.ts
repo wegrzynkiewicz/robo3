@@ -1,4 +1,4 @@
-import { DimensionalRectangle } from "../../../math/DimensionalRectangle.ts";
+import { DimensionalRectangle } from "../../../common/math/DimensionalRectangle.ts";
 
 export interface SpriteAlloc {
   absoluteDim: DimensionalRectangle;

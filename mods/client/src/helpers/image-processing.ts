@@ -1,4 +1,4 @@
-import { assertNonNull, assertTrue } from "../../../common/asserts.ts";
+import { assertNonNull, assertTrue } from "../../../utils/asserts.ts";
 import { SPRITE_SIZE } from "../../../core/vars.ts";
 import { deferred } from "../../../deps.ts";
 

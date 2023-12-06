@@ -1,6 +1,6 @@
-import { Breaker } from "../../common/breaker.ts";
-import { logger } from "../../common/logger.ts";
-import { ServiceResolver } from "../../dependency/service.ts";
+import { Breaker } from "../../utils/breaker.ts";
+import { logger } from "../../utils/logger.ts";
+import { ServiceResolver } from "../dependency/service.ts";
 import { GACodec, GAEnvelope, provideGACodec } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
 

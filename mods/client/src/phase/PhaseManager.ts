@@ -1,5 +1,5 @@
-import { Breaker } from "../../../common/breaker.ts";
-import { ServiceResolver } from "../../../dependency/service.ts";
+import { Breaker } from "../../../utils/breaker.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { KAMatcher, provideKAMatcher } from "../keyboard/KAMatcher.ts";
 import { provideGamePhase } from "./GamePhase.ts";
 import { PhaseController } from "./Phase.ts";

@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../common/dependency/service.ts";
 import { PrimaryUBO, providePrimaryUBO } from "../PrimaryUBO.ts";
 import { provideWebGL } from "../WebGL.ts";
 import { TilesProgram, provideTilesProgram } from "./TilesProgram.ts";

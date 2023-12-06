@@ -1,4 +1,4 @@
-import { DEFAULT_GAME_OBJECT_SPRITE_INDEX } from "../vars.ts";
+import { DEFAULT_GAME_OBJECT_SPRITE_INDEX } from "../../core/vars.ts";
 
 export interface GameObjectProperties {
   walkable: boolean;

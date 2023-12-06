@@ -1,4 +1,4 @@
-import { registerGADefinition } from "../../core/action/foundation.ts";
+import { registerGADefinition } from "../../common/action/foundation.ts";
 
 export interface BeingUpdateGA {
   id: number;

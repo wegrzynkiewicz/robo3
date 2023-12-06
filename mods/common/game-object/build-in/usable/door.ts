@@ -1,4 +1,4 @@
-import { UNDEFINED_GAME_OBJECT_SPRITE_INDEX } from "../../../vars.ts";
+import { UNDEFINED_GAME_OBJECT_SPRITE_INDEX } from "../../../../core/vars.ts";
 import { defineComplexGameObjectType, defineGameObjectProcessor } from "../../defining.ts";
 import { GameObjectProcessor } from "../../processor.ts";
 

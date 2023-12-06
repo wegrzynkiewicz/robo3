@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../common/dependency/service.ts";
 import { KeyShortCut, KeyState } from "../../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../../keyboard/foundation.ts";
 import { provideFreeCameraPhase } from "../../phase/FreeCameraPhase.ts";

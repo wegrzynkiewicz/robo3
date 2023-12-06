@@ -1,4 +1,4 @@
-import { Breaker } from "../common/breaker.ts";
+import { Breaker } from "../utils/breaker.ts";
 import { EPBinding, EPHandler } from "./endpoint.ts";
 
 export class URLNotMatchHandler implements EPHandler {

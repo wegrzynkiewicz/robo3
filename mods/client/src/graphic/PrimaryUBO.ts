@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { provideWebGL } from "./WebGL.ts";
 import { createBuffer } from "./utilities.ts";
 

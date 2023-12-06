@@ -1,4 +1,4 @@
-import { assertRequiredString, throws } from "../../common/asserts.ts";
+import { assertRequiredString, throws } from "../../utils/asserts.ts";
 import { GameObjectType } from "./foundation.ts";
 
 export class GameObjectTypeEncodingTable {

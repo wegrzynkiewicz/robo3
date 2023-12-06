@@ -1,6 +1,6 @@
-import { CornerRectangle } from "../../math/CornerRectangle.ts";
-import { BinaryBYOBCodec } from "../codec.ts";
-import { PIXELS_PER_CHUNK_GRID_AXIS } from "../vars.ts";
+import { CornerRectangle } from "../math/CornerRectangle.ts";
+import { BinaryBYOBCodec } from "../../core/codec.ts";
+import { PIXELS_PER_CHUNK_GRID_AXIS } from "../../core/vars.ts";
 
 function toHex(number: number, pad: number): string {
   return number.toString(16).padStart(pad, "0");

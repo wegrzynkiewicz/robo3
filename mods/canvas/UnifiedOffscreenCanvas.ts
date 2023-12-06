@@ -1,4 +1,4 @@
-import { loadImage } from "../common/useful.ts";
+import { loadImage } from "../utils/useful.ts";
 import { AbstractUnifiedCanvasContext, initialize, UnifiedCanvasContext } from "./common.ts";
 
 export class UnifiedOffscreenCanvasContext extends AbstractUnifiedCanvasContext implements UnifiedCanvasContext {

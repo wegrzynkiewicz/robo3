@@ -1,5 +1,5 @@
-import { registerGADefinition } from "../../core/action/foundation.ts";
-import { ChunkDTO } from "../../core/chunk/chunk.ts";
+import { registerGADefinition } from "../../common/action/foundation.ts";
+import { ChunkDTO } from "../../common/chunk/chunk.ts";
 
 export interface ChunksUpdateGA {
   chunks: ChunkDTO[];

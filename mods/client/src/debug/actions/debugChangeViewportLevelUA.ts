@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../common/dependency/service.ts";
 import { Viewport, provideViewport } from "../../graphic/Viewport.ts";
 import { KeyShortCut, KeyState } from "../../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../../keyboard/foundation.ts";

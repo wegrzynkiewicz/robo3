@@ -1,6 +1,6 @@
-import { Breaker } from "../../common/breaker.ts";
-import { ServiceResolver } from "../../dependency/service.ts";
-import { SpaceManager } from "../../core/space/SpaceManager.ts";
+import { Breaker } from "../../utils/breaker.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
+import { SpaceManager } from "../../common/space/SpaceManager.ts";
 import { Chunk } from "./chunkManager.ts";
 
 const ter = { // TODO: hardcode

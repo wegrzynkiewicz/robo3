@@ -1,6 +1,6 @@
-import { Position } from "../../math/Position.ts";
+import { Position } from "../math/Position.ts";
 import { ChunkId } from "../chunk/chunkId.ts";
-import { LAYERS_PER_CHUNK, PIXELS_PER_CHUNK_GRID_AXIS, POSITIONS_SAMPLING_PER_CHUNK_AXIS } from "../vars.ts";
+import { LAYERS_PER_CHUNK, PIXELS_PER_CHUNK_GRID_AXIS, POSITIONS_SAMPLING_PER_CHUNK_AXIS } from "../../core/vars.ts";
 
 export class GONormChunkPosition implements Position {
   public static readonly X_BITMASK = 0b00000000_00000000_00111111_11111111;

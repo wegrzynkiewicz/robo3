@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../dependency/service.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
 import { provideFPSCounter } from "./FPSCounter.ts";
 import { provideCameraManager } from "./camera/CameraManager.ts";
 import { provideDebugInfo } from "./debug/DebugInfo.ts";

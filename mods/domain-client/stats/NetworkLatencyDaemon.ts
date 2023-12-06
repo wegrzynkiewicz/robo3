@@ -1,7 +1,7 @@
-import { createPerformanceCounter } from "../../common/PerformanceCounter.ts";
-import { logger } from "../../common/logger.ts";
-import { GARequestor, provideGARequestor } from "../../core/action/requestor.ts";
-import { ServiceResolver } from "../../dependency/service.ts";
+import { createPerformanceCounter } from "../../utils/PerformanceCounter.ts";
+import { logger } from "../../utils/logger.ts";
+import { GARequestor, provideGARequestor } from "../../common/action/requestor.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
 import { pingGADef } from "../../domain/stats/pingGA.ts";
 import { pongGADef } from "../../domain/stats/pongGA.ts";
 

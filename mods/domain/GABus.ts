@@ -1,4 +1,4 @@
-import { GADefinition } from "../core/action/foundation.ts";
+import { GADefinition } from "../common/action/foundation.ts";
 
 export interface GABusSubscriber {
   subscribe<TData>(definition: GADefinition<TData>, data: TData): Promise<void>;

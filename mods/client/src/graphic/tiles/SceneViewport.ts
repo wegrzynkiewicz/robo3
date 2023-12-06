@@ -1,7 +1,7 @@
-import { ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../common/dependency/service.ts";
 import { SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y } from "../../../../core/vars.ts";
-import { cornerRect } from "../../../../math/CornerRectangle.ts";
-import { point } from "../../../../math/Point.ts";
+import { cornerRect } from "../../../../common/math/CornerRectangle.ts";
+import { point } from "../../../../common/math/Point.ts";
 import { Viewport, provideViewport } from "../Viewport.ts";
 import { PrimaryUBO, providePrimaryUBO } from "../PrimaryUBO.ts";
 

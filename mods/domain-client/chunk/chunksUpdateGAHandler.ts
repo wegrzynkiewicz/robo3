@@ -1,4 +1,4 @@
-import { GAHandler } from "../../core/action/processor.ts";
+import { GAHandler } from "../../common/action/processor.ts";
 import { ChunksUpdateGA } from "../../domain/chunk/chunksUpdateGA.ts";
 
 export function provideChunksUpdateGAHandler() {

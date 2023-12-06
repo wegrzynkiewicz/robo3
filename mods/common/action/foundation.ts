@@ -1,4 +1,4 @@
-import { registerIdentifier } from "../identifier.ts";
+import { registerIdentifier } from "../../core/identifier.ts";
 import { GAEncodingDefinition } from "./codec.ts";
 
 export interface GADefinition<TData> {

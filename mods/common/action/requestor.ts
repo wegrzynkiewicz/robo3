@@ -1,5 +1,5 @@
 import { Deferred, deferred } from "../../deps.ts";
-import { ServiceResolver } from "../../dependency/service.ts";
+import { ServiceResolver } from "../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
 import { GAProcessor } from "./processor.ts";

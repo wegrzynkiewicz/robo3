@@ -1,6 +1,6 @@
-import { assertEqual } from "../../common/asserts.ts";
-import { registerIdentifier } from "../identifier.ts";
-import { TILES_PER_CHUNK_GRID } from "../vars.ts";
+import { assertEqual } from "../../utils/asserts.ts";
+import { registerIdentifier } from "../../core/identifier.ts";
+import { TILES_PER_CHUNK_GRID } from "../../core/vars.ts";
 
 const identifier = registerIdentifier({
   key: 0x11,

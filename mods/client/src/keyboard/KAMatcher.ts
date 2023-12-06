@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { KABus, provideMainKABus } from "./KABus.ts";
 import { Keyboard, provideKeyboard } from "./Keyboard.ts";
 import { AnyKADefinition } from "./foundation.ts";

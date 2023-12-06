@@ -1,5 +1,5 @@
-import { Breaker } from "../../../common/breaker.ts";
-import { ServiceResolver } from "../../../dependency/service.ts";
+import { Breaker } from "../../../utils/breaker.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { debugDisplayScaleUA, provideDebugDisplayScaleUAHandler } from "../debug/actions/debugDisplayScaleUA.ts";
 import { debugOpenInfoUA, provideDebugOpenInfoUAHandler } from "../debug/actions/debugOpenInfoUA.ts";
 import { debugChangeViewportLevelUA, provideDebugChangeViewportLevelUAHandler } from "../debug/actions/debugChangeViewportLevelUA.ts";

@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { Viewport, provideViewport } from "../graphic/Viewport.ts";
 import { Camera } from "./CameraManager.ts";
 

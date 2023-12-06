@@ -1,8 +1,8 @@
 import { UnifiedCanvasContext } from "../canvas/common.ts";
 import { createUnifiedCanvas } from "../canvas/mod.ts";
 import { index2coords } from "../core/numbers.ts";
-import { Dim2D, dim2D } from "../math/Dim2D.ts";
-import { Point, point } from "../math/Point.ts";
+import { Dim2D, dim2D } from "../common/math/Dim2D.ts";
+import { Point, point } from "../common/math/Point.ts";
 import { SpriteImage } from "./sprite.ts";
 
 export interface SpriteBinding {

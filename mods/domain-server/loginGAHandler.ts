@@ -1,5 +1,5 @@
-import { assertRequiredString } from "../common/asserts.ts";
-import { GAHandler } from "../core/action/processor.ts";
+import { assertRequiredString } from "../utils/asserts.ts";
+import { GAHandler } from "../common/action/processor.ts";
 
 import { LoginGARequest, LoginGAResponse } from "../domain/loginGA.ts";
 

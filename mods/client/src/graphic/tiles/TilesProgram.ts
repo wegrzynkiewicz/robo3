@@ -1,10 +1,10 @@
-import { ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../common/dependency/service.ts";
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
 import { VertexAttribute } from "../attribute.ts";
 import { Texture2DArray } from "../textures/Texture2DArray.ts";
 import { i32, ivec } from "../types.ts";
 import { createProgram, createVertexArray } from "../utilities.ts";
-import { assertNonNull } from "../../../../common/asserts.ts";
+import { assertNonNull } from "../../../../utils/asserts.ts";
 import { provideWebGL } from "../WebGL.ts";
 import { provideTilesBuffer } from "./tilesBuffer.ts";
 import { provideSpriteIndicesTexture } from "./SpriteIndicesTexture.ts";

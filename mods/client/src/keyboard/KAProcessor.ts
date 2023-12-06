@@ -1,5 +1,5 @@
-import { Breaker } from "../../../common/breaker.ts";
-import { ServiceResolver } from "../../../dependency/service.ts";
+import { Breaker } from "../../../utils/breaker.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { UABus, provideMainUABus } from "../ua/UABus.ts";
 import { KABusSubscriber } from "./KABus.ts";
 import { AnyKADefinition } from "./foundation.ts";

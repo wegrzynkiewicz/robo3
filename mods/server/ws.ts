@@ -1,9 +1,9 @@
-import { Breaker } from "../common/breaker.ts";
-import { Logger } from "../common/logger.ts";
-import { GAReceiver, provideGAReceiver } from "../core/action/receiver.ts";
-import { provideWebSocket } from "../core/action/sender.ts";
+import { Breaker } from "../utils/breaker.ts";
+import { Logger } from "../utils/logger.ts";
+import { GAReceiver, provideGAReceiver } from "../common/action/receiver.ts";
+import { provideWebSocket } from "../common/action/sender.ts";
 import { provideGlobalLogger } from "../core/logger.ts";
-import { ServiceResolver } from "../dependency/service.ts";
+import { ServiceResolver } from "../common/dependency/service.ts";
 
 export class ClientChannel {
   public constructor(

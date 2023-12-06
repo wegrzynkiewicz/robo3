@@ -1,6 +1,6 @@
-import { assertArray, assertObject, isRequiredString, throws } from "../../common/asserts.ts";
-import { Registry } from "../../common/registry.ts";
-import { deepClone } from "../../common/useful.ts";
+import { assertArray, assertObject, isRequiredString, throws } from "../../utils/asserts.ts";
+import { Registry } from "../../utils/registry.ts";
+import { deepClone } from "../../utils/useful.ts";
 import { ComplexGameObjectTypeDefinition, GameObjectTypeDefinitionCommon, gocRegister, SimpleGameObjectTypeDefinition } from "./defining.ts";
 import { ComplexGameObjectType, GameObjectTypeCommon, SimpleGameObjectType } from "./foundation.ts";
 import { GameObjectProcessorConstructor } from "./processor.ts";

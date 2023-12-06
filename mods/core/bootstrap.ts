@@ -1,1 +1,1 @@
-import "./game-object/build-in/bootstrap.ts";
+import "../common/game-object/build-in/bootstrap.ts";

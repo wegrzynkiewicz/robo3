@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { provideFreeCamera } from "./FreeCamera.ts";
 
 export interface Camera {

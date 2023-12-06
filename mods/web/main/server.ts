@@ -1,6 +1,6 @@
-import { Breaker } from "../../common/breaker.ts";
+import { Breaker } from "../../utils/breaker.ts";
 import { provideGlobalLogger } from "../../core/logger.ts";
-import { ServiceResolver } from "../../dependency/service.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
 import { Router } from "../router.ts";
 import { WebServer } from "../server.ts";
 

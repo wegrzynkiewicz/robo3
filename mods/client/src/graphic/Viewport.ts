@@ -1,8 +1,8 @@
-import { ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { SPRITES_TEXTURE_SIZE } from "../../../core/vars.ts";
-import { cornerRect } from "../../../math/CornerRectangle.ts";
-import { point } from "../../../math/Point.ts";
-import { fromTranslation, identity, ortho } from "../../../math/mat4.ts";
+import { cornerRect } from "../../../common/math/CornerRectangle.ts";
+import { point } from "../../../common/math/Point.ts";
+import { fromTranslation, identity, ortho } from "../../../common/math/mat4.ts";
 import { providePrimaryUBO } from "./PrimaryUBO.ts";
 
 export class Viewport {

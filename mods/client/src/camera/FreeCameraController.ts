@@ -1,5 +1,5 @@
-import { ServiceResolver } from "../../../dependency/service.ts";
-import { Point } from "../../../math/Point.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
+import { Point } from "../../../common/math/Point.ts";
 import { Looper } from "../MainLoop.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
 import { Keyboard, provideKeyboard } from "../keyboard/Keyboard.ts";

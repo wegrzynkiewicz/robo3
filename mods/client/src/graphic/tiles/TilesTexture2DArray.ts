@@ -1,6 +1,6 @@
-import { Breaker } from "../../../../common/breaker.ts";
-import { ServiceResolver } from "../../../../dependency/service.ts";
-import { dim3D } from "../../../../math/Dim3D.ts";
+import { Breaker } from "../../../../utils/breaker.ts";
+import { ServiceResolver } from "../../../../common/dependency/service.ts";
+import { dim3D } from "../../../../common/math/Dim3D.ts";
 import { provideWebGL } from "../WebGL.ts";
 import { Texture2DArray } from "../textures/Texture2DArray.ts";
 import { TextureFormatConfig } from "../textures/format.ts";

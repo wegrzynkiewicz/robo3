@@ -1,11 +1,11 @@
 import "../canvas/UnifiedOffscreenCanvas.ts";
 import "../core/bootstrap.ts";
-import { assertNonNull } from "../common/asserts.ts";
-import { cgotdRegistry, sgotdRegistry } from "../core/game-object/defining.ts";
-import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../core/game-object/resolving.ts";
-import { ServiceResolver } from "../dependency/service.ts";
+import { assertNonNull } from "../utils/asserts.ts";
+import { cgotdRegistry, sgotdRegistry } from "../common/game-object/defining.ts";
+import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../common/game-object/resolving.ts";
+import { ServiceResolver } from "../common/dependency/service.ts";
 import { SpriteImageExtractor } from "../sprite/SpriteImageDataExtractor.ts";
-import { logger } from "../common/logger.ts";
+import { logger } from "../utils/logger.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../domain/loginGA.ts";
 import { SpriteAllocator } from "../sprite/SpriteAllocator.ts";
 import { SpriteImage } from "../sprite/sprite.ts";
@@ -25,10 +25,10 @@ import { provideCanvas } from "./src/graphic/WebGL.ts";
 import { provideKAProcessor } from "./src/keyboard/KAProcessor.ts";
 import { provideTilesTexture2DArray } from "./src/graphic/tiles/TilesTexture2DArray.ts";
 import { provideSpriteIndicesTexture } from "./src/graphic/tiles/SpriteIndicesTexture.ts";
-import { provideWebSocket } from "../core/action/sender.ts";
-import { provideGAProcessor } from "../core/action/processor.ts";
+import { provideWebSocket } from "../common/action/sender.ts";
+import { provideGAProcessor } from "../common/action/processor.ts";
 import { provideClientGAProcessor } from "../domain-client/clientGAProcessor.ts";
-import { provideGACommunicator } from "../core/action/communication.ts";
+import { provideGACommunicator } from "../common/action/communication.ts";
 import { provideClientSpriteAtlasLoader } from "../domain-client/sprite/allocation/clientSpriteAtlasLoader.ts";
 
 async function start() {

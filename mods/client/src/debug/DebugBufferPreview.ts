@@ -1,4 +1,4 @@
-import { TypedArray } from "../../../common/binary.ts";
+import { TypedArray } from "../../../utils/binary.ts";
 
 export interface DebugBufferPreviewColorizer {
   colorize(colorOutput: Uint8Array, bufferItem: number): void;

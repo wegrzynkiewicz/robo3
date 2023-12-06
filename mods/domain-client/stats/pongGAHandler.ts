@@ -1,5 +1,5 @@
-import { GAHandler } from "../../core/action/processor.ts";
-import { ServiceResolver } from "../../dependency/service.ts";
+import { GAHandler } from "../../common/action/processor.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
 import { PangGA } from "../../domain/stats/pangGA.ts";
 import { PongGA } from "../../domain/stats/pongGA.ts";
 import { NetworkLatencyCounter, provideNetworkLatencyCounter } from "./NetworkLatencyCounter.ts";

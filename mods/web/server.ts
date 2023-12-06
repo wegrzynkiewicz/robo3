@@ -1,4 +1,4 @@
-import { Breaker } from "../common/breaker.ts";
+import { Breaker } from "../utils/breaker.ts";
 import { Logger } from "../core/logger.ts";
 import { EPHandler } from "./endpoint.ts";
 

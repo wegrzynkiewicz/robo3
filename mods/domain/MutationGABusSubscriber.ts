@@ -1,6 +1,6 @@
-import { GACommunicator, provideGACommunicator } from "../core/action/communication.ts";
-import { GADefinition } from "../core/action/foundation.ts";
-import { ServiceResolver } from "../dependency/service.ts";
+import { GACommunicator, provideGACommunicator } from "../common/action/communication.ts";
+import { GADefinition } from "../common/action/foundation.ts";
+import { ServiceResolver } from "../common/dependency/service.ts";
 
 export interface GABusSubscriber {
   subscribe<TData>(definition: GADefinition<TData>, data: TData): Promise<void>;

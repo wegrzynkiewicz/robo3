@@ -1,7 +1,7 @@
-import { assertObject, assertPositiveNumber, assertRequiredString, isRequiredString } from "../../common/asserts.ts";
-import { Breaker } from "../../common/breaker.ts";
-import { BinaryBYOBCodec } from "../codec.ts";
-import { ServiceResolver } from "../../dependency/service.ts";
+import { assertObject, assertPositiveNumber, assertRequiredString, isRequiredString } from "../../utils/asserts.ts";
+import { Breaker } from "../../utils/breaker.ts";
+import { BinaryBYOBCodec } from "../../core/codec.ts";
+import { ServiceResolver } from "../dependency/service.ts";
 import { GADefinition, GAManager, provideGAManager } from "./foundation.ts";
 
 export interface GAEnvelope<TData> {

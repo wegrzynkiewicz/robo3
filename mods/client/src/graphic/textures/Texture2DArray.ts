@@ -1,6 +1,6 @@
-import { Breaker } from "../../../../common/breaker.ts";
-import { TypedArray } from "../../../../common/binary.ts";
-import { Dim3D } from "../../../../math/Dim3D.ts";
+import { Breaker } from "../../../../utils/breaker.ts";
+import { TypedArray } from "../../../../utils/binary.ts";
+import { Dim3D } from "../../../../common/math/Dim3D.ts";
 import { createSampler, createTexture } from "../utilities.ts";
 import { TextureFormatConfig } from "./format.ts";
 

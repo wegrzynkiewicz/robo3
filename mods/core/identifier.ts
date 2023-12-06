@@ -1,4 +1,4 @@
-import { Breaker } from "../common/breaker.ts";
+import { Breaker } from "../utils/breaker.ts";
 
 export interface Identifier {
   key: number;

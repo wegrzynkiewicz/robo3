@@ -1,6 +1,6 @@
-import { GAHandler } from "../../core/action/processor.ts";
-import { SpaceManager, provideSpaceManager } from "../../core/space/SpaceManager.ts";
-import { ServiceResolver } from "../../dependency/service.ts";
+import { GAHandler } from "../../common/action/processor.ts";
+import { SpaceManager, provideSpaceManager } from "../../common/space/SpaceManager.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
 import { MyPlayer, provideMyPlayer } from "./MyPlayer.ts";
 import { BeingUpdateGA } from "./beingUpdate.ts";
 

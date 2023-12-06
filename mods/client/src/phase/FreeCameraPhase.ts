@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { provideFreeCameraController } from "../camera/FreeCameraController.ts";
 import { provideDebugController } from "../debug/DebugController.ts";
 import { PhaseConnector } from "./Phase.ts";
