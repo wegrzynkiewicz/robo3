@@ -46,12 +46,9 @@ export class FreeCameraController implements Looper {
   }
 }
 
-export const freeCameraControllerService = registerService({
-  name: "freeCameraController",
-  async provider(resolver: ServiceResolver): Promise<FreeCameraController> {
-    return new FreeCameraController(
-      await resolver.resolve(freeCameraService),
-      await resolver.resolve(keyboardService),
-    );
-  },
-});
+export function provideFreeCameraController(resolver: ServiceResolver) {
+  return new FreeCameraController(
+    resolver.resolve(provideFreeCamera),
+    resolver.resolve(provideKeyboard),
+  );
+}

@@ -10,15 +10,12 @@ export const spriteIndexPullingTextureFormatConfig: TextureFormatConfig = {
   type: WebGL2RenderingContext["FLOAT"],
 };
 
-export const spriteIndicesTextureService = registerService({
-  name: "spriteIndicesTexture",
-  async provider(resolver: ServiceResolver): Promise<Texture2DArray> {
-    const gl = await resolver.resolve(webGLService);
-    return new Texture2DArray(
-      gl,
-      dim3D(256, 256, 2),
-      1,
-      spriteIndexPullingTextureFormatConfig,
-    );
-  },
-});
+export function provideTexture2DArray(resolver: ServiceResolver) {
+  const gl = resolver.resolve(provideWebGL);
+  return new Texture2DArray(
+    gl,
+    dim3D(256, 256, 2),
+    1,
+    spriteIndexPullingTextureFormatConfig,
+  );
+}

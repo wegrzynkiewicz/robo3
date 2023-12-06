@@ -18,9 +18,6 @@ export class MainGABus implements GABus {
   }
 }
 
-export const mainGABusService = registerService({
-  name: "mainGABus",
-  async provider(): Promise<MainGABus> {
-    return new MainGABus();
-  },
-});
+export function provideMainGABus() {
+  return new MainGABus();
+}

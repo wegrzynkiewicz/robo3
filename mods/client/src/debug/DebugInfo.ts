@@ -147,16 +147,13 @@ export class DebugInfo {
   }
 }
 
-export const debugInfoService = registerService({
-  name: "debugInfo",
-  async provider(resolver: ServiceResolver): Promise<DebugInfo> {
-    return new DebugInfo(
-      await resolver.resolve(displayService),
-      await resolver.resolve(fpsCounterService),
-      await resolver.resolve(networkLatencyCounterService),
-      await resolver.resolve(tilesBufferService),
-      await resolver.resolve(tilesSceneBuilderService),
-      await resolver.resolve(viewportService),
-    );
-  },
-});
+export function provideDebugInfo(resolver: ServiceResolver) {
+  return new DebugInfo(
+    resolver.resolve(provideDisplay),
+    resolver.resolve(provideFpsCounter),
+    resolver.resolve(provideNetworkLatencyCounter),
+    resolver.resolve(provideTilesBuffer),
+    resolver.resolve(provideTilesSceneBuilder),
+    resolver.resolve(provideViewport),
+  );
+}

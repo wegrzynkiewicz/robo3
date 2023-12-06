@@ -39,11 +39,8 @@ export class DebugChangeViewportLevelUAHandler implements UAHandler<number> {
   }
 }
 
-export const debugChangeViewportLevelUAHandlerService = registerService({
-  name: "debugChangeViewportLevelUAHandler",
-  async provider(resolver: ServiceResolver): Promise<UAHandler<number>> {
-    return new DebugChangeViewportLevelUAHandler(
-      await resolver.resolve(viewportService),
-    );
-  },
-});
+export function provideUAHandler<number>(resolver: ServiceResolver) {
+  return new DebugChangeViewportLevelUAHandler(
+    resolver.resolve(provideViewport),
+  );
+}

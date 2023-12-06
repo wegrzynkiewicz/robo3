@@ -59,12 +59,9 @@ export class PrimaryUBO {
   }
 }
 
-export const primaryUBOService = registerService({
-  name: "primaryUBO",
-  async provider(resolver: ServiceResolver): Promise<PrimaryUBO> {
-    return new PrimaryUBO(
-      await resolver.resolve(webGLService),
-      0,
-    );
-  },
-});
+export function providePrimaryUBO(resolver: ServiceResolver) {
+  return new PrimaryUBO(
+    resolver.resolve(provideWebGL),
+    0,
+  );
+}

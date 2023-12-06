@@ -18,11 +18,8 @@ export class PongGAHandler implements GAHandler<PongGA, PangGA> {
   }
 }
 
-export const pongGAHandlerService = registerService({
-  name: "pongGAHandler",
-  async provider(resolver: ServiceResolver): Promise<PongGAHandler> {
-    return new PongGAHandler(
-      await resolver.resolve(networkLatencyCounterService),
-    );
-  },
-});
+export function providePongGAHandler(resolver: ServiceResolver) {
+  return new PongGAHandler(
+    resolver.resolve(provideNetworkLatencyCounter),
+  );
+}

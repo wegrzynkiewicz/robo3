@@ -22,9 +22,6 @@ export class ConsoleLogger implements Logger {
   }
 }
 
-export const globalLoggerService = registerService({
-  name: "globalLogger",
-  async provider(): Promise<Logger> {
-    return new ConsoleLogger();
-  },
-});
+export function provideLogger() {
+  return new ConsoleLogger();
+}

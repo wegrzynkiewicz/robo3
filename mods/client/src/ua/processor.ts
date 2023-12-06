@@ -34,17 +34,14 @@ export class UAProcessor implements UABusSubscriber {
   }
 }
 
-export const mainUAProcessorService = registerService({
-  name: "mainUAProcessor",
-  async provider(): Promise<UAProcessor> {
-    return new UAProcessor();
-  },
-});
+export function provideUAProcessor() {
+  return new UAProcessor();
+}
 
 export async function resolveUAProcessHandlers(resolver: ServiceResolver, processor: UAProcessor) {
-  processor.registerHandler(debugOpenInfoUA, await resolver.resolve(debugOpenInfoUAHandlerService));
-  processor.registerHandler(debugDisplayScaleUA, await resolver.resolve(debugDisplayScaleUAHandlerService));
-  processor.registerHandler(debugChangeViewportLevelUA, await resolver.resolve(debugChangeViewportLevelUAHandlerService));
-  processor.registerHandler(debugSwitchFreeCameraUA, await resolver.resolve(debugSwitchFreeCameraUAHandlerService));
-  processor.registerHandler(mePlayerMoveUA, await resolver.resolve(mePlayerMoveUAHandlerService));
+  processor.registerHandler(debugOpenInfoUA, resolver.resolve(provideDebugOpenInfoUAHandler));
+  processor.registerHandler(debugDisplayScaleUA, resolver.resolve(provideDebugDisplayScaleUAHandler));
+  processor.registerHandler(debugChangeViewportLevelUA, resolver.resolve(provideDebugChangeViewportLevelUAHandler));
+  processor.registerHandler(debugSwitchFreeCameraUA, resolver.resolve(provideDebugSwitchFreeCameraUAHandler));
+  processor.registerHandler(mePlayerMoveUA, resolver.resolve(provideMePlayerMoveUAHandler));
 }

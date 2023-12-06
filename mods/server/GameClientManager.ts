@@ -17,9 +17,6 @@ export class GameClientManager {
   }
 }
 
-export const gameClientManagerService = registerService({
-  name: "gameClientManager",
-  async provider(): Promise<GameClientManager> {
-    return new GameClientManager();
-  },
-});
+export function provideGameClientManager() {
+  return new GameClientManager();
+}

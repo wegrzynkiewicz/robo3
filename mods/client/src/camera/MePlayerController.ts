@@ -57,12 +57,9 @@ export class MePlayerController implements Looper {
   }
 }
 
-export const mePlayerControllerService = registerService({
-  name: "mePlayerController",
-  async provider(resolver: ServiceResolver): Promise<MePlayerController> {
-    return new MePlayerController(
-      await resolver.resolve(keyboardService),
-      await resolver.resolve(mainUABusService),
-    );
-  },
-});
+export function provideMePlayerController(resolver: ServiceResolver) {
+  return new MePlayerController(
+    resolver.resolve(provideKeyboard),
+    resolver.resolve(provideMainUABus),
+  );
+}

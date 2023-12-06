@@ -3,12 +3,9 @@ import { freeCameraControllerService } from "../camera/FreeCameraController.ts";
 import { debugControllerService } from "../debug/DebugController.ts";
 import { PhaseConnector } from "./Phase.ts";
 
-export const freeCameraPhaseService = registerService({
-  name: "freeCameraPhase",
-  async provider(resolver: ServiceResolver): Promise<PhaseConnector> {
-    const phase = new PhaseConnector("free-camera");
-    phase.loopers.push(await resolver.resolve(freeCameraControllerService));
-    phase.kaShortCutsCheckers.push(await resolver.resolve(debugControllerService));
-    return phase;
-  },
-});
+export function providePhaseConnector(resolver: ServiceResolver) {
+  const phase = new PhaseConnector("free-camera");
+  phase.loopers.push(resolver.resolve(provideFreeCameraController));
+  phase.kaShortCutsCheckers.push(resolver.resolve(provideDebugController));
+  return phase;
+}

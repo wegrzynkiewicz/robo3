@@ -4,43 +4,40 @@ import { SpriteAtlasLoader } from "../../../sprite-atlas/SpriteAtlasLoader.ts";
 import { SpriteAtlasSource } from "../../../sprite-atlas/atlas.ts";
 import { shadowSpriteAtlasProviderService } from "../shadow/ShadowSpriteAtlasProvider.ts";
 
-export const clientSpriteAtlasLoaderService = registerService({
-  name: "clientSpriteAtlasLoader",
-  async provider(resolver: ServiceResolver): Promise<SpriteAtlasLoader> {
-    const loader = new SpriteAtlasLoader();
-    const build: SpriteAtlasSource = {
-      allocation: {
-        type: "static",
-      },
-      layout: {
-        spriteDim: { h: 32, w: 32 },
-        type: "numbers",
-      },
-      origin: {
-        type: "external",
-        url: `${window.location.origin}/assets/3.png`, // TODO: hardcode
-      },
-      spriteAtlasId: "build-in",
-    };
-    loader.addProvider(new ExternalSpriteAtlasProvider(build));
-    loader.addProvider(await resolver.resolve(shadowSpriteAtlasProviderService));
+export function provideSpriteAtlasLoader(resolver: ServiceResolver) {
+  const loader = new SpriteAtlasLoader();
+  const build: SpriteAtlasSource = {
+    allocation: {
+      type: "static",
+    },
+    layout: {
+      spriteDim: { h: 32, w: 32 },
+      type: "numbers",
+    },
+    origin: {
+      type: "external",
+      url: `${window.location.origin}/assets/3.png`, // TODO: hardcode
+    },
+    spriteAtlasId: "build-in",
+  };
+  loader.addProvider(new ExternalSpriteAtlasProvider(build));
+  loader.addProvider(resolver.resolve(provideShadowSpriteAtlasProvider));
 
-    const mage: SpriteAtlasSource = {
-      allocation: {
-        type: "static",
-      },
-      layout: {
-        spriteDim: { h: 32, w: 32 },
-        type: "numbers",
-      },
-      origin: {
-        type: "external",
-        url: `${window.location.origin}/assets/mage-cyan.png`, // TODO: hardcode
-      },
-      spriteAtlasId: "mage",
-    };
-    loader.addProvider(new ExternalSpriteAtlasProvider(mage));
+  const mage: SpriteAtlasSource = {
+    allocation: {
+      type: "static",
+    },
+    layout: {
+      spriteDim: { h: 32, w: 32 },
+      type: "numbers",
+    },
+    origin: {
+      type: "external",
+      url: `${window.location.origin}/assets/mage-cyan.png`, // TODO: hardcode
+    },
+    spriteAtlasId: "mage",
+  };
+  loader.addProvider(new ExternalSpriteAtlasProvider(mage));
 
-    return loader;
-  },
-});
+  return loader;
+}

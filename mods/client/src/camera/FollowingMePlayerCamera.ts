@@ -15,12 +15,9 @@ export class FollowingMePlayerCamera implements Camera {
   }
 }
 
-export const followingMePlayerCameraService = registerService({
-  name: "followingMePlayerCamera",
-  async provider(resolver: ServiceResolver): Promise<FollowingMePlayerCamera> {
-    return new FollowingMePlayerCamera(
-      await resolver.resolve(viewportService),
-      await resolver.resolve(myPlayerService),
-    );
-  },
-});
+export function provideFollowingMePlayerCamera(resolver: ServiceResolver) {
+  return new FollowingMePlayerCamera(
+    resolver.resolve(provideViewport),
+    resolver.resolve(provideMyPlayer),
+  );
+}

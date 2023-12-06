@@ -18,9 +18,6 @@ export class MainKABus implements KABus {
   }
 }
 
-export const mainKABusService = registerService({
-  name: "mainKABus",
-  async provider(): Promise<MainKABus> {
-    return new MainKABus();
-  },
-});
+export function provideMainKABus() {
+  return new MainKABus();
+}

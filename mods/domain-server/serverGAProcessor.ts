@@ -15,12 +15,12 @@ export const serverGAProcessor = registerService({
   name: "serverGAProcessor",
   provider: async (resolver: ServiceResolver): Promise<GAProcessor> => {
     const processor = new UniversalGAProcessor(
-      await resolver.resolve(gaSenderService),
+      resolver.resolve(provideGaSender),
     );
-    processor.registerHandler(loginGARequestDef, loginGAResponseDef, await resolver.resolve(loginGARequestHandlerService));
-    processor.registerHandler(pingGADef, pongGADef, await resolver.resolve(pingGAHandlerService));
-    processor.registerHandler(pangGADef, undefined, await resolver.resolve(pangGAHandlerService));
-    processor.registerHandler(mePlayerMoveGADef, undefined, await resolver.resolve(mePlayerMoveGAHandlerService));
+    processor.registerHandler(loginGARequestDef, loginGAResponseDef, resolver.resolve(provideLoginGARequestHandler));
+    processor.registerHandler(pingGADef, pongGADef, resolver.resolve(providePingGAHandler));
+    processor.registerHandler(pangGADef, undefined, resolver.resolve(providePangGAHandler));
+    processor.registerHandler(mePlayerMoveGADef, undefined, resolver.resolve(provideMePlayerMoveGAHandler));
     return processor;
   },
 });

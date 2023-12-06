@@ -18,11 +18,8 @@ export class MePlayerMoveHandler implements UAHandler<number> {
   }
 }
 
-export const mePlayerMoveUAHandlerService = registerService({
-  name: "mePlayerMoveUAHandler",
-  async provider(resolver: ServiceResolver): Promise<MePlayerMoveHandler> {
-    return new MePlayerMoveHandler(
-      await resolver.resolve(mainGABusService),
-    );
-  },
-});
+export function provideMePlayerMoveHandler(resolver: ServiceResolver) {
+  return new MePlayerMoveHandler(
+    resolver.resolve(provideMainGABus),
+  );
+}

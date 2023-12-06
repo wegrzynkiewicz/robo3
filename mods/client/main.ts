@@ -37,27 +37,27 @@ async function start() {
   assertNonNull(canvas, "cannot-find-primary-canvas");
   resolver.inject(canvasService, canvas);
 
-  (globalThis as any).app = await resolver.resolve(appService);
-  const display = await resolver.resolve(displayService);
-  const keyboard = await resolver.resolve(keyboardService);
-  const mainLoop = await resolver.resolve(mainLoopService);
-  const debugInfo = await resolver.resolve(debugInfoService);
-  const phaseManager = await resolver.resolve(phaseManagerService);
+  (globalThis as any).app = resolver.resolve(provideApp);
+  const display = resolver.resolve(provideDisplay);
+  const keyboard = resolver.resolve(provideKeyboard);
+  const mainLoop = resolver.resolve(provideMainLoop);
+  const debugInfo = resolver.resolve(provideDebugInfo);
+  const phaseManager = resolver.resolve(providePhaseManager);
 
-  const mainKABus = await resolver.resolve(mainKABusService);
-  const mainKAProcessor = await resolver.resolve(kaProcessorService);
+  const mainKABus = resolver.resolve(provideMainKABus);
+  const mainKAProcessor = resolver.resolve(provideKaProcessor);
   mainKABus.subscribers.add(mainKAProcessor);
 
-  const mainUABus = await resolver.resolve(mainUABusService);
-  const mainUAProcessor = await resolver.resolve(mainUAProcessorService);
+  const mainUABus = resolver.resolve(provideMainUABus);
+  const mainUAProcessor = resolver.resolve(provideMainUAProcessor);
   resolveUAProcessHandlers(resolver, mainUAProcessor);
   mainUABus.subscribers.add(mainUAProcessor);
 
-  const mainGABus = await resolver.resolve(mainGABusService);
+  const mainGABus = resolver.resolve(provideMainGABus);
 
-  const tilesTexture2DArray = await resolver.resolve(tilesTexture2DArrayService);
-  const spriteIndicesTexture = await resolver.resolve(spriteIndicesTextureService);
-  const clientSpriteAtlasLoader = await resolver.resolve(clientSpriteAtlasLoaderService);
+  const tilesTexture2DArray = resolver.resolve(provideTilesTexture2DArray);
+  const spriteIndicesTexture = resolver.resolve(provideSpriteIndicesTexture);
+  const clientSpriteAtlasLoader = resolver.resolve(provideClientSpriteAtlasLoader);
   const spriteAtlasImages = await clientSpriteAtlasLoader.loadSpriteAtlasImages();
 
   function resizeWindow() {
@@ -141,8 +141,8 @@ async function start() {
   const processor = await resolver.resolve(clientGAProcessor);
   resolver.inject(gaProcessorService, processor);
   const communicator = await resolver.resolve(gaCommunicator);
-  const networkLatencyDaemon = await resolver.resolve(networkLatencyDaemonService);
-  const mutationGABusSubscriber = await resolver.resolve(mutationGABusSubscriberService);
+  const networkLatencyDaemon = resolver.resolve(provideNetworkLatencyDaemon);
+  const mutationGABusSubscriber = resolver.resolve(provideMutationGABusSubscriber);
 
   mainGABus.subscribers.add(mutationGABusSubscriber);
 

@@ -69,7 +69,7 @@ export class Viewport {
 export const viewportService = registerService({
   name: "viewport",
   async provider(resolver: ServiceResolver) {
-    const primaryUBO = await resolver.resolve(primaryUBOService);
+    const primaryUBO = resolver.resolve(providePrimaryUBO);
     const { projectionMatrix, viewMatrix } = primaryUBO;
     return new Viewport(projectionMatrix, viewMatrix);
   },

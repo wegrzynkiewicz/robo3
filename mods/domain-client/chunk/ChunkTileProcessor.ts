@@ -198,11 +198,8 @@ export class ChunkTerrainProcessor {
   }
 }
 
-export const chunkTileProcessorService = registerService({
-  name: "chunkTileProcessor",
-  async provider(resolver: ServiceResolver): Promise<ChunkTerrainProcessor> {
-    return new ChunkTerrainProcessor(
-      await resolver.resolve(spaceManagerService),
-    );
-  },
-});
+export function provideChunkTerrainProcessor(resolver: ServiceResolver) {
+  return new ChunkTerrainProcessor(
+    resolver.resolve(provideSpaceManager),
+  );
+}

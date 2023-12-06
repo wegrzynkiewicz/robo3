@@ -2,12 +2,9 @@ import { registerService, ServiceResolver } from "../../../../dependency/service
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
 import { webGLService } from "../WebGL.ts";
 
-export const tilesBufferService = registerService({
-  name: "tilesBuffer",
-  async provider(resolver: ServiceResolver): Promise<DynamicDrawBuffer> {
-    return new DynamicDrawBuffer(
-      await resolver.resolve(webGLService),
-      8192 * 8,
-    );
-  },
-});
+export function provideDynamicDrawBuffer(resolver: ServiceResolver) {
+  return new DynamicDrawBuffer(
+    resolver.resolve(provideWebGL),
+    8192 * 8,
+  );
+}

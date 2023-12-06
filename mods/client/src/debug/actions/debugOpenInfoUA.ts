@@ -34,11 +34,8 @@ export class DebugOpenInfoUAHandler implements UAHandler<null> {
   }
 }
 
-export const debugOpenInfoUAHandlerService = registerService({
-  name: "debugOpenInfoUAHandler",
-  async provider(resolver: ServiceResolver): Promise<UAHandler<null>> {
-    return new DebugOpenInfoUAHandler(
-      await resolver.resolve(debugInfoService),
-    );
-  },
-});
+export function provideUAHandler<null>(resolver: ServiceResolver) {
+  return new DebugOpenInfoUAHandler(
+    resolver.resolve(provideDebugInfo),
+  );
+}

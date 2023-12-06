@@ -23,11 +23,8 @@ export class KAProcessor implements KABusSubscriber {
   }
 }
 
-export const kaProcessorService = registerService({
-  name: "kaProcessor",
-  async provider(resolver: ServiceResolver): Promise<KAProcessor> {
-    return new KAProcessor(
-      await resolver.resolve(mainUABusService),
-    );
-  },
-});
+export function provideKAProcessor(resolver: ServiceResolver) {
+  return new KAProcessor(
+    resolver.resolve(provideMainUABus),
+  );
+}

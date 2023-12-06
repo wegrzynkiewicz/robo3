@@ -51,13 +51,10 @@ export class DebugSwitchFreeCameraUAHandler implements UAHandler<null> {
   }
 }
 
-export const debugSwitchFreeCameraUAHandlerService = registerService({
-  name: "debugSwitchFreeCameraUAHandler",
-  async provider(resolver: ServiceResolver): Promise<UAHandler<null>> {
-    return new DebugSwitchFreeCameraUAHandler(
-      await resolver.resolve(phaseManagerService),
-      await resolver.resolve(gamePhaseService),
-      await resolver.resolve(freeCameraPhaseService),
-    );
-  },
-});
+export function provideUAHandler<null>(resolver: ServiceResolver) {
+  return new DebugSwitchFreeCameraUAHandler(
+    resolver.resolve(providePhaseManager),
+    resolver.resolve(provideGamePhase),
+    resolver.resolve(provideFreeCameraPhase),
+  );
+}

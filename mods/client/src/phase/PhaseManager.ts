@@ -33,12 +33,9 @@ export class PhaseManager {
   }
 }
 
-export const phaseManagerService = registerService({
-  name: "phaseManager",
-  async provider(resolver: ServiceResolver): Promise<PhaseManager> {
-    return new PhaseManager(
-      await resolver.resolve(gamePhaseService),
-      await resolver.resolve(kaMatcherService),
-    );
-  },
-});
+export function providePhaseManager(resolver: ServiceResolver) {
+  return new PhaseManager(
+    resolver.resolve(provideGamePhase),
+    resolver.resolve(provideKaMatcher),
+  );
+}

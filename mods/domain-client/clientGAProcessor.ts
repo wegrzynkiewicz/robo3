@@ -14,12 +14,12 @@ import { pongGAHandlerService } from "./stats/pongGAHandler.ts";
 export const clientGAProcessor = registerService({
   name: "clientGAProcessor",
   async provider(resolver: ServiceResolver) {
-    const sender = await resolver.resolve(gaSenderService);
+    const sender = resolver.resolve(provideGaSender);
     const processor = new UniversalGAProcessor(sender);
-    processor.registerHandler(chunksUpdateGADef, undefined, await resolver.resolve(chunksUpdateGAHandlerService));
-    processor.registerHandler(chunkSegmentUpdateGADef, undefined, await resolver.resolve(chunkSegmentUpdateGAHandlerService));
-    processor.registerHandler(pongGADef, pangGADef, await resolver.resolve(pongGAHandlerService));
-    processor.registerHandler(beingUpdateGADef, undefined, await resolver.resolve(beingUpdateGAHandlerService));
+    processor.registerHandler(chunksUpdateGADef, undefined, resolver.resolve(provideChunksUpdateGAHandler));
+    processor.registerHandler(chunkSegmentUpdateGADef, undefined, resolver.resolve(provideChunkSegmentUpdateGAHandler));
+    processor.registerHandler(pongGADef, pangGADef, resolver.resolve(providePongGAHandler));
+    processor.registerHandler(beingUpdateGADef, undefined, resolver.resolve(provideBeingUpdateGAHandler));
     return processor;
   },
 });

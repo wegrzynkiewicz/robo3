@@ -135,14 +135,11 @@ export class TilesProgram {
   }
 }
 
-export const tilesProgramService = registerService({
-  name: "tilesProgram",
-  async provider(resolver: ServiceResolver): Promise<TilesProgram> {
-    return new TilesProgram(
-      await resolver.resolve(webGLService),
-      await resolver.resolve(tilesBufferService),
-      await resolver.resolve(tilesTexture2DArrayService),
-      await resolver.resolve(spriteIndicesTextureService),
-    );
-  },
-});
+export function provideTilesProgram(resolver: ServiceResolver) {
+  return new TilesProgram(
+    resolver.resolve(provideWebGL),
+    resolver.resolve(provideTilesBuffer),
+    resolver.resolve(provideTilesTexture2DArray),
+    resolver.resolve(provideSpriteIndicesTexture),
+  );
+}

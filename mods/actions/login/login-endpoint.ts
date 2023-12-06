@@ -17,9 +17,6 @@ export class LoginEPHandler implements EPHandler {
   }
 }
 
-export const loginEPHandlerService = registerService({
-  name: "loginEPHandler",
-  async provider(): Promise<LoginEPHandler> {
-    return new LoginEPHandler();
-  },
-});
+export function provideLoginEPHandler() {
+  return new LoginEPHandler();
+}

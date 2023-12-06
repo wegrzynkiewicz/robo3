@@ -16,11 +16,8 @@ export class MutationGABusSubscriber implements GABusSubscriber {
   }
 }
 
-export const mutationGABusSubscriberService = registerService({
-  name: "mutationGABusSubscriber",
-  async provider(resolver: ServiceResolver): Promise<MutationGABusSubscriber> {
-    return new MutationGABusSubscriber(
-      await resolver.resolve(gaCommunicator),
-    );
-  },
-});
+export function provideMutationGABusSubscriber(resolver: ServiceResolver) {
+  return new MutationGABusSubscriber(
+    resolver.resolve(gaCommunicator),
+  );
+}

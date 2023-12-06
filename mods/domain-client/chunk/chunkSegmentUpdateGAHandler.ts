@@ -6,7 +6,7 @@ import { chunkManagerService } from "./chunkManager.ts";
 export const chunkSegmentUpdateGAHandlerService = registerService({
   name: "chunkSegmentUpdateGAHandler",
   async provider(resolver: ServiceResolver) {
-    const chunkManager = await resolver.resolve(chunkManagerService);
+    const chunkManager = resolver.resolve(provideChunkManager);
     const chunkSegmentUpdateGAHandler: GAHandler<ChunkSegmentUpdateGA, void> = {
       async handle(request: ChunkSegmentUpdateGA): Promise<void> {
         const { chunkId, segment } = request;

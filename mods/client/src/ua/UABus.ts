@@ -23,9 +23,6 @@ export class MainUABus implements UABus {
   }
 }
 
-export const mainUABusService = registerService({
-  name: "mainUABus",
-  async provider(): Promise<MainUABus> {
-    return new MainUABus();
-  },
-});
+export function provideMainUABus() {
+  return new MainUABus();
+}

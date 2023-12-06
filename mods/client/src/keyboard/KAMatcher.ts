@@ -25,12 +25,9 @@ export class KAMatcher {
   }
 }
 
-export const kaMatcherService = registerService({
-  name: "kaMatcher",
-  async provider(resolver: ServiceResolver): Promise<KAMatcher> {
-    return new KAMatcher(
-      await resolver.resolve(keyboardService),
-      await resolver.resolve(mainKABusService),
-    );
-  },
-});
+export function provideKAMatcher(resolver: ServiceResolver) {
+  return new KAMatcher(
+    resolver.resolve(provideKeyboard),
+    resolver.resolve(provideMainKABus),
+  );
+}

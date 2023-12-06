@@ -41,16 +41,13 @@ export class MainLoop implements Looper {
   }
 }
 
-export const mainLoopService = registerService({
-  name: "mainLoop",
-  async provider(resolver: ServiceResolver): Promise<MainLoop> {
-    return new MainLoop([
-      await resolver.resolve(phaseManagerService),
-      await resolver.resolve(cameraManagerService),
-      await resolver.resolve(sceneViewportService),
-      await resolver.resolve(tilesRendererService),
-      await resolver.resolve(fpsCounterService),
-      await resolver.resolve(debugInfoService),
-    ]);
-  },
-});
+export function provideMainLoop(resolver: ServiceResolver) {
+  return new MainLoop([
+    resolver.resolve(providePhaseManager),
+    resolver.resolve(provideCameraManager),
+    resolver.resolve(provideSceneViewport),
+    resolver.resolve(provideTilesRenderer),
+    resolver.resolve(provideFpsCounter),
+    resolver.resolve(provideDebugInfo),
+  ]);
+}

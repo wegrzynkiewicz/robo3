@@ -33,16 +33,13 @@ export class UniversalGAReceiver implements GAReceiver {
   }
 }
 
-export const gaReceiverService = registerService({
-  name: "gaReceiver",
-  async provider(resolver: ServiceResolver): Promise<GAReceiver> {
-    return new UniversalGAReceiver(
-      await resolver.resolve(gaCodecService),
-      logger,
-      [
-        await resolver.resolve(gaRequestorService),
-        await resolver.resolve(gaProcessorService),
-      ],
-    );
-  },
-});
+export function provideGAReceiver(resolver: ServiceResolver) {
+  return new UniversalGAReceiver(
+    resolver.resolve(provideGaCodec),
+    logger,
+    [
+      resolver.resolve(provideGaRequestor),
+      resolver.resolve(provideGaProcessor),
+    ],
+  );
+}

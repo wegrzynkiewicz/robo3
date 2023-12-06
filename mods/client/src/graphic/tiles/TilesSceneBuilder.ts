@@ -215,15 +215,12 @@ export class TilesSceneBuilder {
   }
 }
 
-export const tilesSceneBuilderService = registerService({
-  name: "tilesSceneBuilder",
-  async provider(resolver: ServiceResolver): Promise<TilesSceneBuilder> {
-    return new TilesSceneBuilder(
-      10,
-      await resolver.resolve(chunkManagerService),
-      await resolver.resolve(sceneViewportService),
-      await resolver.resolve(tilesCollectorService),
-      await resolver.resolve(spaceManagerService),
-    );
-  },
-});
+export function provideTilesSceneBuilder(resolver: ServiceResolver) {
+  return new TilesSceneBuilder(
+    10,
+    resolver.resolve(provideChunkManager),
+    resolver.resolve(provideSceneViewport),
+    resolver.resolve(provideTilesCollector),
+    resolver.resolve(provideSpaceManager),
+  );
+}

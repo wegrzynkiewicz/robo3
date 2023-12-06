@@ -9,14 +9,11 @@ export interface GACommunicator {
   requestor: GARequestor;
 }
 
-export const gaCommunicator = registerService({
-  name: "gaCommunicator",
-  async provider(resolver: ServiceResolver): Promise<GACommunicator> {
-    const communicator: GACommunicator = {
-      sender: await resolver.resolve(gaSenderService),
-      receiver: await resolver.resolve(gaReceiverService),
-      requestor: await resolver.resolve(gaRequestorService),
-    };
-    return communicator;
-  },
-});
+export function provideGACommunicator(resolver: ServiceResolver) {
+  const communicator: GACommunicator = {
+    sender: resolver.resolve(provideGaSender),
+    receiver: resolver.resolve(provideGaReceiver),
+    requestor: resolver.resolve(provideGaRequestor),
+  };
+  return communicator;
+}

@@ -14,30 +14,27 @@ export const fromCanvasTextureFormatConfig: TextureFormatConfig = {
   type: WebGL2RenderingContext["UNSIGNED_BYTE"],
 };
 
-export const tilesTexture2DArrayService = registerService({
-  name: "tilesTexture2DArray",
-  async provider(resolver: ServiceResolver): Promise<Texture2DArray> {
-    const gl = await resolver.resolve(webGLService);
+export function provideTexture2DArray(resolver: ServiceResolver) {
+  const gl = resolver.resolve(provideWebGL);
 
-    const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-    const textureSize = Math.min(maxTextureSize, requiredTextureSize);
-    if (textureSize < requiredTextureSize) {
-      throw new Breaker("engine-require-min-texture-size", { maxTextureSize, requiredTextureSize });
-    }
+  const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+  const textureSize = Math.min(maxTextureSize, requiredTextureSize);
+  if (textureSize < requiredTextureSize) {
+    throw new Breaker("engine-require-min-texture-size", { maxTextureSize, requiredTextureSize });
+  }
 
-    const maxArrayTextureLayers = gl.getParameter(gl.MAX_ARRAY_TEXTURE_LAYERS);
-    const depth = Math.min(maxArrayTextureLayers, requiredArrayLayers);
-    if (depth < requiredArrayLayers) {
-      throw new Breaker("engine-require-min-array-texture-layers", { maxArrayTextureLayers, requiredArrayLayers });
-    }
+  const maxArrayTextureLayers = gl.getParameter(gl.MAX_ARRAY_TEXTURE_LAYERS);
+  const depth = Math.min(maxArrayTextureLayers, requiredArrayLayers);
+  if (depth < requiredArrayLayers) {
+    throw new Breaker("engine-require-min-array-texture-layers", { maxArrayTextureLayers, requiredArrayLayers });
+  }
 
-    const dim = dim3D(textureSize, textureSize, depth);
+  const dim = dim3D(textureSize, textureSize, depth);
 
-    return new Texture2DArray(
-      gl,
-      dim,
-      0,
-      fromCanvasTextureFormatConfig,
-    );
-  },
-});
+  return new Texture2DArray(
+    gl,
+    dim,
+    0,
+    fromCanvasTextureFormatConfig,
+  );
+}

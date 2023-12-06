@@ -33,11 +33,8 @@ export class NetworkLatencyDaemon {
   }
 }
 
-export const networkLatencyDaemonService = registerService({
-  name: "networkLatencyDaemon",
-  async provider(resolver: ServiceResolver): Promise<NetworkLatencyDaemon> {
-    return new NetworkLatencyDaemon(
-      await resolver.resolve(gaRequestorService),
-    );
-  },
-});
+export function provideNetworkLatencyDaemon(resolver: ServiceResolver) {
+  return new NetworkLatencyDaemon(
+    resolver.resolve(provideGaRequestor),
+  );
+}

@@ -18,9 +18,6 @@ export class DebugController implements KAShortCutsChecker {
   }
 }
 
-export const debugControllerService = registerService({
-  name: "debugController",
-  async provider(): Promise<DebugController> {
-    return new DebugController();
-  },
-});
+export function provideDebugController() {
+  return new DebugController();
+}

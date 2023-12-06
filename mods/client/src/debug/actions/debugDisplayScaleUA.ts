@@ -37,11 +37,8 @@ export class DebugDisplayScaleUAHandler implements UAHandler<number> {
   }
 }
 
-export const debugDisplayScaleUAHandlerService = registerService({
-  name: "debugDisplayScaleUAHandler",
-  async provider(resolver: ServiceResolver): Promise<DebugDisplayScaleUAHandler> {
-    return new DebugDisplayScaleUAHandler(
-      await resolver.resolve(displayService),
-    );
-  },
-});
+export function provideDebugDisplayScaleUAHandler(resolver: ServiceResolver) {
+  return new DebugDisplayScaleUAHandler(
+    resolver.resolve(provideDisplay),
+  );
+}

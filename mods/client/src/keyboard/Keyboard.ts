@@ -79,9 +79,6 @@ export class Keyboard {
   }
 }
 
-export const keyboardService = registerService({
-  name: "keyboard",
-  async provider(): Promise<Keyboard> {
-    return new Keyboard();
-  },
-});
+export function provideKeyboard() {
+  return new Keyboard();
+}

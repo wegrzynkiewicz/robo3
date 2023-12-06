@@ -29,14 +29,11 @@ export class TilesRenderer implements Renderer {
   }
 }
 
-export const tilesRendererService = registerService({
-  name: "tilesRenderer",
-  async provider(resolver: ServiceResolver): Promise<TilesRenderer> {
-    return new TilesRenderer(
-      await resolver.resolve(webGLService),
-      await resolver.resolve(primaryUBOService),
-      await resolver.resolve(tilesProgramService),
-      await resolver.resolve(tilesSceneBuilderService),
-    );
-  },
-});
+export function provideTilesRenderer(resolver: ServiceResolver) {
+  return new TilesRenderer(
+    resolver.resolve(provideWebGL),
+    resolver.resolve(providePrimaryUBO),
+    resolver.resolve(provideTilesProgram),
+    resolver.resolve(provideTilesSceneBuilder),
+  );
+}

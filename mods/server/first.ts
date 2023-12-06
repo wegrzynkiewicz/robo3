@@ -57,12 +57,12 @@ router.get("/api.json", (ctx) => {
 (async () => {
   const resolver = new ServiceResolver();
   const client = await resolver.resolve(dbClient);
-  const gameClientManager = await resolver.resolve(gameClientManagerService);
+  const gameClientManager = resolver.resolve(provideGameClientManager);
 
   const db = client.db("app");
   const collection = db.collection("chunks");
 
-  const spaceManager = await resolver.resolve(spaceManagerService);
+  const spaceManager = resolver.resolve(provideSpaceManager);
   const space = spaceManager.obtain(1);
 
   let beingCounter = 1;
@@ -102,7 +102,7 @@ router.get("/api.json", (ctx) => {
     const processor = await resolver.resolve(serverGAProcessor);
     resolver.inject(gaProcessorService, processor);
     const communicator = await resolver.resolve(gaCommunicator);
-    const clientChannel = await resolver.resolve(clientChannelService);
+    const clientChannel = resolver.resolve(provideClientChannel);
 
     clientChannel.attachListeners();
 

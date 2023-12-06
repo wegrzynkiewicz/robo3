@@ -42,13 +42,10 @@ export class ClientChannel {
   }
 }
 
-export const clientChannelService = registerService({
-  name: "clientChannel",
-  async provider(resolver: ServiceResolver): Promise<ClientChannel> {
-    return new ClientChannel(
-      await resolver.resolve(globalLoggerService),
-      await resolver.resolve(gaReceiverService),
-      await resolver.resolve(webSocketService),
-    );
-  },
-});
+export function provideClientChannel(resolver: ServiceResolver) {
+  return new ClientChannel(
+    resolver.resolve(provideGlobalLogger),
+    resolver.resolve(provideGaReceiver),
+    resolver.resolve(provideWebSocket),
+  );
+}

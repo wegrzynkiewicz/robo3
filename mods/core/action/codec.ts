@@ -113,7 +113,7 @@ export class GACodec {
 export const gaCodecService = registerService({
   name: "gaCodec",
   provider: async (resolver: ServiceResolver): Promise<GACodec> => {
-    const manager = await resolver.resolve(gaManagerService);
+    const manager = resolver.resolve(provideGaManager);
     return new GACodec(manager);
   },
 });

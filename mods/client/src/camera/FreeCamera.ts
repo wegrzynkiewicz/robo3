@@ -16,11 +16,8 @@ export class FreeCamera implements Camera {
   }
 }
 
-export const freeCameraService = registerService({
-  name: "freeCamera",
-  async provider(resolver: ServiceResolver): Promise<FreeCamera> {
-    return new FreeCamera(
-      await resolver.resolve(viewportService),
-    );
-  },
-});
+export function provideFreeCamera(resolver: ServiceResolver) {
+  return new FreeCamera(
+    resolver.resolve(provideViewport),
+  );
+}

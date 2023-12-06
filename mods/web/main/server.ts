@@ -4,31 +4,22 @@ import { registerService, ServiceResolver } from "../../dependency/service.ts";
 import { Router } from "../router.ts";
 import { WebServer, WebServerConfig } from "../server.ts";
 
-export const mainWebServerConfigService = registerService({
-  name: "mainWebServerConfig",
-  async provider(): Promise<WebServerConfig> {
-    return {
-      hostname: "0.0.0.0",
-      name: "main",
-      port: 8080,
-    };
-  },
-});
+export function provideWebServerConfig() {
+  return {
+    hostname: "0.0.0.0",
+    name: "main",
+    port: 8080,
+  };
+}
 
-export const mainWebRouterService = registerService({
-  name: "mainWebRouter",
-  async provider(): Promise<Router> {
-    throw new Breaker("main-web-router-must-be-injected");
-  },
-});
+export function provideRouter() {
+  throw new Breaker("main-web-router-must-be-injected");
+}
 
-export const mainWebServerService = registerService({
-  name: "mainWebServer",
-  async provider(resolver: ServiceResolver): Promise<WebServer> {
-    return new WebServer(
-      await resolver.resolve(mainWebServerConfigService),
-      await resolver.resolve(mainWebRouterService),
-      await resolver.resolve(globalLoggerService),
-    );
-  },
-});
+export function provideWebServer(resolver: ServiceResolver) {
+  return new WebServer(
+    resolver.resolve(provideMainWebServerConfig),
+    resolver.resolve(provideMainWebRouter),
+    resolver.resolve(provideGlobalLogger),
+  );
+}

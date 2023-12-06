@@ -24,8 +24,8 @@ export const beingUpdateGAHandlerService = registerService({
   name: "beingUpdateGAHandler",
   async provider(resolver: ServiceResolver) {
     return new BeingUpdateGAHandler(
-      await resolver.resolve(spaceManagerService),
-      await resolver.resolve(myPlayerService),
+      resolver.resolve(provideSpaceManager),
+      resolver.resolve(provideMyPlayer),
     );
   },
 });

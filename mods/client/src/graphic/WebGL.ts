@@ -4,12 +4,9 @@ import { registerService, ServiceResolver } from "../../../dependency/service.ts
 
 const { TEXTURE0, TEXTURE_2D, TEXTURE_2D_ARRAY } = WebGL2RenderingContext;
 
-export const canvasService = registerService({
-  name: "canvas",
-  async provider(): Promise<HTMLCanvasElement> {
-    throw new Breaker("canvas-service-must-be-injected");
-  },
-});
+export function provideHTMLCanvasElement() {
+  throw new Breaker("canvas-service-must-be-injected");
+}
 
 function replaceOriginalFunction(gl: WebGL2RenderingContext, props: string) {
   const oldFunction = (gl as any)[props];
@@ -40,68 +37,65 @@ function createTextureUnits(count: number): TextureUnit[] {
   return textureUnits;
 }
 
-export const webGLService = registerService({
-  name: "wegGL",
-  async provider(resolver: ServiceResolver): Promise<WebGL2RenderingContext> {
-    const canvas = await resolver.resolve(canvasService);
-    const gl = canvas.getContext("webgl2", {
-      alpha: false,
-      premultipliedAlpha: true,
-      antialias: false,
-      depth: false,
-      desynchronized: false,
-      failIfMajorPerformanceCaveat: false,
-      powerPreference: "high-performance",
-      preserveDrawingBuffer: false,
-      stencil: false,
-    });
-    assertNonNull(gl, "cannot-create-webgl2-context");
+export function provideWebGL2RenderingContext(resolver: ServiceResolver) {
+  const canvas = resolver.resolve(provideCanvas);
+  const gl = canvas.getContext("webgl2", {
+    alpha: false,
+    premultipliedAlpha: true,
+    antialias: false,
+    depth: false,
+    desynchronized: false,
+    failIfMajorPerformanceCaveat: false,
+    powerPreference: "high-performance",
+    preserveDrawingBuffer: false,
+    stencil: false,
+  });
+  assertNonNull(gl, "cannot-create-webgl2-context");
 
-    const oldBindBuffer = gl.bindBuffer;
-    const bound: Record<number, unknown> = {};
-    gl.bindBuffer = (target: number, buffer: WebGLBuffer | null): void => {
-      if (bound[target] === buffer) {
-        return;
-      }
-      oldBindBuffer.call(gl, target, buffer);
-      bound[target] = buffer;
-    };
+  const oldBindBuffer = gl.bindBuffer;
+  const bound: Record<number, unknown> = {};
+  gl.bindBuffer = (target: number, buffer: WebGLBuffer | null): void => {
+    if (bound[target] === buffer) {
+      return;
+    }
+    oldBindBuffer.call(gl, target, buffer);
+    bound[target] = buffer;
+  };
 
-    const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
-    const textureUnits = createTextureUnits(maxTextureUnits);
-    let activeTextureUnit = 0;
+  const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+  const textureUnits = createTextureUnits(maxTextureUnits);
+  let activeTextureUnit = 0;
 
-    const oldActiveTexture = gl.activeTexture;
-    gl.activeTexture = function (unit: number): void {
-      const index = unit - TEXTURE0;
-      if (index > (maxTextureUnits - 1)) {
-        throw new Error("unexpected-texture-unit");
-      }
-      if (activeTextureUnit === index) {
-        return;
-      }
-      oldActiveTexture.call(gl, unit);
-      activeTextureUnit = index;
-    };
+  const oldActiveTexture = gl.activeTexture;
+  gl.activeTexture = function (unit: number): void {
+    const index = unit - TEXTURE0;
+    if (index > (maxTextureUnits - 1)) {
+      throw new Error("unexpected-texture-unit");
+    }
+    if (activeTextureUnit === index) {
+      return;
+    }
+    oldActiveTexture.call(gl, unit);
+    activeTextureUnit = index;
+  };
 
-    const oldBindTexture = gl.bindTexture;
-    gl.bindTexture = function (target: number, texture: WebGLTexture | null): void {
-      const textureUnit = textureUnits[activeTextureUnit] as any;
-      if (textureUnit[target] === texture) {
-        return;
-      }
-      oldBindTexture.call(gl, target, texture);
-      textureUnit[target] = texture;
-    };
+  const oldBindTexture = gl.bindTexture;
+  gl.bindTexture = function (target: number, texture: WebGLTexture | null): void {
+    const textureUnit = textureUnits[activeTextureUnit] as any;
+    if (textureUnit[target] === texture) {
+      return;
+    }
+    oldBindTexture.call(gl, target, texture);
+    textureUnit[target] = texture;
+  };
 
-    replaceOriginalFunction(gl, "useProgram");
-    replaceOriginalFunction(gl, "bindVertexArray");
+  replaceOriginalFunction(gl, "useProgram");
+  replaceOriginalFunction(gl, "bindVertexArray");
 
-    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
-    gl.clearColor(1.0, 0.0, 1.0, 1.0);
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    return gl;
-  },
-});
+  gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+  gl.clearColor(1.0, 0.0, 1.0, 1.0);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  return gl;
+}

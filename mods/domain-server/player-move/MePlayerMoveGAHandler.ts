@@ -19,7 +19,7 @@ export const mePlayerMoveGAHandlerService = registerService({
   name: "mePlayerMoveGAHandler",
   async provider(resolver: ServiceResolver) {
     return new MePlayerMoveGAHandler(
-      await resolver.resolve(spaceManagerService),
+      resolver.resolve(provideSpaceManager),
     );
   },
 });

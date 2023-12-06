@@ -51,10 +51,6 @@ export class ChunkManager {
   }
 }
 
-export const chunkManagerService = registerService({
-  name: "chunkManager",
-  async provider(): Promise<ChunkManager> {
-    return new ChunkManager();
-  },
-  singleton: true,
-});
+export function provideChunkManager() {
+  return new ChunkManager();
+}

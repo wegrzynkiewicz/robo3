@@ -8,9 +8,6 @@ export class PangGAHandler implements GAHandler<PangGA, void> {
   }
 }
 
-export const pangGAHandlerService = registerService({
-  name: "pangGAHandler",
-  async provider(): Promise<PangGAHandler> {
-    return new PangGAHandler();
-  },
-});
+export function providePangGAHandler() {
+  return new PangGAHandler();
+}
