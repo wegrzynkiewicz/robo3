@@ -1,7 +1,7 @@
 import { Breaker } from "../../common/breaker.ts";
 import { logger } from "../../common/logger.ts";
-import { registerService, ServiceResolver } from "../../dependency/service.ts";
-import { GACodec, gaCodecService, GAEnvelope } from "./codec.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
+import { GACodec, GAEnvelope, provideGACodec } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
 
 export interface GASender {
@@ -39,13 +39,13 @@ export class OnlineGASender implements GASender {
   }
 }
 
-export function provideWebSocket() {
+export function provideWebSocket(): WebSocket {
   throw new Breaker("websocket-service-should-be-injected");
 }
 
 export function provideGASender(resolver: ServiceResolver) {
   return new OnlineGASender(
-    resolver.resolve(provideGaCodec),
+    resolver.resolve(provideGACodec),
     resolver.resolve(provideWebSocket),
   );
 }

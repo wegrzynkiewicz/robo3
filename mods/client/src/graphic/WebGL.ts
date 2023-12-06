@@ -1,10 +1,10 @@
 import { assertNonNull } from "../../../common/asserts.ts";
 import { Breaker } from "../../../common/breaker.ts";
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
 
 const { TEXTURE0, TEXTURE_2D, TEXTURE_2D_ARRAY } = WebGL2RenderingContext;
 
-export function provideHTMLCanvasElement() {
+export function provideCanvas(): HTMLCanvasElement {
   throw new Breaker("canvas-service-must-be-injected");
 }
 
@@ -37,7 +37,7 @@ function createTextureUnits(count: number): TextureUnit[] {
   return textureUnits;
 }
 
-export function provideWebGL2RenderingContext(resolver: ServiceResolver) {
+export function provideWebGL(resolver: ServiceResolver) {
   const canvas = resolver.resolve(provideCanvas);
   const gl = canvas.getContext("webgl2", {
     alpha: false,

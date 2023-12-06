@@ -1,5 +1,5 @@
-import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
-import { Display, displayService } from "../../graphic/Display.ts";
+import { ServiceResolver } from "../../../../dependency/service.ts";
+import { Display, provideDisplay } from "../../graphic/Display.ts";
 import { KeyShortCut, KeyState } from "../../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../../keyboard/foundation.ts";
 import { registerUADefinition, UADefinition } from "../../ua/foundation.ts";

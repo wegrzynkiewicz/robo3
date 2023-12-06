@@ -1,12 +1,12 @@
 import { GAHandler } from "../../core/action/processor.ts";
-import { SpaceManager, spaceManagerService } from "../../core/space/SpaceManager.ts";
-import { registerService, ServiceResolver } from "../../dependency/service.ts";
+import { SpaceManager, provideSpaceManager } from "../../core/space/SpaceManager.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
 import { MePlayerMoveGA } from "../../domain-client/player-move/move.ts";
 
 export class MePlayerMoveGAHandler implements GAHandler<MePlayerMoveGA, void> {
   public constructor(
     protected readonly spaceManager: SpaceManager,
-  ) {}
+  ) { }
 
   public async handle(request: MePlayerMoveGA): Promise<void> {
     const space = this.spaceManager.obtain(1);
@@ -15,11 +15,8 @@ export class MePlayerMoveGAHandler implements GAHandler<MePlayerMoveGA, void> {
   }
 }
 
-export const mePlayerMoveGAHandlerService = registerService({
-  name: "mePlayerMoveGAHandler",
-  async provider(resolver: ServiceResolver) {
-    return new MePlayerMoveGAHandler(
-      resolver.resolve(provideSpaceManager),
-    );
-  },
-});
+export function provideMePlayerMoveGAHandler(resolver: ServiceResolver) {
+  return new MePlayerMoveGAHandler(
+    resolver.resolve(provideSpaceManager),
+  );
+}

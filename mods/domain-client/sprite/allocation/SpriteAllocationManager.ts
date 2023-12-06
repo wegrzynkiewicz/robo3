@@ -1,4 +1,3 @@
-import { registerService } from "../../../dependency/service.ts";
 import { DimensionalRectangle } from "../../../math/DimensionalRectangle.ts";
 
 export interface SpriteAlloc {

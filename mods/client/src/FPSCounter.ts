@@ -1,5 +1,3 @@
-import { registerService } from "../../dependency/service.ts";
-
 export class FPSCounter {
   public fps = 0;
   protected frameCount = 0;

@@ -1,8 +1,8 @@
 import { assertObject, assertPositiveNumber, assertRequiredString, isRequiredString } from "../../common/asserts.ts";
 import { Breaker } from "../../common/breaker.ts";
 import { BinaryBYOBCodec } from "../codec.ts";
-import { registerService, ServiceResolver } from "../../dependency/service.ts";
-import { GADefinition, GAManager, gaManagerService } from "./foundation.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
+import { GADefinition, GAManager, provideGAManager } from "./foundation.ts";
 
 export interface GAEnvelope<TData> {
   id: number;
@@ -110,10 +110,8 @@ export class GACodec {
   }
 }
 
-export const gaCodecService = registerService({
-  name: "gaCodec",
-  provider: async (resolver: ServiceResolver): Promise<GACodec> => {
-    const manager = resolver.resolve(provideGaManager);
-    return new GACodec(manager);
-  },
-});
+export function provideGACodec(resolver: ServiceResolver): GACodec {
+  return new GACodec(
+    resolver.resolve(provideGAManager),
+  );
+}

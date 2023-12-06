@@ -1,7 +1,7 @@
 import { ChunkId } from "../../core/chunk/chunkId.ts";
 import { ChunkSegment } from "../../core/chunk/chunkSegment.ts";
 import { GONormChunkPosition } from "../../core/game-object/position.ts";
-import { registerService } from "../../dependency/service.ts";
+
 import { CornerRectangle } from "../../math/CornerRectangle.ts";
 import { Position } from "../../math/Position.ts";
 

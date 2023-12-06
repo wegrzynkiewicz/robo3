@@ -1,9 +1,9 @@
 import { Deferred, deferred } from "../../deps.ts";
-import { registerService, ServiceResolver } from "../../dependency/service.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
 import { GAProcessor } from "./processor.ts";
-import { GASender, gaSenderService } from "./sender.ts";
+import { GASender, provideGASender } from "./sender.ts";
 
 export type WithId<TData> = { id: number } & TData;
 export type WithoutId<TData> = Omit<TData, "id">;
@@ -70,10 +70,8 @@ export class UniversalGARequestor implements GAProcessor, GARequestor {
   }
 }
 
-export const gaRequestorService = registerService({
-  name: "gaRequestor",
-  provider: async (resolver: ServiceResolver): Promise<UniversalGARequestor> => {
-    const sender = resolver.resolve(provideGaSender);
-    return new UniversalGARequestor(sender);
-  },
-});
+export function provideGARequestor(resolver: ServiceResolver) {
+  return new UniversalGARequestor(
+    resolver.resolve(provideGASender),
+  );
+}

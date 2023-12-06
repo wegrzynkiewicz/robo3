@@ -1,9 +1,9 @@
-import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../dependency/service.ts";
 import { KeyShortCut, KeyState } from "../../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../../keyboard/foundation.ts";
 import { registerUADefinition, UADefinition } from "../../ua/foundation.ts";
 import { UAHandler } from "../../ua/processor.ts";
-import { DebugInfo, debugInfoService } from "../DebugInfo.ts";
+import { DebugInfo, provideDebugInfo } from "../DebugInfo.ts";
 import { debugKeyShortCut } from "./common.ts";
 
 export const debugOpenInfoUA = registerUADefinition<null>({
@@ -34,7 +34,7 @@ export class DebugOpenInfoUAHandler implements UAHandler<null> {
   }
 }
 
-export function provideUAHandler<null>(resolver: ServiceResolver) {
+export function provideDebugOpenInfoUAHandler(resolver: ServiceResolver) {
   return new DebugOpenInfoUAHandler(
     resolver.resolve(provideDebugInfo),
   );

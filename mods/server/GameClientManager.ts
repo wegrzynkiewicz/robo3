@@ -1,5 +1,3 @@
-import { registerService } from "../dependency/service.ts";
-
 export class GameClient {
   public constructor(
     public readonly clientId: number,

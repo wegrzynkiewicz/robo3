@@ -1,4 +1,3 @@
-import { registerService } from "../../../dependency/service.ts";
 import { KeyState } from "./KeyShortCut.ts";
 import { AnyKADefinition } from "./foundation.ts";
 

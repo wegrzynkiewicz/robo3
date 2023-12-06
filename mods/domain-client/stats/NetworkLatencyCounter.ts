@@ -1,5 +1,3 @@
-import { registerService } from "../../dependency/service.ts";
-
 export class NetworkLatencyCounter {
   public ping = 0;
 

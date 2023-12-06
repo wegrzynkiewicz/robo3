@@ -1,10 +1,10 @@
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
 import { ExternalSpriteAtlasProvider } from "../../../sprite-atlas/ExternalSpriteAtlasProvider.ts";
 import { SpriteAtlasLoader } from "../../../sprite-atlas/SpriteAtlasLoader.ts";
 import { SpriteAtlasSource } from "../../../sprite-atlas/atlas.ts";
-import { shadowSpriteAtlasProviderService } from "../shadow/ShadowSpriteAtlasProvider.ts";
+import { provideShadowSpriteAtlasProvider } from "../shadow/ShadowSpriteAtlasProvider.ts";
 
-export function provideSpriteAtlasLoader(resolver: ServiceResolver) {
+export function provideClientSpriteAtlasLoader(resolver: ServiceResolver) {
   const loader = new SpriteAtlasLoader();
   const build: SpriteAtlasSource = {
     allocation: {

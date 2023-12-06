@@ -1,10 +1,10 @@
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
 import { Point } from "../../../math/Point.ts";
 import { Looper } from "../MainLoop.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
-import { Keyboard, keyboardService } from "../keyboard/Keyboard.ts";
+import { Keyboard, provideKeyboard } from "../keyboard/Keyboard.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
-import { FreeCamera, freeCameraService } from "./FreeCamera.ts";
+import { FreeCamera, provideFreeCamera } from "./FreeCamera.ts";
 
 function createHolder(code: string, name: string, vector: Point) {
   const kaDefinition = registerKADefinition({

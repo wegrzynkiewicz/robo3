@@ -1,13 +1,13 @@
 import { assertNonNull } from "../../../common/asserts.ts";
 import { formatBytes } from "../../../common/useful.ts";
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { NetworkLatencyCounter, networkLatencyCounterService } from "../../../domain-client/stats/NetworkLatencyCounter.ts";
-import { FPSCounter, fpsCounterService } from "../FPSCounter.ts";
-import { Display, displayService } from "../graphic/Display.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
+import { NetworkLatencyCounter, provideNetworkLatencyCounter } from "../../../domain-client/stats/NetworkLatencyCounter.ts";
+import { FPSCounter, provideFPSCounter } from "../FPSCounter.ts";
+import { Display, provideDisplay } from "../graphic/Display.ts";
 import { DynamicDrawBuffer } from "../graphic/DynamicDrawBuffer.ts";
-import { Viewport, viewportService } from "../graphic/Viewport.ts";
-import { TilesSceneBuilder, tilesSceneBuilderService } from "../graphic/tiles/TilesSceneBuilder.ts";
-import { tilesBufferService } from "../graphic/tiles/tilesBuffer.ts";
+import { provideViewport, Viewport } from "../graphic/Viewport.ts";
+import { provideTilesSceneBuilder, TilesSceneBuilder } from "../graphic/tiles/TilesSceneBuilder.ts";
+import { provideTilesBuffer } from "../graphic/tiles/tilesBuffer.ts";
 import { DebugBufferPreview } from "./DebugBufferPreview.ts";
 import { DepthDebugBufferPreviewColorizer } from "./DepthDebugBufferPreviewColorizer.ts";
 import { TerrainDebugBufferPreviewColorizer } from "./TerrainDebugBufferPreviewColorizer.ts";
@@ -150,7 +150,7 @@ export class DebugInfo {
 export function provideDebugInfo(resolver: ServiceResolver) {
   return new DebugInfo(
     resolver.resolve(provideDisplay),
-    resolver.resolve(provideFpsCounter),
+    resolver.resolve(provideFPSCounter),
     resolver.resolve(provideNetworkLatencyCounter),
     resolver.resolve(provideTilesBuffer),
     resolver.resolve(provideTilesSceneBuilder),

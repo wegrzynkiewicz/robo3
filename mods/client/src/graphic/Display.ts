@@ -1,8 +1,8 @@
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
 import { SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y, TILE_SIZE } from "../../../core/vars.ts";
 import { point } from "../../../math/Point.ts";
-import { Viewport, viewportService } from "./Viewport.ts";
-import { webGLService } from "./WebGL.ts";
+import { Viewport, provideViewport } from "./Viewport.ts";
+import { provideWebGL } from "./WebGL.ts";
 
 export class Display {
   protected scale = 1.0;
@@ -50,12 +50,9 @@ export class Display {
   }
 }
 
-export const displayService = registerService({
-  name: "display",
-  async provider(resolver: ServiceResolver) {
-    return new Display(
-      resolver.resolve(provideWebGL),
-      resolver.resolve(provideViewport),
-    );
-  },
-});
+export function provideDisplay(resolver: ServiceResolver) {
+  return new Display(
+    resolver.resolve(provideWebGL),
+    resolver.resolve(provideViewport),
+  );
+}

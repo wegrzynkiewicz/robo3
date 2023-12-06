@@ -1,11 +1,10 @@
-import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../dependency/service.ts";
 import { KeyShortCut, KeyState } from "../../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../../keyboard/foundation.ts";
-import { freeCameraPhaseService } from "../../phase/FreeCameraPhase.ts";
-import { gamePhaseService } from "../../phase/GamePhase.ts";
+import { provideFreeCameraPhase } from "../../phase/FreeCameraPhase.ts";
+import { provideGamePhase } from "../../phase/GamePhase.ts";
 import { PhaseController } from "../../phase/Phase.ts";
-import { PhaseManager } from "../../phase/PhaseManager.ts";
-import { phaseManagerService } from "../../phase/PhaseManager.ts";
+import { PhaseManager, providePhaseManager } from "../../phase/PhaseManager.ts";
 import { registerUADefinition, UADefinition } from "../../ua/foundation.ts";
 import { UAHandler } from "../../ua/processor.ts";
 import { debugKeyShortCut } from "./common.ts";
@@ -51,7 +50,7 @@ export class DebugSwitchFreeCameraUAHandler implements UAHandler<null> {
   }
 }
 
-export function provideUAHandler<null>(resolver: ServiceResolver) {
+export function provideDebugSwitchFreeCameraUAHandler(resolver: ServiceResolver) {
   return new DebugSwitchFreeCameraUAHandler(
     resolver.resolve(providePhaseManager),
     resolver.resolve(provideGamePhase),

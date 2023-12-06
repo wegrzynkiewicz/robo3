@@ -1,5 +1,5 @@
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { webGLService } from "./WebGL.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
+import { provideWebGL } from "./WebGL.ts";
 import { createBuffer } from "./utilities.ts";
 
 const { DYNAMIC_DRAW, UNIFORM_BUFFER } = WebGL2RenderingContext;

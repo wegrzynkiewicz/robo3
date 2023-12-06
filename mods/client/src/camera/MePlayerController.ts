@@ -1,11 +1,11 @@
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
 import { MoveDirection } from "../../../domain-client/player-move/move.ts";
 import { Looper } from "../MainLoop.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
-import { Keyboard, keyboardService } from "../keyboard/Keyboard.ts";
+import { Keyboard, provideKeyboard } from "../keyboard/Keyboard.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
 import { mePlayerMoveUA } from "../move/mePlayerMoveUA.ts";
-import { mainUABusService, UABus } from "../ua/UABus.ts";
+import { UABus, provideMainUABus } from "../ua/UABus.ts";
 
 function createHolder(code: string, name: string, direct: MoveDirection) {
   const kaDefinition = registerKADefinition({

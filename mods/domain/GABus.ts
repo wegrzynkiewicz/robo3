@@ -1,5 +1,4 @@
 import { GADefinition } from "../core/action/foundation.ts";
-import { registerService } from "../dependency/service.ts";
 
 export interface GABusSubscriber {
   subscribe<TData>(definition: GADefinition<TData>, data: TData): Promise<void>;

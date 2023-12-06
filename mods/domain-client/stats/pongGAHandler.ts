@@ -1,9 +1,8 @@
 import { GAHandler } from "../../core/action/processor.ts";
-import { registerService, ServiceResolver } from "../../dependency/service.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
 import { PangGA } from "../../domain/stats/pangGA.ts";
 import { PongGA } from "../../domain/stats/pongGA.ts";
-import { NetworkLatencyCounter } from "./NetworkLatencyCounter.ts";
-import { networkLatencyCounterService } from "./NetworkLatencyCounter.ts";
+import { NetworkLatencyCounter, provideNetworkLatencyCounter } from "./NetworkLatencyCounter.ts";
 
 export class PongGAHandler implements GAHandler<PongGA, PangGA> {
   public constructor(

@@ -1,6 +1,6 @@
-import { GACommunicator, gaCommunicator } from "../core/action/communication.ts";
+import { GACommunicator, provideGACommunicator } from "../core/action/communication.ts";
 import { GADefinition } from "../core/action/foundation.ts";
-import { registerService, ServiceResolver } from "../dependency/service.ts";
+import { ServiceResolver } from "../dependency/service.ts";
 
 export interface GABusSubscriber {
   subscribe<TData>(definition: GADefinition<TData>, data: TData): Promise<void>;
@@ -18,6 +18,6 @@ export class MutationGABusSubscriber implements GABusSubscriber {
 
 export function provideMutationGABusSubscriber(resolver: ServiceResolver) {
   return new MutationGABusSubscriber(
-    resolver.resolve(gaCommunicator),
+    resolver.resolve(provideGACommunicator),
   );
 }

@@ -1,7 +1,7 @@
 import { Breaker } from "../../../../common/breaker.ts";
-import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../dependency/service.ts";
 import { dim3D } from "../../../../math/Dim3D.ts";
-import { webGLService } from "../WebGL.ts";
+import { provideWebGL } from "../WebGL.ts";
 import { Texture2DArray } from "../textures/Texture2DArray.ts";
 import { TextureFormatConfig } from "../textures/format.ts";
 
@@ -14,7 +14,7 @@ export const fromCanvasTextureFormatConfig: TextureFormatConfig = {
   type: WebGL2RenderingContext["UNSIGNED_BYTE"],
 };
 
-export function provideTexture2DArray(resolver: ServiceResolver) {
+export function provideTilesTexture2DArray(resolver: ServiceResolver) {
   const gl = resolver.resolve(provideWebGL);
 
   const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);

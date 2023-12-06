@@ -1,10 +1,10 @@
 import { createPerformanceCounter } from "../../../../common/PerformanceCounter.ts";
-import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
-import { Chunk, ChunkManager, chunkManagerService } from "../../../../domain-client/chunk/chunkManager.ts";
-import { SceneViewport, sceneViewportService } from "./SceneViewport.ts";
-import { TilesCollector, tilesCollectorService } from "./TilesCollector.ts";
+import { ServiceResolver } from "../../../../dependency/service.ts";
+import { Chunk, ChunkManager, provideChunkManager } from "../../../../domain-client/chunk/chunkManager.ts";
+import { SceneViewport, provideSceneViewport } from "./SceneViewport.ts";
+import { TilesCollector, provideTilesCollector } from "./TilesCollector.ts";
 import { ChunkId } from "../../../../core/chunk/chunkId.ts";
-import { SpaceManager, spaceManagerService } from "../../../../core/space/SpaceManager.ts";
+import { SpaceManager, provideSpaceManager } from "../../../../core/space/SpaceManager.ts";
 
 const ter = {
   "LQ": 65,

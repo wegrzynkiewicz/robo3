@@ -1,5 +1,3 @@
-import { registerService } from "../dependency/service.ts";
-
 export type LoggerData = Record<string, unknown>;
 
 export interface Logger {
@@ -22,6 +20,6 @@ export class ConsoleLogger implements Logger {
   }
 }
 
-export function provideLogger() {
+export function provideGlobalLogger() {
   return new ConsoleLogger();
 }

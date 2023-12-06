@@ -1,5 +1,5 @@
-import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
-import { Viewport, viewportService } from "../../graphic/Viewport.ts";
+import { ServiceResolver } from "../../../../dependency/service.ts";
+import { Viewport, provideViewport } from "../../graphic/Viewport.ts";
 import { KeyShortCut, KeyState } from "../../keyboard/KeyShortCut.ts";
 import { registerKADefinition } from "../../keyboard/foundation.ts";
 import { registerUADefinition, UADefinition } from "../../ua/foundation.ts";
@@ -39,7 +39,7 @@ export class DebugChangeViewportLevelUAHandler implements UAHandler<number> {
   }
 }
 
-export function provideUAHandler<number>(resolver: ServiceResolver) {
+export function provideDebugChangeViewportLevelUAHandler(resolver: ServiceResolver) {
   return new DebugChangeViewportLevelUAHandler(
     resolver.resolve(provideViewport),
   );

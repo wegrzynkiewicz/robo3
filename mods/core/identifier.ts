@@ -1,5 +1,4 @@
 import { Breaker } from "../common/breaker.ts";
-import { registerService } from "../dependency/service.ts";
 
 export interface Identifier {
   key: number;
@@ -29,10 +28,6 @@ export class IdentifierRegistry {
 const identifierRegistry = new IdentifierRegistry();
 export const registerIdentifier = identifierRegistry.registerIdentifier.bind(identifierRegistry);
 
-export const identifierRegistryService = registerService({
-  name: "identifierRegistry",
-  provider: async (): Promise<IdentifierRegistry> => {
-    return identifierRegistry;
-  },
-  singleton: true,
-});
+export function provideIdentifierRegistry() {
+  return identifierRegistry;
+}

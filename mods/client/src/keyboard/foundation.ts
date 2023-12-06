@@ -1,4 +1,3 @@
-import { registerService } from "../../../dependency/service.ts";
 import { UADefinition } from "../ua/foundation.ts";
 import { KeyShortCut } from "./KeyShortCut.ts";
 

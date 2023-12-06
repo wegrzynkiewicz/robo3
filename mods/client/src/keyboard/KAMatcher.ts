@@ -1,6 +1,6 @@
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { KABus, mainKABusService } from "./KABus.ts";
-import { Keyboard, keyboardService } from "./Keyboard.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
+import { KABus, provideMainKABus } from "./KABus.ts";
+import { Keyboard, provideKeyboard } from "./Keyboard.ts";
 import { AnyKADefinition } from "./foundation.ts";
 
 export interface KAShortCutsChecker {

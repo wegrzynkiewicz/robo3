@@ -1,5 +1,5 @@
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { freeCameraService } from "./FreeCamera.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
+import { provideFreeCamera } from "./FreeCamera.ts";
 
 export interface Camera {
   loop(): void;

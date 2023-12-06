@@ -1,7 +1,7 @@
 import { createPerformanceCounter } from "../../common/PerformanceCounter.ts";
 import { logger } from "../../common/logger.ts";
-import { GARequestor, gaRequestorService } from "../../core/action/requestor.ts";
-import { registerService, ServiceResolver } from "../../dependency/service.ts";
+import { GARequestor, provideGARequestor } from "../../core/action/requestor.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
 import { pingGADef } from "../../domain/stats/pingGA.ts";
 import { pongGADef } from "../../domain/stats/pongGA.ts";
 
@@ -35,6 +35,6 @@ export class NetworkLatencyDaemon {
 
 export function provideNetworkLatencyDaemon(resolver: ServiceResolver) {
   return new NetworkLatencyDaemon(
-    resolver.resolve(provideGaRequestor),
+    resolver.resolve(provideGARequestor),
   );
 }

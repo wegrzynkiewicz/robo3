@@ -1,5 +1,3 @@
-import { registerService } from "../../../dependency/service.ts";
-
 export interface UAInput {
   name: string;
 }

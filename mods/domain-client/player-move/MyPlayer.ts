@@ -1,4 +1,3 @@
-import { registerService } from "../../dependency/service.ts";
 import { Being } from "../../domain-server/BeingManager.ts";
 import { MoveDirection } from "./move.ts";
 
@@ -15,9 +14,6 @@ export class MyPlayer {
   public being: Being = nullBeing;
 }
 
-export const myPlayerService = registerService({
-  name: "myPlayer",
-  async provider() {
-    return new MyPlayer();
-  },
-});
+export function provideMyPlayer() {
+  return new MyPlayer();
+}

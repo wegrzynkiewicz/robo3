@@ -1,10 +1,10 @@
 import { Breaker } from "../../common/breaker.ts";
-import { globalLoggerService } from "../../core/logger.ts";
-import { registerService, ServiceResolver } from "../../dependency/service.ts";
+import { provideGlobalLogger } from "../../core/logger.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
 import { Router } from "../router.ts";
-import { WebServer, WebServerConfig } from "../server.ts";
+import { WebServer } from "../server.ts";
 
-export function provideWebServerConfig() {
+export function provideMainWebServerConfig() {
   return {
     hostname: "0.0.0.0",
     name: "main",
@@ -12,7 +12,7 @@ export function provideWebServerConfig() {
   };
 }
 
-export function provideRouter() {
+export function provideMainWebRouter(): Router {
   throw new Breaker("main-web-router-must-be-injected");
 }
 

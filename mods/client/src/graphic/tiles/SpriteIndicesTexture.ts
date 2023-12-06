@@ -1,6 +1,6 @@
-import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../dependency/service.ts";
 import { dim3D } from "../../../../math/Dim3D.ts";
-import { webGLService } from "../WebGL.ts";
+import { provideWebGL } from "../WebGL.ts";
 import { Texture2DArray } from "../textures/Texture2DArray.ts";
 import { TextureFormatConfig } from "../textures/format.ts";
 
@@ -10,7 +10,7 @@ export const spriteIndexPullingTextureFormatConfig: TextureFormatConfig = {
   type: WebGL2RenderingContext["FLOAT"],
 };
 
-export function provideTexture2DArray(resolver: ServiceResolver) {
+export function provideSpriteIndicesTexture(resolver: ServiceResolver) {
   const gl = resolver.resolve(provideWebGL);
   return new Texture2DArray(
     gl,

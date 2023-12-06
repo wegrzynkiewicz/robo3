@@ -1,4 +1,3 @@
-import { registerService } from "../../../dependency/service.ts";
 import { KAMatcher, KAShortCutsChecker } from "../keyboard/KAMatcher.ts";
 import { debugChangeViewportLevelKAs } from "./actions/debugChangeViewportLevelUA.ts";
 import { debugDisplayScaleKAs } from "./actions/debugDisplayScaleUA.ts";

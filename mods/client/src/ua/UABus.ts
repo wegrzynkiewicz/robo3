@@ -1,5 +1,5 @@
 import { Breaker } from "../../../common/breaker.ts";
-import { registerService } from "../../../dependency/service.ts";
+
 import { UADefinition } from "./foundation.ts";
 
 export interface UABusSubscriber {

@@ -1,7 +1,7 @@
 import { Breaker } from "../../../common/breaker.ts";
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { KAMatcher, kaMatcherService } from "../keyboard/KAMatcher.ts";
-import { gamePhaseService } from "./GamePhase.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
+import { KAMatcher, provideKAMatcher } from "../keyboard/KAMatcher.ts";
+import { provideGamePhase } from "./GamePhase.ts";
 import { PhaseController } from "./Phase.ts";
 
 export class PhaseManager {
@@ -36,6 +36,6 @@ export class PhaseManager {
 export function providePhaseManager(resolver: ServiceResolver) {
   return new PhaseManager(
     resolver.resolve(provideGamePhase),
-    resolver.resolve(provideKaMatcher),
+    resolver.resolve(provideKAMatcher),
   );
 }

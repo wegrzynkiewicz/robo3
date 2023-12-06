@@ -1,5 +1,5 @@
 import { GAHandler } from "../../core/action/processor.ts";
-import { registerService } from "../../dependency/service.ts";
+
 import { PangGA } from "../../domain/stats/pangGA.ts";
 
 export class PangGAHandler implements GAHandler<PangGA, void> {

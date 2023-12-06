@@ -1,12 +1,12 @@
 import { Breaker } from "../../../common/breaker.ts";
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { debugDisplayScaleUA, debugDisplayScaleUAHandlerService } from "../debug/actions/debugDisplayScaleUA.ts";
-import { debugOpenInfoUA, debugOpenInfoUAHandlerService } from "../debug/actions/debugOpenInfoUA.ts";
-import { debugChangeViewportLevelUA, debugChangeViewportLevelUAHandlerService } from "../debug/actions/debugChangeViewportLevelUA.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
+import { debugDisplayScaleUA, provideDebugDisplayScaleUAHandler } from "../debug/actions/debugDisplayScaleUA.ts";
+import { debugOpenInfoUA, provideDebugOpenInfoUAHandler } from "../debug/actions/debugOpenInfoUA.ts";
+import { debugChangeViewportLevelUA, provideDebugChangeViewportLevelUAHandler } from "../debug/actions/debugChangeViewportLevelUA.ts";
 import { AnyUADefinition, UADefinition } from "./foundation.ts";
-import { debugSwitchFreeCameraUA, debugSwitchFreeCameraUAHandlerService } from "../debug/actions/debugSwitchFreeCamera.ts";
+import { debugSwitchFreeCameraUA, provideDebugSwitchFreeCameraUAHandler } from "../debug/actions/debugSwitchFreeCamera.ts";
 import { UABusSubscriber } from "./UABus.ts";
-import { mePlayerMoveUA, mePlayerMoveUAHandlerService } from "../move/mePlayerMoveUA.ts";
+import { mePlayerMoveUA } from "../move/mePlayerMoveUA.ts";
 
 export interface UAHandler<TData> {
   handle(definition: UADefinition<TData>, data: TData): Promise<void>;
@@ -34,7 +34,7 @@ export class UAProcessor implements UABusSubscriber {
   }
 }
 
-export function provideUAProcessor() {
+export function provideMainUAProcessor() {
   return new UAProcessor();
 }
 
@@ -43,5 +43,5 @@ export async function resolveUAProcessHandlers(resolver: ServiceResolver, proces
   processor.registerHandler(debugDisplayScaleUA, resolver.resolve(provideDebugDisplayScaleUAHandler));
   processor.registerHandler(debugChangeViewportLevelUA, resolver.resolve(provideDebugChangeViewportLevelUAHandler));
   processor.registerHandler(debugSwitchFreeCameraUA, resolver.resolve(provideDebugSwitchFreeCameraUAHandler));
-  processor.registerHandler(mePlayerMoveUA, resolver.resolve(provideMePlayerMoveUAHandler));
+//   processor.registerHandler(mePlayerMoveUA, resolver.resolve(provideMePlayerMoveUAHandler));
 }

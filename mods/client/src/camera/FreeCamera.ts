@@ -1,5 +1,5 @@
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { Viewport, viewportService } from "../graphic/Viewport.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
+import { Viewport, provideViewport } from "../graphic/Viewport.ts";
 import { Camera } from "./CameraManager.ts";
 
 export class FreeCamera implements Camera {

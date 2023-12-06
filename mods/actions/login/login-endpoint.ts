@@ -1,4 +1,3 @@
-import { registerService } from "../../dependency/service.ts";
 import { EPHandler } from "../../web/endpoint.ts";
 
 export interface LoginEPRequest {

@@ -1,4 +1,3 @@
-import { registerService } from "../../dependency/service.ts";
 import { registerIdentifier } from "../identifier.ts";
 import { GAEncodingDefinition } from "./codec.ts";
 
@@ -26,8 +25,6 @@ export class GAManager {
 const gaManager = new GAManager();
 export const registerGADefinition = gaManager.registerGADefinition.bind(gaManager);
 
-export const gaManagerService = registerService({
-  name: "gaManager",
-  provider: async () => gaManager,
-  singleton: true,
-});
+export function provideGAManager() {
+  return gaManager;
+}

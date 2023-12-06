@@ -4,38 +4,38 @@ import { assertNonNull } from "../common/asserts.ts";
 import { cgotdRegistry, sgotdRegistry } from "../core/game-object/defining.ts";
 import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../core/game-object/resolving.ts";
 import { ServiceResolver } from "../dependency/service.ts";
-import { displayService } from "./src/graphic/Display.ts";
-import { canvasService } from "./src/graphic/WebGL.ts";
-import { mainLoopService } from "./src/MainLoop.ts";
-import { debugInfoService } from "./src/debug/DebugInfo.ts";
-import { keyboardService } from "./src/keyboard/Keyboard.ts";
-import { phaseManagerService } from "./src/phase/PhaseManager.ts";
-import { appService } from "./src/App.ts";
-import { tilesTexture2DArrayService } from "./src/graphic/tiles/TilesTexture2DArray.ts";
-import { clientSpriteAtlasLoaderService } from "../domain-client/sprite/allocation/clientSpriteAtlasLoader.ts";
 import { SpriteImageExtractor } from "../sprite/SpriteImageDataExtractor.ts";
 import { logger } from "../common/logger.ts";
-import { gaCommunicator } from "../core/action/communication.ts";
-import { gaProcessorService } from "../core/action/processor.ts";
-import { clientGAProcessor } from "../domain-client/clientGAProcessor.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../domain/loginGA.ts";
 import { SpriteAllocator } from "../sprite/SpriteAllocator.ts";
 import { SpriteImage } from "../sprite/sprite.ts";
-import { spriteIndicesTextureService } from "./src/graphic/tiles/SpriteIndicesTexture.ts";
-import { networkLatencyDaemonService } from "../domain-client/stats/NetworkLatencyDaemon.ts";
-import { mainUAProcessorService, resolveUAProcessHandlers } from "./src/ua/processor.ts";
-import { kaProcessorService } from "./src/keyboard/KAProcessor.ts";
-import { mainKABusService } from "./src/keyboard/KABus.ts";
-import { mainUABusService } from "./src/ua/UABus.ts";
-import { mainGABusService } from "../domain/GABus.ts";
-import { mutationGABusSubscriberService } from "../domain/MutationGABusSubscriber.ts";
-import { webSocketService } from "../core/action/sender.ts";
+import { provideMainUAProcessor, resolveUAProcessHandlers } from "./src/ua/processor.ts";
+import { provideNetworkLatencyDaemon } from "../domain-client/stats/NetworkLatencyDaemon.ts";
+import { provideMainGABus } from "../domain/GABus.ts";
+import { provideMutationGABusSubscriber } from "../domain/MutationGABusSubscriber.ts";
+import { provideApp } from "./src/App.ts";
+import { provideMainLoop } from "./src/MainLoop.ts";
+import { provideDebugInfo } from "./src/debug/DebugInfo.ts";
+import { provideDisplay } from "./src/graphic/Display.ts";
+import { provideMainKABus } from "./src/keyboard/KABus.ts";
+import { provideKeyboard } from "./src/keyboard/Keyboard.ts";
+import { providePhaseManager } from "./src/phase/PhaseManager.ts";
+import { provideMainUABus } from "./src/ua/UABus.ts";
+import { provideCanvas } from "./src/graphic/WebGL.ts";
+import { provideKAProcessor } from "./src/keyboard/KAProcessor.ts";
+import { provideTilesTexture2DArray } from "./src/graphic/tiles/TilesTexture2DArray.ts";
+import { provideSpriteIndicesTexture } from "./src/graphic/tiles/SpriteIndicesTexture.ts";
+import { provideWebSocket } from "../core/action/sender.ts";
+import { provideGAProcessor } from "../core/action/processor.ts";
+import { provideClientGAProcessor } from "../domain-client/clientGAProcessor.ts";
+import { provideGACommunicator } from "../core/action/communication.ts";
+import { provideClientSpriteAtlasLoader } from "../domain-client/sprite/allocation/clientSpriteAtlasLoader.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
   const canvas = document.getElementById("primary-canvas") as HTMLCanvasElement | null;
   assertNonNull(canvas, "cannot-find-primary-canvas");
-  resolver.inject(canvasService, canvas);
+  resolver.inject(provideCanvas, canvas);
 
   (globalThis as any).app = resolver.resolve(provideApp);
   const display = resolver.resolve(provideDisplay);
@@ -45,7 +45,7 @@ async function start() {
   const phaseManager = resolver.resolve(providePhaseManager);
 
   const mainKABus = resolver.resolve(provideMainKABus);
-  const mainKAProcessor = resolver.resolve(provideKaProcessor);
+  const mainKAProcessor = resolver.resolve(provideKAProcessor);
   mainKABus.subscribers.add(mainKAProcessor);
 
   const mainUABus = resolver.resolve(provideMainUABus);
@@ -137,10 +137,10 @@ async function start() {
   const ws = new WebSocket(`ws://${hostname}:8000/wss/token`);
   ws.binaryType = "arraybuffer";
 
-  resolver.inject(webSocketService, ws);
-  const processor = await resolver.resolve(clientGAProcessor);
-  resolver.inject(gaProcessorService, processor);
-  const communicator = await resolver.resolve(gaCommunicator);
+  resolver.inject(provideWebSocket, ws);
+  const processor = await resolver.resolve(provideClientGAProcessor);
+  resolver.inject(provideGAProcessor, processor);
+  const communicator = await resolver.resolve(provideGACommunicator);
   const networkLatencyDaemon = resolver.resolve(provideNetworkLatencyDaemon);
   const mutationGABusSubscriber = resolver.resolve(provideMutationGABusSubscriber);
 

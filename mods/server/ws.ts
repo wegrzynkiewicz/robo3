@@ -3,7 +3,7 @@ import { Logger } from "../common/logger.ts";
 import { GAReceiver, gaReceiverService } from "../core/action/receiver.ts";
 import { webSocketService } from "../core/action/sender.ts";
 import { globalLoggerService } from "../core/logger.ts";
-import { registerService, ServiceResolver } from "../dependency/service.ts";
+import { ServiceResolver } from "../dependency/service.ts";
 
 export class ClientChannel {
   public constructor(

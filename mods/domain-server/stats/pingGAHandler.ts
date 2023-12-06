@@ -1,5 +1,5 @@
 import { GAHandler } from "../../core/action/processor.ts";
-import { registerService } from "../../dependency/service.ts";
+
 import { PingGA } from "../../domain/stats/pingGA.ts";
 import { PongGA } from "../../domain/stats/pongGA.ts";
 

@@ -1,4 +1,3 @@
-import { registerService } from "../../../dependency/service.ts";
 import { KADefinition } from "./foundation.ts";
 
 export interface KABusSubscriber {

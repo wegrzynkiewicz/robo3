@@ -1,6 +1,4 @@
 import { Breaker } from "../../common/breaker.ts";
-import { logger } from "../../common/logger.ts";
-import { registerService } from "../../dependency/service.ts";
 import { GAEnvelope } from "./codec.ts";
 import { AnyGADefinition, GADefinition } from "./foundation.ts";
 import { GASender } from "./sender.ts";
@@ -57,6 +55,6 @@ export class UniversalGAProcessor implements GAProcessor {
   }
 }
 
-export function provideGAProcessor() {
-  throw new Breaker("main-ga-processor-should-be-injected");
+export function provideGAProcessor(): GAProcessor {
+  throw new Breaker("ga-processor-should-be-injected");
 }

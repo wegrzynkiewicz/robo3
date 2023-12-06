@@ -1,14 +1,14 @@
-import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../dependency/service.ts";
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
-import { webGLService } from "../WebGL.ts";
 import { VertexAttribute } from "../attribute.ts";
 import { Texture2DArray } from "../textures/Texture2DArray.ts";
 import { i32, ivec } from "../types.ts";
-import { createProgram, createVertexArray, getUniformInfo } from "../utilities.ts";
-import { tilesTexture2DArrayService } from "./TilesTexture2DArray.ts";
-import { tilesBufferService } from "./tilesBuffer.ts";
+import { createProgram, createVertexArray } from "../utilities.ts";
 import { assertNonNull } from "../../../../common/asserts.ts";
-import { spriteIndicesTextureService } from "./SpriteIndicesTexture.ts";
+import { provideWebGL } from "../WebGL.ts";
+import { provideTilesBuffer } from "./tilesBuffer.ts";
+import { provideSpriteIndicesTexture } from "./SpriteIndicesTexture.ts";
+import { provideTilesTexture2DArray } from "./TilesTexture2DArray.ts";
 
 const byteStride = (2 * 2) + (1 * 4);
 const tilePos = new VertexAttribute({ byteOffset: 0, byteStride, divisor: 1, location: 0, name: "tilePos", type: ivec(2, "i16") });

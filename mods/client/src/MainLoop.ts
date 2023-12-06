@@ -1,10 +1,10 @@
-import { registerService, ServiceResolver } from "../../dependency/service.ts";
-import { fpsCounterService } from "./FPSCounter.ts";
-import { cameraManagerService } from "./camera/CameraManager.ts";
-import { debugInfoService } from "./debug/DebugInfo.ts";
-import { sceneViewportService } from "./graphic/tiles/SceneViewport.ts";
-import { tilesRendererService } from "./graphic/tiles/TilesRenderer.ts";
-import { phaseManagerService } from "./phase/PhaseManager.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
+import { provideFPSCounter } from "./FPSCounter.ts";
+import { provideCameraManager } from "./camera/CameraManager.ts";
+import { provideDebugInfo } from "./debug/DebugInfo.ts";
+import { provideSceneViewport } from "./graphic/tiles/SceneViewport.ts";
+import { provideTilesRenderer } from "./graphic/tiles/TilesRenderer.ts";
+import { providePhaseManager } from "./phase/PhaseManager.ts";
 
 export interface Looper {
   loop(now: DOMHighResTimeStamp): void;
@@ -47,7 +47,7 @@ export function provideMainLoop(resolver: ServiceResolver) {
     resolver.resolve(provideCameraManager),
     resolver.resolve(provideSceneViewport),
     resolver.resolve(provideTilesRenderer),
-    resolver.resolve(provideFpsCounter),
+    resolver.resolve(provideFPSCounter),
     resolver.resolve(provideDebugInfo),
   ]);
 }

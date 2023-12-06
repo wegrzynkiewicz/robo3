@@ -57,7 +57,7 @@ router.get("/api.json", (ctx) => {
 (async () => {
   const resolver = new ServiceResolver();
   const client = await resolver.resolve(dbClient);
-  const gameClientManager = resolver.resolve(provideGameClientManager);
+  const gameClientManager = resolver.resolve(provideGAmeClientManager);
 
   const db = client.db("app");
   const collection = db.collection("chunks");

@@ -1,7 +1,7 @@
-import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../dependency/service.ts";
 import { DynamicDrawBuffer } from "../DynamicDrawBuffer.ts";
-import { SceneViewport, sceneViewportService } from "./SceneViewport.ts";
-import { tilesBufferService } from "./tilesBuffer.ts";
+import { SceneViewport, provideSceneViewport } from "./SceneViewport.ts";
+import { provideTilesBuffer } from "./tilesBuffer.ts";
 
 export class TilesCollector {
   protected index = 0;

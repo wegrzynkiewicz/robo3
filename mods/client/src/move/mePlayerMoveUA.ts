@@ -1,6 +1,6 @@
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
 import { mePlayerMoveGADef, MoveDirection } from "../../../domain-client/player-move/move.ts";
-import { GABus, mainGABusService } from "../../../domain/GABus.ts";
+import { GABus, provideMainGABus } from "../../../domain/GABus.ts";
 import { registerUADefinition, UADefinition } from "../ua/foundation.ts";
 import { UAHandler } from "../ua/processor.ts";
 

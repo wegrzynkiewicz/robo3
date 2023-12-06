@@ -1,9 +1,9 @@
-import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
+import { ServiceResolver } from "../../../../dependency/service.ts";
 import { SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y } from "../../../../core/vars.ts";
 import { cornerRect } from "../../../../math/CornerRectangle.ts";
 import { point } from "../../../../math/Point.ts";
-import { Viewport, viewportService } from "../Viewport.ts";
-import { PrimaryUBO, primaryUBOService } from "../PrimaryUBO.ts";
+import { Viewport, provideViewport } from "../Viewport.ts";
+import { PrimaryUBO, providePrimaryUBO } from "../PrimaryUBO.ts";
 
 class SceneGridVariant {
   public cellCount = 0;

@@ -1,6 +1,6 @@
-import { registerService, ServiceResolver } from "../../../dependency/service.ts";
-import { MyPlayer, myPlayerService } from "../../../domain-client/player-move/MyPlayer.ts";
-import { Viewport, viewportService } from "../graphic/Viewport.ts";
+import { ServiceResolver } from "../../../dependency/service.ts";
+import { MyPlayer, provideMyPlayer } from "../../../domain-client/player-move/MyPlayer.ts";
+import { provideViewport, Viewport } from "../graphic/Viewport.ts";
 import { Camera } from "./CameraManager.ts";
 
 export class FollowingMePlayerCamera implements Camera {

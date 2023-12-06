@@ -1,8 +1,8 @@
-import { registerService, ServiceResolver } from "../../../../dependency/service.ts";
-import { PrimaryUBO, primaryUBOService } from "../PrimaryUBO.ts";
-import { webGLService } from "../WebGL.ts";
-import { TilesProgram, tilesProgramService } from "./TilesProgram.ts";
-import { TilesSceneBuilder, tilesSceneBuilderService } from "./TilesSceneBuilder.ts";
+import { ServiceResolver } from "../../../../dependency/service.ts";
+import { PrimaryUBO, providePrimaryUBO } from "../PrimaryUBO.ts";
+import { provideWebGL } from "../WebGL.ts";
+import { TilesProgram, provideTilesProgram } from "./TilesProgram.ts";
+import { TilesSceneBuilder, provideTilesSceneBuilder } from "./TilesSceneBuilder.ts";
 
 const { COLOR_BUFFER_BIT, TRIANGLES } = WebGL2RenderingContext;
 
