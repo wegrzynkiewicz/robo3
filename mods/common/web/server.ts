@@ -1,5 +1,5 @@
-import { Breaker } from "../common/utils/breaker.ts";
-import { Logger } from "../core/logger.ts";
+import { Breaker } from "../utils/breaker.ts";
+import { Logger } from "../../core/logger.ts";
 import { EPHandler } from "./endpoint.ts";
 
 export interface WebServerConfig {

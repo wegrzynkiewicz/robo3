@@ -1,4 +1,4 @@
-import { EPHandler } from "../../web/endpoint.ts";
+import { EPHandler } from "../../common/web/endpoint.ts";
 
 export interface LoginEPRequest {
   username: string;
