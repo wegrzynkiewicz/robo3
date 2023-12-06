@@ -3,13 +3,13 @@ import { provideGASender } from "../common/action/sender.ts";
 import { ServiceResolver } from "../common/dependency/service.ts";
 import { chunkSegmentUpdateGADef } from "../domain/chunk/chunkSegmentUpdateGA.ts";
 import { chunksUpdateGADef } from "../domain/chunk/chunksUpdateGA.ts";
-import { pangGADef } from "../features/stats/pangGA.ts";
-import { pongGADef } from "../features/stats/pongGA.ts";
+import { pangGADef } from "../actions/stats/pangGA.ts";
+import { pongGADef } from "../actions/stats/pongGA.ts";
 import { provideChunkSegmentUpdateGAHandler } from "./chunk/chunkSegmentUpdateGAHandler.ts";
 import { provideChunksUpdateGAHandler } from "./chunk/chunksUpdateGAHandler.ts";
-import { provideBeingUpdateGAHandler } from "../features/player-move/BeingUpdateGAHandler.ts";
-import { beingUpdateGADef } from "../features/player-move/beingUpdate.ts";
-import { providePongGAHandler } from "../features/stats/pongGAHandler.ts";
+import { provideBeingUpdateGAHandler } from "../actions/player-move/BeingUpdateGAHandler.ts";
+import { beingUpdateGADef } from "../actions/player-move/beingUpdate.ts";
+import { providePongGAHandler } from "../actions/stats/pongGAHandler.ts";
 
 export function provideClientGAProcessor(resolver: ServiceResolver) {
   const sender = resolver.resolve(provideGASender);

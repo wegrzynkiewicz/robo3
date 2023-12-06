@@ -1,15 +1,15 @@
 import { UniversalGAProcessor } from "../common/action/processor.ts";
 import { provideGASender } from "../common/action/sender.ts";
 import { ServiceResolver } from "../common/dependency/service.ts";
-import { mePlayerMoveGADef } from "../features/player-move/move.ts";
-import { loginGARequestDef, loginGAResponseDef } from "../features/login/loginGA.ts";
-import { pangGADef } from "../features/stats/pangGA.ts";
-import { pingGADef } from "../features/stats/pingGA.ts";
-import { pongGADef } from "../features/stats/pongGA.ts";
-import { provideLoginGARequestHandler } from "../features/login/loginGAHandler.ts";
-import { provideMePlayerMoveGAHandler } from "../features/player-move/MePlayerMoveGAHandler.ts";
-import { providePangGAHandler } from "../features/stats/pangGAHandler.ts";
-import { providePingGAHandler } from "../features/stats/pingGAHandler.ts";
+import { mePlayerMoveGADef } from "../actions/player-move/move.ts";
+import { loginGARequestDef, loginGAResponseDef } from "../actions/login/loginGA.ts";
+import { pangGADef } from "../actions/stats/pangGA.ts";
+import { pingGADef } from "../actions/stats/pingGA.ts";
+import { pongGADef } from "../actions/stats/pongGA.ts";
+import { provideLoginGARequestHandler } from "../actions/login/loginGAHandler.ts";
+import { provideMePlayerMoveGAHandler } from "../actions/player-move/MePlayerMoveGAHandler.ts";
+import { providePangGAHandler } from "../actions/stats/pangGAHandler.ts";
+import { providePingGAHandler } from "../actions/stats/pingGAHandler.ts";
 
 export function provideServerGAProcessor(resolver: ServiceResolver) {
   const processor = new UniversalGAProcessor(

@@ -1,5 +1,5 @@
 import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { mePlayerMoveGADef, MoveDirection } from "../../../features/player-move/move.ts";
+import { mePlayerMoveGADef, MoveDirection } from "../../../actions/player-move/move.ts";
 import { GABus, provideMainGABus } from "../../../common/action/bus.ts";
 import { registerUADefinition, UADefinition } from "../ua/foundation.ts";
 import { UAHandler } from "../ua/processor.ts";

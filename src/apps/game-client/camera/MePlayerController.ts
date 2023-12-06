@@ -1,5 +1,5 @@
 import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { MoveDirection } from "../../../features/player-move/move.ts";
+import { MoveDirection } from "../../../actions/player-move/move.ts";
 import { Looper } from "../MainLoop.ts";
 import { KeyShortCut, KeyState } from "../keyboard/KeyShortCut.ts";
 import { Keyboard, provideKeyboard } from "../keyboard/Keyboard.ts";

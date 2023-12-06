@@ -6,11 +6,11 @@ import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../../commo
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { SpriteImageExtractor } from "../../common/sprite/SpriteImageDataExtractor.ts";
 import { logger } from "../../common/utils/logger.ts";
-import { loginGARequestDef, loginGAResponseDef } from "../../features/login/loginGA.ts";
+import { loginGARequestDef, loginGAResponseDef } from "../../actions/login/loginGA.ts";
 import { SpriteAllocator } from "../../common/sprite/SpriteAllocator.ts";
 import { SpriteImage } from "../../common/sprite/sprite.ts";
 import { provideMainUAProcessor, resolveUAProcessHandlers } from "./ua/processor.ts";
-import { provideNetworkLatencyDaemon } from "../../features/stats/NetworkLatencyDaemon.ts";
+import { provideNetworkLatencyDaemon } from "../../actions/stats/NetworkLatencyDaemon.ts";
 import { provideMainGABus } from "../../common/action/bus.ts";
 import { provideMutationGABusSubscriber } from "../../domain/MutationGABusSubscriber.ts";
 import { provideApp } from "./App.ts";

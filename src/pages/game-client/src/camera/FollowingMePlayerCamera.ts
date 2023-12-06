@@ -1,5 +1,5 @@
 import { ServiceResolver } from "../../../../common/dependency/service.ts";
-import { MyPlayer, provideMyPlayer } from "../../../../features/player-move/MyPlayer.ts";
+import { MyPlayer, provideMyPlayer } from "../../../../actions/player-move/MyPlayer.ts";
 import { provideViewport, Viewport } from "../graphic/Viewport.ts";
 import { Camera } from "./CameraManager.ts";
 

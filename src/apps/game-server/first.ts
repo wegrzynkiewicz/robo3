@@ -7,7 +7,7 @@ import { chunkSegmentUpdateGADef } from "../../domain/chunk/chunkSegmentUpdateGA
 import { chunksUpdateGADef } from "../../domain/chunk/chunksUpdateGA.ts";
 import { decompress } from "../../common/utils/binary.ts";
 import { ChunkSegment } from "../../common/chunk/chunkSegment.ts";
-import { beingUpdateGADef } from "../../features/player-move/beingUpdate.ts";
+import { beingUpdateGADef } from "../../actions/player-move/beingUpdate.ts";
 import { provideSpaceManager } from "../../common/space/SpaceManager.ts";
 import { provideClientChannel } from "./ws.ts";
 import { provideDBClient } from "./db.ts";
