@@ -11,7 +11,7 @@ import { SpriteAllocator } from "../../common/sprite/SpriteAllocator.ts";
 import { SpriteImage } from "../../common/sprite/sprite.ts";
 import { provideMainUAProcessor, resolveUAProcessHandlers } from "./ua/processor.ts";
 import { provideNetworkLatencyDaemon } from "../../features/stats/NetworkLatencyDaemon.ts";
-import { provideMainGABus } from "../../domain/GABus.ts";
+import { provideMainGABus } from "../../common/action/bus.ts";
 import { provideMutationGABusSubscriber } from "../../domain/MutationGABusSubscriber.ts";
 import { provideApp } from "./App.ts";
 import { provideMainLoop } from "./MainLoop.ts";

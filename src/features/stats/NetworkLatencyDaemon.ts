@@ -2,8 +2,8 @@ import { createPerformanceCounter } from "../../common/utils/PerformanceCounter.
 import { logger } from "../../common/utils/logger.ts";
 import { GARequestor, provideGARequestor } from "../../common/action/requestor.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { pingGADef } from "../../domain/stats/pingGA.ts";
-import { pongGADef } from "../../domain/stats/pongGA.ts";
+import { pingGADef } from "./pingGA.ts";
+import { pongGADef } from "./pongGA.ts";
 
 export class NetworkLatencyDaemon {
   protected timer = 0;

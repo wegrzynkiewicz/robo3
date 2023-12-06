@@ -1,6 +1,6 @@
 import { GAHandler } from "../../common/action/processor.ts";
 
-import { PangGA } from "../../domain/stats/pangGA.ts";
+import { PangGA } from "./pangGA.ts";
 
 export class PangGAHandler implements GAHandler<PangGA, void> {
   async handle(request: PangGA): Promise<void> {
