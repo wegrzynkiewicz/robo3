@@ -43,13 +43,13 @@ Deno.addSignalListener(
   const client = await resolver.resolve(dbClient);
   const gameClientManager = await resolver.resolve(gameClientManagerService);
 
-  const db = client.db("app", );
-  const collection = db.collection("chunks", );
+  const db = client.db("app");
+  const collection = db.collection("chunks");
 
   const spaceManager = await resolver.resolve(spaceManagerService);
   const space = spaceManager.obtain(1);
 
-  let beingCounter = 0;
+  let beingCounter = 1;
 
   router.get("/wss/:token", async (ctx) => {
     if (!ctx.isUpgradable) {
@@ -109,7 +109,6 @@ Deno.addSignalListener(
         }
         being.x += x * 16;
         being.y += y * 16;
-        being.updated = false;
         communicator.sender.send(beingUpdateGADef, being);
       }
     }, 100);

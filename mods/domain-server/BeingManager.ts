@@ -6,7 +6,6 @@ export interface Being {
   z: number,
   direct: MoveDirection,
   id: number,
-  updated: boolean;
 }
 
 export class BeingManager {
@@ -21,7 +20,6 @@ export class BeingManager {
         x: 0,
         y: 0,
         z: 0,
-        updated: false,
       };
       this.byId.set(beingId, being);
       return being;

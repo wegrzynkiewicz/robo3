@@ -12,7 +12,6 @@ export class MePlayerMoveGAHandler implements GAHandler<MePlayerMoveGA, void> {
     const space = this.spaceManager.obtain(1);
     const being = space.beingManager.obtain(1);
     being.direct = request.direction;
-    being.updated = true;
   }
 }
 
