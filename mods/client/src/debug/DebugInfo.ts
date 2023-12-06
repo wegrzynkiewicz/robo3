@@ -1,5 +1,5 @@
-import { assertNonNull } from "../../../utils/asserts.ts";
-import { formatBytes } from "../../../utils/useful.ts";
+import { assertNonNull } from "../../../common/utils/asserts.ts";
+import { formatBytes } from "../../../common/utils/useful.ts";
 import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { NetworkLatencyCounter, provideNetworkLatencyCounter } from "../../../domain-client/stats/NetworkLatencyCounter.ts";
 import { FPSCounter, provideFPSCounter } from "../FPSCounter.ts";

@@ -5,7 +5,7 @@ import { ChunkDTO } from "../common/chunk/chunk.ts";
 import { ServiceResolver } from "../common/dependency/service.ts";
 import { chunkSegmentUpdateGADef } from "../domain/chunk/chunkSegmentUpdateGA.ts";
 import { chunksUpdateGADef } from "../domain/chunk/chunksUpdateGA.ts";
-import { decompress } from "../utils/binary.ts";
+import { decompress } from "../common/utils/binary.ts";
 import { ChunkSegment } from "../common/chunk/chunkSegment.ts";
 import { beingUpdateGADef } from "../domain-client/player-move/beingUpdate.ts";
 import { provideSpaceManager } from "../common/space/SpaceManager.ts";

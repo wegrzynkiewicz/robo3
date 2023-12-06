@@ -1,4 +1,4 @@
-import { createPerformanceCounter } from "../../../../utils/PerformanceCounter.ts";
+import { createPerformanceCounter } from "../../../../common/utils/PerformanceCounter.ts";
 import { ServiceResolver } from "../../../../common/dependency/service.ts";
 import { Chunk, ChunkManager, provideChunkManager } from "../../../../domain-client/chunk/chunkManager.ts";
 import { SceneViewport, provideSceneViewport } from "./SceneViewport.ts";

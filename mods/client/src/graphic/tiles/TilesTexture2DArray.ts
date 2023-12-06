@@ -1,4 +1,4 @@
-import { Breaker } from "../../../../utils/breaker.ts";
+import { Breaker } from "../../../../common/utils/breaker.ts";
 import { ServiceResolver } from "../../../../common/dependency/service.ts";
 import { dim3D } from "../../../../common/math/Dim3D.ts";
 import { provideWebGL } from "../WebGL.ts";

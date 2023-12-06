@@ -1,4 +1,4 @@
-import { assertTrue } from "../utils/asserts.ts";
+import { assertTrue } from "../common/utils/asserts.ts";
 import { deferred } from "../deps.ts";
 
 interface ImageResource {

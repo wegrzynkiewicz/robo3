@@ -1,4 +1,4 @@
-import { Breaker } from "../../utils/breaker.ts";
+import { Breaker } from "../utils/breaker.ts";
 
 export interface Provider<TInstance> {
   (resolver: ServiceResolver): TInstance;

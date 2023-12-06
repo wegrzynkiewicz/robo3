@@ -1,4 +1,4 @@
-import { Registry } from "../../utils/registry.ts";
+import { Registry } from "../utils/registry.ts";
 import { GameObjectProcessorConstructor } from "./processor.ts";
 import { GameObjectProperties } from "./properties.ts";
 

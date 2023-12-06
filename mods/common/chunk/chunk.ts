@@ -1,4 +1,4 @@
-import { assertArray, assertObject, assertPositiveNumber, assertRequiredString } from "../../utils/asserts.ts";
+import { assertArray, assertObject, assertPositiveNumber, assertRequiredString } from "../utils/asserts.ts";
 import { ChunkId } from "./chunkId.ts";
 
 export interface ChunkComplexGODTO {

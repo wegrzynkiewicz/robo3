@@ -1,5 +1,5 @@
-import { assertEqual, assertRequiredString } from "../../utils/asserts.ts";
-import { Breaker } from "../../utils/breaker.ts";
+import { assertEqual, assertRequiredString } from "../utils/asserts.ts";
+import { Breaker } from "../utils/breaker.ts";
 
 export class SpriteAtlasURL {
   public static readonly ALLOWED_LAYOUTS = ["single", "terrain"];

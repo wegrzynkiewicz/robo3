@@ -1,4 +1,4 @@
-import { TypedArray } from "../../../../utils/binary.ts";
+import { TypedArray } from "../../../../common/utils/binary.ts";
 import { Dim2D } from "../../../../common/math/Dim2D.ts";
 import { createSampler, createTexture } from "../utilities.ts";
 import { TextureFormatConfig } from "./format.ts";

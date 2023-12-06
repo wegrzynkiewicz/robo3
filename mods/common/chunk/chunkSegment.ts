@@ -1,4 +1,4 @@
-import { assertEqual } from "../../utils/asserts.ts";
+import { assertEqual } from "../utils/asserts.ts";
 import { registerIdentifier } from "../../core/identifier.ts";
 import { TILES_PER_CHUNK_GRID } from "../../core/vars.ts";
 

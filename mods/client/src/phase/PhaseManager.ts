@@ -1,4 +1,4 @@
-import { Breaker } from "../../../utils/breaker.ts";
+import { Breaker } from "../../../common/utils/breaker.ts";
 import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { KAMatcher, provideKAMatcher } from "../keyboard/KAMatcher.ts";
 import { provideGamePhase } from "./GamePhase.ts";

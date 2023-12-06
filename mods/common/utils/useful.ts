@@ -1,4 +1,4 @@
-import { Deferred, deferred } from "../deps.ts";
+import { Deferred, deferred } from "../../deps.ts";
 import { Breaker } from "./breaker.ts";
 
 export type UnknownData = Record<string, unknown>;

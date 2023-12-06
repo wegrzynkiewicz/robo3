@@ -1,11 +1,11 @@
 import "../common/canvas/UnifiedOffscreenCanvas.ts";
 import "../core/bootstrap.ts";
-import { assertNonNull } from "../utils/asserts.ts";
+import { assertNonNull } from "../common/utils/asserts.ts";
 import { cgotdRegistry, sgotdRegistry } from "../common/game-object/defining.ts";
 import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../common/game-object/resolving.ts";
 import { ServiceResolver } from "../common/dependency/service.ts";
 import { SpriteImageExtractor } from "../common/sprite/SpriteImageDataExtractor.ts";
-import { logger } from "../utils/logger.ts";
+import { logger } from "../common/utils/logger.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../domain/loginGA.ts";
 import { SpriteAllocator } from "../common/sprite/SpriteAllocator.ts";
 import { SpriteImage } from "../common/sprite/sprite.ts";

@@ -1,5 +1,5 @@
 import { generateHighContrastColor } from "../client/src/graphic/color.ts";
-import { assertNonNull, assertTrue } from "../utils/asserts.ts";
+import { assertNonNull, assertTrue } from "../common/utils/asserts.ts";
 import { coords2ImageRect, index2coords } from "./numbers.ts";
 import { SPRITE_SIZE, SPRITES_TEXTURE_SIZE } from "./vars.ts";
 

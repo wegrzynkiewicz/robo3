@@ -1,5 +1,5 @@
 import { createUnifiedCanvasFromImageURL } from "../canvas/mod.ts";
-import { Breaker } from "../../utils/breaker.ts";
+import { Breaker } from "../utils/breaker.ts";
 import { SpriteAtlasImage, SpriteAtlasProvider, SpriteAtlasSource } from "./atlas.ts";
 
 export class ExternalSpriteAtlasProvider implements SpriteAtlasProvider {
