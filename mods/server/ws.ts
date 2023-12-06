@@ -1,8 +1,8 @@
 import { Breaker } from "../common/breaker.ts";
 import { Logger } from "../common/logger.ts";
-import { GAReceiver, gaReceiverService } from "../core/action/receiver.ts";
-import { webSocketService } from "../core/action/sender.ts";
-import { globalLoggerService } from "../core/logger.ts";
+import { GAReceiver, provideGAReceiver } from "../core/action/receiver.ts";
+import { provideWebSocket } from "../core/action/sender.ts";
+import { provideGlobalLogger } from "../core/logger.ts";
 import { ServiceResolver } from "../dependency/service.ts";
 
 export class ClientChannel {
@@ -45,7 +45,7 @@ export class ClientChannel {
 export function provideClientChannel(resolver: ServiceResolver) {
   return new ClientChannel(
     resolver.resolve(provideGlobalLogger),
-    resolver.resolve(provideGaReceiver),
+    resolver.resolve(provideGAReceiver),
     resolver.resolve(provideWebSocket),
   );
 }

@@ -1,21 +1,21 @@
-import { Application, Router } from "./deps.ts";
+import { Application, OpenAPI, Router } from "./deps.ts";
 import { ChunkDoc } from "../storage/chunk.ts";
-import { dbClient } from "./db.ts";
 import { ChunkId } from "../core/chunk/chunkId.ts";
 import { ChunkDTO } from "../core/chunk/chunk.ts";
-import { serverGAProcessor } from "../domain-server/serverGAProcessor.ts";
 import { ServiceResolver } from "../dependency/service.ts";
-import { gaCommunicator } from "../core/action/communication.ts";
-import { gaProcessorService } from "../core/action/processor.ts";
 import { chunkSegmentUpdateGADef } from "../domain/chunk/chunkSegmentUpdateGA.ts";
 import { chunksUpdateGADef } from "../domain/chunk/chunksUpdateGA.ts";
 import { decompress } from "../common/binary.ts";
 import { ChunkSegment } from "../core/chunk/chunkSegment.ts";
-import { spaceManagerService } from "../core/space/SpaceManager.ts";
 import { beingUpdateGADef } from "../domain-client/player-move/beingUpdate.ts";
-import { clientChannelService } from "./ws.ts";
-import { gameClientManagerService } from "./GameClientManager.ts";
-import { webSocketService } from "../core/action/sender.ts";
+import { provideSpaceManager } from "../core/space/SpaceManager.ts";
+import { provideClientChannel } from "./ws.ts";
+import { provideDBClient } from "./db.ts";
+import { provideGameClientManager } from "./GameClientManager.ts";
+import { provideWebSocket } from "../core/action/sender.ts";
+import { provideServerGAProcessor } from "../domain-server/serverGAProcessor.ts";
+import { provideGAProcessor } from "../core/action/processor.ts";
+import { provideGACommunicator } from "../core/action/communication.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -56,8 +56,9 @@ router.get("/api.json", (ctx) => {
 
 (async () => {
   const resolver = new ServiceResolver();
-  const client = await resolver.resolve(dbClient);
-  const gameClientManager = resolver.resolve(provideGAmeClientManager);
+  const client = resolver.resolve(provideDBClient);
+  await client.connect();
+  const gameClientManager = resolver.resolve(provideGameClientManager);
 
   const db = client.db("app");
   const collection = db.collection("chunks");
@@ -66,6 +67,8 @@ router.get("/api.json", (ctx) => {
   const space = spaceManager.obtain(1);
 
   let beingCounter = 1;
+
+  console.log('starting...');
 
   router.get("/wss/:token", async (ctx) => {
     if (!ctx.isUpgradable) {
@@ -98,10 +101,10 @@ router.get("/api.json", (ctx) => {
     const being = space.beingManager.obtain(beingCounter++);
 
     const resolver = new ServiceResolver();
-    resolver.inject(webSocketService, ws);
-    const processor = await resolver.resolve(serverGAProcessor);
-    resolver.inject(gaProcessorService, processor);
-    const communicator = await resolver.resolve(gaCommunicator);
+    resolver.inject(provideWebSocket, ws);
+    const processor = resolver.resolve(provideServerGAProcessor);
+    resolver.inject(provideGAProcessor, processor);
+    const communicator = resolver.resolve(provideGACommunicator);
     const clientChannel = resolver.resolve(provideClientChannel);
 
     clientChannel.attachListeners();
@@ -146,5 +149,6 @@ router.get("/api.json", (ctx) => {
 
   app.use(router.routes());
   app.use(router.allowedMethods());
-  app.listen({ port: 8000 });
+  app.listen({ port: 8000, });
+  console.log("Server started!");
 })();
