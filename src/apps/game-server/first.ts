@@ -71,8 +71,6 @@ router.get("/api.json", (ctx) => {
 
   let beingCounter = 1;
 
-  console.log("starting...");
-
   router.get("/wss/:token", async (ctx) => {
     if (!ctx.isUpgradable) {
       ctx.throw(501, "lol");
@@ -153,5 +151,4 @@ router.get("/api.json", (ctx) => {
   app.use(router.routes());
   app.use(router.allowedMethods());
   app.listen({ port: 8000 });
-  console.log("Server started!");
 })();

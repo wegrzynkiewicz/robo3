@@ -1,4 +1,4 @@
-import { provideGlobalLogger } from "../../core/logger.ts";
+import { provideGlobalLogger } from "../../common/logger/logger.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { Router } from "../../common/web/router.ts";
 import { WebServer } from "../../common/web/server.ts";

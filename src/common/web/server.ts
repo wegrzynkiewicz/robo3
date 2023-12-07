@@ -1,5 +1,5 @@
 import { Breaker } from "../utils/breaker.ts";
-import { Logger } from "../../core/logger.ts";
+import { Logger } from "../logger/logger.ts";
 
 export interface WebServerConfig {
   hostname: string;
@@ -37,8 +37,8 @@ export class WebServer {
   }
 
   public close(reason: string): void {
-    const { hostname, port } = this.config;
-    this.logger.info("Web-server-aborting", { date: new Date(), hostname, port });
+    const { hostname, name, port } = this.config;
+    this.logger.info("web-server-aborting", { hostname, name, port });
     this.abortController.abort(reason);
   }
 
@@ -61,7 +61,7 @@ export class WebServer {
   }
 
   private handleListen(): void {
-    const { hostname, port } = this.config;
-    this.logger.info("Web-server-listening", { date: new Date(), hostname, port });
+    const { hostname, name, port } = this.config;
+    this.logger.info("web-server-listening", { hostname, name, port });
   }
 }

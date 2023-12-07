@@ -1,8 +1,8 @@
 import { Breaker } from "../utils/breaker.ts";
-import { logger } from "../utils/logger.ts";
 import { ServiceResolver } from "../dependency/service.ts";
 import { GACodec, GAEnvelope, provideGACodec } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
+import { Logger, provideGlobalLogger } from "../logger/logger.ts";
 
 export interface GASender {
   send<TData>(definition: GADefinition<TData>, data: TData): void;
@@ -13,6 +13,7 @@ export interface GASender {
 export class OnlineGASender implements GASender {
   public constructor(
     public readonly codec: GACodec,
+    public readonly logger: Logger,
     public readonly ws: WebSocket,
   ) {}
 
@@ -31,7 +32,7 @@ export class OnlineGASender implements GASender {
     const { ws } = this;
     const { readyState } = ws;
     if (readyState !== ws.OPEN) {
-      logger.error("ws-not-open", { readyState });
+      this.logger.error("ws-not-open", { readyState });
       return;
     }
     ws.send(data);
@@ -46,6 +47,7 @@ export function provideWebSocket(): WebSocket {
 export function provideGASender(resolver: ServiceResolver) {
   return new OnlineGASender(
     resolver.resolve(provideGACodec),
+    resolver.resolve(provideGlobalLogger),
     resolver.resolve(provideWebSocket),
   );
 }

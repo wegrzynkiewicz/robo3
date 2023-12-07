@@ -5,7 +5,6 @@ import { cgotdRegistry, sgotdRegistry } from "../../common/game-object/defining.
 import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../../common/game-object/resolving.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { SpriteImageExtractor } from "../../common/sprite/sprite-image-data-extractor.ts";
-import { logger } from "../../common/utils/logger.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../../actions/login/login-ga.ts";
 import { SpriteAllocator } from "../../common/sprite/sprite-allocator.ts";
 import { SpriteImage } from "../../common/sprite/sprite.ts";
@@ -30,6 +29,7 @@ import { provideGAProcessor } from "../../common/action/processor.ts";
 import { provideClientGAProcessor } from "../../domain-client/client-ga-processor.ts";
 import { provideGACommunicator } from "../../common/action/communication.ts";
 import { provideClientSpriteAtlasLoader } from "../../domain-client/sprite/allocation/client-sprite-atlas-loader.ts";
+import { logger } from "../../common/logger/logger.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
