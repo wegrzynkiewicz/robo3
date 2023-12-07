@@ -1,10 +1,10 @@
-import { ChunkId } from "../common/chunk/chunkId.ts";
-import { ChunkSegment } from "../common/chunk/chunkSegment.ts";
+import { ChunkId } from "../common/chunk/chunk-id.ts";
+import { ChunkSegment } from "../common/chunk/chunk-segment.ts";
 import { ServiceResolver } from "../common/dependency/service.ts";
 import { dbClient } from "../server/db.ts";
 import { ChunkDoc } from "../common/storage/chunk.ts";
 import { Binary, deflate } from "../common/storage/deps.ts";
-import { NoiseGenerator } from "./NoiseGenerator.ts";
+import { NoiseGenerator } from "./noise-generator.ts";
 
 function generateChunkSegment(noise: Uint8Array, chunkId: ChunkId): ChunkSegment {
   const { z } = chunkId;

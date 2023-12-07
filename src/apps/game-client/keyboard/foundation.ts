@@ -1,5 +1,5 @@
 import { UADefinition } from "../ua/foundation.ts";
-import { KeyShortCut } from "./KeyShortCut.ts";
+import { KeyShortCut } from "./key-short-cut.ts";
 
 export interface KACommon<TData> {
   name: string;

@@ -1,5 +1,5 @@
-import { Pos3D } from "../math/Pos3D.ts";
-import { ChunkId } from "../chunk/chunkId.ts";
+import { Pos3D } from "../math/pos3d.ts";
+import { ChunkId } from "../chunk/chunk-id.ts";
 import { LAYERS_PER_CHUNK, PIXELS_PER_CHUNK_GRID_AXIS, POSITIONS_SAMPLING_PER_CHUNK_AXIS } from "../../core/vars.ts";
 
 export class GONormChunkPosition implements Pos3D {

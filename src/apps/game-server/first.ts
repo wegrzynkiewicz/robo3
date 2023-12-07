@@ -1,19 +1,19 @@
 import { Application, OpenAPI, Router } from "./deps.ts";
 import { ChunkDoc } from "../../common/storage/chunk.ts";
-import { ChunkId } from "../../common/chunk/chunkId.ts";
+import { ChunkId } from "../../common/chunk/chunk-id.ts";
 import { ChunkDTO } from "../../common/chunk/chunk.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { chunkSegmentUpdateGADef } from "../../domain/chunk/chunkSegmentUpdateGA.ts";
-import { chunksUpdateGADef } from "../../domain/chunk/chunksUpdateGA.ts";
+import { chunkSegmentUpdateGADef } from "../../domain/chunk/chunk-segment-update-ga.ts";
+import { chunksUpdateGADef } from "../../domain/chunk/chunks-update-ga.ts";
 import { decompress } from "../../common/utils/binary.ts";
-import { ChunkSegment } from "../../common/chunk/chunkSegment.ts";
-import { beingUpdateGADef } from "../../actions/being-update/beingUpdateGA.ts";
-import { provideSpaceManager } from "../../common/space/SpaceManager.ts";
+import { ChunkSegment } from "../../common/chunk/chunk-segment.ts";
+import { beingUpdateGADef } from "../../actions/being-update/being-update-ga.ts";
+import { provideSpaceManager } from "../../common/space/space-manager.ts";
 import { provideClientChannel } from "./ws.ts";
 import { provideDBClient } from "./db.ts";
-import { provideGameClientManager } from "./GameClientManager.ts";
+import { provideGameClientManager } from "./game-client-manager.ts";
 import { provideWebSocket } from "../../common/action/sender.ts";
-import { provideServerGAProcessor } from "../../domain-server/serverGAProcessor.ts";
+import { provideServerGAProcessor } from "../../domain-server/server-ga-processor.ts";
 import { provideGAProcessor } from "../../common/action/processor.ts";
 import { provideGACommunicator } from "../../common/action/communication.ts";
 

@@ -1,5 +1,5 @@
 import { assertEquals } from "../../deps.ts";
-import { ChunkId } from "./chunkId.ts";
+import { ChunkId } from "./chunk-id.ts";
 
 Deno.test("encodeChunkId", () => {
   const chunkId = new ChunkId(1, 0x44, 0x55, 0x66);

@@ -1,5 +1,5 @@
-import { Dim2D } from "../math/Dim2D.ts";
-import { Box1P } from "../math/Box1P.ts";
+import { Dim2D } from "../math/dim2d.ts";
+import { Box1P } from "../math/box1p.ts";
 import { SpriteAllocation } from "../sprite/sprite.ts";
 
 export interface ExternalSpriteAtlasOrigin {

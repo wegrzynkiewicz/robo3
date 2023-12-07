@@ -1,4 +1,4 @@
-import { Box1P } from "../math/Box1P.ts";
+import { Box1P } from "../math/box1p.ts";
 import { SpriteAtlasSource } from "../sprite-atlas/atlas.ts";
 
 export interface StaticSpriteAllocation {
