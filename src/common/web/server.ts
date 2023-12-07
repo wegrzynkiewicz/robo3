@@ -1,6 +1,5 @@
 import { Breaker } from "../utils/breaker.ts";
 import { Logger } from "../../core/logger.ts";
-import { EPHandler } from "./endpoint.ts";
 
 export interface WebServerConfig {
   hostname: string;
@@ -8,7 +7,9 @@ export interface WebServerConfig {
   port: number;
 }
 
-export type WebServerHandler = EPHandler;
+export interface WebServerHandler {
+  handle(req: Request): Promise<Response>;
+}
 
 export class WebServer {
   private readonly abortController = new AbortController();
@@ -16,17 +17,17 @@ export class WebServer {
     private readonly config: WebServerConfig,
     private readonly handler: WebServerHandler,
     private readonly logger: Logger,
-  ) {}
+  ) { }
 
   public async listen(): Promise<void> {
-    const promise = new Promise<Deno.HttpServer>((resolve) => {
-      const server = Deno.serve({
+    const promise = new Promise<void>((resolve) => {
+      Deno.serve({
         handler: this.handle.bind(this),
         hostname: this.config.hostname,
         onError: this.handleError.bind(this),
         onListen: () => {
           this.handleListen();
-          resolve(server);
+          resolve();
         },
         port: this.config.port,
         signal: this.abortController.signal,

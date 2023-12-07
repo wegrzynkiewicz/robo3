@@ -16,6 +16,7 @@ import { provideWebSocket } from "../../common/action/sender.ts";
 import { provideServerGAProcessor } from "../../domain-server/server-ga-processor.ts";
 import { provideGAProcessor } from "../../common/action/processor.ts";
 import { provideGACommunicator } from "../../common/action/communication.ts";
+import { provideWebServer } from "./main-web-server.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -56,6 +57,8 @@ router.get("/api.json", (ctx) => {
 
 (async () => {
   const resolver = new ServiceResolver();
+  const server = resolver.resolve(provideWebServer);
+  await server.listen();
   const client = resolver.resolve(provideDBClient);
   await client.connect();
   const gameClientManager = resolver.resolve(provideGameClientManager);

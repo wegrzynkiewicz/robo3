@@ -110,9 +110,10 @@ Obrażenia
 
 # ShortCuts
 
+ep - Endpoint
 ga - Game Action
-ka - Keyboard Action
 go - Game Object
+ka - Keyboard Action
 ua - User Action
 
 # TODO
