@@ -1,5 +1,5 @@
 import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { Viewport, provideViewport } from "../graphic/viewport.ts";
+import { provideViewport, Viewport } from "../graphic/viewport.ts";
 import { Camera } from "./camera-manager.ts";
 
 export class FreeCamera implements Camera {

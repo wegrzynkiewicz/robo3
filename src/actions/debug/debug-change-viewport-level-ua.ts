@@ -1,5 +1,5 @@
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { Viewport, provideViewport } from "../../apps/game-client/graphic/viewport.ts";
+import { provideViewport, Viewport } from "../../apps/game-client/graphic/viewport.ts";
 import { KeyShortCut, KeyState } from "../../apps/game-client/keyboard/key-short-cut.ts";
 import { registerKADefinition } from "../../apps/game-client/keyboard/foundation.ts";
 import { registerUADefinition, UADefinition } from "../../apps/game-client/ua/foundation.ts";

@@ -5,7 +5,7 @@ import { KeyShortCut, KeyState } from "../keyboard/key-short-cut.ts";
 import { Keyboard, provideKeyboard } from "../keyboard/keyboard.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
 import { mePlayerMoveUA } from "../move/me-player-move-ua.ts";
-import { UABus, provideMainUABus } from "../ua/uabus.ts";
+import { provideMainUABus, UABus } from "../ua/uabus.ts";
 
 function createHolder(code: string, name: string, direct: MoveDirection) {
   const kaDefinition = registerKADefinition({

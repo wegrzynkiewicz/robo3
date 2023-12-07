@@ -1,7 +1,7 @@
 import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { SpriteAtlasImage, SpriteAtlasProvider, SpriteAtlasSource } from "../../../common/sprite-atlas/atlas.ts";
 import { dim2D } from "../../../common/math/dim2d.ts";
-import { ShadowSpriteAtlasGenerator, provideShadowSpriteAtlasGenerator } from "./shadow-sprite-atlas-generator.ts";
+import { provideShadowSpriteAtlasGenerator, ShadowSpriteAtlasGenerator } from "./shadow-sprite-atlas-generator.ts";
 
 export class ShadowSpriteAtlasProvider implements SpriteAtlasProvider {
   public constructor(

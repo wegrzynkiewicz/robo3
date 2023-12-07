@@ -1,6 +1,6 @@
 import { ServiceResolver } from "../../../../common/dependency/service.ts";
 import { DynamicDrawBuffer } from "../dynamic-draw-buffer.ts";
-import { SceneViewport, provideSceneViewport } from "./scene-viewport.ts";
+import { provideSceneViewport, SceneViewport } from "./scene-viewport.ts";
 import { provideTilesBuffer } from "./tiles-buffer.ts";
 
 export class TilesCollector {

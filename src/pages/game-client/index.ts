@@ -1,1 +1,1 @@
-import "../../apps/game-client/bootstrap.ts"
+import "../../apps/game-client/bootstrap.ts";

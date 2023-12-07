@@ -20,7 +20,7 @@
   "tasks": {
     "bundle": "deno bundle --watch ./src/pages/game-client/index.ts ./src/pages/game-client/dist/index.js",
     "db": "mongo -u root -p --authenticationDatabase admin app",
-    "serve": "serve ./mods/client",
+    "serve": "serve -p 3010 ./src/pages/game-client",
     "server": "deno run -A --watch ./src/apps/game-server/first.ts"
   }
 }

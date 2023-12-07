@@ -2,7 +2,7 @@ import { ServiceResolver } from "../../../../common/dependency/service.ts";
 import { SCREEN_MAX_VISIBLE_TILE_X, SCREEN_MAX_VISIBLE_TILE_Y } from "../../../../core/vars.ts";
 import { box2P } from "../../../../common/math/box2p.ts";
 import { pos2D } from "../../../../common/math/pos2d.ts";
-import { Viewport, provideViewport } from "../viewport.ts";
+import { provideViewport, Viewport } from "../viewport.ts";
 import { PrimaryUBO, providePrimaryUBO } from "../primary-ubo.ts";
 
 class SceneGridVariant {
