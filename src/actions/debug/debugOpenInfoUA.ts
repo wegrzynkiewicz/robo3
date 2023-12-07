@@ -1,9 +1,9 @@
-import { ServiceResolver } from "../../../../common/dependency/service.ts";
-import { KeyShortCut, KeyState } from "../../keyboard/KeyShortCut.ts";
-import { registerKADefinition } from "../../keyboard/foundation.ts";
-import { registerUADefinition, UADefinition } from "../../ua/foundation.ts";
-import { UAHandler } from "../../ua/processor.ts";
-import { DebugInfo, provideDebugInfo } from "../DebugInfo.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
+import { KeyShortCut, KeyState } from "../../apps/game-client/keyboard/KeyShortCut.ts";
+import { registerKADefinition } from "../../apps/game-client/keyboard/foundation.ts";
+import { registerUADefinition, UADefinition } from "../../apps/game-client/ua/foundation.ts";
+import { UAHandler } from "../../apps/game-client/ua/processor.ts";
+import { DebugInfo, provideDebugInfo } from "../../apps/game-client/debug/DebugInfo.ts";
 import { debugKeyShortCut } from "./common.ts";
 
 export const debugOpenInfoUA = registerUADefinition<null>({

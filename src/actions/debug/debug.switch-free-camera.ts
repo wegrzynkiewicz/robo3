@@ -1,12 +1,12 @@
-import { ServiceResolver } from "../../../../common/dependency/service.ts";
-import { KeyShortCut, KeyState } from "../../keyboard/KeyShortCut.ts";
-import { registerKADefinition } from "../../keyboard/foundation.ts";
-import { provideFreeCameraPhase } from "../../phase/FreeCameraPhase.ts";
-import { provideGamePhase } from "../../phase/GamePhase.ts";
-import { PhaseController } from "../../phase/Phase.ts";
-import { PhaseManager, providePhaseManager } from "../../phase/PhaseManager.ts";
-import { registerUADefinition, UADefinition } from "../../ua/foundation.ts";
-import { UAHandler } from "../../ua/processor.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
+import { KeyShortCut, KeyState } from "../../apps/game-client/keyboard/KeyShortCut.ts";
+import { registerKADefinition } from "../../apps/game-client/keyboard/foundation.ts";
+import { provideFreeCameraPhase } from "../../apps/game-client/phase/FreeCameraPhase.ts";
+import { provideGamePhase } from "../../apps/game-client/phase/GamePhase.ts";
+import { PhaseController } from "../../apps/game-client/phase/Phase.ts";
+import { PhaseManager, providePhaseManager } from "../../apps/game-client/phase/PhaseManager.ts";
+import { registerUADefinition, UADefinition } from "../../apps/game-client/ua/foundation.ts";
+import { UAHandler } from "../../apps/game-client/ua/processor.ts";
 import { debugKeyShortCut } from "./common.ts";
 
 export const debugSwitchFreeCameraUA = registerUADefinition<null>({

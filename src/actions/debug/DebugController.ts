@@ -1,8 +1,8 @@
-import { KAMatcher, KAShortCutsChecker } from "../keyboard/KAMatcher.ts";
-import { debugChangeViewportLevelKAs } from "./actions/debugChangeViewportLevelUA.ts";
-import { debugDisplayScaleKAs } from "./actions/debugDisplayScaleUA.ts";
-import { debugOpenInfoKA } from "./actions/debugOpenInfoUA.ts";
-import { debugSwitchFreeCameraKA } from "./actions/debugSwitchFreeCamera.ts";
+import { KAMatcher, KAShortCutsChecker } from "../../apps/game-client/keyboard/KAMatcher.ts";
+import { debugChangeViewportLevelKAs } from "./debugChangeViewportLevelUA.ts";
+import { debugDisplayScaleKAs } from "./debugDisplayScaleUA.ts";
+import { debugOpenInfoKA } from "./debugOpenInfoUA.ts";
+import { debugSwitchFreeCameraKA } from "./debug.switch-free-camera.ts";
 
 export class DebugController implements KAShortCutsChecker {
   public async checkKAShortCuts(matcher: KAMatcher): Promise<void> {

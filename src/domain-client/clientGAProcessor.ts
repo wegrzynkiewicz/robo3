@@ -7,8 +7,8 @@ import { pangGADef } from "../actions/stats/pangGA.ts";
 import { pongGADef } from "../actions/stats/pongGA.ts";
 import { provideChunkSegmentUpdateGAHandler } from "./chunk/chunkSegmentUpdateGAHandler.ts";
 import { provideChunksUpdateGAHandler } from "./chunk/chunksUpdateGAHandler.ts";
-import { provideBeingUpdateGAHandler } from "../actions/player-move/BeingUpdateGAHandler.ts";
-import { beingUpdateGADef } from "../actions/player-move/beingUpdate.ts";
+import { provideBeingUpdateGAHandler } from "../actions/being-update/BeingUpdateGAHandler.ts";
+import { beingUpdateGADef } from "../actions/being-update/beingUpdateGA.ts";
 import { providePongGAHandler } from "../actions/stats/pongGAHandler.ts";
 
 export function provideClientGAProcessor(resolver: ServiceResolver) {

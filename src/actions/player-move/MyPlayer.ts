@@ -1,5 +1,5 @@
 import { Being } from "../../domain-server/BeingManager.ts";
-import { MoveDirection } from "./move.ts";
+import { MoveDirection } from "./mePlayerMoveGA.ts";
 
 const nullBeing = {
   direct: MoveDirection.S,

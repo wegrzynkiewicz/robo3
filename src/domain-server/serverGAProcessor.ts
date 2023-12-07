@@ -1,7 +1,7 @@
 import { UniversalGAProcessor } from "../common/action/processor.ts";
 import { provideGASender } from "../common/action/sender.ts";
 import { ServiceResolver } from "../common/dependency/service.ts";
-import { mePlayerMoveGADef } from "../actions/player-move/move.ts";
+import { mePlayerMoveGADef } from "../actions/player-move/mePlayerMoveGA.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../actions/login/loginGA.ts";
 import { pangGADef } from "../actions/stats/pangGA.ts";
 import { pingGADef } from "../actions/stats/pingGA.ts";

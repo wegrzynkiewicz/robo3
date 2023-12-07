@@ -1,9 +1,9 @@
-import { ServiceResolver } from "../../../../common/dependency/service.ts";
-import { Viewport, provideViewport } from "../../graphic/Viewport.ts";
-import { KeyShortCut, KeyState } from "../../keyboard/KeyShortCut.ts";
-import { registerKADefinition } from "../../keyboard/foundation.ts";
-import { registerUADefinition, UADefinition } from "../../ua/foundation.ts";
-import { UAHandler } from "../../ua/processor.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
+import { Viewport, provideViewport } from "../../apps/game-client/graphic/Viewport.ts";
+import { KeyShortCut, KeyState } from "../../apps/game-client/keyboard/KeyShortCut.ts";
+import { registerKADefinition } from "../../apps/game-client/keyboard/foundation.ts";
+import { registerUADefinition, UADefinition } from "../../apps/game-client/ua/foundation.ts";
+import { UAHandler } from "../../apps/game-client/ua/processor.ts";
 
 export const debugChangeViewportLevelUA = registerUADefinition<null>({
   name: "ua.debug.change-viewport-level",

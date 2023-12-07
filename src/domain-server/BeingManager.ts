@@ -1,4 +1,4 @@
-import { MoveDirection } from "../actions/player-move/move.ts";
+import { MoveDirection } from "../actions/player-move/mePlayerMoveGA.ts";
 
 export interface Being {
   x: number;

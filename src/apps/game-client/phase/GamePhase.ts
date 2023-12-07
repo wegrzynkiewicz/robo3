@@ -1,7 +1,7 @@
 import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { provideFollowingMePlayerCamera } from "../camera/FollowingMePlayerCamera.ts";
 import { provideMePlayerController } from "../camera/MePlayerController.ts";
-import { provideDebugController } from "../debug/DebugController.ts";
+import { provideDebugController } from "../../../actions/debug/DebugController.ts";
 import { PhaseConnector } from "./Phase.ts";
 
 export function provideGamePhase(resolver: ServiceResolver) {

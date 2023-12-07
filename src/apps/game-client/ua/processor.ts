@@ -1,10 +1,10 @@
 import { Breaker } from "../../../common/utils/breaker.ts";
 import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { debugDisplayScaleUA, provideDebugDisplayScaleUAHandler } from "../debug/actions/debugDisplayScaleUA.ts";
-import { debugOpenInfoUA, provideDebugOpenInfoUAHandler } from "../debug/actions/debugOpenInfoUA.ts";
-import { debugChangeViewportLevelUA, provideDebugChangeViewportLevelUAHandler } from "../debug/actions/debugChangeViewportLevelUA.ts";
+import { debugDisplayScaleUA, provideDebugDisplayScaleUAHandler } from "../../../actions/debug/debugDisplayScaleUA.ts";
+import { debugOpenInfoUA, provideDebugOpenInfoUAHandler } from "../../../actions/debug/debugOpenInfoUA.ts";
+import { debugChangeViewportLevelUA, provideDebugChangeViewportLevelUAHandler } from "../../../actions/debug/debugChangeViewportLevelUA.ts";
 import { AnyUADefinition, UADefinition } from "./foundation.ts";
-import { debugSwitchFreeCameraUA, provideDebugSwitchFreeCameraUAHandler } from "../debug/actions/debugSwitchFreeCamera.ts";
+import { debugSwitchFreeCameraUA, provideDebugSwitchFreeCameraUAHandler } from "../../../actions/debug/debug.switch-free-camera.ts";
 import { UABusSubscriber } from "./UABus.ts";
 import { mePlayerMoveUA, provideMePlayerMoveUAHandler } from "../move/mePlayerMoveUA.ts";
 
