@@ -2,7 +2,7 @@ import { assertNonNull } from "../../../common/utils/asserts.ts";
 import { formatBytes } from "../../../common/utils/useful.ts";
 import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { NetworkLatencyCounter, provideNetworkLatencyCounter } from "../../../actions/stats/network-latency-counter.ts";
-import { FPSCounter, provideFPSCounter } from "../fpscounter.ts";
+import { FPSCounter, provideFPSCounter } from "../fps-counter.ts";
 import { Display, provideDisplay } from "../graphic/display.ts";
 import { DynamicDrawBuffer } from "../graphic/dynamic-draw-buffer.ts";
 import { provideViewport, Viewport } from "../graphic/viewport.ts";

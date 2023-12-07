@@ -1,5 +1,5 @@
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { provideFPSCounter } from "./fpscounter.ts";
+import { provideFPSCounter } from "./fps-counter.ts";
 import { provideCameraManager } from "./camera/camera-manager.ts";
 import { provideDebugInfo } from "./debug/debug-info.ts";
 import { provideSceneViewport } from "./graphic/tiles/scene-viewport.ts";
