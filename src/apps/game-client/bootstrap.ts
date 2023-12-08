@@ -29,7 +29,7 @@ import { provideGAProcessor } from "../../common/action/processor.ts";
 import { provideClientGAProcessor } from "../../domain-client/client-ga-processor.ts";
 import { provideGACommunicator } from "../../common/action/communication.ts";
 import { provideClientSpriteAtlasLoader } from "../../domain-client/sprite/allocation/client-sprite-atlas-loader.ts";
-import { logger } from "../../common/logger/logger.ts";
+import { logger } from "../../common/logger/global.ts";
 
 async function start() {
   const resolver = new ServiceResolver();

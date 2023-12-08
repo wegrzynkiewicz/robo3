@@ -16,8 +16,9 @@ export function parseHelloEPParams(value: unknown): HelloEPParams {
   return { name };
 }
 
+export const helloEPRoute = new EPRoute("GET", "/hello/:name");
+
 export class HelloEPHandler implements EPHandler {
-  public readonly route = new EPRoute("GET", "/hello/:name");
   public async handle({ params }: EPContext): Promise<Response> {
     const { name } = parseHelloEPParams(params);
     const payload: HelloEPResponse = { message: `Hello, ${name}!` };

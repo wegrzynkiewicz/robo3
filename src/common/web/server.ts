@@ -1,5 +1,5 @@
 import { Breaker } from "../utils/breaker.ts";
-import { Logger } from "../logger/logger.ts";
+import { Logger } from "../logger/global.ts";
 
 export interface WebServerConfig {
   hostname: string;
@@ -47,14 +47,18 @@ export class WebServer {
       const response = await this.handler.handle(req);
       return response;
     } catch (error) {
-      throw new Breaker("error-inside-Web-server", { error, req });
+      throw new Breaker("error-inside-web-server-handler", {
+        error,
+        method: req.method,
+        url: req.url,
+      });
     }
   }
 
   private async handleError(error: unknown): Promise<Response> {
     const payload = { error: "internal-server-error" };
     const response = Response.json(payload, { status: 500 });
-    const msg = "error-inside-Web-server-handle-error";
+    const msg = "error-inside-web-server-handle-error";
     const breaker = new Breaker(msg, { error });
     this.logger.error(msg, { error: breaker });
     return response;

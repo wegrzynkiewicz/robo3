@@ -20,17 +20,6 @@ import { provideWebServer } from "./main-web-server.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
-router.get("/hello", (ctx) => {
-  ctx.response.type = "json";
-  ctx.response.body = JSON.stringify({ hello: "world!" });
-});
-
-router.post("/login", (ctx) => {
-  ctx.response.type = "json";
-  ctx.response.body = JSON.stringify({
-    token: "123",
-  });
-});
 
 Deno.addSignalListener(
   "SIGTERM",

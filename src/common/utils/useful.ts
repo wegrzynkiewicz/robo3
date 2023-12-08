@@ -95,6 +95,13 @@ export class MapSet<TKey, TValue> {
   }
 }
 
+export function indent(data: string, delimiter: string): string {
+  return data
+    .split("\n")
+    .map((line) => `${delimiter}${line}`)
+    .join("\n");
+}
+
 export class MapList<TKey, TValue> {
   public readonly list = new Map<TKey, TValue[]>();
   public push(key: TKey, value: TValue): void {

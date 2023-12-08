@@ -18,8 +18,9 @@ export function parseLoginEPRequest(value: unknown): LoginEPRequest {
   return { username, password };
 }
 
+export const loginEPRoute = new EPRoute("POST", "/login");
+
 export class LoginEPHandler implements EPHandler {
-  public readonly route = new EPRoute("POST", "/login");
   public async handle({ request }: EPContext): Promise<Response> {
     const body = await request.json();
     const { username, password } = parseLoginEPRequest(body);

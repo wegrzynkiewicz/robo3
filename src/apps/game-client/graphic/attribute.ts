@@ -1,4 +1,4 @@
-import { logger } from "../../../common/logger/logger.ts";
+import { logger } from "../../../common/logger/global.ts";
 import { isPositiveNumber } from "../../../common/utils/asserts.ts";
 import { VertexAttributeType } from "./types.ts";
 

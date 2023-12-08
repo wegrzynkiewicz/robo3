@@ -17,6 +17,5 @@ export class EPRoute {
 }
 
 export interface EPHandler {
-  route: EPRoute;
   handle(ctx: EPContext): Promise<Response>;
 }

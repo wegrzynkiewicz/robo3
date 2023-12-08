@@ -1,9 +1,4 @@
-function indent(data: string): string {
-  return data
-    .split("\n")
-    .map((line) => `    ${line}`)
-    .join("\n");
-}
+import { indent } from "./useful.ts";
 
 export interface BreakerOptions {
   error?: unknown;
@@ -11,24 +6,26 @@ export interface BreakerOptions {
 }
 
 export class Breaker extends Error {
+  public readonly code: string;
   public readonly options: BreakerOptions;
-  constructor(message?: string, options?: BreakerOptions) {
-    let msg = message ?? "unknown-breaker-error";
+  constructor(code: string, options?: BreakerOptions) {
+    let msg = code;
     const { error, ...others } = options ?? {};
     const json = JSON.stringify(others, null, 2);
     if (json === "{}") {
       msg += `\nwithout parameters`;
     } else {
       msg += `\nwith parameters:\n`;
-      msg += indent(json);
+      msg += indent(json, '    ');
     }
     if (error) {
       msg += `\nwith cause error:\n`;
-      msg += error instanceof Error ? indent(error.stack ?? "") : error;
+      msg += error instanceof Error ? indent(error.stack ?? "", '    ') : error;
     }
     msg += "\nwith stack trace:";
     super(msg);
     this.name = "BREAKER";
+    this.code = code;
     this.options = options ?? {};
   }
 }

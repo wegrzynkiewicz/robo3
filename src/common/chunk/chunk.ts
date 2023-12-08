@@ -11,10 +11,10 @@ export interface ChunkComplexGODTO {
 export function parseChunkComplexGODTO(data: unknown): ChunkComplexGODTO {
   assertObject<ChunkComplexGODTO>(data, "chunk-complex-go-must-be-object");
   const { gid, lid, pos, typ } = data;
-  assertRequiredString(gid);
-  assertPositiveNumber(lid);
-  assertPositiveNumber(pos);
-  assertPositiveNumber(typ);
+  assertRequiredString(gid, "TODO");
+  assertPositiveNumber(lid, "TODO");
+  assertPositiveNumber(pos, "TODO");
+  assertPositiveNumber(typ, "TODO");
   return { gid, lid, pos, typ };
 }
 

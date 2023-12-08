@@ -6,23 +6,23 @@ export type Insecurity<T> = {
 
 export type AssertData = Record<string, unknown>;
 
-export function throws(msg?: string, data?: AssertData): never {
+export function throws(msg: string, data?: AssertData): never {
   throw new Breaker(msg ?? "assertion-fail", data);
 }
 
-export function assertTrue(value: unknown, msg?: string, data?: AssertData): asserts value is boolean {
+export function assertTrue(value: unknown, msg: string, data?: AssertData): asserts value is boolean {
   if (value !== true) {
     throws(msg, data);
   }
 }
 
-export function assertEqual<TExpected>(value: unknown, expected: TExpected, msg?: string, data?: AssertData): asserts value is TExpected {
+export function assertEqual<TExpected>(value: unknown, expected: TExpected, msg: string, data?: AssertData): asserts value is TExpected {
   if (value !== expected) {
     throws(msg, data);
   }
 }
 
-export function assertNonNull<T>(value: T, msg?: string, data?: AssertData): asserts value is Exclude<T, null> {
+export function assertNonNull<T>(value: T, msg: string, data?: AssertData): asserts value is Exclude<T, null> {
   if (value === null) {
     throws(msg, data);
   }
@@ -32,19 +32,19 @@ export function isObject<T>(value: unknown): value is Insecurity<T> {
   return typeof value === "object" && value !== null;
 }
 
-export function assertObject<T>(value: unknown, msg?: string, data?: AssertData): asserts value is Insecurity<T> {
+export function assertObject<T>(value: unknown, msg: string, data?: AssertData): asserts value is Insecurity<T> {
   if (typeof value !== "object" || value === null) {
     throw new Breaker(msg, data);
   }
 }
 
-export function assertArrayBuffer<T>(value: unknown, msg?: string, data?: AssertData): asserts value is ArrayBuffer {
+export function assertArrayBuffer<T>(value: unknown, msg: string, data?: AssertData): asserts value is ArrayBuffer {
   if (!(value instanceof ArrayBuffer)) {
     throw new Breaker(msg, data);
   }
 }
 
-export function assertRecord(value: unknown, msg?: string, data?: AssertData): asserts value is Record<string, unknown> {
+export function assertRecord(value: unknown, msg: string, data?: AssertData): asserts value is Record<string, unknown> {
   if (typeof value !== "object" || value === null) {
     throw new Breaker(msg, data);
   }
@@ -54,7 +54,7 @@ export function isRequiredString(value: unknown): value is string {
   return typeof value === "string" && value !== "";
 }
 
-export function assertRequiredString(value: unknown, msg?: string, data?: AssertData): asserts value is string {
+export function assertRequiredString(value: unknown, msg: string, data?: AssertData): asserts value is string {
   if (typeof value !== "string" || value === "") {
     throws(msg, data);
   }
@@ -68,13 +68,13 @@ export function isGreaterThenZero(value: unknown): value is number {
   return typeof value === "number" && value > 0 && !isNaN(value) && isFinite(value);
 }
 
-export function assertPositiveNumber(value: unknown, msg?: string, data?: AssertData): asserts value is number {
+export function assertPositiveNumber(value: unknown, msg: string, data?: AssertData): asserts value is number {
   if (!isPositiveNumber(value)) {
     throws(msg, data);
   }
 }
 
-export function assertArray<T>(value: unknown, msg?: string, data?: AssertData): asserts value is T[] {
+export function assertArray<T>(value: unknown, msg: string, data?: AssertData): asserts value is T[] {
   if (Array.isArray(value) === false) {
     throws(msg, data);
   }

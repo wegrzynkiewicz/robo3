@@ -1,5 +1,5 @@
 import { Breaker } from "../utils/breaker.ts";
-import { EPHandler } from "./endpoint.ts";
+import { EPHandler, EPRoute } from "./endpoint.ts";
 import { WebServerHandler } from "./server.ts";
 
 export class URLNotMatchHandler implements WebServerHandler {
@@ -14,13 +14,23 @@ export class URLNotMatchHandler implements WebServerHandler {
   }
 }
 
+export interface RouteBinding {
+  handler: EPHandler;
+  route: EPRoute;
+}
+
 export class Router implements WebServerHandler {
-  public readonly handlers: EPHandler[] = [];
+  private readonly bindings: RouteBinding[] = [];
   private readonly notMatchHandler = new URLNotMatchHandler();
 
+  public add(route: EPRoute, handler: EPHandler): void {
+    const binding: RouteBinding = { handler, route };
+    this.bindings.push(binding);
+  }
+
   public async handle(req: Request): Promise<Response> {
-    for (const handler of this.handlers) {
-      const { method, urlPattern } = handler.route;
+    for (const { handler, route } of this.bindings) {
+      const { method, urlPattern } = route;
       if (req.method === method && urlPattern.test(req.url)) {
         const match = urlPattern.exec(req.url);
         if (match === null) {
@@ -32,10 +42,10 @@ export class Router implements WebServerHandler {
           url: new URL(req.url),
         };
         try {
-          const { response } = await handler.handle(input);
+          const response = await handler.handle(input);
           return response;
         } catch (error: unknown) {
-          throw new Breaker("error-inside-router", { error, req });
+          throw new Breaker("error-inside-router", { error, method, urlPattern});
         }
       }
     }

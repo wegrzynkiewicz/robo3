@@ -3,7 +3,7 @@ import { ServiceResolver } from "../dependency/service.ts";
 import { GACodec, provideGACodec } from "./codec.ts";
 import { GAProcessor, provideGAProcessor } from "./processor.ts";
 import { provideGARequestor } from "./requestor.ts";
-import { Logger, provideGlobalLogger } from "../logger/logger.ts";
+import { Logger, provideGlobalLogger } from "../logger/global.ts";
 
 export interface GAReceiver {
   receive(data: unknown): Promise<void>;

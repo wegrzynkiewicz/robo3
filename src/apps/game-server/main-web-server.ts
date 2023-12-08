@@ -1,9 +1,9 @@
-import { provideGlobalLogger } from "../../common/logger/logger.ts";
+import { provideGlobalLogger } from "../../common/logger/global.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { Router } from "../../common/web/router.ts";
 import { WebServer } from "../../common/web/server.ts";
-import { provideLoginEPHandler } from "../../actions/login/login-ep.ts";
-import { provideHelloEPHandler } from "../../actions/hello/hello-ep.ts";
+import { loginEPRoute, provideLoginEPHandler } from "../../actions/login/login-ep.ts";
+import { helloEPRoute, provideHelloEPHandler } from "../../actions/hello/hello-ep.ts";
 
 export function provideMainWebServerConfig() {
   return {
@@ -15,8 +15,8 @@ export function provideMainWebServerConfig() {
 
 export function provideMainWebRouter(resolver: ServiceResolver) {
   const router = new Router();
-  router.handlers.push(resolver.resolve(provideHelloEPHandler));
-  router.handlers.push(resolver.resolve(provideLoginEPHandler));
+  router.add(helloEPRoute, resolver.resolve(provideHelloEPHandler));
+  router.add(loginEPRoute, resolver.resolve(provideLoginEPHandler));
   return router;
 }
 

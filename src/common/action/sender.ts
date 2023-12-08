@@ -2,7 +2,7 @@ import { Breaker } from "../utils/breaker.ts";
 import { ServiceResolver } from "../dependency/service.ts";
 import { GACodec, GAEnvelope, provideGACodec } from "./codec.ts";
 import { GADefinition } from "./foundation.ts";
-import { Logger, provideGlobalLogger } from "../logger/logger.ts";
+import { Logger, provideGlobalLogger } from "../logger/global.ts";
 
 export interface GASender {
   send<TData>(definition: GADefinition<TData>, data: TData): void;

@@ -28,8 +28,8 @@ export class DebugInfo {
   ) {
     const left = document.getElementById("debug-info-left");
     const right = document.getElementById("debug-info-right");
-    assertNonNull(left);
-    assertNonNull(right);
+    assertNonNull(left, "TODO");
+    assertNonNull(right, "TODO");
     this.left = left;
     this.right = right;
 
