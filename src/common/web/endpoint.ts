@@ -1,4 +1,4 @@
-export type EPMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+export type EPMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
 
 export interface EPContext {
   params: Record<string, unknown>;

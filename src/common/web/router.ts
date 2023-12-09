@@ -45,7 +45,13 @@ export class Router implements WebServerHandler {
           const response = await handler.handle(input);
           return response;
         } catch (error: unknown) {
-          throw new Breaker("error-inside-router", { error, method, urlPattern});
+          throw new Breaker("error-inside-router", {
+            error,
+            method,
+            urlPattern: {
+              pathname: urlPattern.pathname,
+            }
+          });
         }
       }
     }

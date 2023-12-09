@@ -11,10 +11,17 @@ export class PrettyLogFormatter {
 
   private formatData(data: LoggerData): string {
     if (Object.keys(data).length === 0) {
-      return "";
+      return `\n`;
     }
-    const json = JSON.stringify(data, null, 2);
-    const formatted = indent(json, '  ');
-    return `\n${formatted}`
+    const { error, ...others } = data;
+    let msg = `\n`;
+    if (Object.keys(others).length > 0) {
+      const json = JSON.stringify(others, null, 2);
+      msg += `${indent(json, '  ')}\n`;
+    }
+    if (error instanceof Error) {
+      msg += `${indent(error.stack ?? '', '   ')}\n`;
+    }
+    return msg;
   }
 }

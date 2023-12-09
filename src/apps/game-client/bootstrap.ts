@@ -134,7 +134,18 @@ async function start() {
   const cgoMap = c.resolveGameObjectTypes();
 
   const { hostname } = window.location;
-  const ws = new WebSocket(`ws://${hostname}:8000/wss/token`);
+
+  const response = await fetch('http://localhost:8080/client-channel', {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer test",
+    },
+  });
+
+  const payload = await response.json();
+  const { wsURL } = payload;
+
+  const ws = new WebSocket(wsURL);
   ws.binaryType = "arraybuffer";
 
   resolver.inject(provideWebSocket, ws);

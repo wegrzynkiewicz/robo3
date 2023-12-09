@@ -8,6 +8,7 @@ export interface BreakerOptions {
 export class Breaker extends Error {
   public readonly code: string;
   public readonly options: BreakerOptions;
+  public readonly stackTrace: string;
   constructor(code: string, options?: BreakerOptions) {
     let msg = code;
     const { error, ...others } = options ?? {};
@@ -24,8 +25,13 @@ export class Breaker extends Error {
     }
     msg += "\nwith stack trace:";
     super(msg);
+    const exception = error instanceof Breaker ? error : error instanceof Error ? error.stack : error;
     this.name = "BREAKER";
     this.code = code;
-    this.options = options ?? {};
+    this.stackTrace = this.stack ?? 'unknown';
+    this.options = {
+      ...others,
+      error: exception,
+    } ?? {};
   }
 }
