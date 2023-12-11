@@ -4,8 +4,8 @@ import { Looper } from "../main-loop.ts";
 import { KeyShortCut, KeyState } from "../keyboard/key-short-cut.ts";
 import { Keyboard, provideKeyboard } from "../keyboard/keyboard.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
-import { mePlayerMoveUA } from "../move/me-player-move-ua.ts";
 import { provideMainUABus, UABus } from "../ua/uabus.ts";
+import { mePlayerMoveUA } from "../../../actions/player-move/me-player-move-ua.ts";
 
 function createHolder(code: string, name: string, direct: MoveDirection) {
   const kaDefinition = registerKADefinition({

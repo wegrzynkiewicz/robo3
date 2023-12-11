@@ -1,5 +1,6 @@
-import { provideScopedReceivingGABus } from "../../../common/action/bus.ts";
+import { GABusSubscriber, provideScopedReceivingGABus, provideScopedSendingGABus } from "../../../common/action/bus.ts";
 import { GACodec, provideGACodec } from "../../../common/action/codec.ts";
+import { provideScopedOnlineGASender } from "../../../common/action/online-sender.ts";
 import { provideScopedGAProcessor } from "../../../common/action/processor.ts";
 import { provideScopedWebSocket } from "../../../common/action/socket.ts";
 import { ServiceResolver } from "../../../common/dependency/service.ts";
@@ -8,6 +9,7 @@ import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/
 import { resolveClientSideGAProcessHandlers } from "./ga-processor.ts";
 
 export interface GameContext {
+  connector: GABusSubscriber;
   resolver: ServiceResolver;
 }
 
@@ -32,17 +34,22 @@ export class GameContextFactory {
     resolver.inject(provideScopedLogger, logger);
     resolver.inject(provideGACodec, this.gaCodec);
 
+    const receivedGABus = resolver.resolve(provideScopedReceivingGABus);
     const processor = resolver.resolve(provideScopedGAProcessor);
     resolveClientSideGAProcessHandlers(resolver, processor);
+    receivedGABus.subscribers.add(processor);
 
-    const gaReceivedGABus = resolver.resolve(provideScopedReceivingGABus);
-    gaReceivedGABus.subscribers.add(processor);
+    const sendingGABus = resolver.resolve(provideScopedSendingGABus);
+    const onlineGASender = resolver.resolve(provideScopedOnlineGASender);
+    sendingGABus.subscribers.add(onlineGASender);
 
     // const networkLatencyDaemon = resolver.resolve(provideNetworkLatencyDaemon);
     // const mutationGABusSubscriber = resolver.resolve(provideMutationGABusSubscriber);
 
-    // mainGABus.subscribers.add(mutationGABusSubscriber);
-    const context: GameContext = { resolver };
+    const context: GameContext = {
+      connector: sendingGABus,
+      resolver,
+    };
     return context;
   }
 }

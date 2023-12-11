@@ -2,23 +2,18 @@ import { ServiceResolver } from "../dependency/service.ts";
 import { GACodec, provideGACodec } from "./codec.ts";
 import { Logger, provideScopedLogger } from "../logger/global.ts";
 import { provideScopedWebSocket } from "./socket.ts";
-import { GADefinition, GAEnvelope, GASender } from "./define.ts";
+import { GADefinition, GAEnvelope } from "./define.ts";
+import { GABusSubscriber } from "./bus.ts";
 
-export class OnlineGASender implements GASender {
+export class OnlineGASender implements GABusSubscriber {
   public constructor(
     public readonly codec: GACodec,
     public readonly logger: Logger,
     public readonly ws: WebSocket,
   ) {}
 
-  public send<TData>(definition: GADefinition<TData>, params: TData): void {
-    const { kind } = definition;
-    const envelope: GAEnvelope<TData> = { id: 0, kind, params };
-    this.sendEnvelope(definition, envelope);
-  }
-
-  public sendEnvelope<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): void {
-    const encodedData = this.codec.encode(definition, envelope);
+  public async subscribe<TData>(definition: GADefinition<TData>, data: GAEnvelope<TData>): Promise<void> {
+    const encodedData = this.codec.encode(definition, data);
     this.sendRaw(encodedData);
   }
 
@@ -34,7 +29,7 @@ export class OnlineGASender implements GASender {
   }
 }
 
-export function provideScopedGASender(resolver: ServiceResolver) {
+export function provideScopedOnlineGASender(resolver: ServiceResolver) {
   return new OnlineGASender(
     resolver.resolve(provideGACodec),
     resolver.resolve(provideScopedLogger),

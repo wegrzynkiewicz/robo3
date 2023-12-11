@@ -17,10 +17,20 @@ export class BasicGABus implements GABus {
   }
 }
 
+export class ForwardingGABus extends BasicGABus implements GABus, GABusSubscriber {
+  public async subscribe<TData>(definition: GADefinition<TData>, data: GAEnvelope<TData>): Promise<void> {
+    return this.dispatch(definition, data);
+  }
+}
+
 export function provideMainGABus() {
   return new BasicGABus();
 }
 
 export function provideScopedReceivingGABus() {
   return new BasicGABus();
+}
+
+export function provideScopedSendingGABus() {
+  return new ForwardingGABus();
 }

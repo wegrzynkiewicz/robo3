@@ -6,7 +6,7 @@ import { debugChangeViewportLevelUA, provideDebugChangeViewportLevelUAHandler } 
 import { AnyUADefinition, UADefinition } from "./foundation.ts";
 import { debugSwitchFreeCameraUA, provideDebugSwitchFreeCameraUAHandler } from "../../../actions/debug/debug.switch-free-camera.ts";
 import { UABusSubscriber } from "./uabus.ts";
-import { mePlayerMoveUA, provideMePlayerMoveUAHandler } from "../move/me-player-move-ua.ts";
+import { mePlayerMoveUA, provideMePlayerMoveUAHandler } from "../../../actions/player-move/me-player-move-ua.ts";
 
 export interface UAHandler<TData> {
   handle(definition: UADefinition<TData>, data: TData): Promise<void>;

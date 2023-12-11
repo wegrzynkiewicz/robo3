@@ -1,5 +1,4 @@
 import { BinaryBYOBCodec } from "../../core/codec.ts";
-import { Deferred } from "../../deps.ts";
 
 export interface GAEnvelope<TData> {
   id: number;
@@ -42,7 +41,7 @@ export interface HandlerBinding<TRequest, TResponse> {
 
 export type AnyHandlerBinding = HandlerBinding<any, any>;
 
-export interface GASender {
+export interface GADispatcher {
   send<TData>(definition: GADefinition<TData>, data: TData): void;
   sendEnvelope<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): void;
 }

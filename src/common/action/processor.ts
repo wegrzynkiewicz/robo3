@@ -1,14 +1,14 @@
 import { ServiceResolver } from "../dependency/service.ts";
 import { Breaker } from "../utils/breaker.ts";
 import { GABusSubscriber } from "./bus.ts";
-import { AnyGADefinition, AnyHandlerBinding, GASender, GADefinition, GAHandler, HandlerBinding, GAEnvelope } from "./define.ts";
-import { provideScopedGASender } from "./online-sender.ts";
+import { AnyGADefinition, AnyHandlerBinding, GADefinition, GADispatcher, GAEnvelope, GAHandler, HandlerBinding } from "./define.ts";
+import { provideScopedGADispatcher } from "./dispatcher.ts";
 
 export class UniversalGAProcessor implements GABusSubscriber {
   public handlers = new Map<AnyGADefinition, AnyHandlerBinding>();
 
   public constructor(
-    public readonly sender: GASender,
+    public readonly dispatcher: GADispatcher,
   ) {}
 
   public registerHandler<TRequest, TResponse>(
@@ -32,7 +32,7 @@ export class UniversalGAProcessor implements GABusSubscriber {
       if (response) {
         const { kind } = response;
         const resultEnvelope: GAEnvelope<unknown> = { id, kind, params: result };
-        this.sender.sendEnvelope(response, resultEnvelope);
+        this.dispatcher.sendEnvelope(response, resultEnvelope);
       }
     } catch (error) {
       throw new Breaker("error-inside-game-action-handler", { definition, envelope, error });
@@ -42,6 +42,6 @@ export class UniversalGAProcessor implements GABusSubscriber {
 
 export function provideScopedGAProcessor(resolver: ServiceResolver) {
   return new UniversalGAProcessor(
-    resolver.resolve(provideScopedGASender),
+    resolver.resolve(provideScopedGADispatcher),
   ); 
 }

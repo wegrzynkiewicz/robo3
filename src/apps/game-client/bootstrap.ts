@@ -5,13 +5,10 @@ import { cgotdRegistry, sgotdRegistry } from "../../common/game-object/defining.
 import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../../common/game-object/resolving.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { SpriteImageExtractor } from "../../common/sprite/sprite-image-data-extractor.ts";
-import { loginGARequestDef, loginGAResponseDef } from "../../actions/login/login-ga.ts";
 import { SpriteAllocator } from "../../common/sprite/sprite-allocator.ts";
 import { SpriteImage } from "../../common/sprite/sprite.ts";
 import { provideMainUAProcessor, resolveUAProcessHandlers } from "./ua/processor.ts";
-import { provideNetworkLatencyDaemon } from "../../actions/stats/network-latency-daemon.ts";
 import { provideMainGABus } from "../../common/action/bus.ts";
-import { provideMutationGABusSubscriber } from "../../domain/mutation-ga-bus-subscriber.ts";
 import { provideApp } from "./app.ts";
 import { provideMainLoop } from "./main-loop.ts";
 import { provideDebugInfo } from "./debug/debug-info.ts";
@@ -25,7 +22,6 @@ import { provideKAProcessor } from "./keyboard/kaprocessor.ts";
 import { provideTilesTexture2DArray } from "./graphic/tiles/tiles-texture2darray.ts";
 import { provideSpriteIndicesTexture } from "./graphic/tiles/sprite-indices-texture.ts";
 import { provideClientSpriteAtlasLoader } from "../../domain-client/sprite/allocation/client-sprite-atlas-loader.ts";
-import { logger } from "../../common/logger/global.ts";
 import { provideGameContextFactory } from "./client-channel/ga-context.ts";
 
 async function start() {
@@ -49,8 +45,6 @@ async function start() {
   const mainUAProcessor = resolver.resolve(provideMainUAProcessor);
   resolveUAProcessHandlers(resolver, mainUAProcessor);
   mainUABus.subscribers.add(mainUAProcessor);
-
-  const mainGABus = resolver.resolve(provideMainGABus);
 
   const tilesTexture2DArray = resolver.resolve(provideTilesTexture2DArray);
   const spriteIndicesTexture = resolver.resolve(provideSpriteIndicesTexture);
@@ -144,8 +138,12 @@ async function start() {
 
   const socket = new WebSocket(wsURL);
 
+  const mainGABus = resolver.resolve(provideMainGABus);
+
   const clientContextFactory = resolver.resolve(provideGameContextFactory);
   const clientContext = await clientContextFactory.createGameContext({ socket });
+  const { connector } = clientContext;
+  mainGABus.subscribers.add(connector);
 
   mainLoop.start();
 }
