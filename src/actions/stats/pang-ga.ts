@@ -1,3 +1,4 @@
+import { GAHandler } from "../../common/action/define.ts";
 import { registerGADefinition } from "../../common/action/manager.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
 
@@ -29,3 +30,13 @@ export const pangGADef = registerGADefinition({
   kind: "pang",
   key: 0x03,
 });
+
+export class PangGAHandler implements GAHandler<PangGA, void> {
+  async handle(request: PangGA): Promise<void> {
+    // TODO: implement
+  }
+}
+
+export function providePangGAHandler() {
+  return new PangGAHandler();
+}

@@ -1,5 +1,7 @@
+import { GAHandler } from "../../common/action/define.ts";
 import { registerGADefinition } from "../../common/action/manager.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
+import { PongGA } from "./pong-ga.ts";
 
 export interface PingGA {
   clientHighResTimestamp: number;
@@ -29,3 +31,16 @@ export const pingGADef = registerGADefinition({
   kind: "ping",
   key: 0x01,
 });
+
+export class PingGAHandler implements GAHandler<PingGA, PongGA> {
+  async handle(request: PingGA): Promise<PongGA> {
+    const { clientHighResTimestamp } = request;
+    const serverHighResTimestamp = performance.now();
+    const response = { clientHighResTimestamp, serverHighResTimestamp };
+    return response;
+  }
+}
+
+export function providePingGAHandler() {
+  return new PingGAHandler();
+}
