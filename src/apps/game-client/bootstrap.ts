@@ -22,7 +22,7 @@ import { provideKAProcessor } from "./keyboard/kaprocessor.ts";
 import { provideTilesTexture2DArray } from "./graphic/tiles/tiles-texture2darray.ts";
 import { provideSpriteIndicesTexture } from "./graphic/tiles/sprite-indices-texture.ts";
 import { provideClientSpriteAtlasLoader } from "../../domain-client/sprite/allocation/client-sprite-atlas-loader.ts";
-import { provideGameContextFactory } from "./client-channel/ga-context.ts";
+import { provideGameContextFactory } from "./game-context/ga-context.ts";
 
 async function start() {
   const resolver = new ServiceResolver();

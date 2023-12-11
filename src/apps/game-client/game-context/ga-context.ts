@@ -6,7 +6,7 @@ import { provideScopedWebSocket } from "../../../common/action/socket.ts";
 import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { provideScopedLogger } from "../../../common/logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/logger-factory.ts";
-import { resolveClientSideGAProcessHandlers } from "./ga-processor.ts";
+import { feedClientSideGAProcess } from "./ga-processor.ts";
 
 export interface GameContext {
   connector: GABusSubscriber;
@@ -36,7 +36,7 @@ export class GameContextFactory {
 
     const receivedGABus = resolver.resolve(provideScopedReceivingGABus);
     const processor = resolver.resolve(provideScopedGAProcessor);
-    resolveClientSideGAProcessHandlers(resolver, processor);
+    feedClientSideGAProcess(resolver, processor);
     receivedGABus.subscribers.add(processor);
 
     const sendingGABus = resolver.resolve(provideScopedSendingGABus);
