@@ -1,16 +1,20 @@
 import { provideScopedReceivingGABus, provideScopedSendingGABus } from "../../../common/action/bus.ts";
-import { GACodec, provideGACodec } from "../../../common/action/codec.ts";
+import { provideGACodec } from "../../../common/action/codec.ts";
+import { GADispatcher } from "../../../common/action/define.ts";
+import { provideScopedGADispatcher } from "../../../common/action/dispatcher.ts";
 import { provideScopedOnlineGASender } from "../../../common/action/online-sender.ts";
 import { provideScopedGAProcessor } from "../../../common/action/processor.ts";
 import { provideScopedGAReceiver } from "../../../common/action/receiver.ts";
 import { provideScopedWebSocket } from "../../../common/action/socket.ts";
-import { ServiceResolver } from "../../../common/dependency/service.ts";
+import { ServiceResolver, provideMainServiceResolver } from "../../../common/dependency/service.ts";
 import { provideScopedLogger } from "../../../common/logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/logger-factory.ts";
+import { provideSpaceManager } from "../../../common/space/space-manager.ts";
 import { provideScopedWebSocketChannel } from "../../../common/web-socket/web-socket-channel.ts";
 import { feedServerGAProcessor } from "./ga-processor.ts";
 
 export interface PlayerContext {
+  dispatcher: GADispatcher;
   resolver: ServiceResolver;
 }
 
@@ -24,21 +28,24 @@ export class PlayerContextManager {
   public readonly byClientId = new Map<number, PlayerContext>();
 
   public constructor(
-    public readonly gaCodec: GACodec,
     public readonly loggerFactory: LoggerFactory,
+    public readonly mainServiceResolver: ServiceResolver,
   ) { }
 
   public async createPlayerContext(options: PlayerContextFactoryOption): Promise<PlayerContext> {
     const { socket } = options;
+
     const clientId = this.byClientId.size;
 
-    const resolver = new ServiceResolver();
+    const resolver = this.mainServiceResolver.clone([
+      provideGACodec,
+      provideSpaceManager,
+    ]);
 
     const logger = this.loggerFactory.createLogger('PLAYER');
+    resolver.inject(provideScopedLogger, logger);
 
     resolver.inject(provideScopedWebSocket, socket);
-    resolver.inject(provideScopedLogger, logger);
-    resolver.inject(provideGACodec, this.gaCodec);
 
     const webSocketChannel = resolver.resolve(provideScopedWebSocketChannel);
     {
@@ -59,8 +66,11 @@ export class PlayerContextManager {
       sendingGABus.subscribers.add(onlineGASender);
     }
 
+    const dispatcher = resolver.resolve(provideScopedGADispatcher);
+
     const context: PlayerContext = {
       resolver,
+      dispatcher,
     };
     this.byClientId.set(clientId, context);
 
@@ -70,7 +80,7 @@ export class PlayerContextManager {
 
 export function providePlayerContextManager(resolver: ServiceResolver) {
   return new PlayerContextManager(
-    resolver.resolve(provideGACodec),
     resolver.resolve(provideMainLoggerFactory),
+    resolver.resolve(provideMainServiceResolver),
   );
 }

@@ -26,4 +26,17 @@ export class ServiceResolver {
       throw new Breaker("error-when-resolving-provider", { provider, error });
     }
   }
+
+  public clone(providers: AnyProvider[]): ServiceResolver {
+    const resolver = new ServiceResolver();
+    for (const provider of providers) {
+      const instance = this.resolve(provider);
+      resolver.inject(provider, instance);
+    }
+    return resolver;
+  }
+}
+
+export function provideMainServiceResolver(): ServiceResolver {
+  throw new Breaker("main-service-resolver-must-be-injected");
 }

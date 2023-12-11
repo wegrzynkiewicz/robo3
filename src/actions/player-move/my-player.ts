@@ -1,4 +1,4 @@
-import { Being } from "../../domain-server/being-manager.ts";
+import { Being } from "../../apps/game-server/being-manager.ts";
 import { MoveDirection } from "./me-player-move-ga.ts";
 
 const nullBeing = {
