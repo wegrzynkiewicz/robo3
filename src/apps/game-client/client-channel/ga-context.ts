@@ -7,21 +7,21 @@ import { provideScopedLogger } from "../../../common/logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/logger-factory.ts";
 import { resolveClientSideGAProcessHandlers } from "./ga-processor.ts";
 
-export interface ClientContext {
+export interface GameContext {
   resolver: ServiceResolver;
 }
 
-export interface ClientContextFactoryOption {
+export interface GameContextFactoryOption {
   socket: WebSocket;
 }
 
-export class ClientContextFactory {
+export class GameContextFactory {
   public constructor(
     private readonly gaCodec: GACodec,
     private readonly loggerFactory: LoggerFactory,
   ) { }
 
-  public async createClientContext(options: ClientContextFactoryOption): Promise<ClientContext> {
+  public async createGameContext(options: GameContextFactoryOption): Promise<GameContext> {
     const { socket } = options;
 
     const resolver = new ServiceResolver();
@@ -42,13 +42,13 @@ export class ClientContextFactory {
     // const mutationGABusSubscriber = resolver.resolve(provideMutationGABusSubscriber);
 
     // mainGABus.subscribers.add(mutationGABusSubscriber);
-    const context: ClientContext = { resolver };
+    const context: GameContext = { resolver };
     return context;
   }
 }
 
-export function provideClientContextFactory(resolver: ServiceResolver) {
-  return new ClientContextFactory(
+export function provideGameContextFactory(resolver: ServiceResolver) {
+  return new GameContextFactory(
     resolver.resolve(provideGACodec),
     resolver.resolve(provideMainLoggerFactory),
   );

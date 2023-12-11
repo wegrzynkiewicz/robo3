@@ -26,7 +26,7 @@ import { provideTilesTexture2DArray } from "./graphic/tiles/tiles-texture2darray
 import { provideSpriteIndicesTexture } from "./graphic/tiles/sprite-indices-texture.ts";
 import { provideClientSpriteAtlasLoader } from "../../domain-client/sprite/allocation/client-sprite-atlas-loader.ts";
 import { logger } from "../../common/logger/global.ts";
-import { provideClientContextFactory } from "./client-channel/ga-context.ts";
+import { provideGameContextFactory } from "./client-channel/ga-context.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -144,8 +144,8 @@ async function start() {
 
   const socket = new WebSocket(wsURL);
 
-  const clientContextFactory = resolver.resolve(provideClientContextFactory);
-  const clientContext = await clientContextFactory.createClientContext({ socket });
+  const clientContextFactory = resolver.resolve(provideGameContextFactory);
+  const clientContext = await clientContextFactory.createGameContext({ socket });
 
   mainLoop.start();
 }

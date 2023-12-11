@@ -1,7 +1,7 @@
-import { GAHandler } from "../../common/action/processor.ts";
 import { provideSpaceManager, SpaceManager } from "../../common/space/space-manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { MePlayerMoveGA } from "./me-player-move-ga.ts";
+import { GAHandler } from "../../common/action/define.ts";
 
 export class MePlayerMoveGAHandler implements GAHandler<MePlayerMoveGA, void> {
   public constructor(
