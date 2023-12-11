@@ -1,13 +1,5 @@
 import { registerIdentifier } from "../../core/identifier.ts";
-import { GAEncodingDefinition } from "./codec.ts";
-
-export interface GADefinition<TData> {
-  encoding: GAEncodingDefinition<TData>;
-  key: number;
-  kind: string;
-}
-
-export type AnyGADefinition = GADefinition<any>;
+import { AnyGADefinition, GADefinition } from "./define.ts";
 
 export class GAManager {
   public readonly byKey = new Map<number, AnyGADefinition>();

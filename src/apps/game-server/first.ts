@@ -11,11 +11,7 @@ import { beingUpdateGADef } from "../../actions/being-update/being-update-ga.ts"
 import { provideSpaceManager } from "../../common/space/space-manager.ts";
 import { provideClientChannel } from "./ws.ts";
 import { provideDBClient } from "./db.ts";
-import { provideGameClientManager } from "./game-client-manager.ts";
-import { provideWebSocket } from "../../common/action/sender.ts";
 import { provideServerGAProcessor } from "../../domain-server/server-ga-processor.ts";
-import { provideGAProcessor } from "../../common/action/processor.ts";
-import { provideGACommunicator } from "../../common/action/communication.ts";
 import { provideWebServer } from "./main-web-server.ts";
 
 const app = new Application({ logErrors: false });
@@ -50,7 +46,6 @@ router.get("/api.json", (ctx) => {
   await server.listen();
   const client = resolver.resolve(provideDBClient);
   await client.connect();
-  const gameClientManager = resolver.resolve(provideGameClientManager);
 
   const db = client.db("app");
   const collection = db.collection("chunks");

@@ -1,4 +1,5 @@
 import { ServiceResolver } from "../dependency/service.ts";
+import { Breaker } from "../utils/breaker.ts";
 import { BasicLogFilter } from "./basic-log-filter.ts";
 import { BasicLogSubscriber } from "./basic-log-subscriber.ts";
 import { BasicLogger } from "./basic-logger.ts";
@@ -39,7 +40,8 @@ export function defineLogger(resolver: ServiceResolver) {
   const logBus = resolver.resolve(provideMainLogBus);
   const logger = new BasicLogger(
     "GLOBAL",
-    logBus
+    logBus,
+    {},
   );
   const subscriber = new BasicLogSubscriber(
     new BasicLogFilter(),
@@ -54,4 +56,8 @@ export const logger = defineLogger(new ServiceResolver());
 
 export function provideGlobalLogger() {
   return logger;
+}
+
+export function provideScopedLogger(): Logger {
+  throw new Breaker("scoped-logger-must-be-injected");
 }

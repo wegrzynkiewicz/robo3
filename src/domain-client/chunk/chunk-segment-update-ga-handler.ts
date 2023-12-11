@@ -1,4 +1,4 @@
-import { GAHandler } from "../../common/action/processor.ts";
+import { GAHandler } from "../../common/action/define.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { ChunkSegmentUpdateGA } from "../../domain/chunk/chunk-segment-update-ga.ts";
 import { provideChunkManager } from "./chunk-manager.ts";

@@ -1,6 +1,6 @@
 import { copyViewToArrayBuffer } from "../../common/utils/binary.ts";
 import { gaBinaryHeaderCodec } from "../../common/action/codec.ts";
-import { registerGADefinition } from "../../common/action/foundation.ts";
+import { registerGADefinition } from "../../common/action/manager.ts";
 import { ChunkId, chunkIdCodec } from "../../common/chunk/chunk-id.ts";
 import { ChunkSegment } from "../../common/chunk/chunk-segment.ts";
 import { BinaryBYOBCodec, BinarySequencyDecoder, BinarySequencyEncoder } from "../../core/codec.ts";

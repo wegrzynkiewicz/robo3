@@ -1,8 +1,8 @@
-import { GAHandler } from "../../common/action/processor.ts";
 import { provideSpaceManager, SpaceManager } from "../../common/space/space-manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { MyPlayer, provideMyPlayer } from "../player-move/my-player.ts";
 import { BeingUpdateGA } from "./being-update-ga.ts";
+import { GAHandler } from "../../common/action/define.ts";
 
 export class BeingUpdateGAHandler implements GAHandler<BeingUpdateGA, void> {
   public constructor(

@@ -24,12 +24,9 @@ import { provideCanvas } from "./graphic/web-gl.ts";
 import { provideKAProcessor } from "./keyboard/kaprocessor.ts";
 import { provideTilesTexture2DArray } from "./graphic/tiles/tiles-texture2darray.ts";
 import { provideSpriteIndicesTexture } from "./graphic/tiles/sprite-indices-texture.ts";
-import { provideWebSocket } from "../../common/action/sender.ts";
-import { provideGAProcessor } from "../../common/action/processor.ts";
-import { provideClientGAProcessor } from "../../domain-client/client-ga-processor.ts";
-import { provideGACommunicator } from "../../common/action/communication.ts";
 import { provideClientSpriteAtlasLoader } from "../../domain-client/sprite/allocation/client-sprite-atlas-loader.ts";
 import { logger } from "../../common/logger/global.ts";
+import { provideClientContextFactory } from "./client-channel/ga-context.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -135,7 +132,7 @@ async function start() {
 
   const { hostname } = window.location;
 
-  const response = await fetch('http://localhost:8080/client-channel', {
+  const response = await fetch('http://localhost:3088/client-channel', {
     method: "POST",
     headers: {
       "Authorization": "Bearer test",
@@ -145,40 +142,10 @@ async function start() {
   const payload = await response.json();
   const { wsURL } = payload;
 
-  const ws = new WebSocket(wsURL);
-  ws.binaryType = "arraybuffer";
+  const socket = new WebSocket(wsURL);
 
-  resolver.inject(provideWebSocket, ws);
-  const processor = await resolver.resolve(provideClientGAProcessor);
-  resolver.inject(provideGAProcessor, processor);
-  const communicator = await resolver.resolve(provideGACommunicator);
-  const networkLatencyDaemon = resolver.resolve(provideNetworkLatencyDaemon);
-  const mutationGABusSubscriber = resolver.resolve(provideMutationGABusSubscriber);
-
-  mainGABus.subscribers.add(mutationGABusSubscriber);
-
-  ws.addEventListener("open", async (event) => {
-    const { status } = await communicator.requestor.request(
-      loginGARequestDef,
-      loginGAResponseDef,
-      { token: "test" },
-    );
-    const data = new Uint8Array(8);
-    networkLatencyDaemon.stop();
-  });
-
-  // Listen for messages
-  ws.addEventListener("message", async (message) => {
-    try {
-      await communicator.receiver.receive(message.data);
-    } catch (error) {
-      logger.error("error-when-processing-wss-message", { error });
-    }
-  });
-
-  ws.addEventListener("close", (event) => {
-    console.log("Close", event);
-  });
+  const clientContextFactory = resolver.resolve(provideClientContextFactory);
+  const clientContext = await clientContextFactory.createClientContext({ socket });
 
   mainLoop.start();
 }

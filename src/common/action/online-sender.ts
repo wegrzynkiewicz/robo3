@@ -1,14 +1,8 @@
-import { Breaker } from "../utils/breaker.ts";
 import { ServiceResolver } from "../dependency/service.ts";
-import { GACodec, GAEnvelope, provideGACodec } from "./codec.ts";
-import { GADefinition } from "./foundation.ts";
-import { Logger, provideGlobalLogger } from "../logger/global.ts";
-
-export interface GASender {
-  send<TData>(definition: GADefinition<TData>, data: TData): void;
-  sendEnvelope<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): void;
-  sendRaw(data: string | ArrayBuffer): void;
-}
+import { GACodec, provideGACodec } from "./codec.ts";
+import { Logger, provideScopedLogger } from "../logger/global.ts";
+import { provideScopedWebSocket } from "./socket.ts";
+import { GADefinition, GAEnvelope, GASender } from "./define.ts";
 
 export class OnlineGASender implements GASender {
   public constructor(
@@ -40,14 +34,10 @@ export class OnlineGASender implements GASender {
   }
 }
 
-export function provideWebSocket(): WebSocket {
-  throw new Breaker("websocket-service-should-be-injected");
-}
-
-export function provideGASender(resolver: ServiceResolver) {
+export function provideScopedGASender(resolver: ServiceResolver) {
   return new OnlineGASender(
     resolver.resolve(provideGACodec),
-    resolver.resolve(provideGlobalLogger),
-    resolver.resolve(provideWebSocket),
+    resolver.resolve(provideScopedLogger),
+    resolver.resolve(provideScopedWebSocket),
   );
 }

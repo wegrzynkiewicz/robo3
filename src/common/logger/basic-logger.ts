@@ -4,17 +4,21 @@ import { LogBus } from "./log-bus.ts";
 export class BasicLogger implements Logger {
 
   public constructor(
-    private channel: string,
+    private readonly channel: string,
     private readonly logBus: LogBus,
+    private readonly params: LoggerData,
   ) { }
 
-  private log(severity: LogSeverity, message: string, data?: LoggerData) {
+  private log(severity: LogSeverity, message: string, data: LoggerData = {}) {
     this.logBus.dispatch({
       channel: this.channel,
       date: new Date(),
       severity,
       message,
-      data: data ?? {},
+      data: { 
+        ...this.params, 
+        ...data,
+      },
     });
   }
 

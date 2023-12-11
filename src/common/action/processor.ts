@@ -1,25 +1,10 @@
+import { ServiceResolver } from "../dependency/service.ts";
 import { Breaker } from "../utils/breaker.ts";
-import { GAEnvelope } from "./codec.ts";
-import { AnyGADefinition, GADefinition } from "./foundation.ts";
-import { GASender } from "./sender.ts";
+import { GABusSubscriber } from "./bus.ts";
+import { AnyGADefinition, AnyHandlerBinding, GASender, GADefinition, GAHandler, HandlerBinding, GAEnvelope } from "./define.ts";
+import { provideScopedGASender } from "./online-sender.ts";
 
-export interface GAProcessor {
-  process<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void>;
-}
-
-export interface GAHandler<TRequest, TResponse> {
-  handle(request: TRequest): Promise<TResponse>;
-}
-export type AnyGAHandler = GAHandler<any, any>;
-
-export interface HandlerBinding<TRequest, TResponse> {
-  handler: GAHandler<TRequest, TResponse>;
-  request: GADefinition<TRequest>;
-  response?: GADefinition<TResponse>;
-}
-export type AnyHandlerBinding = HandlerBinding<any, any>;
-
-export class UniversalGAProcessor implements GAProcessor {
+export class UniversalGAProcessor implements GABusSubscriber {
   public handlers = new Map<AnyGADefinition, AnyHandlerBinding>();
 
   public constructor(
@@ -35,7 +20,7 @@ export class UniversalGAProcessor implements GAProcessor {
     this.handlers.set(request, binding);
   }
 
-  public async process<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
+  public async subscribe<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
     const binding = this.handlers.get(definition);
     if (!binding) {
       return;
@@ -55,6 +40,8 @@ export class UniversalGAProcessor implements GAProcessor {
   }
 }
 
-export function provideGAProcessor(): GAProcessor {
-  throw new Breaker("ga-processor-should-be-injected");
+export function provideScopedGAProcessor(resolver: ServiceResolver) {
+  return new UniversalGAProcessor(
+    resolver.resolve(provideScopedGASender),
+  ); 
 }

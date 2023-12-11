@@ -1,3 +1,5 @@
+import { ClientChannelManager, provideClientChannelManager } from "../../apps/game-server/client-channel-manager.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
 import { assertObject, assertRequiredString } from "../../common/utils/asserts.ts";
 import { EPContext, EPHandler, EPRoute } from "../../common/web/endpoint.ts";
 
@@ -15,13 +17,20 @@ export function parseClientWebSocketEPRequest(value: unknown): ClientWebSocketEP
 export const clientWebSocketEPRoute = new EPRoute("GET", "/client-web-socket/:token");
 
 export class ClientWebSocketEP implements EPHandler {
+  public constructor(
+    public readonly clientChannelManager: ClientChannelManager,
+  ) { }
+
   public async handle({ params, request }: EPContext): Promise<Response> {
     const { token } = parseClientWebSocketEPRequest(params);
-    const {response, socket} = Deno.upgradeWebSocket(request);
+    const { response, socket } = Deno.upgradeWebSocket(request);
+    this.clientChannelManager.createChannel({ token, socket });
     return response;
   }
 }
 
-export function provideClientWebSocketEP() {
-  return new ClientWebSocketEP();
+export function provideClientWebSocketEP(resolver: ServiceResolver) {
+  return new ClientWebSocketEP(
+    resolver.resolve(provideClientChannelManager),
+  );
 }

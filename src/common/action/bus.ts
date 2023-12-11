@@ -1,16 +1,16 @@
-import { GADefinition } from "./foundation.ts";
+import { GADefinition, GAEnvelope } from "./define.ts";
 
 export interface GABusSubscriber {
-  subscribe<TData>(definition: GADefinition<TData>, data: TData): Promise<void>;
+  subscribe<TData>(definition: GADefinition<TData>, data: GAEnvelope<TData>): Promise<void>;
 }
 
 export interface GABus {
-  dispatch<TData>(definition: GADefinition<TData>, data: TData): Promise<void>;
+  dispatch<TData>(definition: GADefinition<TData>, data: GAEnvelope<TData>): Promise<void>;
 }
 
-export class MainGABus implements GABus {
+export class BasicGABus implements GABus {
   public readonly subscribers = new Set<GABusSubscriber>();
-  public async dispatch<TData>(definition: GADefinition<TData>, data: TData): Promise<void> {
+  public async dispatch<TData>(definition: GADefinition<TData>, data: GAEnvelope<TData>): Promise<void> {
     for (const subscriber of this.subscribers) {
       subscriber.subscribe(definition, data);
     }
@@ -18,5 +18,9 @@ export class MainGABus implements GABus {
 }
 
 export function provideMainGABus() {
-  return new MainGABus();
+  return new BasicGABus();
+}
+
+export function provideScopedReceivingGABus() {
+  return new BasicGABus();
 }

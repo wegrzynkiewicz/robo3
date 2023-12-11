@@ -1,5 +1,4 @@
 import { UniversalGAProcessor } from "../common/action/processor.ts";
-import { provideGASender } from "../common/action/sender.ts";
 import { ServiceResolver } from "../common/dependency/service.ts";
 import { mePlayerMoveGADef } from "../actions/player-move/me-player-move-ga.ts";
 import { loginGARequestDef, loginGAResponseDef } from "../actions/login/login-ga.ts";
@@ -10,10 +9,11 @@ import { provideLoginGARequestHandler } from "../actions/login/login-ga-handler.
 import { provideMePlayerMoveGAHandler } from "../actions/player-move/me-player-move-ga-handler.ts";
 import { providePangGAHandler } from "../actions/stats/pang-ga-handler.ts";
 import { providePingGAHandler } from "../actions/stats/ping-ga-handler.ts";
+import { provideScopedGASender } from "../common/action/online-sender.ts";
 
 export function provideServerGAProcessor(resolver: ServiceResolver) {
   const processor = new UniversalGAProcessor(
-    resolver.resolve(provideGASender),
+    resolver.resolve(provideScopedGASender),
   );
   processor.registerHandler(loginGARequestDef, loginGAResponseDef, resolver.resolve(provideLoginGARequestHandler));
   processor.registerHandler(pingGADef, pongGADef, resolver.resolve(providePingGAHandler));

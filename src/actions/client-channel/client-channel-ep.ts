@@ -11,7 +11,7 @@ let i = 1;
 export class ClientChannelEP implements EPHandler {
   public async handle({ request }: EPContext): Promise<Response> {
     const token = i++;
-    const wsURL = new URL('ws://localhost:8080/ws');
+    const wsURL = new URL('ws://localhost:3088/ws');
     wsURL.pathname = `/client-web-socket/${token}`;
     const payload: ClientChannelEPResponse = {
       wsURL: wsURL.toString(),

@@ -13,7 +13,7 @@ export function provideMainWebServerConfig() {
   return {
     hostname: "0.0.0.0",
     name: "main",
-    port: 8080,
+    port: 3088,
   };
 }
 

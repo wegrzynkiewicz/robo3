@@ -1,4 +1,4 @@
-import { registerGADefinition } from "../../common/action/foundation.ts";
+import { registerGADefinition } from "../../common/action/manager.ts";
 
 export const enum MoveDirection {
   Q = 0b1010,

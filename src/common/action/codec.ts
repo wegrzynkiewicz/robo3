@@ -2,26 +2,8 @@ import { assertObject, assertPositiveNumber, assertRequiredString, isRequiredStr
 import { Breaker } from "../utils/breaker.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
 import { ServiceResolver } from "../dependency/service.ts";
-import { GADefinition, GAManager, provideGAManager } from "./foundation.ts";
-
-export interface GAEnvelope<TData> {
-  id: number;
-  kind: string;
-  params: TData;
-}
-
-export interface GABinaryEncodingDefinition<TData> {
-  codec: BinaryBYOBCodec<TData>;
-  type: "binary";
-}
-
-export interface GAJsonEncodingDefinition<TData> {
-  type: "json";
-}
-
-export type GAEncodingDefinition<TData> = GABinaryEncodingDefinition<TData> | GAJsonEncodingDefinition<TData>;
-
-export type AnyGAEnvelope = GAEnvelope<any>;
+import { GAManager, provideGAManager } from "./manager.ts";
+import { AnyGAEnvelope, GADefinition, GAEnvelope } from "./define.ts";
 
 export function decodeGAJsonEnvelope(message: string): AnyGAEnvelope {
   const envelope = JSON.parse(message);

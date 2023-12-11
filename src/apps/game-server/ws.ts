@@ -1,6 +1,4 @@
 import { Breaker } from "../../common/utils/breaker.ts";
-import { GAReceiver, provideGAReceiver } from "../../common/action/receiver.ts";
-import { provideWebSocket } from "../../common/action/sender.ts";
 import { Logger, provideGlobalLogger } from "../../common/logger/global.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 
