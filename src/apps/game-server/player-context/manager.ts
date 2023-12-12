@@ -9,13 +9,19 @@ import { provideScopedWebSocket } from "../../../common/action/socket.ts";
 import { ServiceResolver, provideMainServiceResolver } from "../../../common/dependency/service.ts";
 import { provideScopedLogger } from "../../../common/logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/logger-factory.ts";
-import { provideSpaceManager } from "../../../common/space/space-manager.ts";
+import { SpaceManager, provideSpaceManager } from "../../../common/space/space-manager.ts";
+import { Breaker } from "../../../common/utils/breaker.ts";
 import { provideScopedWebSocketChannel } from "../../../common/web-socket/web-socket-channel.ts";
 import { feedServerGAProcessor } from "./ga-processor.ts";
 
 export interface PlayerContext {
+  clientId: number;
   dispatcher: GADispatcher;
   resolver: ServiceResolver;
+}
+
+export function provideScopedPlayerContext(): PlayerContext {
+  throw new Breaker('player-context-must-be-injected');
 }
 
 export interface PlayerContextFactoryOption {
@@ -30,10 +36,11 @@ export class PlayerContextManager {
   public constructor(
     public readonly loggerFactory: LoggerFactory,
     public readonly mainServiceResolver: ServiceResolver,
+    public readonly spaceManager: SpaceManager,
   ) { }
 
   public async createPlayerContext(options: PlayerContextFactoryOption): Promise<PlayerContext> {
-    const { socket } = options;
+    const { socket, token } = options;
 
     const clientId = this.byClientId.size;
 
@@ -53,6 +60,17 @@ export class PlayerContextManager {
       webSocketChannel.messageBus.subscribers.add(universalGAReceiver);
     }
 
+    const dispatcher = resolver.resolve(provideScopedGADispatcher);
+
+    const context: PlayerContext = {
+      clientId,
+      resolver,
+      dispatcher,
+    };
+    this.byClientId.set(clientId, context);
+
+    resolver.inject(provideScopedPlayerContext, context);
+
     const receivedGABus = resolver.resolve(provideScopedReceivingGABus);
     {
       const processor = resolver.resolve(provideScopedGAProcessor);
@@ -66,15 +84,8 @@ export class PlayerContextManager {
       sendingGABus.subscribers.add(onlineGASender);
     }
 
-    const dispatcher = resolver.resolve(provideScopedGADispatcher);
-
-    const context: PlayerContext = {
-      resolver,
-      dispatcher,
-    };
-    this.byClientId.set(clientId, context);
-
-    return context;
+    const space = this.spaceManager.obtain(1);
+    const being = space.beingManager.obtain(clientId);
   }
 }
 
@@ -82,5 +93,6 @@ export function providePlayerContextManager(resolver: ServiceResolver) {
   return new PlayerContextManager(
     resolver.resolve(provideMainLoggerFactory),
     resolver.resolve(provideMainServiceResolver),
+    resolver.resolve(provideSpaceManager),
   );
 }
