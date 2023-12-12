@@ -39,7 +39,7 @@ export class PlayerContextManager {
     public readonly spaceManager: SpaceManager,
   ) { }
 
-  public async createPlayerContext(options: PlayerContextFactoryOption): Promise<PlayerContext> {
+  public async createPlayerContext(options: PlayerContextFactoryOption): Promise<void> {
     const { socket, token } = options;
 
     const clientId = this.byClientId.size;

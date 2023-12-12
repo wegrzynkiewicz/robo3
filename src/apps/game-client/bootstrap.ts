@@ -3,7 +3,7 @@ import "../../core/bootstrap.ts";
 import { assertNonNull } from "../../common/utils/asserts.ts";
 import { cgotdRegistry, sgotdRegistry } from "../../common/game-object/defining.ts";
 import { ComplexGameObjectResolver, SimpleGameObjectResolver } from "../../common/game-object/resolving.ts";
-import { ServiceResolver } from "../../common/dependency/service.ts";
+import { ServiceResolver, provideMainServiceResolver } from "../../common/dependency/service.ts";
 import { SpriteImageExtractor } from "../../common/sprite/sprite-image-data-extractor.ts";
 import { SpriteAllocator } from "../../common/sprite/sprite-allocator.ts";
 import { SpriteImage } from "../../common/sprite/sprite.ts";
@@ -26,6 +26,7 @@ import { provideGameContextFactory } from "./game-context/ga-context.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
+  resolver.inject(provideMainServiceResolver, resolver);
   const canvas = document.getElementById("primary-canvas") as HTMLCanvasElement | null;
   assertNonNull(canvas, "cannot-find-primary-canvas");
   resolver.inject(provideCanvas, canvas);

@@ -6,8 +6,7 @@ import { pangGADef } from "../../../actions/stats/pang-ga.ts";
 import { pongGADef, providePongGAHandler } from "../../../actions/stats/pong-ga.ts";
 import { provideChunkSegmentUpdateGAHandler } from "../../../domain-client/chunk/chunk-segment-update-ga-handler.ts";
 import { provideChunksUpdateGAHandler } from "../../../domain-client/chunk/chunks-update-ga-handler.ts";
-import { provideBeingUpdateGAHandler } from "../../../actions/being-update/being-update-ga-handler.ts";
-import { beingUpdateGADef } from "../../../actions/being-update/being-update-ga.ts";
+import { beingUpdateGADef, provideBeingUpdateGAHandler } from "../../../actions/being-update/being-update-ga.ts";
 
 export function feedClientSideGAProcess(resolver: ServiceResolver, processor: UniversalGAProcessor) {
   processor.registerHandler(chunksUpdateGADef, undefined, resolver.resolve(provideChunksUpdateGAHandler));
