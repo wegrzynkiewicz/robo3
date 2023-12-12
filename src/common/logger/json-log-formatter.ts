@@ -1,4 +1,4 @@
-import { LogFormatter, Log } from "./global.ts";
+import { LogFormatter, Log, logSeverityNames } from "./global.ts";
 
 export class JSONLogFormatter implements LogFormatter {
   public format(log: Log): string {
@@ -7,7 +7,7 @@ export class JSONLogFormatter implements LogFormatter {
     const errorStack = error instanceof Error ? error.stack : error;
     const json = JSON.stringify({
       date,
-      severity,
+      severity: logSeverityNames[severity],
       channel,
       message,
       data: {

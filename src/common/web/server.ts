@@ -37,21 +37,19 @@ export class WebServer {
   }
 
   public close(reason: string): void {
-    const { hostname, name, port } = this.config;
-    this.logger.info("web-server-aborting", { hostname, name, port });
+    this.logger.info("web-server-aborting");
     this.abortController.abort(reason);
   }
 
   private async handle(req: Request): Promise<Response> {
+    const { method, url } = req;
+    const headers = Object.fromEntries([...req.headers]);
+    this.logger.debug("web-server-handling", { headers, method, url });
     try {
       const response = await this.handler.handle(req);
       return response;
     } catch (error) {
-      throw new Breaker("error-inside-web-server-handler", {
-        error,
-        method: req.method,
-        url: req.url,
-      });
+      throw new Breaker("error-inside-web-server-handler", { error, headers, method, url });
     }
   }
 
@@ -65,7 +63,6 @@ export class WebServer {
   }
 
   private handleListen(): void {
-    const { hostname, name, port } = this.config;
-    this.logger.info("web-server-listening", { hostname, name, port });
+    this.logger.info("web-server-listening");
   }
 }

@@ -23,7 +23,7 @@ export class ServiceResolver {
       this.instances.set(provider, instance);
       return instance;
     } catch (error) {
-      throw new Breaker("error-when-resolving-provider", { provider, error });
+      throw new Breaker("error-when-resolving-provider", { provider: provider.name, error });
     }
   }
 

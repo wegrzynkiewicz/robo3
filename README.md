@@ -120,10 +120,10 @@ ua - User Action
 
 - [X] Upakowanie danych o teksturze kafelka w teksturze "danych"
 - [X] Ping Pong Pang
+- [X] Kontrola gracza
 - [ ] Zaprojektowanie modelu przedmiotów w grze
 - [ ] Dekonstrukcja mapy z GRIDa na kafelki o zaokrąglonych kształtach
 - [ ] Informacje w DebugInfo o wyświetlanych chunkach i ilościach kafelków
 - [ ] Aktualizacja pojedynczego tile w chunku
-- [ ] Kontrola gracza
 - [ ] Narzędzie admina
 - [ ] Mechanizm kolizji

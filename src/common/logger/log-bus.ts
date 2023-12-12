@@ -1,4 +1,7 @@
-import { Log } from "./global.ts";
+import { BasicLogFilter } from "./basic-log-filter.ts";
+import { BasicLogSubscriber } from "./basic-log-subscriber.ts";
+import { Log, LogSeverity } from "./global.ts";
+import { PrettyLogFormatter } from "./pretty-log-formatter.ts";
 
 export interface LogBusSubscriber {
   subscribe(log: Log): Promise<void>;
@@ -18,5 +21,11 @@ export class MainLogBus implements LogBus {
 }
 
 export function provideMainLogBus() {
-  return new MainLogBus();
+  const bus = new MainLogBus();
+  const subscriber = new BasicLogSubscriber(
+    new BasicLogFilter(LogSeverity.INFO),
+    new PrettyLogFormatter(),
+  );
+  bus.subscribers.add(subscriber);
+  return bus;
 }

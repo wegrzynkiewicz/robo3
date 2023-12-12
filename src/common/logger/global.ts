@@ -1,23 +1,38 @@
 import { ServiceResolver } from "../dependency/service.ts";
 import { Breaker } from "../utils/breaker.ts";
-import { BasicLogFilter } from "./basic-log-filter.ts";
-import { BasicLogSubscriber } from "./basic-log-subscriber.ts";
 import { BasicLogger } from "./basic-logger.ts";
 import { provideMainLogBus } from "./log-bus.ts";
-import { PrettyLogFormatter } from "./pretty-log-formatter.ts";
 
 export type LoggerData = Record<string, unknown>;
 
 export const enum LogSeverity {
-  INFO = 'INFO',
-  WARN = 'WARN',
-  ERROR = 'ERROR',
+  SILLY = 0,
+  DEBUG = 1,
+  INFO = 2,
+  NOTICE = 3,
+  WARN = 4,
+  ERROR = 5,
+  FATAL = 6,
 }
 
+export const logSeverityNames: Record<LogSeverity, string> = {
+  [LogSeverity.SILLY]: "SILLY",
+  [LogSeverity.DEBUG]: "DEBUG",
+  [LogSeverity.INFO]: "INFO",
+  [LogSeverity.NOTICE]: "NOTICE",
+  [LogSeverity.WARN]: "WARN",
+  [LogSeverity.ERROR]: "ERROR",
+  [LogSeverity.FATAL]: "FATAL",
+} as const;
+
 export interface Logger {
+  silly(message: string, data?: LoggerData): void;
+  debug(message: string, data?: LoggerData): void;
   info(message: string, data?: LoggerData): void;
+  notice(message: string, data?: LoggerData): void;
   warn(message: string, data?: LoggerData): void;
   error(message: string, data?: LoggerData): void;
+  fatal(message: string, data?: LoggerData): void;
 }
 
 export interface Log {
@@ -36,26 +51,12 @@ export interface LogFormatter {
   format(log: Log): string;
 }
 
-export function defineLogger(resolver: ServiceResolver) {
-  const logBus = resolver.resolve(provideMainLogBus);
-  const logger = new BasicLogger(
+export function provideMainLogger(resolver: ServiceResolver) {
+  return new BasicLogger(
     "GLOBAL",
-    logBus,
+    resolver.resolve(provideMainLogBus),
     {},
   );
-  const subscriber = new BasicLogSubscriber(
-    new BasicLogFilter(),
-    new PrettyLogFormatter(),
-  );
-  logBus.subscribers.add(subscriber);
-  return logger;
-}
-
-// TODO: this duplicate log bus
-export const logger = defineLogger(new ServiceResolver());
-
-export function provideGlobalLogger() {
-  return logger;
 }
 
 export function provideScopedLogger(): Logger {
