@@ -1,4 +1,3 @@
-import { logger } from "../../../common/logger/global.ts";
 import { isPositiveNumber } from "../../../common/utils/asserts.ts";
 import { VertexAttributeType } from "./types.ts";
 
@@ -36,7 +35,7 @@ export class VertexAttribute {
     const { byteOffset, byteStride, divisor, name, type: { axes, glType, isInteger } } = this;
     const location = gl.getAttribLocation(glProgram, name);
     if (!isPositiveNumber(location)) {
-      logger.warn("attribute-location-not-found-in-shader", { va: this });
+      console.warn("attribute-location-not-found-in-shader", { va: this });
       return;
     }
     gl.enableVertexAttribArray(location);
