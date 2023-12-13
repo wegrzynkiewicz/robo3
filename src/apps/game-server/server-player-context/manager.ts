@@ -88,6 +88,13 @@ export class ServerPlayerContextManager {
   }
 
   public async destroyPlayerContext(playerContextId: number): Promise<void> {
+    const context = this.byPlayerContextId.get(playerContextId);
+    if (context === undefined) {
+      return;
+    }
+    const { beingId, spaceId } = context;
+    const space = this.spaceManager.obtain(spaceId);
+    space.beingManager.destroyBeing(beingId);
     this.byPlayerContextId.delete(playerContextId);
   }
 }
