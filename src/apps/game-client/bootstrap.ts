@@ -22,7 +22,8 @@ import { provideKAProcessor } from "./keyboard/kaprocessor.ts";
 import { provideTilesTexture2DArray } from "./graphic/tiles/tiles-texture2darray.ts";
 import { provideSpriteIndicesTexture } from "./graphic/tiles/sprite-indices-texture.ts";
 import { provideClientSpriteAtlasLoader } from "../../domain-client/sprite/allocation/client-sprite-atlas-loader.ts";
-import { provideGameContextFactory } from "./game-context/ga-context.ts";
+import { provideClientPlayerContextManager } from "./client-player-context/client-player-context.ts";
+import { meRequestGADef } from "../../actions/me/me-request-ga.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -141,10 +142,11 @@ async function start() {
 
   const mainGABus = resolver.resolve(provideMainGABus);
 
-  const clientContextFactory = resolver.resolve(provideGameContextFactory);
-  const clientContext = await clientContextFactory.createGameContext({ socket });
-  const { connector } = clientContext;
+  const clientPlayerContextManager = resolver.resolve(provideClientPlayerContextManager);
+  const clientPlayerContext = await clientPlayerContextManager.createClientPlayerContext({ socket });
+  const { connector, dispatcher } = clientPlayerContext;
   mainGABus.subscribers.add(connector);
+  dispatcher.send(meRequestGADef, {});
 
   mainLoop.start();
 }

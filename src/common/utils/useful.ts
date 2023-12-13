@@ -2,6 +2,7 @@ import { Deferred, deferred } from "../../deps.ts";
 import { Breaker } from "./breaker.ts";
 
 export type UnknownData = Record<string, unknown>;
+export type EmptyObject = Record<string, never>;
 export type NonEmptyObj<T extends Record<string, unknown>> = T extends Record<string, never> ? never : T;
 export type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 

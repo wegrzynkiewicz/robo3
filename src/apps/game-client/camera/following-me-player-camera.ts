@@ -1,16 +1,16 @@
+import { MePlayer, provideMePlayer } from "../../../actions/me/me-player.ts";
 import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { MyPlayer, provideMyPlayer } from "../../../actions/player-move/my-player.ts";
 import { provideViewport, Viewport } from "../graphic/viewport.ts";
 import { Camera } from "./camera-manager.ts";
 
 export class FollowingMePlayerCamera implements Camera {
   public constructor(
     public readonly viewport: Viewport,
-    public readonly myPlayer: MyPlayer,
+    public readonly myPlayer: MePlayer,
   ) {}
 
   public loop(): void {
-    const { x, y } = this.myPlayer.being;
+    const { x, y } = this.myPlayer.absolutePos;
     this.viewport.lookAt(x, y);
   }
 }
@@ -18,6 +18,6 @@ export class FollowingMePlayerCamera implements Camera {
 export function provideFollowingMePlayerCamera(resolver: ServiceResolver) {
   return new FollowingMePlayerCamera(
     resolver.resolve(provideViewport),
-    resolver.resolve(provideMyPlayer),
+    resolver.resolve(provideMePlayer),
   );
 }

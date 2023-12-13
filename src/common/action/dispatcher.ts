@@ -9,6 +9,7 @@ export class UniversalGADispatcher implements GADispatcher {
 
   public send<TData>(definition: GADefinition<TData>, params: TData): void {
     const { kind } = definition;
+    params = params ?? {} as TData;
     const envelope: GAEnvelope<TData> = { id: 0, kind, params };
     this.sendEnvelope(definition, envelope);
   }
