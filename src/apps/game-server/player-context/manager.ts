@@ -33,6 +33,8 @@ export class PlayerContextManager {
   public async createPlayerContext(options: PlayerContextFactoryOption): Promise<void> {
     const { socket, token } = options;
 
+    const spaceId = 1;
+
     const playerContextId = this.playerContextIdCounter++;
 
     const resolver = this.mainServiceResolver.clone([
@@ -48,10 +50,15 @@ export class PlayerContextManager {
 
     const dispatcher = resolver.resolve(provideScopedGADispatcher);
 
+    const space = this.spaceManager.obtain(spaceId);
+    const being = space.beingManager.create();
+
     const context: PlayerContext = {
-      playerContextId,
+      beingId: being.id,
       dispatcher,
+      playerContextId,
       resolver,
+      spaceId,
     };
     resolver.inject(provideScopedPlayerContext, context);
 
@@ -76,9 +83,6 @@ export class PlayerContextManager {
       const onlineGASender = resolver.resolve(provideScopedOnlineGASender);
       sendingGABus.subscribers.add(onlineGASender);
     }
-
-    const space = this.spaceManager.obtain(1);
-    const being = space.beingManager.obtain(playerContextId);
 
     this.byPlayerContextId.set(playerContextId, context);
   }
