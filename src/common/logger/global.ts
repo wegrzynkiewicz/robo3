@@ -5,14 +5,14 @@ import { provideMainLogBus } from "./log-bus.ts";
 
 export type LoggerData = Record<string, unknown>;
 
-export const enum LogSeverity {
-  SILLY = 0,
-  DEBUG = 1,
-  INFO = 2,
-  NOTICE = 3,
-  WARN = 4,
-  ERROR = 5,
-  FATAL = 6,
+export enum LogSeverity {
+  SILLY = 1,
+  DEBUG = 2,
+  INFO = 3,
+  NOTICE = 4,
+  WARN = 5,
+  ERROR = 6,
+  FATAL = 7,
 }
 
 export const logSeverityNames: Record<LogSeverity, string> = {
@@ -23,6 +23,16 @@ export const logSeverityNames: Record<LogSeverity, string> = {
   [LogSeverity.WARN]: "WARN",
   [LogSeverity.ERROR]: "ERROR",
   [LogSeverity.FATAL]: "FATAL",
+} as const;
+
+export const mapSeverityToConsoleMethod: Record<LogSeverity, (...args: unknown[]) => void> = {
+  [LogSeverity.SILLY]: console.debug,
+  [LogSeverity.DEBUG]: console.debug,
+  [LogSeverity.INFO]: console.info,
+  [LogSeverity.NOTICE]: console.info,
+  [LogSeverity.WARN]: console.warn,
+  [LogSeverity.ERROR]: console.error,
+  [LogSeverity.FATAL]: console.error,
 } as const;
 
 export interface Logger {
