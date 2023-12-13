@@ -127,7 +127,7 @@ async function start() {
 
   const { hostname } = window.location;
 
-  const response = await fetch('http://localhost:3088/client-channel', {
+  const response = await fetch('http://localhost:3088/player-channel', {
     method: "POST",
     headers: {
       "Authorization": "Bearer test",
