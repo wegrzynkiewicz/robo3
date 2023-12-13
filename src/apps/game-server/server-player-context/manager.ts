@@ -10,19 +10,19 @@ import { provideScopedLogger } from "../../../common/logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/logger-factory.ts";
 import { SpaceManager, provideSpaceManager } from "../../../common/space/space-manager.ts";
 import { provideScopedWebSocketChannel } from "../../../common/web-socket/web-socket-channel.ts";
-import { provideClosePlayerWebSocketSubscriber } from "./close-player-web-socket-subscriber.ts";
+import { provideCloseServerPlayerWebSocketSubscriber } from "./close-server-player-web-socket-subscriber.ts";
+import { ServerPlayerContext, provideScopedServerPlayerContext } from "./define.ts";
 import { feedServerGAProcessor } from "./ga-processor.ts";
-import { PlayerContext, provideScopedPlayerContext } from "./player-context.ts";
 
-export interface PlayerContextFactoryOption {
+export interface ServerPlayerContextFactoryOption {
   socket: WebSocket;
   token: string,
 }
 
-export class PlayerContextManager {
+export class ServerPlayerContextManager {
 
   private playerContextIdCounter = 1;
-  public readonly byPlayerContextId = new Map<number, PlayerContext>();
+  public readonly byPlayerContextId = new Map<number, ServerPlayerContext>();
 
   public constructor(
     public readonly loggerFactory: LoggerFactory,
@@ -30,7 +30,7 @@ export class PlayerContextManager {
     public readonly spaceManager: SpaceManager,
   ) { }
 
-  public async createPlayerContext(options: PlayerContextFactoryOption): Promise<void> {
+  public async createServerPlayerContext(options: ServerPlayerContextFactoryOption): Promise<void> {
     const { socket, token } = options;
 
     const spaceId = 1;
@@ -40,7 +40,7 @@ export class PlayerContextManager {
     const resolver = this.mainServiceResolver.clone([
       provideGACodec,
       provideSpaceManager,
-      providePlayerContextManager,
+      provideServerPlayerContextManager,
     ]);
 
     resolver.inject(provideScopedWebSocket, socket);
@@ -53,22 +53,22 @@ export class PlayerContextManager {
     const space = this.spaceManager.obtain(spaceId);
     const being = space.beingManager.create();
 
-    const context: PlayerContext = {
+    const context: ServerPlayerContext = {
       beingId: being.id,
       dispatcher,
       playerContextId,
       resolver,
       spaceId,
     };
-    resolver.inject(provideScopedPlayerContext, context);
+    resolver.inject(provideScopedServerPlayerContext, context);
 
     const webSocketChannel = resolver.resolve(provideScopedWebSocketChannel);
     {
       const universalGAReceiver = resolver.resolve(provideScopedGAReceiver);
       webSocketChannel.messageBus.subscribers.add(universalGAReceiver);
 
-      const closePlayerWebSocketSubscriber = resolver.resolve(provideClosePlayerWebSocketSubscriber);
-      webSocketChannel.closeBus.subscribers.add(closePlayerWebSocketSubscriber);
+      const closePlayerServerWebSocketSubscriber = resolver.resolve(provideCloseServerPlayerWebSocketSubscriber);
+      webSocketChannel.closeBus.subscribers.add(closePlayerServerWebSocketSubscriber);
     }
 
     const receivedGABus = resolver.resolve(provideScopedReceivingGABus);
@@ -92,8 +92,8 @@ export class PlayerContextManager {
   }
 }
 
-export function providePlayerContextManager(resolver: ServiceResolver) {
-  return new PlayerContextManager(
+export function provideServerPlayerContextManager(resolver: ServiceResolver) {
+  return new ServerPlayerContextManager(
     resolver.resolve(provideMainLoggerFactory),
     resolver.resolve(provideMainServiceResolver),
     resolver.resolve(provideSpaceManager),

@@ -3,8 +3,8 @@ import { ServiceResolver, provideMainServiceResolver } from "../../common/depend
 import { provideSpaceManager } from "../../common/space/space-manager.ts";
 import { provideDBClient } from "./db.ts";
 import { provideWebServer } from "./main-web-server.ts";
-import { providePlayerContextManager } from "./player-context/manager.ts";
 import { beingUpdateGADef } from "../../actions/being-update/being-update-ga.ts";
+import { provideServerPlayerContextManager } from "./server-player-context/manager.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -43,7 +43,7 @@ router.get("/api.json", (ctx) => {
   const db = client.db("app");
   const collection = db.collection("chunks");
 
-  const playerContextManager = resolver.resolve(providePlayerContextManager);
+  const playerContextManager = resolver.resolve(provideServerPlayerContextManager);
   const spaceManager = resolver.resolve(provideSpaceManager);
   const space = spaceManager.obtain(1);
 

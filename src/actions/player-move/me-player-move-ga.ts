@@ -2,7 +2,7 @@ import { registerGADefinition } from "../../common/action/manager.ts";
 import { provideSpaceManager, SpaceManager } from "../../common/space/space-manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { GAHandler } from "../../common/action/define.ts";
-import { PlayerContext, provideScopedPlayerContext } from "../../apps/game-server/player-context/player-context.ts";
+import { provideScopedServerPlayerContext, ServerPlayerContext } from "../../apps/game-server/server-player-context/define.ts";
 
 export const enum MoveDirection {
   Q = 0b1010,
@@ -30,7 +30,7 @@ export const mePlayerMoveGADef = registerGADefinition<MePlayerMoveGA>({
 
 export class MePlayerMoveGAHandler implements GAHandler<MePlayerMoveGA, void> {
   public constructor(
-    protected readonly playerContext: PlayerContext,
+    protected readonly playerContext: ServerPlayerContext,
     protected readonly spaceManager: SpaceManager,
   ) { }
 
@@ -43,7 +43,7 @@ export class MePlayerMoveGAHandler implements GAHandler<MePlayerMoveGA, void> {
 
 export function provideMePlayerMoveGAHandler(resolver: ServiceResolver) {
   return new MePlayerMoveGAHandler(
-    resolver.resolve(provideScopedPlayerContext),
+    resolver.resolve(provideScopedServerPlayerContext),
     resolver.resolve(provideSpaceManager),
   );
 }

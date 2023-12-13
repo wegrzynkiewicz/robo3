@@ -2,7 +2,7 @@ import { GADispatcher } from "../../../common/action/define.ts";
 import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { Breaker } from "../../../common/utils/breaker.ts";
 
-export interface PlayerContext {
+export interface ServerPlayerContext {
   beingId: number;
   dispatcher: GADispatcher;
   playerContextId: number;
@@ -10,6 +10,6 @@ export interface PlayerContext {
   spaceId: number;
 }
 
-export function provideScopedPlayerContext(): PlayerContext {
-  throw new Breaker('player-context-must-be-injected');
+export function provideScopedServerPlayerContext(): ServerPlayerContext {
+  throw new Breaker('server-player-context-must-be-injected');
 }
