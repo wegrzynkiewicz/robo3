@@ -1,6 +1,5 @@
 import { provideScopedReceivingGABus, provideScopedSendingGABus } from "../../../common/action/bus.ts";
 import { provideGACodec } from "../../../common/action/codec.ts";
-import { GADispatcher } from "../../../common/action/define.ts";
 import { provideScopedGADispatcher } from "../../../common/action/dispatcher.ts";
 import { provideScopedOnlineGASender } from "../../../common/action/online-sender.ts";
 import { provideScopedGAProcessor } from "../../../common/action/processor.ts";
@@ -10,19 +9,10 @@ import { ServiceResolver, provideMainServiceResolver } from "../../../common/dep
 import { provideScopedLogger } from "../../../common/logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/logger-factory.ts";
 import { SpaceManager, provideSpaceManager } from "../../../common/space/space-manager.ts";
-import { Breaker } from "../../../common/utils/breaker.ts";
 import { provideScopedWebSocketChannel } from "../../../common/web-socket/web-socket-channel.ts";
+import { provideClosePlayerWebSocketSubscriber } from "./close-player-web-socket-subscriber.ts";
 import { feedServerGAProcessor } from "./ga-processor.ts";
-
-export interface PlayerContext {
-  clientId: number;
-  dispatcher: GADispatcher;
-  resolver: ServiceResolver;
-}
-
-export function provideScopedPlayerContext(): PlayerContext {
-  throw new Breaker('player-context-must-be-injected');
-}
+import { PlayerContext, provideScopedPlayerContext } from "./player-context.ts";
 
 export interface PlayerContextFactoryOption {
   socket: WebSocket;
@@ -31,7 +21,8 @@ export interface PlayerContextFactoryOption {
 
 export class PlayerContextManager {
 
-  public readonly byClientId = new Map<number, PlayerContext>();
+  private playerContextIdCounter = 1;
+  public readonly byPlayerContextId = new Map<number, PlayerContext>();
 
   public constructor(
     public readonly loggerFactory: LoggerFactory,
@@ -42,34 +33,36 @@ export class PlayerContextManager {
   public async createPlayerContext(options: PlayerContextFactoryOption): Promise<void> {
     const { socket, token } = options;
 
-    const clientId = this.byClientId.size;
+    const playerContextId = this.playerContextIdCounter++;
 
     const resolver = this.mainServiceResolver.clone([
       provideGACodec,
       provideSpaceManager,
+      providePlayerContextManager,
     ]);
+
+    resolver.inject(provideScopedWebSocket, socket);
 
     const logger = this.loggerFactory.createLogger('PLAYER');
     resolver.inject(provideScopedLogger, logger);
 
-    resolver.inject(provideScopedWebSocket, socket);
+    const dispatcher = resolver.resolve(provideScopedGADispatcher);
+
+    const context: PlayerContext = {
+      playerContextId,
+      dispatcher,
+      resolver,
+    };
+    resolver.inject(provideScopedPlayerContext, context);
 
     const webSocketChannel = resolver.resolve(provideScopedWebSocketChannel);
     {
       const universalGAReceiver = resolver.resolve(provideScopedGAReceiver);
       webSocketChannel.messageBus.subscribers.add(universalGAReceiver);
+
+      const closePlayerWebSocketSubscriber = resolver.resolve(provideClosePlayerWebSocketSubscriber);
+      webSocketChannel.closeBus.subscribers.add(closePlayerWebSocketSubscriber);
     }
-
-    const dispatcher = resolver.resolve(provideScopedGADispatcher);
-
-    const context: PlayerContext = {
-      clientId,
-      resolver,
-      dispatcher,
-    };
-    this.byClientId.set(clientId, context);
-
-    resolver.inject(provideScopedPlayerContext, context);
 
     const receivedGABus = resolver.resolve(provideScopedReceivingGABus);
     {
@@ -85,7 +78,13 @@ export class PlayerContextManager {
     }
 
     const space = this.spaceManager.obtain(1);
-    const being = space.beingManager.obtain(clientId);
+    const being = space.beingManager.obtain(playerContextId);
+
+    this.byPlayerContextId.set(playerContextId, context);
+  }
+
+  public async destroyPlayerContext(playerContextId: number): Promise<void> {
+    this.byPlayerContextId.delete(playerContextId);
   }
 }
 

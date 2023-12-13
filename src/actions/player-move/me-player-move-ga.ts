@@ -2,7 +2,7 @@ import { registerGADefinition } from "../../common/action/manager.ts";
 import { provideSpaceManager, SpaceManager } from "../../common/space/space-manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { GAHandler } from "../../common/action/define.ts";
-import { PlayerContext, provideScopedPlayerContext } from "../../apps/game-server/player-context/manager.ts";
+import { PlayerContext, provideScopedPlayerContext } from "../../apps/game-server/player-context/player-context.ts";
 
 export const enum MoveDirection {
   Q = 0b1010,
@@ -36,7 +36,7 @@ export class MePlayerMoveGAHandler implements GAHandler<MePlayerMoveGA, void> {
 
   public async handle(request: MePlayerMoveGA): Promise<void> {
     const space = this.spaceManager.obtain(1);
-    const being = space.beingManager.obtain(this.playerContext.clientId);
+    const being = space.beingManager.obtain(this.playerContext.playerContextId);
     being.direct = request.direction;
   }
 }

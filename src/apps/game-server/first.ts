@@ -69,7 +69,7 @@ router.get("/api.json", (ctx) => {
       }
       being.x += x * 16;
       being.y += y * 16;
-      for (const playerContext of playerContextManager.byClientId.values()) {
+      for (const playerContext of playerContextManager.byPlayerContextId.values()) {
         playerContext.dispatcher.send(beingUpdateGADef, being)
       }
     }
