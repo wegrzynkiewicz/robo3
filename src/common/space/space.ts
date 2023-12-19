@@ -1,5 +1,11 @@
-import { BeingManager } from "../being/manager.ts";
+import { Breaker } from "../utils/breaker.ts";
 
 export class Space {
-  public readonly beingManager = new BeingManager();
+  public constructor(
+    public readonly spaceId: number,
+  ) { }
+}
+
+export function provideScopedSpace(): Space {
+  throw new Breaker("space-must-be-injected");
 }

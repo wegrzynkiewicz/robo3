@@ -2,8 +2,9 @@ import { createPerformanceCounter } from "../utils/performance-counter.ts";
 import { ServiceResolver } from "../dependency/service.ts";
 import { FPSCounter, provideFPSCounter } from "./fps-counter.ts";
 import { Daemon, Framer, Looper } from "./looper.ts";
+import { provideScopedBeingSimulator } from "../being/simulator.ts";
 
-export class GameDaemon implements Daemon, Framer {
+export class GameSimulatorDaemon implements Daemon, Framer {
   public loopers: Looper[] = [];
   public name = "game";
   protected boundFrame: (now: number) => void;
@@ -44,12 +45,12 @@ export class GameDaemon implements Daemon, Framer {
   }
 }
 
-export function provideScopedGameDaemon(resolver: ServiceResolver) {
-  return new GameDaemon(
+export function provideScopedGameSimulatorDaemon(resolver: ServiceResolver) {
+  return new GameSimulatorDaemon(
     resolver.resolve(provideFPSCounter),
   );
 }
 
-export function feedGameDaemon(resolver: ServiceResolver, gameDaemon: GameDaemon) {
-  gameDaemon.loopers.push(resolver.resolve(provideFPSCounter));
+export function feedGameSimulatorDaemon(resolver: ServiceResolver, gameSimulatorDaemon: GameSimulatorDaemon) {
+  gameSimulatorDaemon.loopers.push(resolver.resolve(provideScopedBeingSimulator));
 }

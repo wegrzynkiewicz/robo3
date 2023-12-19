@@ -27,13 +27,10 @@ export class ServiceResolver {
     }
   }
 
-  public clone(providers: AnyProvider[]): ServiceResolver {
-    const resolver = new ServiceResolver();
-    for (const provider of providers) {
-      const instance = this.resolve(provider);
-      resolver.inject(provider, instance);
-    }
-    return resolver;
+  public transfer<TInstance>(provider: Provider<TInstance>, destResolver: ServiceResolver): TInstance {
+    const instance = this.resolve(provider)
+    destResolver.inject(provider, instance);
+    return instance;
   }
 }
 

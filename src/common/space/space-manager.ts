@@ -6,7 +6,7 @@ export class SpaceManager {
   public obtain(spaceId: number): Space {
     const probablySpace = this.byId.get(spaceId);
     if (probablySpace === undefined) {
-      const space = new Space();
+      const space = new Space(spaceId);
       this.byId.set(spaceId, space);
       return space;
     }

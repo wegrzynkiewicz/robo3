@@ -1,9 +1,9 @@
 import { MoveDirection } from "../../actions/player-move/me-player-move-ga.ts";
-import { Breaker } from "../utils/breaker.ts";
 
 export interface Being {
   direct: MoveDirection;
   id: number;
+  wasUpdated: boolean;
   x: number;
   y: number;
   z: number;
@@ -32,6 +32,7 @@ export class BeingManager {
     const being: Being = {
       direct: MoveDirection.S,
       id: beingId,
+      wasUpdated: true,
       x: 0,
       y: 0,
       z: 0,
@@ -46,6 +47,6 @@ export class BeingManager {
   }
 }
 
-export function provideScopedBeingManager(): BeingManager {
-  throw new Breaker("being-manager-must-be-injected");
+export function provideScopedBeingManager() {
+  return new BeingManager();
 }

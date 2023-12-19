@@ -34,12 +34,11 @@ export class ClientPlayerContextManager {
   public async createClientPlayerContext(options: ClientPlayerContextFactoryOption): Promise<ClientPlayerContext> {
     const { socket } = options;
 
-    const resolver = this.mainServiceResolver.clone([
-      provideGACodec,
-      provideSpaceManager,
-      provideMePlayer,
-    ]);
-
+    const resolver = new ServiceResolver();
+    this.mainServiceResolver.transfer(provideGACodec, resolver);
+    this.mainServiceResolver.transfer(provideSpaceManager, resolver);
+    this.mainServiceResolver.transfer(provideMePlayer, resolver);
+    
     const logger = this.loggerFactory.createLogger('CLIENT');
 
     resolver.inject(provideScopedWebSocket, socket);

@@ -4,7 +4,7 @@ import { Chunk, ChunkManager, provideChunkManager } from "../../../../domain-cli
 import { provideSceneViewport, SceneViewport } from "./scene-viewport.ts";
 import { provideTilesCollector, TilesCollector } from "./tiles-collector.ts";
 import { ChunkId } from "../../../../common/chunk/chunk-id.ts";
-import { provideSpaceManager, SpaceManager } from "../../../../common/space/space-manager.ts";
+import { BeingManager, provideScopedBeingManager } from "../../../../common/being/manager.ts";
 
 const ter = {
   "LQ": 65,
@@ -38,10 +38,10 @@ export class TilesSceneBuilder {
 
   public constructor(
     public readonly availableLayerCount: number,
+    public readonly beingManager: BeingManager,
     public readonly chunkManager: ChunkManager,
     public readonly sceneViewport: SceneViewport,
     public readonly tiles: TilesCollector,
-    public readonly spaceManager: SpaceManager,
   ) {
     const { cellCount, size } = this.sceneViewport.grid.available;
     this.depthLayer = new Uint16Array(cellCount);
@@ -181,8 +181,7 @@ export class TilesSceneBuilder {
         this.processTile(x, y, currentTerrainLevel);
       }
     }
-    const space = this.spaceManager.obtain(1);
-    for (const being of space.beingManager.byId.values()) {
+    for (const being of this.beingManager.byId.values()) {
       const { x, y } = being;
       this.tiles.putAbsolute(x, y, currentTerrainLevel, 83);
     }
@@ -218,9 +217,9 @@ export class TilesSceneBuilder {
 export function provideTilesSceneBuilder(resolver: ServiceResolver) {
   return new TilesSceneBuilder(
     10,
+    resolver.resolve(provideScopedBeingManager),
     resolver.resolve(provideChunkManager),
     resolver.resolve(provideSceneViewport),
     resolver.resolve(provideTilesCollector),
-    resolver.resolve(provideSpaceManager),
   );
 }

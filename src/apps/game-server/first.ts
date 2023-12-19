@@ -1,10 +1,8 @@
 import { Application, OpenAPI, Router } from "./deps.ts";
 import { ServiceResolver, provideMainServiceResolver } from "../../common/dependency/service.ts";
-import { provideSpaceManager } from "../../common/space/space-manager.ts";
 import { provideDBClient } from "./db.ts";
 import { provideWebServer } from "./main-web-server.ts";
-import { beingUpdateGADef } from "../../actions/being-update/being-update-ga.ts";
-import { provideServerPlayerContextManager } from "./server-player-context/manager.ts";
+import { provideGameSimulatorContextManager } from "../../common/simulator/context/manager.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -43,37 +41,9 @@ router.get("/api.json", (ctx) => {
   const db = client.db("app");
   const collection = db.collection("chunks");
 
-  const playerContextManager = resolver.resolve(provideServerPlayerContextManager);
-  const spaceManager = resolver.resolve(provideSpaceManager);
-  const space = spaceManager.obtain(1);
-
-  let beingCounter = 1;
-
-
-  setInterval(() => {
-    for (const being of space.beingManager.byId.values()) {
-      let x = 0;
-      let y = 0;
-      const { direct } = being;
-      if (direct & 0b1000) {
-        y = -1;
-      }
-      if (direct & 0b0100) {
-        y = 1;
-      }
-      if (direct & 0b0010) {
-        x = -1;
-      }
-      if (direct & 0b0001) {
-        x = 1;
-      }
-      being.x += x * 16;
-      being.y += y * 16;
-      for (const playerContext of playerContextManager.byPlayerContextId.values()) {
-        playerContext.dispatcher.send(beingUpdateGADef, being)
-      }
-    }
-  }, 100);
+  const manager = resolver.resolve(provideGameSimulatorContextManager);
+  const context = await manager.createGameSimulatorContext({ spaceId: 1 });
+  context.simulator.start();
 
   //   router.get("/wss/:token", async (ctx) => {
   //     if (!ctx.isUpgradable) {
