@@ -1,4 +1,4 @@
-import { Looper } from "../main-loop.ts";
+import { Looper } from "../../../common/simulator/looper.ts";
 import { KAMatcher, KAShortCutsChecker } from "../keyboard/kamatcher.ts";
 
 export interface PhaseController extends Looper, KAShortCutsChecker {
@@ -13,9 +13,9 @@ export class PhaseConnector implements PhaseController {
     public readonly name: string,
   ) {}
 
-  public loop(now: DOMHighResTimeStamp): void {
+  public loop(deltaTime: number): void {
     for (const controller of this.loopers) {
-      controller.loop(now);
+      controller.loop(deltaTime);
     }
   }
 

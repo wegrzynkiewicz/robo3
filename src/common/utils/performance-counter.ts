@@ -19,7 +19,7 @@ class MeasurePerformanceCounter implements PerformanceCounter {
     performance.mark(this.startMark);
   }
 
-  public end(): void {
+  public stop(): void {
     const endTime = performance.now();
     performance.mark(this.endMark);
     performance.measure(this.name, this.startMark, this.endMark);
@@ -37,13 +37,13 @@ class MeasurePerformanceCounter implements PerformanceCounter {
 class NullPerformanceCounter implements PerformanceCounter {
   public readonly avgTime = 0;
   public start(): void {}
-  public end(): void {}
+  public stop(): void {}
 }
 
 export interface PerformanceCounter {
   avgTime: number;
   start(): void;
-  end(): void;
+  stop(): void;
 }
 
 export function createPerformanceCounter(name: string, frequency: number): PerformanceCounter {

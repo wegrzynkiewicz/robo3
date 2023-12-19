@@ -1,4 +1,5 @@
 import { MoveDirection } from "../../actions/player-move/me-player-move-ga.ts";
+import { Breaker } from "../utils/breaker.ts";
 
 export interface Being {
   direct: MoveDirection;
@@ -43,4 +44,8 @@ export class BeingManager {
   public destroyBeing(beingId: number): void {
     this.byId.delete(beingId);
   }
+}
+
+export function provideScopedBeingManager(): BeingManager {
+  throw new Breaker("being-manager-must-be-injected");
 }

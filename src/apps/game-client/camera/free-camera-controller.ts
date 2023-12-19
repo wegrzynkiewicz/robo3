@@ -1,10 +1,10 @@
 import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { Pos2D } from "../../../common/math/pos2d.ts";
-import { Looper } from "../main-loop.ts";
 import { KeyShortCut, KeyState } from "../keyboard/key-short-cut.ts";
 import { Keyboard, provideKeyboard } from "../keyboard/keyboard.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
 import { FreeCamera, provideFreeCamera } from "./free-camera.ts";
+import { Looper } from "../../../common/simulator/looper.ts";
 
 function createHolder(code: string, name: string, vector: Pos2D) {
   const kaDefinition = registerKADefinition({

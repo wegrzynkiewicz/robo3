@@ -14,10 +14,10 @@ export class PhaseManager {
     this.currentPhase = phase;
   }
 
-  public loop(now: DOMHighResTimeStamp): void {
+  public loop(deltaTime: number): void {
     const { currentPhase } = this;
     try {
-      currentPhase.loop(now);
+      currentPhase.loop(deltaTime);
     } catch (error: unknown) {
       throw new Breaker("error-in-phase-manager", { currentPhase, error });
     }

@@ -211,7 +211,7 @@ export class TilesSceneBuilder {
       this.processLayer(currentTerrainLevel);
     }
     this.tiles.flush();
-    this.performance.end();
+    this.performance.stop();
   }
 }
 

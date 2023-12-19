@@ -1,12 +1,15 @@
-export class FPSCounter {
+import { Framer } from './looper.ts';
+
+export class FPSCounter implements Framer {
   public fps = 0;
+  public deltaTime = 0;
   protected frameCount = 0;
   protected then = 0;
   protected timeAccumulator = 0;
 
-  public loop(now: DOMHighResTimeStamp) {
-    const deltaTime = now - this.then;
-    this.timeAccumulator += deltaTime;
+  public frame(now: DOMHighResTimeStamp) {
+    this.deltaTime = now - this.then;
+    this.timeAccumulator += this.deltaTime;
     this.frameCount++;
     if (this.frameCount === 60) {
       const averageFrameTime = this.timeAccumulator / this.frameCount;

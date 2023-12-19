@@ -10,7 +10,7 @@ import { SpriteImage } from "../../common/sprite/sprite.ts";
 import { provideMainUAProcessor, resolveUAProcessHandlers } from "./ua/processor.ts";
 import { provideMainGABus } from "../../common/action/bus.ts";
 import { provideApp } from "./app.ts";
-import { provideMainLoop } from "./main-loop.ts";
+import { feedMainLoop, provideMainLoop } from "./main-loop.ts";
 import { provideDebugInfo } from "./debug/debug-info.ts";
 import { provideDisplay } from "./graphic/display.ts";
 import { provideMainKABus } from "./keyboard/kabus.ts";
@@ -36,6 +36,7 @@ async function start() {
   const display = resolver.resolve(provideDisplay);
   const keyboard = resolver.resolve(provideKeyboard);
   const mainLoop = resolver.resolve(provideMainLoop);
+  feedMainLoop(resolver, mainLoop);
   const debugInfo = resolver.resolve(provideDebugInfo);
   const phaseManager = resolver.resolve(providePhaseManager);
 
