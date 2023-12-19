@@ -7,6 +7,7 @@ import { provideScopedOnlineGASender } from "../../../common/action/online-sende
 import { provideScopedGAProcessor } from "../../../common/action/processor.ts";
 import { provideScopedGAReceiver } from "../../../common/action/receiver.ts";
 import { provideScopedWebSocket } from "../../../common/action/socket.ts";
+import { provideScopedBeingManager } from "../../../common/being/manager.ts";
 import { ServiceResolver, provideMainServiceResolver } from "../../../common/dependency/service.ts";
 import { provideScopedLogger } from "../../../common/logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/logger-factory.ts";
@@ -38,6 +39,7 @@ export class ClientPlayerContextManager {
     this.mainServiceResolver.transfer(provideGACodec, resolver);
     this.mainServiceResolver.transfer(provideSpaceManager, resolver);
     this.mainServiceResolver.transfer(provideMePlayer, resolver);
+    this.mainServiceResolver.transfer(provideScopedBeingManager, resolver);
     
     const logger = this.loggerFactory.createLogger('CLIENT');
 

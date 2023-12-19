@@ -1,5 +1,6 @@
-import { ServerPlayerContextManager, provideServerPlayerContextManager } from "../../apps/game-server/server-player-context/manager.ts";
+import { provideScopedServerPlayerContextManager } from "../../apps/game-server/server-player-context/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
+import { GameSimulatorContextManager, provideGameSimulatorContextManager } from "../../common/simulator/context/manager.ts";
 import { assertObject, assertRequiredString } from "../../common/utils/asserts.ts";
 import { EPContext, EPHandler, EPRoute } from "../../common/web/endpoint.ts";
 
@@ -18,19 +19,23 @@ export const playerWebSocketEPRoute = new EPRoute("GET", "/player-web-socket/:to
 
 export class PlayerWebSocketEP implements EPHandler {
   public constructor(
-    public readonly manager: ServerPlayerContextManager,
+    protected readonly manager: GameSimulatorContextManager,
   ) { }
 
   public async handle({ params, request }: EPContext): Promise<Response> {
     const { token } = parsePlayerWebSocketEPRequest(params);
+    const spaceId = 1; // TODO: from token; 
     const { response, socket } = Deno.upgradeWebSocket(request);
-    this.manager.createServerPlayerContext({ token, socket });
+    const gameSimulatorContext = this.manager.bySpaceId.get(spaceId);
+    assertObject(gameSimulatorContext, "game-simulator-context-not-found");
+    const playerContextManager = gameSimulatorContext.resolver.resolve(provideScopedServerPlayerContextManager);
+    playerContextManager.createServerPlayerContext({ socket });
     return response;
   }
 }
 
 export function providePlayerWebSocketEP(resolver: ServiceResolver) {
   return new PlayerWebSocketEP(
-    resolver.resolve(provideServerPlayerContextManager),
+    resolver.resolve(provideGameSimulatorContextManager),
   );
 }

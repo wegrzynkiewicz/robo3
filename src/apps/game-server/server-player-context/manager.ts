@@ -6,13 +6,13 @@ import { provideScopedGAProcessor } from "../../../common/action/processor.ts";
 import { provideScopedGAReceiver } from "../../../common/action/receiver.ts";
 import { provideScopedWebSocket } from "../../../common/action/socket.ts";
 import { provideScopedBeingManager } from "../../../common/being/manager.ts";
-import { ServiceResolver, provideMainServiceResolver } from "../../../common/dependency/service.ts";
+import { ServiceResolver, provideMainServiceResolver, provideScopedServiceResolver } from "../../../common/dependency/service.ts";
 import { provideScopedLogger } from "../../../common/logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/logger-factory.ts";
-import { GameSimulatorContextManager, provideGameSimulatorContextManager } from "../../../common/simulator/context/manager.ts";
-import { SpaceManager, provideSpaceManager } from "../../../common/space/space-manager.ts";
+import { provideScopedGameSimulatorContextServiceResolver } from "../../../common/simulator/context/manager.ts";
+import { provideSpaceManager } from "../../../common/space/space-manager.ts";
 import { provideScopedSpace } from "../../../common/space/space.ts";
-import { assertObject } from "../../../common/utils/asserts.ts";
+import { Breaker } from "../../../common/utils/breaker.ts";
 import { provideScopedWebSocketChannel } from "../../../common/web-socket/web-socket-channel.ts";
 import { provideCloseServerPlayerWebSocketSubscriber } from "./close-server-player-web-socket-subscriber.ts";
 import { ServerPlayerContext, provideScopedServerPlayerContext } from "./define.ts";
@@ -20,41 +20,36 @@ import { feedServerGAProcessor } from "./ga-processor.ts";
 
 export interface ServerPlayerContextFactoryOption {
   socket: WebSocket;
-  token: string,
 }
+
+let playerContextIdCounter = 1;
 
 export class ServerPlayerContextManager {
 
-  private playerContextIdCounter = 1;
   public readonly byPlayerContextId = new Map<number, ServerPlayerContext>();
 
   public constructor(
-    public readonly gameSimulatorContextManager: GameSimulatorContextManager,
     public readonly loggerFactory: LoggerFactory,
-    public readonly mainServiceResolver: ServiceResolver,
-    public readonly spaceManager: SpaceManager,
+    public readonly scopedServiceResolver: ServiceResolver,
   ) { }
 
   public async createServerPlayerContext(options: ServerPlayerContextFactoryOption): Promise<void> {
-    const { socket, token } = options;
+    const { socket } = options;
 
     const spaceId = 1; // TODO: from token; 
 
-    const playerContextId = this.playerContextIdCounter++;
+    const playerContextId = playerContextIdCounter++;
 
     const resolver = new ServiceResolver();
-    this.mainServiceResolver.transfer(provideMainServiceResolver, resolver);
-    this.mainServiceResolver.transfer(provideGACodec, resolver);
-    this.mainServiceResolver.transfer(provideSpaceManager, resolver);
-
-    const gameSimulatorContext = this.gameSimulatorContextManager.bySpaceId.get(spaceId);
-    assertObject(gameSimulatorContext, "game-simulator-context-not-found");
-    const beingManager = gameSimulatorContext.resolver.transfer(provideScopedBeingManager, resolver);
-
-    const space = this.spaceManager.obtain(spaceId);
-    resolver.inject(provideScopedSpace, space);
-
+    resolver.inject(provideScopedServerPlayerContextServiceResolver, resolver);
     resolver.inject(provideScopedWebSocket, socket);
+    this.scopedServiceResolver.transfer(provideMainServiceResolver, resolver);
+    this.scopedServiceResolver.transfer(provideGACodec, resolver);
+    this.scopedServiceResolver.transfer(provideSpaceManager, resolver);
+    this.scopedServiceResolver.transfer(provideScopedServerPlayerContextManager, resolver);
+    const space = this.scopedServiceResolver.transfer(provideScopedSpace, resolver);
+    const beingManager = this.scopedServiceResolver.transfer(provideScopedBeingManager, resolver);
+    this.scopedServiceResolver.transfer(provideScopedGameSimulatorContextServiceResolver, resolver);
 
     const being = beingManager.create();
     const beingId = being.id;
@@ -63,7 +58,7 @@ export class ServerPlayerContextManager {
       beingId,
       playerContextId,
       resolver,
-      spaceId,
+      spaceId: space.spaceId,
     };
     resolver.inject(provideScopedServerPlayerContext, context);
 
@@ -110,11 +105,13 @@ export class ServerPlayerContextManager {
   }
 }
 
-export function provideServerPlayerContextManager(resolver: ServiceResolver) {
+export function provideScopedServerPlayerContextServiceResolver(): ServiceResolver {
+  throw new Breaker('scoped-server-player-context-service-resolver-must-be-injected');
+}
+
+export function provideScopedServerPlayerContextManager(resolver: ServiceResolver) {
   return new ServerPlayerContextManager(
-    resolver.resolve(provideGameSimulatorContextManager),
     resolver.resolve(provideMainLoggerFactory),
-    resolver.resolve(provideMainServiceResolver),
-    resolver.resolve(provideSpaceManager),
+    resolver.resolve(provideScopedGameSimulatorContextServiceResolver),
   );
 }

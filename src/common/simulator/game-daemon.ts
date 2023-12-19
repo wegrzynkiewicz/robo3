@@ -31,7 +31,7 @@ export class GameSimulatorDaemon implements Daemon, Framer {
     this.fpsCounter.frame(now);
     this.performance.start();
     for (const looper of this.loopers) {
-      looper.loop(this.fpsCounter.deltaTime);
+      looper.loop(this.fpsCounter.deltaTime / 1000);
     }
     this.performance.stop();
   }

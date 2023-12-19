@@ -5,7 +5,9 @@ export interface Being {
   id: number;
   wasUpdated: boolean;
   x: number;
+  rx: number;
   y: number;
+  ry: number;
   z: number;
 }
 
@@ -33,7 +35,9 @@ export class BeingManager {
       direct: MoveDirection.S,
       id: beingId,
       wasUpdated: true,
+      rx: 0,
       x: 0,
+      ry: 0,
       y: 0,
       z: 0,
     };

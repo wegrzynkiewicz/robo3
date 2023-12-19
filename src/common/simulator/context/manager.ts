@@ -24,7 +24,10 @@ export class GameSimulatorContextManager {
     { spaceId }: GameSimulatorContextFactoryOption
   ): Promise<GameSimulatorContext> {
     const resolver = new ServiceResolver();
+    resolver.inject(provideScopedGameSimulatorContextServiceResolver, resolver);
     this.mainServiceResolver.transfer(provideSpaceManager, resolver);
+    this.mainServiceResolver.transfer(provideMainLoggerFactory, resolver);
+    this.mainServiceResolver.transfer(provideMainServiceResolver, resolver);
 
     const logger = this.loggerFactory.createLogger('GAME', { spaceId });
     resolver.inject(provideScopedLogger, logger);
@@ -45,6 +48,10 @@ export class GameSimulatorContextManager {
 
     return gameSimulatorContext;
   }
+}
+
+export function provideScopedGameSimulatorContextServiceResolver(): ServiceResolver {
+  throw new Error('scoped-game-simulator-context-service-resolver-must-be-injected');
 }
 
 export function provideGameSimulatorContextManager(resolver: ServiceResolver) {

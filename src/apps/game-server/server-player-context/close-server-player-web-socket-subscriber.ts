@@ -1,7 +1,7 @@
 import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { WebSocketChannelBusSubscriber } from "../../../common/web-socket/web-socket-channel-bus.ts";
 import { ServerPlayerContext, provideScopedServerPlayerContext } from "./define.ts";
-import { ServerPlayerContextManager, provideServerPlayerContextManager } from "./manager.ts";
+import { ServerPlayerContextManager, provideScopedServerPlayerContextManager } from "./manager.ts";
 
 export class CloseServerPlayerWebSocketSubscriber implements WebSocketChannelBusSubscriber<CloseEvent> {
   public constructor(
@@ -18,6 +18,6 @@ export class CloseServerPlayerWebSocketSubscriber implements WebSocketChannelBus
 export function provideCloseServerPlayerWebSocketSubscriber(resolver: ServiceResolver) {
   return new CloseServerPlayerWebSocketSubscriber(
     resolver.resolve(provideScopedServerPlayerContext),
-    resolver.resolve(provideServerPlayerContextManager),
+    resolver.resolve(provideScopedServerPlayerContextManager),
   );
 }
