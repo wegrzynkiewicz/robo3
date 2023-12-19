@@ -25,7 +25,7 @@ export function provideMainLogBus() {
   const bus = new MainLogBus();
   if (typeof Deno === "object") {
     const subscriber = new BasicLogSubscriber(
-      new BasicLogFilter(LogSeverity.INFO),
+      new BasicLogFilter(LogSeverity.SILLY),
       new PrettyLogFormatter(),
     );
     bus.subscribers.add(subscriber);

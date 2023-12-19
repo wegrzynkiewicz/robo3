@@ -1,5 +1,6 @@
 import { provideScopedReceivingGABus, provideScopedSendingGABus } from "../../../common/action/bus.ts";
 import { provideGACodec } from "../../../common/action/codec.ts";
+import { provideScopedGALogger } from "../../../common/action/logger.ts";
 import { provideScopedOnlineGASender } from "../../../common/action/online-sender.ts";
 import { provideScopedGAProcessor } from "../../../common/action/processor.ts";
 import { provideScopedGAReceiver } from "../../../common/action/receiver.ts";
@@ -53,20 +54,21 @@ export class ServerPlayerContextManager {
     const space = this.spaceManager.obtain(spaceId);
     resolver.inject(provideScopedSpace, space);
 
-    const logger = this.loggerFactory.createLogger('PLAYER');
-    resolver.inject(provideScopedLogger, logger);
-
     resolver.inject(provideScopedWebSocket, socket);
 
     const being = beingManager.create();
+    const beingId = being.id;
 
     const context: ServerPlayerContext = {
-      beingId: being.id,
+      beingId,
       playerContextId,
       resolver,
       spaceId,
     };
     resolver.inject(provideScopedServerPlayerContext, context);
+
+    const logger = this.loggerFactory.createLogger('PLAYER', { beingId, playerContextId, spaceId });
+    resolver.inject(provideScopedLogger, logger);
 
     const webSocketChannel = resolver.resolve(provideScopedWebSocketChannel);
     {
@@ -82,6 +84,9 @@ export class ServerPlayerContextManager {
       const processor = resolver.resolve(provideScopedGAProcessor);
       feedServerGAProcessor(resolver, processor);
       receivedGABus.subscribers.add(processor);
+
+      const logger = resolver.resolve(provideScopedGALogger);
+      receivedGABus.subscribers.add(logger);
     }
 
     const sendingGABus = resolver.resolve(provideScopedSendingGABus);
