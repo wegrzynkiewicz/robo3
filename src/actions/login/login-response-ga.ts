@@ -8,7 +8,6 @@ export const loginResponseGADef = registerGADefinition<LoginResponseGA>({
   encoding: {
     type: "json",
   },
-  key: 0x0005,
   kind: "login-res",
 });
 

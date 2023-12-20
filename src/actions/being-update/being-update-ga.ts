@@ -15,7 +15,6 @@ export const beingUpdateGADef = registerGADefinition<BeingUpdateGA>({
     type: "json",
   },
   kind: "being-update",
-  key: 0x0021,
 });
 
 export class BeingUpdateGAHandler implements GAHandler<BeingUpdateGA, void> {

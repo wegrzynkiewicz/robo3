@@ -1,14 +1,8 @@
 import { assertEqual } from "../utils/asserts.ts";
-import { registerIdentifier } from "../../core/identifier.ts";
-import { TILES_PER_CHUNK_GRID } from "../../core/vars.ts";
-
-const identifier = registerIdentifier({
-  key: 0x11,
-  kind: "chunk-segment-header",
-});
+import { Identifier, TILES_PER_CHUNK_GRID } from "../vars.ts";
 
 export class ChunkSegmentHeader {
-  public static readonly HEADER_ID = identifier.key;
+  public static readonly HEADER_ID = Identifier.chunkSegmentHeader;
   public static readonly BYTE_LENGTH = 8;
 
   public constructor(

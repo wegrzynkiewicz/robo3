@@ -24,3 +24,11 @@ export const POSITIONS_SAMPLING_PER_PIXEL = Math.floor(POSITIONS_SAMPLING_PER_CH
 export const ERROR_GAME_OBJECT_SPRITE_INDEX = 0;
 export const UNDEFINED_GAME_OBJECT_SPRITE_INDEX = 1;
 export const DEFAULT_GAME_OBJECT_SPRITE_INDEX = 2;
+
+export const enum Identifier {
+  pingGA = 0x01,
+  pongGA = 0x02,
+  pangGA = 0x03,
+  chunkSegmentUpdateGA = 0x04,
+  chunkSegmentHeader = 0x05,
+}

@@ -1,4 +1,3 @@
-import { registerIdentifier } from "../../core/identifier.ts";
 import { AnyGADefinition, GADefinition } from "./define.ts";
 
 export class GAManager {
@@ -6,9 +5,10 @@ export class GAManager {
   public readonly byKind = new Map<string, AnyGADefinition>();
 
   public registerGADefinition<TInstance>(definition: GADefinition<TInstance>): GADefinition<TInstance> {
-    const { key, kind } = definition;
-    registerIdentifier({ key, kind });
-    this.byKey.set(key, definition);
+    const { encoding, kind } = definition;
+    if (encoding.type === "binary") {
+      this.byKey.set(encoding.key, definition);
+    }
     this.byKind.set(kind, definition);
     return definition;
   }

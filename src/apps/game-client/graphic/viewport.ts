@@ -1,5 +1,5 @@
 import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { SPRITES_TEXTURE_SIZE } from "../../../core/vars.ts";
+import { SPRITES_TEXTURE_SIZE } from "../../../common/vars.ts";
 import { box2P } from "../../../common/math/box2p.ts";
 import { pos2D } from "../../../common/math/pos2d.ts";
 import { fromTranslation, identity, ortho } from "../../../common/math/mat4.ts";

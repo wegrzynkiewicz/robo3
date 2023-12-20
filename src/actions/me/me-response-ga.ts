@@ -10,7 +10,6 @@ export const meResponseGADef = registerGADefinition<MeResponseGA>({
   encoding: {
     type: "json",
   },
-  key: 0x00033,
   kind: "me-res",
 });
 

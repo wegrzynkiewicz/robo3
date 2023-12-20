@@ -74,17 +74,18 @@ export class GACodec {
   }
 
   public encode<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): string | ArrayBuffer {
-    const { encoding, key } = definition;
+    const { encoding } = definition;
     const type = encoding.type;
     if (type === "json") {
       const data = JSON.stringify(envelope);
       return data;
     } else if (type === "binary") {
+      const { codec, key } = encoding;
       const { id, params } = envelope;
-      const byteLength = GA_BINARY_HEADER_BYTE_LENGTH + encoding.codec.calcByteLength(params);
+      const byteLength = GA_BINARY_HEADER_BYTE_LENGTH + codec.calcByteLength(params);
       const buffer = new ArrayBuffer(byteLength);
       gaBinaryHeaderCodec.encode(buffer, 0, { id, key });
-      encoding.codec.encode(buffer, GA_BINARY_HEADER_BYTE_LENGTH, params);
+      codec.encode(buffer, GA_BINARY_HEADER_BYTE_LENGTH, params);
       return buffer;
     } else {
       throw new Breaker("unexpected-game-action-definition");

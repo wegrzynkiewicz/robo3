@@ -25,7 +25,6 @@ export const mePlayerMoveGADef = registerGADefinition<MePlayerMoveGA>({
     type: "json",
   },
   kind: "me-player-move",
-  key: 0x0020,
 });
 
 export class MePlayerMoveGAHandler implements GAHandler<MePlayerMoveGA, void> {

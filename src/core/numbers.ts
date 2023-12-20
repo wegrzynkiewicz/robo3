@@ -1,4 +1,4 @@
-import { SPRITE_SIZE, SPRITES_PER_TEXTURE_AXIS } from "./vars.ts";
+import { SPRITE_SIZE, SPRITES_PER_TEXTURE_AXIS } from "../common/vars.ts";
 
 export function createIndexCalculator(width: number, height: number): (x: number, y: number, z: number) => number {
   const area = width * height;

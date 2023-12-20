@@ -1,6 +1,7 @@
 import { GAHandler } from "../../common/action/define.ts";
 import { registerGADefinition } from "../../common/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
+import { Identifier } from "../../common/vars.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
 import { NetworkLatencyCounter, provideNetworkLatencyCounter } from "./network-latency-counter.ts";
 import { PangGA } from "./pang-ga.ts";
@@ -31,10 +32,10 @@ const codec: BinaryBYOBCodec<PongGA> = {
 export const pongGADef = registerGADefinition({
   encoding: {
     codec,
+    key: Identifier.pongGA,
     type: "binary",
   },
   kind: "pong",
-  key: 0x02,
 });
 
 export class PongGAHandler implements GAHandler<PongGA, PangGA> {

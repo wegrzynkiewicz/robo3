@@ -8,6 +8,7 @@ export interface GAEnvelope<TData> {
 
 export interface GABinaryEncodingDefinition<TData> {
   codec: BinaryBYOBCodec<TData>;
+  key: number;
   type: "binary";
 }
 
@@ -21,7 +22,6 @@ export type AnyGAEnvelope = GAEnvelope<any>;
 
 export interface GADefinition<TData> {
   encoding: GAEncodingDefinition<TData>;
-  key: number;
   kind: string;
 }
 

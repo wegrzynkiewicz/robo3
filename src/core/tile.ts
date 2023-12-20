@@ -1,7 +1,7 @@
 import { generateHighContrastColor } from "../pages/game-client/src/graphic/color.ts";
 import { assertNonNull, assertTrue } from "../common/utils/asserts.ts";
 import { coords2ImageRect, index2coords } from "./numbers.ts";
-import { SPRITE_SIZE, SPRITES_TEXTURE_SIZE } from "./vars.ts";
+import { SPRITE_SIZE, SPRITES_TEXTURE_SIZE } from "../common/vars.ts";
 
 export function createContext2D(width: number, height: number): CanvasRenderingContext2D {
   assertTrue(width % SPRITE_SIZE === 0, `canvas-width-must-be-multiples-of-${SPRITE_SIZE}`, { width });

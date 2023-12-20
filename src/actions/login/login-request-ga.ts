@@ -10,7 +10,6 @@ export const loginRequestGADef = registerGADefinition<LoginRequestGA>({
   encoding: {
     type: "json",
   },
-  key: 0x0004,
   kind: "login-req",
 });
 

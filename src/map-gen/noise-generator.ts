@@ -1,4 +1,4 @@
-import { TILES_PER_CHUNK_GRID_AXIS } from "../core/vars.ts";
+import { TILES_PER_CHUNK_GRID_AXIS } from "../common/vars.ts";
 import { createNoise2D } from "./deps.ts";
 
 const axis = TILES_PER_CHUNK_GRID_AXIS;

@@ -8,7 +8,6 @@ export const meRequestGADef = registerGADefinition<EmptyObject>({
   encoding: {
     type: "json",
   },
-  key: 0x00032,
   kind: "me-req",
 });
 

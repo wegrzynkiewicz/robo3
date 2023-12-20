@@ -4,6 +4,7 @@ import { registerGADefinition } from "../../common/action/manager.ts";
 import { ChunkId, chunkIdCodec } from "../../common/chunk/chunk-id.ts";
 import { ChunkSegment } from "../../common/chunk/chunk-segment.ts";
 import { BinaryBYOBCodec, BinarySequencyDecoder, BinarySequencyEncoder } from "../../core/codec.ts";
+import { Identifier } from "../../common/vars.ts";
 
 export interface ChunkSegmentUpdateGA {
   chunkId: ChunkId;
@@ -33,8 +34,8 @@ const codec: BinaryBYOBCodec<ChunkSegmentUpdateGA> = {
 export const chunkSegmentUpdateGADef = registerGADefinition({
   encoding: {
     codec,
+    key: Identifier.chunkSegmentUpdateGA,
     type: "binary",
   },
   kind: "chunk-segment-update",
-  key: 0x12,
 });

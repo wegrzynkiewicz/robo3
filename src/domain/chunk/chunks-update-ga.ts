@@ -10,5 +10,4 @@ export const chunksUpdateGADef = registerGADefinition({
     type: "json",
   },
   kind: "chunks-update",
-  key: 0x0010,
 });

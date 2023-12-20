@@ -1,5 +1,6 @@
 import { GAHandler } from "../../common/action/define.ts";
 import { registerGADefinition } from "../../common/action/manager.ts";
+import { Identifier } from "../../common/vars.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
 
 export interface PangGA {
@@ -25,10 +26,10 @@ const codec: BinaryBYOBCodec<PangGA> = {
 export const pangGADef = registerGADefinition({
   encoding: {
     codec,
+    key: Identifier.pangGA,
     type: "binary",
   },
   kind: "pang",
-  key: 0x03,
 });
 
 export class PangGAHandler implements GAHandler<PangGA, void> {
