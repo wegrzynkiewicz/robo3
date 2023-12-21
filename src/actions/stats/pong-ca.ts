@@ -4,7 +4,7 @@ import { ServiceResolver } from "../../common/dependency/service.ts";
 import { Identifier } from "../../common/vars.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
 import { NetworkLatencyCounter, provideNetworkLatencyCounter } from "./network-latency-counter.ts";
-import { PangCA } from "./pang-ga.ts";
+import { PangCA } from "./pang-ca.ts";
 
 export interface PongCA {
   clientHighResTimestamp: number;

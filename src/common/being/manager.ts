@@ -1,4 +1,4 @@
-import { MoveDirection } from "../../actions/player-move/me-player-move-ga.ts";
+import { MoveDirection } from "../../actions/player-move/me-player-move-ca.ts";
 
 export interface Being {
   direct: MoveDirection;

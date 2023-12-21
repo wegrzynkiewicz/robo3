@@ -23,7 +23,7 @@ import { provideTilesTexture2DArray } from "./graphic/tiles/tiles-texture2darray
 import { provideSpriteIndicesTexture } from "./graphic/tiles/sprite-indices-texture.ts";
 import { provideClientSpriteAtlasLoader } from "../../domain-client/sprite/allocation/client-sprite-atlas-loader.ts";
 import { provideClientPlayerContextManager } from "./client-player-context/client-player-context.ts";
-import { meRequestCADef } from "../../actions/me/me-request-ga.ts";
+import { meRequestCADef } from "../../actions/me/me-request-ca.ts";
 
 async function start() {
   const resolver = new ServiceResolver();

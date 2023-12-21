@@ -1,6 +1,6 @@
 import { registerCADefinition } from "../../common/action/manager.ts";
 import { assertRequiredString } from "../../common/utils/asserts.ts";
-import { LoginResponseCA } from "./login-response-ga.ts";
+import { LoginResponseCA } from "./login-response-ca.ts";
 
 export interface LoginRequestCA {
   token: string;

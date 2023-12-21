@@ -3,7 +3,7 @@ import { Looper } from "../../common/simulator/looper.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { ServerPlayerContextManager, provideScopedServerPlayerContextManager } from "../../apps/game-server/server-player-context/manager.ts";
 import { provideScopedCADispatcher } from "../../common/action/dispatcher.ts";
-import { beingUpdateCADef } from "../being-update/being-update-ga.ts";
+import { beingUpdateCADef } from "../being-update/being-update-ca.ts";
 
 export class BeingSimulator implements Looper {
   public constructor(

@@ -1,7 +1,7 @@
 import { createPerformanceCounter } from "../../common/utils/performance-counter.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { pingCADef } from "./ping-ga.ts";
-import { pongCADef } from "./pong-ga.ts";
+import { pingCADef } from "./ping-ca.ts";
+import { pongCADef } from "./pong-ca.ts";
 import { Breaker } from "../../common/utils/breaker.ts";
 import { CARequestor } from "../../common/action/define.ts";
 import { provideScopedCARequestor } from "../../common/action/requestor.ts";

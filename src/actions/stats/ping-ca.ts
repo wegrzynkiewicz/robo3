@@ -2,7 +2,7 @@ import { CAHandler } from "../../common/action/define.ts";
 import { registerCADefinition } from "../../common/action/manager.ts";
 import { Identifier } from "../../common/vars.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
-import { PongCA } from "./pong-ga.ts";
+import { PongCA } from "./pong-ca.ts";
 
 export interface PingCA {
   clientHighResTimestamp: number;

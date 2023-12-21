@@ -2,7 +2,7 @@ import { BeingManager, provideScopedBeingManager } from "../../common/being/mana
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { SAHandler } from "../../common/simulator/actions/define.ts";
 import { registerSADefinition } from "../../common/simulator/actions/sa-manager.ts";
-import { MoveDirection } from "../player-move/me-player-move-ga.ts";
+import { MoveDirection } from "../player-move/me-player-move-ca.ts";
 
 export interface BeingMoveSA {
   beingId: number;

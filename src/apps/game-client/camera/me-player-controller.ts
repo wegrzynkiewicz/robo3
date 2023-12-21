@@ -1,5 +1,5 @@
 import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { MoveDirection } from "../../../actions/player-move/me-player-move-ga.ts";
+import { MoveDirection } from "../../../actions/player-move/me-player-move-ca.ts";
 import { KeyShortCut, KeyState } from "../keyboard/key-short-cut.ts";
 import { Keyboard, provideKeyboard } from "../keyboard/keyboard.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";

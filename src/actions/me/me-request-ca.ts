@@ -2,7 +2,7 @@ import { ServerPlayerContext, provideScopedServerPlayerContext } from "../../app
 import { registerCADefinition } from "../../common/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { EmptyObject } from "../../common/utils/useful.ts";
-import { MeResponseCA } from "./me-response-ga.ts";
+import { MeResponseCA } from "./me-response-ca.ts";
 
 export const meRequestCADef = registerCADefinition<EmptyObject>({
   encoding: {

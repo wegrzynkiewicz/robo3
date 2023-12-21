@@ -16,7 +16,7 @@ import { Breaker } from "../../../common/utils/breaker.ts";
 import { provideScopedWebSocketChannel } from "../../../common/web-socket/web-socket-channel.ts";
 import { provideCloseServerPlayerWebSocketSubscriber } from "./close-server-player-web-socket-subscriber.ts";
 import { ServerPlayerContext, provideScopedServerPlayerContext } from "./define.ts";
-import { feedServerCAProcessor } from "./ga-processor.ts";
+import { feedServerCAProcessor } from "./ca-processor.ts";
 
 export interface ServerPlayerContextFactoryOption {
   socket: WebSocket;

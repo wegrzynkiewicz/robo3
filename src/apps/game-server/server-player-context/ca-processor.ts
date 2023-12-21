@@ -1,13 +1,13 @@
 import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { mePlayerMoveCADef, provideMePlayerMoveCAHandler } from "../../../actions/player-move/me-player-move-ga.ts";
-import { pangCADef, providePangCAHandler } from "../../../actions/stats/pang-ga.ts";
-import { pingCADef, providePingCAHandler } from "../../../actions/stats/ping-ga.ts";
-import { pongCADef } from "../../../actions/stats/pong-ga.ts";
+import { mePlayerMoveCADef, provideMePlayerMoveCAHandler } from "../../../actions/player-move/me-player-move-ca.ts";
+import { pangCADef, providePangCAHandler } from "../../../actions/stats/pang-ca.ts";
+import { pingCADef, providePingCAHandler } from "../../../actions/stats/ping-ca.ts";
+import { pongCADef } from "../../../actions/stats/pong-ca.ts";
 import { UniversalCAProcessor } from "../../../common/action/processor.ts";
-import { loginRequestCADef, provideLoginRequestCAHandler } from "../../../actions/login/login-request-ga.ts";
-import { loginResponseCADef } from "../../../actions/login/login-response-ga.ts";
-import { meRequestCADef, provideMeRequestCAHandler } from "../../../actions/me/me-request-ga.ts";
-import { meResponseCADef } from "../../../actions/me/me-response-ga.ts";
+import { loginRequestCADef, provideLoginRequestCAHandler } from "../../../actions/login/login-request-ca.ts";
+import { loginResponseCADef } from "../../../actions/login/login-response-ca.ts";
+import { meRequestCADef, provideMeRequestCAHandler } from "../../../actions/me/me-request-ca.ts";
+import { meResponseCADef } from "../../../actions/me/me-response-ca.ts";
 
 export function feedServerCAProcessor(resolver: ServiceResolver, processor: UniversalCAProcessor) {
   processor.registerHandler(loginRequestCADef, loginResponseCADef, resolver.resolve(provideLoginRequestCAHandler));
