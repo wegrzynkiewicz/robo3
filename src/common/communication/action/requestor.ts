@@ -1,8 +1,8 @@
 import { Deferred, deferred } from "../../../deps.ts";
 import { ServiceResolver } from "../../dependency/service.ts";
 import { CABusSubscriber } from "./bus.ts";
-import { CARequestor, CASender, CADefinition, CAEnvelope } from "./define.ts";
-import { provideScopedCASender } from "./online-sender.ts";
+import { CARequestor, CADefinition, CAEnvelope, CADispatcher } from "./define.ts";
+import { provideScopedCADispatcher } from "./dispatcher.ts";
 
 export interface CARequest<TRequest, TResponse> {
   id: number;
@@ -19,7 +19,7 @@ export class UniversalCARequestor implements CABusSubscriber, CARequestor {
   protected readonly requests = new Map<number, AnyCARequest>();
 
   public constructor(
-    public readonly sender: CASender,
+    public readonly dispatcher: CADispatcher,
   ) {}
 
   public async subscribe<TData>(_definition: CADefinition<TData>, envelope: CAEnvelope<TData>): Promise<void> {
@@ -53,13 +53,13 @@ export class UniversalCARequestor implements CABusSubscriber, CARequestor {
       responseDefinition,
     };
     this.requests.set(id, request);
-    this.sender.sendEnvelope(requestDefinition, envelope);
+    this.dispatcher.sendEnvelope(requestDefinition, envelope);
     return promise;
   }
 }
 
 export function provideScopedCARequestor(resolver: ServiceResolver) {
   return new UniversalCARequestor(
-    resolver.resolve(provideScopedCASender),
+    resolver.resolve(provideScopedCADispatcher),
   );
 }
