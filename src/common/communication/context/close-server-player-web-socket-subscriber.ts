@@ -1,5 +1,5 @@
-import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { WebSocketChannelBusSubscriber } from "../../../common/web-socket/web-socket-channel-bus.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
+import { WebSocketChannelBusSubscriber } from "../../web-socket/web-socket-channel-bus.ts";
 import { ServerPlayerContext, provideScopedServerPlayerContext } from "./define.ts";
 import { ServerPlayerContextManager, provideScopedServerPlayerContextManager } from "./manager.ts";
 

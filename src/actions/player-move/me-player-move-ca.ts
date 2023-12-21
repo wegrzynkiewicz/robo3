@@ -1,7 +1,7 @@
 import { registerCADefinition } from "../../common/communication/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { CAHandler } from "../../common/communication/action/define.ts";
-import { provideScopedServerPlayerContext, ServerPlayerContext } from "../../apps/game-server/server-player-context/define.ts";
+import { provideScopedServerPlayerContext, ServerPlayerContext } from "../../common/communication/context/define.ts";
 import { BeingManager, provideScopedBeingManager } from "../../common/being/manager.ts";
 
 export const enum MoveDirection {

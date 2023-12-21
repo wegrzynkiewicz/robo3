@@ -1,4 +1,4 @@
-import { ServerPlayerContext, provideScopedServerPlayerContext } from "../../apps/game-server/server-player-context/define.ts";
+import { ServerPlayerContext, provideScopedServerPlayerContext } from "../../common/communication/context/define.ts";
 import { registerCADefinition } from "../../common/communication/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { EmptyObject } from "../../common/utils/useful.ts";

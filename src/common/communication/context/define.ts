@@ -1,5 +1,5 @@
-import { ServiceResolver } from "../../../common/dependency/service.ts";
-import { Breaker } from "../../../common/utils/breaker.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
+import { Breaker } from "../../utils/breaker.ts";
 
 export interface ServerPlayerContext {
   beingId: number;

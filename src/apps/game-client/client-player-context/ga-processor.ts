@@ -6,13 +6,13 @@ import { pangCADef } from "../../../actions/stats/pang-ca.ts";
 import { pongCADef, providePongCAHandler } from "../../../actions/stats/pong-ca.ts";
 import { provideChunkSegmentUpdateCAHandler } from "../../../domain-client/chunk/chunk-segment-update-ga-handler.ts";
 import { provideChunksUpdateCAHandler } from "../../../domain-client/chunk/chunks-update-ga-handler.ts";
-import { beingUpdateCADef, provideBeingUpdateCAHandler } from "../../../actions/being-update/being-update-ca.ts";
+import { beingsUpdateCADef, provideBeingsUpdateCAHandler } from "../../../actions/beings-update/beings-update-ca.ts";
 import { meResponseCADef, provideMeResponseCAHandler } from "../../../actions/me/me-response-ca.ts";
 
 export function feedClientSideCAProcess(resolver: ServiceResolver, processor: UniversalCAProcessor) {
   processor.registerHandler(chunksUpdateCADef, undefined, resolver.resolve(provideChunksUpdateCAHandler));
   processor.registerHandler(chunkSegmentUpdateCADef, undefined, resolver.resolve(provideChunkSegmentUpdateCAHandler));
   processor.registerHandler(pongCADef, pangCADef, resolver.resolve(providePongCAHandler));
-  processor.registerHandler(beingUpdateCADef, undefined, resolver.resolve(provideBeingUpdateCAHandler));
+  processor.registerHandler(beingsUpdateCADef, undefined, resolver.resolve(provideBeingsUpdateCAHandler));
   processor.registerHandler(meResponseCADef, undefined, resolver.resolve(provideMeResponseCAHandler));
 }

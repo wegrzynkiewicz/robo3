@@ -3,7 +3,7 @@ import { provideScopedLogger } from "../../logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../logger/logger-factory.ts";
 import { SpaceManager, provideSpaceManager } from "../../space/space-manager.ts";
 import { provideScopedSpace } from "../../space/space.ts";
-import { provideScopedGameSimulationDaemon, feedGameSimulationDaemon } from "../game-simulation-daemon.ts";
+import { provideScopedGameSimulationDaemon, feedGameSimulationDaemon } from "../simulation-daemon.ts";
 import { GameSimulationContext } from "./define.ts";
 
 export interface GameSimulationContextFactoryOption {

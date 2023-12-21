@@ -1,4 +1,4 @@
-import { provideScopedServerPlayerContextManager } from "../../apps/game-server/server-player-context/manager.ts";
+import { provideScopedServerPlayerContextManager } from "../../common/communication/context/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { GameSimulationContextManager, provideGameSimulationContextManager } from "../../common/game/context/manager.ts";
 import { assertObject, assertRequiredString } from "../../common/utils/asserts.ts";

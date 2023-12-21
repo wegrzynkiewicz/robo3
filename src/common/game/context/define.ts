@@ -1,6 +1,6 @@
 import { ServiceResolver } from "../../dependency/service.ts";
 import { Breaker } from "../../utils/breaker.ts";
-import { GameSimulationDaemon } from "../game-simulation-daemon.ts";
+import { GameSimulationDaemon } from "../simulation-daemon.ts";
 
 export interface GameSimulationContext {
   resolver: ServiceResolver;
