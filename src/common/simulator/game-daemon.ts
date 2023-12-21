@@ -2,7 +2,7 @@ import { createPerformanceCounter } from "../utils/performance-counter.ts";
 import { ServiceResolver } from "../dependency/service.ts";
 import { FPSCounter, provideFPSCounter } from "./fps-counter.ts";
 import { Daemon, Framer, Looper } from "./looper.ts";
-import { provideScopedBeingSimulator } from "../being/simulator.ts";
+import { provideScopedBeingSimulator } from "../../actions/being-move/being-move-simulator.ts";
 
 export class GameSimulatorDaemon implements Daemon, Framer {
   public loopers: Looper[] = [];

@@ -1,9 +1,9 @@
-import { Being, BeingManager, provideScopedBeingManager } from "./manager.ts";
-import { Looper } from "../simulator/looper.ts";
-import { ServiceResolver } from "../dependency/service.ts";
+import { Being, BeingManager, provideScopedBeingManager } from "../../common/being/manager.ts";
+import { Looper } from "../../common/simulator/looper.ts";
+import { ServiceResolver } from "../../common/dependency/service.ts";
 import { ServerPlayerContextManager, provideScopedServerPlayerContextManager } from "../../apps/game-server/server-player-context/manager.ts";
-import { provideScopedGADispatcher } from "../action/dispatcher.ts";
-import { beingUpdateGADef } from "../../actions/being-update/being-update-ga.ts";
+import { provideScopedGADispatcher } from "../../common/action/dispatcher.ts";
+import { beingUpdateGADef } from "../being-update/being-update-ga.ts";
 
 export class BeingSimulator implements Looper {
   public constructor(
