@@ -1,7 +1,7 @@
-import { ServiceResolver, provideMainServiceResolver } from "../../../common/dependency/service.ts";
-import { provideScopedLogger } from "../../../common/logger/global.ts";
-import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/logger-factory.ts";
-import { SpaceManager, provideSpaceManager } from "../../../common/space/space-manager.ts";
+import { ServiceResolver, provideMainServiceResolver } from "../../dependency/service.ts";
+import { provideScopedLogger } from "../../logger/global.ts";
+import { LoggerFactory, provideMainLoggerFactory } from "../../logger/logger-factory.ts";
+import { SpaceManager, provideSpaceManager } from "../../space/space-manager.ts";
 import { provideScopedSpace } from "../../space/space.ts";
 import { feedGameSimulatorDaemon, provideScopedGameSimulatorDaemon } from "../game-daemon.ts";
 import { GameSimulatorContext } from "./define.ts";

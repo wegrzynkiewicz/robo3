@@ -1,6 +1,6 @@
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { FPSCounter, provideFPSCounter } from "../../common/simulator/fps-counter.ts";
-import { Framer, Looper } from "../../common/simulator/looper.ts";
+import { FPSCounter, provideFPSCounter } from "../../common/game/fps-counter.ts";
+import { Framer, Looper } from "../../common/game/looper.ts";
 import { provideCameraManager } from "./camera/camera-manager.ts";
 import { provideDebugInfo } from "./debug/debug-info.ts";
 import { provideSceneViewport } from "./graphic/tiles/scene-viewport.ts";

@@ -1,6 +1,6 @@
 import { provideScopedServerPlayerContextManager } from "../../apps/game-server/server-player-context/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { GameSimulatorContextManager, provideGameSimulatorContextManager } from "../../common/simulator/context/manager.ts";
+import { GameSimulatorContextManager, provideGameSimulatorContextManager } from "../../common/game/context/manager.ts";
 import { assertObject, assertRequiredString } from "../../common/utils/asserts.ts";
 import { EPContext, EPHandler, EPRoute } from "../../common/web/endpoint.ts";
 

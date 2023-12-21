@@ -9,7 +9,7 @@ import { provideScopedBeingManager } from "../../../common/being/manager.ts";
 import { ServiceResolver, provideMainServiceResolver, provideScopedServiceResolver } from "../../../common/dependency/service.ts";
 import { provideScopedLogger } from "../../../common/logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/logger-factory.ts";
-import { provideScopedGameSimulatorContextServiceResolver } from "../../../common/simulator/context/manager.ts";
+import { provideScopedGameSimulatorContextServiceResolver } from "../../../common/game/context/manager.ts";
 import { provideSpaceManager } from "../../../common/space/space-manager.ts";
 import { provideScopedSpace } from "../../../common/space/space.ts";
 import { Breaker } from "../../../common/utils/breaker.ts";

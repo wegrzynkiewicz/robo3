@@ -1,5 +1,5 @@
 import { Being, BeingManager, provideScopedBeingManager } from "../../common/being/manager.ts";
-import { Looper } from "../../common/simulator/looper.ts";
+import { Looper } from "../../common/game/looper.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { ServerPlayerContextManager, provideScopedServerPlayerContextManager } from "../../apps/game-server/server-player-context/manager.ts";
 import { provideScopedCADispatcher } from "../../common/action/dispatcher.ts";

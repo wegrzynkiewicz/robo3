@@ -5,7 +5,7 @@ import { Keyboard, provideKeyboard } from "../keyboard/keyboard.ts";
 import { registerKADefinition } from "../keyboard/foundation.ts";
 import { provideMainUABus, UABus } from "../ua/uabus.ts";
 import { mePlayerMoveUA } from "../../../actions/player-move/me-player-move-ua.ts";
-import { Looper } from "../../../common/simulator/looper.ts";
+import { Looper } from "../../../common/game/looper.ts";
 
 function createHolder(code: string, name: string, direct: MoveDirection) {
   const kaDefinition = registerKADefinition({

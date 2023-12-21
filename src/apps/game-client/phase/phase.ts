@@ -1,4 +1,4 @@
-import { Looper } from "../../../common/simulator/looper.ts";
+import { Looper } from "../../../common/game/looper.ts";
 import { KAMatcher, KAShortCutsChecker } from "../keyboard/kamatcher.ts";
 
 export interface PhaseController extends Looper, KAShortCutsChecker {

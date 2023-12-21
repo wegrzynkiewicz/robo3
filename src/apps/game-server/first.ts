@@ -2,7 +2,7 @@ import { Application, OpenAPI, Router } from "./deps.ts";
 import { ServiceResolver, provideMainServiceResolver } from "../../common/dependency/service.ts";
 import { provideDBClient } from "./db.ts";
 import { provideWebServer } from "./main-web-server.ts";
-import { provideGameSimulatorContextManager } from "../../common/simulator/context/manager.ts";
+import { provideGameSimulatorContextManager } from "../../common/game/context/manager.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();

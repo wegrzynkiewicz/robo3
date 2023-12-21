@@ -1,24 +1,24 @@
 import { BeingManager, provideScopedBeingManager } from "../../common/being/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { SAHandler } from "../../common/simulator/actions/define.ts";
-import { registerSADefinition } from "../../common/simulator/actions/sa-manager.ts";
+import { GAHandler } from "../../common/game/actions/define.ts";
+import { registerGADefinition } from "../../common/game/actions/manager.ts";
 import { MoveDirection } from "../player-move/me-player-move-ca.ts";
 
-export interface BeingMoveSA {
+export interface BeingMoveGA {
   beingId: number;
   direction: MoveDirection;
 }
 
-export const beingMoveSA = registerSADefinition<BeingMoveSA>({
+export const beingMoveGA = registerGADefinition<BeingMoveGA>({
   kind: "being-move",
 });
 
-export class BeingMoveSAHandler implements SAHandler<BeingMoveSA>{
+export class BeingMoveGAHandler implements GAHandler<BeingMoveGA>{
   public constructor(
     protected readonly beingManager: BeingManager,
   ) { }
   
-  public async handle(action: BeingMoveSA): Promise<void> {
+  public async handle(action: BeingMoveGA): Promise<void> {
     const { beingId, direction } = action;
     const being = this.beingManager.byId.get(beingId);
     if (being === undefined) {
@@ -28,8 +28,8 @@ export class BeingMoveSAHandler implements SAHandler<BeingMoveSA>{
   }
 }
 
-export function provideBeingMoveSAHandler(resolver: ServiceResolver) {
-  return new BeingMoveSAHandler(
+export function provideBeingMoveGAHandler(resolver: ServiceResolver) {
+  return new BeingMoveGAHandler(
     resolver.resolve(provideScopedBeingManager),
   );
 }
