@@ -1,15 +1,15 @@
-import { GAHandler } from "../../common/action/define.ts";
+import { CAHandler } from "../../common/action/define.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { ChunkSegmentUpdateGA } from "../../domain/chunk/chunk-segment-update-ga.ts";
+import { ChunkSegmentUpdateCA } from "../../domain/chunk/chunk-segment-update-ga.ts";
 import { provideChunkManager } from "./chunk-manager.ts";
 
-export function provideChunkSegmentUpdateGAHandler(resolver: ServiceResolver) {
+export function provideChunkSegmentUpdateCAHandler(resolver: ServiceResolver) {
   const chunkManager = resolver.resolve(provideChunkManager);
-  const chunkSegmentUpdateGAHandler: GAHandler<ChunkSegmentUpdateGA, void> = {
-    async handle(request: ChunkSegmentUpdateGA): Promise<void> {
+  const chunkSegmentUpdateCAHandler: CAHandler<ChunkSegmentUpdateCA, void> = {
+    async handle(request: ChunkSegmentUpdateCA): Promise<void> {
       const { chunkId, segment } = request;
       chunkManager.updateSegment(chunkId, segment);
     },
   };
-  return chunkSegmentUpdateGAHandler;
+  return chunkSegmentUpdateCAHandler;
 }

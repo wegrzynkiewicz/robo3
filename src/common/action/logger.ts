@@ -1,20 +1,20 @@
 import { ServiceResolver } from "../dependency/service.ts";
 import { Logger, provideScopedLogger } from "../logger/global.ts";
-import { GABusSubscriber } from "./bus.ts";
-import { GADefinition, GAEnvelope } from "./define.ts";
+import { CABusSubscriber } from "./bus.ts";
+import { CADefinition, CAEnvelope } from "./define.ts";
 
-export class GALogger implements GABusSubscriber {
+export class CALogger implements CABusSubscriber {
   public constructor(
     public readonly logger: Logger,
   ) {}
 
-  public async subscribe<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
+  public async subscribe<TData>(definition: CADefinition<TData>, envelope: CAEnvelope<TData>): Promise<void> {
     this.logger.silly("game-action", { definition, envelope });
   }
 }
 
-export function provideScopedGALogger(resolver: ServiceResolver) {
-  return new GALogger(
+export function provideScopedCALogger(resolver: ServiceResolver) {
+  return new CALogger(
     resolver.resolve(provideScopedLogger),
   ); 
 }

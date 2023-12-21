@@ -2,12 +2,12 @@ import { assertObject, assertPositiveNumber, assertRequiredString, isRequiredStr
 import { Breaker } from "../utils/breaker.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
 import { ServiceResolver } from "../dependency/service.ts";
-import { GAManager, provideGAManager } from "./manager.ts";
-import { AnyGAEnvelope, GADefinition, GAEnvelope } from "./define.ts";
+import { CAManager, provideCAManager } from "./manager.ts";
+import { AnyCAEnvelope, CADefinition, CAEnvelope } from "./define.ts";
 
-export function decodeGAJsonEnvelope(message: string): AnyGAEnvelope {
+export function decodeCAJsonEnvelope(message: string): AnyCAEnvelope {
   const envelope = JSON.parse(message);
-  assertObject<AnyGAEnvelope>(envelope, "invalid-game-action-envelope");
+  assertObject<AnyCAEnvelope>(envelope, "invalid-game-action-envelope");
   const { id, kind, params } = envelope;
   assertPositiveNumber(id, "invalid-game-action-envelope-id");
   assertRequiredString(kind, "invalid-game-action-envelope-kind");
@@ -15,24 +15,24 @@ export function decodeGAJsonEnvelope(message: string): AnyGAEnvelope {
   return { id, kind, params };
 }
 
-export interface GABinaryHeader {
+export interface CABinaryHeader {
   readonly key: number;
   readonly id: number;
 }
 
-export const GA_BINARY_HEADER_BYTE_LENGTH = 4;
+export const CA_BINARY_HEADER_BYTE_LENGTH = 4;
 
-export const gaBinaryHeaderCodec: BinaryBYOBCodec<GABinaryHeader> = {
+export const gaBinaryHeaderCodec: BinaryBYOBCodec<CABinaryHeader> = {
   calcByteLength(): number {
-    return GA_BINARY_HEADER_BYTE_LENGTH;
+    return CA_BINARY_HEADER_BYTE_LENGTH;
   },
-  decode: function (buffer: ArrayBuffer, byteOffset: number): GABinaryHeader {
+  decode: function (buffer: ArrayBuffer, byteOffset: number): CABinaryHeader {
     const dv = new DataView(buffer, byteOffset);
     const key = dv.getUint16(0, true);
     const id = dv.getUint16(2, true);
     return { key, id };
   },
-  encode: function (buffer: ArrayBuffer, byteOffset: number, data: GABinaryHeader): void {
+  encode: function (buffer: ArrayBuffer, byteOffset: number, data: CABinaryHeader): void {
     const { id, key } = data;
     const dv = new DataView(buffer, byteOffset);
     dv.setUint16(0, key, true);
@@ -40,14 +40,14 @@ export const gaBinaryHeaderCodec: BinaryBYOBCodec<GABinaryHeader> = {
   },
 };
 
-export class GACodec {
+export class CACodec {
   public constructor(
-    public manager: GAManager,
+    public manager: CAManager,
   ) {}
 
-  public decode<TData>(message: unknown): [GADefinition<TData>, GAEnvelope<TData>] {
+  public decode<TData>(message: unknown): [CADefinition<TData>, CAEnvelope<TData>] {
     if (isRequiredString(message)) {
-      const envelope = decodeGAJsonEnvelope(message);
+      const envelope = decodeCAJsonEnvelope(message);
       const { kind } = envelope;
       const definition = this.manager.byKind.get(kind);
       assertObject(definition, "cannot-decode-envelope-with-unknown-kind", { definition, kind });
@@ -65,15 +65,15 @@ export class GACodec {
       if (type !== "binary") {
         throw new Breaker("unexpected-game-action-encoding-type", { definition, type });
       }
-      const params = encoding.codec.decode(message, GA_BINARY_HEADER_BYTE_LENGTH);
-      const envelope: GAEnvelope<TData> = { id, kind, params };
+      const params = encoding.codec.decode(message, CA_BINARY_HEADER_BYTE_LENGTH);
+      const envelope: CAEnvelope<TData> = { id, kind, params };
       return [definition, envelope];
     } else {
       throw new Breaker("unexpected-game-action-communication-message");
     }
   }
 
-  public encode<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): string | ArrayBuffer {
+  public encode<TData>(definition: CADefinition<TData>, envelope: CAEnvelope<TData>): string | ArrayBuffer {
     const { encoding } = definition;
     const type = encoding.type;
     if (type === "json") {
@@ -82,10 +82,10 @@ export class GACodec {
     } else if (type === "binary") {
       const { codec, key } = encoding;
       const { id, params } = envelope;
-      const byteLength = GA_BINARY_HEADER_BYTE_LENGTH + codec.calcByteLength(params);
+      const byteLength = CA_BINARY_HEADER_BYTE_LENGTH + codec.calcByteLength(params);
       const buffer = new ArrayBuffer(byteLength);
       gaBinaryHeaderCodec.encode(buffer, 0, { id, key });
-      codec.encode(buffer, GA_BINARY_HEADER_BYTE_LENGTH, params);
+      codec.encode(buffer, CA_BINARY_HEADER_BYTE_LENGTH, params);
       return buffer;
     } else {
       throw new Breaker("unexpected-game-action-definition");
@@ -93,8 +93,8 @@ export class GACodec {
   }
 }
 
-export function provideGACodec(resolver: ServiceResolver): GACodec {
-  return new GACodec(
-    resolver.resolve(provideGAManager),
+export function provideCACodec(resolver: ServiceResolver): CACodec {
+  return new CACodec(
+    resolver.resolve(provideCAManager),
   );
 }

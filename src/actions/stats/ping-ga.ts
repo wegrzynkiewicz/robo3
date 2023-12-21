@@ -1,40 +1,40 @@
-import { GAHandler } from "../../common/action/define.ts";
-import { registerGADefinition } from "../../common/action/manager.ts";
+import { CAHandler } from "../../common/action/define.ts";
+import { registerCADefinition } from "../../common/action/manager.ts";
 import { Identifier } from "../../common/vars.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
-import { PongGA } from "./pong-ga.ts";
+import { PongCA } from "./pong-ga.ts";
 
-export interface PingGA {
+export interface PingCA {
   clientHighResTimestamp: number;
 }
 
-const codec: BinaryBYOBCodec<PingGA> = {
+const codec: BinaryBYOBCodec<PingCA> = {
   calcByteLength(): number {
     return 8;
   },
-  decode(buffer: ArrayBuffer, byteOffset: number): PingGA {
+  decode(buffer: ArrayBuffer, byteOffset: number): PingCA {
     const dv = new DataView(buffer, byteOffset);
     const clientHighResTimestamp = dv.getFloat64(0, true);
     return { clientHighResTimestamp };
   },
-  encode(buffer: ArrayBuffer, byteOffset: number, data: PingGA): void {
+  encode(buffer: ArrayBuffer, byteOffset: number, data: PingCA): void {
     const { clientHighResTimestamp } = data;
     const dv = new DataView(buffer, byteOffset);
     dv.setFloat64(0, clientHighResTimestamp, true);
   },
 };
 
-export const pingGADef = registerGADefinition({
+export const pingCADef = registerCADefinition({
   encoding: {
     codec,
-    key: Identifier.pingGA,
+    key: Identifier.pingCA,
     type: "binary",
   },
   kind: "ping",
 });
 
-export class PingGAHandler implements GAHandler<PingGA, PongGA> {
-  async handle(request: PingGA): Promise<PongGA> {
+export class PingCAHandler implements CAHandler<PingCA, PongCA> {
+  async handle(request: PingCA): Promise<PongCA> {
     const { clientHighResTimestamp } = request;
     const serverHighResTimestamp = performance.now();
     const response = { clientHighResTimestamp, serverHighResTimestamp };
@@ -42,6 +42,6 @@ export class PingGAHandler implements GAHandler<PingGA, PongGA> {
   }
 }
 
-export function providePingGAHandler() {
-  return new PingGAHandler();
+export function providePingCAHandler() {
+  return new PingCAHandler();
 }

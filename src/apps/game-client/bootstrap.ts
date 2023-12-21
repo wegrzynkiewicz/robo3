@@ -8,7 +8,7 @@ import { SpriteImageExtractor } from "../../common/sprite/sprite-image-data-extr
 import { SpriteAllocator } from "../../common/sprite/sprite-allocator.ts";
 import { SpriteImage } from "../../common/sprite/sprite.ts";
 import { provideMainUAProcessor, resolveUAProcessHandlers } from "./ua/processor.ts";
-import { provideMainGABus } from "../../common/action/bus.ts";
+import { provideMainCABus } from "../../common/action/bus.ts";
 import { provideApp } from "./app.ts";
 import { feedMainLoop, provideMainLoop } from "./main-loop.ts";
 import { provideDebugInfo } from "./debug/debug-info.ts";
@@ -23,7 +23,7 @@ import { provideTilesTexture2DArray } from "./graphic/tiles/tiles-texture2darray
 import { provideSpriteIndicesTexture } from "./graphic/tiles/sprite-indices-texture.ts";
 import { provideClientSpriteAtlasLoader } from "../../domain-client/sprite/allocation/client-sprite-atlas-loader.ts";
 import { provideClientPlayerContextManager } from "./client-player-context/client-player-context.ts";
-import { meRequestGADef } from "../../actions/me/me-request-ga.ts";
+import { meRequestCADef } from "../../actions/me/me-request-ga.ts";
 
 async function start() {
   const resolver = new ServiceResolver();
@@ -141,13 +141,13 @@ async function start() {
 
   const socket = new WebSocket(wsURL);
 
-  const mainGABus = resolver.resolve(provideMainGABus);
+  const mainCABus = resolver.resolve(provideMainCABus);
 
   const clientPlayerContextManager = resolver.resolve(provideClientPlayerContextManager);
   const clientPlayerContext = await clientPlayerContextManager.createClientPlayerContext({ socket });
   const { connector, dispatcher } = clientPlayerContext;
-  mainGABus.subscribers.add(connector);
-  dispatcher.send(meRequestGADef, {});
+  mainCABus.subscribers.add(connector);
+  dispatcher.send(meRequestCADef, {});
 
   mainLoop.start();
 }

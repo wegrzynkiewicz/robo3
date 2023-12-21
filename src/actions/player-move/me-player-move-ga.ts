@@ -1,6 +1,6 @@
-import { registerGADefinition } from "../../common/action/manager.ts";
+import { registerCADefinition } from "../../common/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { GAHandler } from "../../common/action/define.ts";
+import { CAHandler } from "../../common/action/define.ts";
 import { provideScopedServerPlayerContext, ServerPlayerContext } from "../../apps/game-server/server-player-context/define.ts";
 import { BeingManager, provideScopedBeingManager } from "../../common/being/manager.ts";
 
@@ -16,31 +16,31 @@ export const enum MoveDirection {
   C = 0b0101,
 }
 
-export interface MePlayerMoveGA {
+export interface MePlayerMoveCA {
   direction: MoveDirection;
 }
 
-export const mePlayerMoveGADef = registerGADefinition<MePlayerMoveGA>({
+export const mePlayerMoveCADef = registerCADefinition<MePlayerMoveCA>({
   encoding: {
     type: "json",
   },
   kind: "me-player-move",
 });
 
-export class MePlayerMoveGAHandler implements GAHandler<MePlayerMoveGA, void> {
+export class MePlayerMoveCAHandler implements CAHandler<MePlayerMoveCA, void> {
   public constructor(
     protected readonly beingManager: BeingManager,
     protected readonly playerContext: ServerPlayerContext,
   ) { }
 
-  public async handle(request: MePlayerMoveGA): Promise<void> {
+  public async handle(request: MePlayerMoveCA): Promise<void> {
     const being = this.beingManager.obtain(this.playerContext.playerContextId);
     being.direct = request.direction;
   }
 }
 
-export function provideMePlayerMoveGAHandler(resolver: ServiceResolver) {
-  return new MePlayerMoveGAHandler(
+export function provideMePlayerMoveCAHandler(resolver: ServiceResolver) {
+  return new MePlayerMoveCAHandler(
     resolver.resolve(provideScopedBeingManager),
     resolver.resolve(provideScopedServerPlayerContext),
   );

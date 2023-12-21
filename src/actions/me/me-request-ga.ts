@@ -1,29 +1,29 @@
 import { ServerPlayerContext, provideScopedServerPlayerContext } from "../../apps/game-server/server-player-context/define.ts";
-import { registerGADefinition } from "../../common/action/manager.ts";
+import { registerCADefinition } from "../../common/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { EmptyObject } from "../../common/utils/useful.ts";
-import { MeResponseGA } from "./me-response-ga.ts";
+import { MeResponseCA } from "./me-response-ga.ts";
 
-export const meRequestGADef = registerGADefinition<EmptyObject>({
+export const meRequestCADef = registerCADefinition<EmptyObject>({
   encoding: {
     type: "json",
   },
   kind: "me-req",
 });
 
-export class MeRequestGAHandler {
+export class MeRequestCAHandler {
   public constructor(
     private readonly context: ServerPlayerContext
   ) { }
 
-  public async handle(): Promise<MeResponseGA> {
+  public async handle(): Promise<MeResponseCA> {
     const { beingId } = this.context;
     return { beingId };
   }
 }
 
-export function provideMeRequestGAHandler(resolver: ServiceResolver) {
-  return new MeRequestGAHandler(
+export function provideMeRequestCAHandler(resolver: ServiceResolver) {
+  return new MeRequestCAHandler(
     resolver.resolve(provideScopedServerPlayerContext),
   );
 }

@@ -1,26 +1,26 @@
 import { ServiceResolver } from "../dependency/service.ts";
 import { Breaker } from "../utils/breaker.ts";
-import { GABusSubscriber } from "./bus.ts";
-import { AnyGADefinition, AnyHandlerBinding, GADefinition, GADispatcher, GAEnvelope, GAHandler, HandlerBinding } from "./define.ts";
-import { provideScopedGADispatcher } from "./dispatcher.ts";
+import { CABusSubscriber } from "./bus.ts";
+import { AnyCADefinition, AnyHandlerBinding, CADefinition, CADispatcher, CAEnvelope, CAHandler, HandlerBinding } from "./define.ts";
+import { provideScopedCADispatcher } from "./dispatcher.ts";
 
-export class UniversalGAProcessor implements GABusSubscriber {
-  public handlers = new Map<AnyGADefinition, AnyHandlerBinding>();
+export class UniversalCAProcessor implements CABusSubscriber {
+  public handlers = new Map<AnyCADefinition, AnyHandlerBinding>();
 
   public constructor(
-    public readonly dispatcher: GADispatcher,
+    public readonly dispatcher: CADispatcher,
   ) {}
 
   public registerHandler<TRequest, TResponse>(
-    request: GADefinition<TRequest>,
-    response: TResponse extends void ? undefined : GADefinition<TResponse>,
-    handler: GAHandler<TRequest, TResponse>,
+    request: CADefinition<TRequest>,
+    response: TResponse extends void ? undefined : CADefinition<TResponse>,
+    handler: CAHandler<TRequest, TResponse>,
   ) {
     const binding: HandlerBinding<TRequest, TResponse> = { handler, request, response };
     this.handlers.set(request, binding);
   }
 
-  public async subscribe<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
+  public async subscribe<TData>(definition: CADefinition<TData>, envelope: CAEnvelope<TData>): Promise<void> {
     const binding = this.handlers.get(definition);
     if (!binding) {
       return;
@@ -31,7 +31,7 @@ export class UniversalGAProcessor implements GABusSubscriber {
       const result = await handler.handle(params);
       if (response) {
         const { kind } = response;
-        const resultEnvelope: GAEnvelope<unknown> = { id, kind, params: result };
+        const resultEnvelope: CAEnvelope<unknown> = { id, kind, params: result };
         this.dispatcher.sendEnvelope(response, resultEnvelope);
       }
     } catch (error) {
@@ -40,8 +40,8 @@ export class UniversalGAProcessor implements GABusSubscriber {
   }
 }
 
-export function provideScopedGAProcessor(resolver: ServiceResolver) {
-  return new UniversalGAProcessor(
-    resolver.resolve(provideScopedGADispatcher),
+export function provideScopedCAProcessor(resolver: ServiceResolver) {
+  return new UniversalCAProcessor(
+    resolver.resolve(provideScopedCADispatcher),
   ); 
 }

@@ -1,36 +1,36 @@
-import { GADefinition, GAEnvelope } from "./define.ts";
+import { CADefinition, CAEnvelope } from "./define.ts";
 
-export interface GABusSubscriber {
-  subscribe<TData>(definition: GADefinition<TData>, data: GAEnvelope<TData>): Promise<void>;
+export interface CABusSubscriber {
+  subscribe<TData>(definition: CADefinition<TData>, data: CAEnvelope<TData>): Promise<void>;
 }
 
-export interface GABus {
-  dispatch<TData>(definition: GADefinition<TData>, data: GAEnvelope<TData>): Promise<void>;
+export interface CABus {
+  dispatch<TData>(definition: CADefinition<TData>, data: CAEnvelope<TData>): Promise<void>;
 }
 
-export class BasicGABus implements GABus {
-  public readonly subscribers = new Set<GABusSubscriber>();
-  public async dispatch<TData>(definition: GADefinition<TData>, data: GAEnvelope<TData>): Promise<void> {
+export class BasicCABus implements CABus {
+  public readonly subscribers = new Set<CABusSubscriber>();
+  public async dispatch<TData>(definition: CADefinition<TData>, data: CAEnvelope<TData>): Promise<void> {
     for (const subscriber of this.subscribers) {
       subscriber.subscribe(definition, data);
     }
   }
 }
 
-export class ForwardingGABus extends BasicGABus implements GABus, GABusSubscriber {
-  public async subscribe<TData>(definition: GADefinition<TData>, data: GAEnvelope<TData>): Promise<void> {
+export class ForwardingCABus extends BasicCABus implements CABus, CABusSubscriber {
+  public async subscribe<TData>(definition: CADefinition<TData>, data: CAEnvelope<TData>): Promise<void> {
     return this.dispatch(definition, data);
   }
 }
 
-export function provideMainGABus() {
-  return new BasicGABus();
+export function provideMainCABus() {
+  return new BasicCABus();
 }
 
-export function provideScopedReceivingGABus() {
-  return new BasicGABus();
+export function provideScopedReceivingCABus() {
+  return new BasicCABus();
 }
 
-export function provideScopedSendingGABus() {
-  return new ForwardingGABus();
+export function provideScopedSendingCABus() {
+  return new ForwardingCABus();
 }

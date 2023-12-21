@@ -1,27 +1,27 @@
-import { GAHandler } from "../../common/action/define.ts";
-import { registerGADefinition } from "../../common/action/manager.ts";
+import { CAHandler } from "../../common/action/define.ts";
+import { registerCADefinition } from "../../common/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { Identifier } from "../../common/vars.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
 import { NetworkLatencyCounter, provideNetworkLatencyCounter } from "./network-latency-counter.ts";
-import { PangGA } from "./pang-ga.ts";
+import { PangCA } from "./pang-ga.ts";
 
-export interface PongGA {
+export interface PongCA {
   clientHighResTimestamp: number;
   serverHighResTimestamp: number;
 }
 
-const codec: BinaryBYOBCodec<PongGA> = {
+const codec: BinaryBYOBCodec<PongCA> = {
   calcByteLength(): number {
     return 16;
   },
-  decode(buffer: ArrayBuffer, byteOffset: number): PongGA {
+  decode(buffer: ArrayBuffer, byteOffset: number): PongCA {
     const dv = new DataView(buffer, byteOffset);
     const clientHighResTimestamp = dv.getFloat64(0, true);
     const serverHighResTimestamp = dv.getFloat64(8, true);
     return { clientHighResTimestamp, serverHighResTimestamp };
   },
-  encode(buffer: ArrayBuffer, byteOffset: number, data: PongGA): void {
+  encode(buffer: ArrayBuffer, byteOffset: number, data: PongCA): void {
     const { clientHighResTimestamp, serverHighResTimestamp } = data;
     const dv = new DataView(buffer, byteOffset);
     dv.setFloat64(0, clientHighResTimestamp, true);
@@ -29,21 +29,21 @@ const codec: BinaryBYOBCodec<PongGA> = {
   },
 };
 
-export const pongGADef = registerGADefinition({
+export const pongCADef = registerCADefinition({
   encoding: {
     codec,
-    key: Identifier.pongGA,
+    key: Identifier.pongCA,
     type: "binary",
   },
   kind: "pong",
 });
 
-export class PongGAHandler implements GAHandler<PongGA, PangGA> {
+export class PongCAHandler implements CAHandler<PongCA, PangCA> {
   public constructor(
     protected networkLatencyCounter: NetworkLatencyCounter,
   ) {}
 
-  async handle(request: PongGA): Promise<PangGA> {
+  async handle(request: PongCA): Promise<PangCA> {
     const { clientHighResTimestamp, serverHighResTimestamp } = request;
     this.networkLatencyCounter.feed(clientHighResTimestamp);
     const response = { serverHighResTimestamp };
@@ -51,8 +51,8 @@ export class PongGAHandler implements GAHandler<PongGA, PangGA> {
   }
 }
 
-export function providePongGAHandler(resolver: ServiceResolver) {
-  return new PongGAHandler(
+export function providePongCAHandler(resolver: ServiceResolver) {
+  return new PongCAHandler(
     resolver.resolve(provideNetworkLatencyCounter),
   );
 }

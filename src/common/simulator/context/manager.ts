@@ -29,7 +29,7 @@ export class GameSimulatorContextManager {
     this.mainServiceResolver.transfer(provideMainLoggerFactory, resolver);
     this.mainServiceResolver.transfer(provideMainServiceResolver, resolver);
 
-    const logger = this.loggerFactory.createLogger('GAME', { spaceId });
+    const logger = this.loggerFactory.createLogger('CAME', { spaceId });
     resolver.inject(provideScopedLogger, logger);
 
     const space = this.spaceManager.obtain(spaceId);

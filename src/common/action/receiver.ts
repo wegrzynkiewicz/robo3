@@ -1,13 +1,13 @@
 import { Breaker } from "../utils/breaker.ts";
-import { GACodec, provideGACodec } from "./codec.ts";
+import { CACodec, provideCACodec } from "./codec.ts";
 import { WebSocketChannelBusSubscriber } from "../web-socket/web-socket-channel-bus.ts";
-import { GABus, provideScopedReceivingGABus } from "./bus.ts";
+import { CABus, provideScopedReceivingCABus } from "./bus.ts";
 import { ServiceResolver } from "../dependency/service.ts";
 
-export class UniversalGAReceiver implements WebSocketChannelBusSubscriber<MessageEvent> {
+export class UniversalCAReceiver implements WebSocketChannelBusSubscriber<MessageEvent> {
   public constructor(
-    public readonly codec: GACodec,
-    public readonly gaBus: GABus,
+    public readonly codec: CACodec,
+    public readonly gaBus: CABus,
   ) { }
 
   public async subscribe(event: MessageEvent<unknown>): Promise<void> {
@@ -21,9 +21,9 @@ export class UniversalGAReceiver implements WebSocketChannelBusSubscriber<Messag
   }
 }
 
-export function provideScopedGAReceiver(resolver: ServiceResolver) {
-  return new UniversalGAReceiver(
-    resolver.resolve(provideGACodec),
-    resolver.resolve(provideScopedReceivingGABus),
+export function provideScopedCAReceiver(resolver: ServiceResolver) {
+  return new UniversalCAReceiver(
+    resolver.resolve(provideCACodec),
+    resolver.resolve(provideScopedReceivingCABus),
   );
 }

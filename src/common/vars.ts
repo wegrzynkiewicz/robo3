@@ -26,9 +26,9 @@ export const UNDEFINED_GAME_OBJECT_SPRITE_INDEX = 1;
 export const DEFAULT_GAME_OBJECT_SPRITE_INDEX = 2;
 
 export const enum Identifier {
-  pingGA = 0x01,
-  pongGA = 0x02,
-  pangGA = 0x03,
-  chunkSegmentUpdateGA = 0x04,
+  pingCA = 0x01,
+  pongCA = 0x02,
+  pangCA = 0x03,
+  chunkSegmentUpdateCA = 0x04,
   chunkSegmentHeader = 0x05,
 }

@@ -1,26 +1,26 @@
-import { registerGADefinition } from "../../common/action/manager.ts";
+import { registerCADefinition } from "../../common/action/manager.ts";
 import { assertRequiredString } from "../../common/utils/asserts.ts";
-import { LoginResponseGA } from "./login-response-ga.ts";
+import { LoginResponseCA } from "./login-response-ga.ts";
 
-export interface LoginRequestGA {
+export interface LoginRequestCA {
   token: string;
 }
 
-export const loginRequestGADef = registerGADefinition<LoginRequestGA>({
+export const loginRequestCADef = registerCADefinition<LoginRequestCA>({
   encoding: {
     type: "json",
   },
   kind: "login-req",
 });
 
-export class LoginRequestGAHandler {
-  async handle(request: LoginRequestGA): Promise<LoginResponseGA> {
+export class LoginRequestCAHandler {
+  async handle(request: LoginRequestCA): Promise<LoginResponseCA> {
     const { token } = request;
     assertRequiredString(token, "token-should-be-valid-non-empty-string", { request });
     return { status: 1 };
   }
 }
 
-export function provideLoginRequestGAHandler() {
-  return new LoginRequestGAHandler();
+export function provideLoginRequestCAHandler() {
+  return new LoginRequestCAHandler();
 }

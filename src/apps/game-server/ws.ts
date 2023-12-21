@@ -5,7 +5,7 @@ import { ServiceResolver } from "../../common/dependency/service.ts";
 export class ClientChannel {
   public constructor(
     public readonly logger: Logger,
-    public readonly receiver: GAReceiver,
+    public readonly receiver: CAReceiver,
     public readonly ws: WebSocket,
   ) {}
 
@@ -42,7 +42,7 @@ export class ClientChannel {
 export function provideClientChannel(resolver: ServiceResolver) {
   return new ClientChannel(
     resolver.resolve(provideGlobalLogger),
-    resolver.resolve(provideGAReceiver),
+    resolver.resolve(provideCAReceiver),
     resolver.resolve(provideWebSocket),
   );
 }

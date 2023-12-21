@@ -1,9 +1,9 @@
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { registerUADefinition, UADefinition } from "../../apps/game-client/ua/foundation.ts";
 import { UAHandler } from "../../apps/game-client/ua/processor.ts";
-import { MoveDirection, mePlayerMoveGADef } from "./me-player-move-ga.ts";
-import { GADispatcher } from "../../common/action/define.ts";
-import { provideMainGADispatcher } from "../../common/action/dispatcher.ts";
+import { MoveDirection, mePlayerMoveCADef } from "./me-player-move-ga.ts";
+import { CADispatcher } from "../../common/action/define.ts";
+import { provideMainCADispatcher } from "../../common/action/dispatcher.ts";
 
 export const mePlayerMoveUA = registerUADefinition<MoveDirection>({
   name: "ua.me.player-move",
@@ -11,16 +11,16 @@ export const mePlayerMoveUA = registerUADefinition<MoveDirection>({
 
 export class MePlayerMoveUAHandler implements UAHandler<number> {
   public constructor(
-    protected dispatcher: GADispatcher,
+    protected dispatcher: CADispatcher,
   ) {}
 
   public async handle(_definition: UADefinition<MoveDirection>, data: MoveDirection): Promise<void> {
-    this.dispatcher.send(mePlayerMoveGADef, { direction: data });
+    this.dispatcher.send(mePlayerMoveCADef, { direction: data });
   }
 }
 
 export function provideMePlayerMoveUAHandler(resolver: ServiceResolver) {
   return new MePlayerMoveUAHandler(
-    resolver.resolve(provideMainGADispatcher),
+    resolver.resolve(provideMainCADispatcher),
   );
 }

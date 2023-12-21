@@ -1,18 +1,18 @@
 import { ServiceResolver } from "../dependency/service.ts";
-import { GACodec, provideGACodec } from "./codec.ts";
+import { CACodec, provideCACodec } from "./codec.ts";
 import { Logger, provideScopedLogger } from "../logger/global.ts";
 import { provideScopedWebSocket } from "./socket.ts";
-import { GADefinition, GAEnvelope } from "./define.ts";
-import { GABusSubscriber } from "./bus.ts";
+import { CADefinition, CAEnvelope } from "./define.ts";
+import { CABusSubscriber } from "./bus.ts";
 
-export class OnlineGASender implements GABusSubscriber {
+export class OnlineCASender implements CABusSubscriber {
   public constructor(
-    public readonly codec: GACodec,
+    public readonly codec: CACodec,
     public readonly logger: Logger,
     public readonly ws: WebSocket,
   ) {}
 
-  public async subscribe<TData>(definition: GADefinition<TData>, data: GAEnvelope<TData>): Promise<void> {
+  public async subscribe<TData>(definition: CADefinition<TData>, data: CAEnvelope<TData>): Promise<void> {
     const encodedData = this.codec.encode(definition, data);
     this.sendRaw(encodedData);
   }
@@ -29,9 +29,9 @@ export class OnlineGASender implements GABusSubscriber {
   }
 }
 
-export function provideScopedOnlineGASender(resolver: ServiceResolver) {
-  return new OnlineGASender(
-    resolver.resolve(provideGACodec),
+export function provideScopedOnlineCASender(resolver: ServiceResolver) {
+  return new OnlineCASender(
+    resolver.resolve(provideCACodec),
     resolver.resolve(provideScopedLogger),
     resolver.resolve(provideScopedWebSocket),
   );

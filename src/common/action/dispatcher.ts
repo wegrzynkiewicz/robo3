@@ -1,32 +1,32 @@
 import { ServiceResolver } from "../dependency/service.ts";
-import { GABus, provideMainGABus, provideScopedSendingGABus, } from "./bus.ts";
-import { GADefinition, GADispatcher, GAEnvelope } from "./define.ts";
+import { CABus, provideMainCABus, provideScopedSendingCABus, } from "./bus.ts";
+import { CADefinition, CADispatcher, CAEnvelope } from "./define.ts";
 
-export class UniversalGADispatcher implements GADispatcher {
+export class UniversalCADispatcher implements CADispatcher {
   public constructor(
-    public readonly gaBus: GABus,
+    public readonly gaBus: CABus,
   ) { }
 
-  public send<TData>(definition: GADefinition<TData>, params: TData): void {
+  public send<TData>(definition: CADefinition<TData>, params: TData): void {
     const { kind } = definition;
     params = params ?? {} as TData;
-    const envelope: GAEnvelope<TData> = { id: 0, kind, params };
+    const envelope: CAEnvelope<TData> = { id: 0, kind, params };
     this.sendEnvelope(definition, envelope);
   }
 
-  public sendEnvelope<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): void {
+  public sendEnvelope<TData>(definition: CADefinition<TData>, envelope: CAEnvelope<TData>): void {
     this.gaBus.dispatch(definition, envelope);
   }
 }
 
-export function provideMainGADispatcher(resolver: ServiceResolver) {
-  return new UniversalGADispatcher(
-    resolver.resolve(provideMainGABus),
+export function provideMainCADispatcher(resolver: ServiceResolver) {
+  return new UniversalCADispatcher(
+    resolver.resolve(provideMainCABus),
   );
 }
 
-export function provideScopedGADispatcher(resolver: ServiceResolver) {
-  return new UniversalGADispatcher(
-    resolver.resolve(provideScopedSendingGABus),
+export function provideScopedCADispatcher(resolver: ServiceResolver) {
+  return new UniversalCADispatcher(
+    resolver.resolve(provideScopedSendingCABus),
   );
 }

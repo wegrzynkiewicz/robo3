@@ -1,11 +1,11 @@
 import { provideMePlayer } from "../../../actions/me/me-player.ts";
-import { GABusSubscriber, provideScopedReceivingGABus, provideScopedSendingGABus } from "../../../common/action/bus.ts";
-import { provideGACodec } from "../../../common/action/codec.ts";
-import { GADispatcher } from "../../../common/action/define.ts";
-import { provideScopedGADispatcher } from "../../../common/action/dispatcher.ts";
-import { provideScopedOnlineGASender } from "../../../common/action/online-sender.ts";
-import { provideScopedGAProcessor } from "../../../common/action/processor.ts";
-import { provideScopedGAReceiver } from "../../../common/action/receiver.ts";
+import { CABusSubscriber, provideScopedReceivingCABus, provideScopedSendingCABus } from "../../../common/action/bus.ts";
+import { provideCACodec } from "../../../common/action/codec.ts";
+import { CADispatcher } from "../../../common/action/define.ts";
+import { provideScopedCADispatcher } from "../../../common/action/dispatcher.ts";
+import { provideScopedOnlineCASender } from "../../../common/action/online-sender.ts";
+import { provideScopedCAProcessor } from "../../../common/action/processor.ts";
+import { provideScopedCAReceiver } from "../../../common/action/receiver.ts";
 import { provideScopedWebSocket } from "../../../common/action/socket.ts";
 import { provideScopedBeingManager } from "../../../common/being/manager.ts";
 import { ServiceResolver, provideMainServiceResolver } from "../../../common/dependency/service.ts";
@@ -14,11 +14,11 @@ import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/
 import { provideSpaceManager } from "../../../common/space/space-manager.ts";
 import { provideOpenWebSocketSubscriber } from "../../../common/web-socket/open-subscriber.ts";
 import { provideScopedWebSocketChannel } from "../../../common/web-socket/web-socket-channel.ts";
-import { feedClientSideGAProcess } from "./ga-processor.ts";
+import { feedClientSideCAProcess } from "./ga-processor.ts";
 
 export interface ClientPlayerContext {
-  connector: GABusSubscriber;
-  dispatcher: GADispatcher;
+  connector: CABusSubscriber;
+  dispatcher: CADispatcher;
   resolver: ServiceResolver;
 }
 
@@ -36,7 +36,7 @@ export class ClientPlayerContextManager {
     const { socket } = options;
 
     const resolver = new ServiceResolver();
-    this.mainServiceResolver.transfer(provideGACodec, resolver);
+    this.mainServiceResolver.transfer(provideCACodec, resolver);
     this.mainServiceResolver.transfer(provideSpaceManager, resolver);
     this.mainServiceResolver.transfer(provideMePlayer, resolver);
     this.mainServiceResolver.transfer(provideScopedBeingManager, resolver);
@@ -49,33 +49,33 @@ export class ClientPlayerContextManager {
     const webSocketChannel = resolver.resolve(provideScopedWebSocketChannel);
     const openWebSocketSubscriber = resolver.resolve(provideOpenWebSocketSubscriber);
     {
-      const universalGAReceiver = resolver.resolve(provideScopedGAReceiver);
-      webSocketChannel.messageBus.subscribers.add(universalGAReceiver);
+      const universalCAReceiver = resolver.resolve(provideScopedCAReceiver);
+      webSocketChannel.messageBus.subscribers.add(universalCAReceiver);
       webSocketChannel.openBus.subscribers.add(openWebSocketSubscriber);
     }
 
-    const receivedGABus = resolver.resolve(provideScopedReceivingGABus);
+    const receivedCABus = resolver.resolve(provideScopedReceivingCABus);
     {
-      const processor = resolver.resolve(provideScopedGAProcessor);
-      feedClientSideGAProcess(resolver, processor);
-      receivedGABus.subscribers.add(processor);
+      const processor = resolver.resolve(provideScopedCAProcessor);
+      feedClientSideCAProcess(resolver, processor);
+      receivedCABus.subscribers.add(processor);
     }
 
-    const sendingGABus = resolver.resolve(provideScopedSendingGABus);
+    const sendingCABus = resolver.resolve(provideScopedSendingCABus);
     {
-      const onlineGASender = resolver.resolve(provideScopedOnlineGASender);
-      sendingGABus.subscribers.add(onlineGASender);
+      const onlineCASender = resolver.resolve(provideScopedOnlineCASender);
+      sendingCABus.subscribers.add(onlineCASender);
     }
 
-    const dispatcher = resolver.resolve(provideScopedGADispatcher);
+    const dispatcher = resolver.resolve(provideScopedCADispatcher);
 
     // const networkLatencyDaemon = resolver.resolve(provideNetworkLatencyDaemon);
-    // const mutationGABusSubscriber = resolver.resolve(provideMutationGABusSubscriber);
+    // const mutationCABusSubscriber = resolver.resolve(provideMutationCABusSubscriber);
 
     await openWebSocketSubscriber.ready;
 
     const context: ClientPlayerContext = {
-      connector: sendingGABus,
+      connector: sendingCABus,
       dispatcher,
       resolver,
     };

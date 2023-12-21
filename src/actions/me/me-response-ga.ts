@@ -1,30 +1,30 @@
-import { registerGADefinition } from "../../common/action/manager.ts";
+import { registerCADefinition } from "../../common/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { MePlayer, provideMePlayer } from "./me-player.ts";
 
-export interface MeResponseGA {
+export interface MeResponseCA {
   beingId: number;
 }
 
-export const meResponseGADef = registerGADefinition<MeResponseGA>({
+export const meResponseCADef = registerCADefinition<MeResponseCA>({
   encoding: {
     type: "json",
   },
   kind: "me-res",
 });
 
-export class MeResponseGAHandler {
+export class MeResponseCAHandler {
   public constructor(
     private readonly mePlayer: MePlayer,
   ) { }
   
-  public async handle(response: MeResponseGA): Promise<void> {
+  public async handle(response: MeResponseCA): Promise<void> {
     this.mePlayer.beingId = response.beingId;
   }
 }
 
-export function provideMeResponseGAHandler(resolver: ServiceResolver) {
-  return new MeResponseGAHandler(
+export function provideMeResponseCAHandler(resolver: ServiceResolver) {
+  return new MeResponseCAHandler(
     resolver.resolve(provideMePlayer),
   );
 }

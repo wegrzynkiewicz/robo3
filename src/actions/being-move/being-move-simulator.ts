@@ -2,8 +2,8 @@ import { Being, BeingManager, provideScopedBeingManager } from "../../common/bei
 import { Looper } from "../../common/simulator/looper.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { ServerPlayerContextManager, provideScopedServerPlayerContextManager } from "../../apps/game-server/server-player-context/manager.ts";
-import { provideScopedGADispatcher } from "../../common/action/dispatcher.ts";
-import { beingUpdateGADef } from "../being-update/being-update-ga.ts";
+import { provideScopedCADispatcher } from "../../common/action/dispatcher.ts";
+import { beingUpdateCADef } from "../being-update/being-update-ga.ts";
 
 export class BeingSimulator implements Looper {
   public constructor(
@@ -38,8 +38,8 @@ export class BeingSimulator implements Looper {
     being.y = Math.floor(being.ry);
     being.wasUpdated = !(x === 0 && y === 0);
     for (const playerContext of this.serverPlayerContextManager.byPlayerContextId.values()) {
-      const dispatcher = playerContext.resolver.resolve(provideScopedGADispatcher);
-      dispatcher.send(beingUpdateGADef, being)
+      const dispatcher = playerContext.resolver.resolve(provideScopedCADispatcher);
+      dispatcher.send(beingUpdateCADef, being)
     }
   }
 }

@@ -1,22 +1,22 @@
-import { registerGADefinition } from "../../common/action/manager.ts";
+import { registerCADefinition } from "../../common/action/manager.ts";
 
-export interface LoginResponseGA {
+export interface LoginResponseCA {
   status: number;
 }
 
-export const loginResponseGADef = registerGADefinition<LoginResponseGA>({
+export const loginResponseCADef = registerCADefinition<LoginResponseCA>({
   encoding: {
     type: "json",
   },
   kind: "login-res",
 });
 
-export class LoginResponseGAHandler {
-  async handle(request: LoginResponseGA): Promise<void> {
+export class LoginResponseCAHandler {
+  async handle(request: LoginResponseCA): Promise<void> {
 
   }
 }
 
-export function provideLoginResponseGAHandler() {
-  return new LoginResponseGAHandler();
+export function provideLoginResponseCAHandler() {
+  return new LoginResponseCAHandler();
 }

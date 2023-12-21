@@ -77,22 +77,22 @@ router.get("/api.json", (ctx) => {
 
   //     const resolver = new ServiceResolver();
   //     resolver.inject(provideWebSocket, ws);
-  //     const processor = resolver.resolve(provideServerGAProcessor);
-  //     resolver.inject(provideGAProcessor, processor);
-  //     const communicator = resolver.resolve(provideGACommunicator);
+  //     const processor = resolver.resolve(provideServerCAProcessor);
+  //     resolver.inject(provideCAProcessor, processor);
+  //     const communicator = resolver.resolve(provideCACommunicator);
   //     const clientChannel = resolver.resolve(provideClientChannel);
 
   //     clientChannel.attachListeners();
 
   //     setTimeout(() => {
-  //       communicator.sender.send(chunksUpdateGADef, { chunks });
+  //       communicator.sender.send(chunksUpdateCADef, { chunks });
   //       const chunkSize = 50;
   //       let j = 0;
   //       for (let i = 0; i < bf.length; i += chunkSize) {
   //         const chunks = bf.slice(i, i + chunkSize);
   //         setTimeout(() => {
   //           for (const c of chunks) {
-  //             communicator.sender.send(chunkSegmentUpdateGADef, c);
+  //             communicator.sender.send(chunkSegmentUpdateCADef, c);
   //           }
   //         }, 50 * (j++));
   //       }

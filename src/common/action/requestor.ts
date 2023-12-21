@@ -1,28 +1,28 @@
 import { Deferred, deferred } from "../../deps.ts";
 import { ServiceResolver } from "../dependency/service.ts";
-import { GABusSubscriber } from "./bus.ts";
-import { GARequestor, GASender, GADefinition, GAEnvelope } from "./define.ts";
-import { provideScopedGASender } from "./online-sender.ts";
+import { CABusSubscriber } from "./bus.ts";
+import { CARequestor, CASender, CADefinition, CAEnvelope } from "./define.ts";
+import { provideScopedCASender } from "./online-sender.ts";
 
-export interface GARequest<TRequest, TResponse> {
+export interface CARequest<TRequest, TResponse> {
   id: number;
   promise: Deferred<TResponse>;
-  requestDefinition: GADefinition<TRequest>;
-  responseDefinition: GADefinition<TResponse>;
+  requestDefinition: CADefinition<TRequest>;
+  responseDefinition: CADefinition<TResponse>;
 }
 
-export type AnyGARequest = GARequest<unknown, unknown>;
+export type AnyCARequest = CARequest<unknown, unknown>;
 
-export class UniversalGARequestor implements GABusSubscriber, GARequestor {
+export class UniversalCARequestor implements CABusSubscriber, CARequestor {
   public static readonly MAX_SAFE_ID = (2 ** 16) - 1;
   protected id = 0;
-  protected readonly requests = new Map<number, AnyGARequest>();
+  protected readonly requests = new Map<number, AnyCARequest>();
 
   public constructor(
-    public readonly sender: GASender,
+    public readonly sender: CASender,
   ) {}
 
-  public async subscribe<TData>(_definition: GADefinition<TData>, envelope: GAEnvelope<TData>): Promise<void> {
+  public async subscribe<TData>(_definition: CADefinition<TData>, envelope: CAEnvelope<TData>): Promise<void> {
     const id = envelope.id;
     if (id <= 0) {
       return;
@@ -37,16 +37,16 @@ export class UniversalGARequestor implements GABusSubscriber, GARequestor {
   }
 
   public request<TRequest, TResponse>(
-    requestDefinition: GADefinition<TRequest>,
-    responseDefinition: GADefinition<TResponse>,
+    requestDefinition: CADefinition<TRequest>,
+    responseDefinition: CADefinition<TResponse>,
     params: TRequest,
   ): Promise<TResponse> {
     this.id++;
-    const id = this.id % UniversalGARequestor.MAX_SAFE_ID;
+    const id = this.id % UniversalCARequestor.MAX_SAFE_ID;
     const { kind } = requestDefinition;
-    const envelope: GAEnvelope<TRequest> = { id, kind, params };
+    const envelope: CAEnvelope<TRequest> = { id, kind, params };
     const promise = deferred<TResponse>();
-    const request: GARequest<TRequest, TResponse> = {
+    const request: CARequest<TRequest, TResponse> = {
       id,
       promise,
       requestDefinition,
@@ -58,8 +58,8 @@ export class UniversalGARequestor implements GABusSubscriber, GARequestor {
   }
 }
 
-export function provideScopedGARequestor(resolver: ServiceResolver) {
-  return new UniversalGARequestor(
-    resolver.resolve(provideScopedGASender),
+export function provideScopedCARequestor(resolver: ServiceResolver) {
+  return new UniversalCARequestor(
+    resolver.resolve(provideScopedCASender),
   );
 }

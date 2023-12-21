@@ -1,59 +1,59 @@
 import { BinaryBYOBCodec } from "../../core/codec.ts";
 
-export interface GAEnvelope<TData> {
+export interface CAEnvelope<TData> {
   id: number;
   kind: string;
   params: TData;
 }
 
-export interface GABinaryEncodingDefinition<TData> {
+export interface CABinaryEncodingDefinition<TData> {
   codec: BinaryBYOBCodec<TData>;
   key: number;
   type: "binary";
 }
 
-export interface GAJsonEncodingDefinition<TData> {
+export interface CAJsonEncodingDefinition<TData> {
   type: "json";
 }
 
-export type GAEncodingDefinition<TData> = GABinaryEncodingDefinition<TData> | GAJsonEncodingDefinition<TData>;
+export type CAEncodingDefinition<TData> = CABinaryEncodingDefinition<TData> | CAJsonEncodingDefinition<TData>;
 
-export type AnyGAEnvelope = GAEnvelope<any>;
+export type AnyCAEnvelope = CAEnvelope<any>;
 
-export interface GADefinition<TData> {
-  encoding: GAEncodingDefinition<TData>;
+export interface CADefinition<TData> {
+  encoding: CAEncodingDefinition<TData>;
   kind: string;
 }
 
-export type AnyGADefinition = GADefinition<any>;
+export type AnyCADefinition = CADefinition<any>;
 
-export interface GAHandler<TRequest, TResponse> {
+export interface CAHandler<TRequest, TResponse> {
   handle(request: TRequest): Promise<TResponse>;
 }
 
-export type AnyGAHandler = GAHandler<any, any>;
+export type AnyCAHandler = CAHandler<any, any>;
 
 export interface HandlerBinding<TRequest, TResponse> {
-  handler: GAHandler<TRequest, TResponse>;
-  request: GADefinition<TRequest>;
-  response?: GADefinition<TResponse>;
+  handler: CAHandler<TRequest, TResponse>;
+  request: CADefinition<TRequest>;
+  response?: CADefinition<TResponse>;
 }
 
 export type AnyHandlerBinding = HandlerBinding<any, any>;
 
-export interface GADispatcher {
-  send<TData>(definition: GADefinition<TData>, data: TData): void;
-  sendEnvelope<TData>(definition: GADefinition<TData>, envelope: GAEnvelope<TData>): void;
+export interface CADispatcher {
+  send<TData>(definition: CADefinition<TData>, data: TData): void;
+  sendEnvelope<TData>(definition: CADefinition<TData>, envelope: CAEnvelope<TData>): void;
 }
 
-export interface GARequestor {
+export interface CARequestor {
   request<TRequest, TResponse>(
-    requestDefinition: GADefinition<TRequest>,
-    responseDefinition: GADefinition<TResponse>,
+    requestDefinition: CADefinition<TRequest>,
+    responseDefinition: CADefinition<TResponse>,
     data: TRequest,
   ): Promise<TResponse>;
 }
 
-export interface GAReceiver {
+export interface CAReceiver {
   receive(data: unknown): Promise<void>;
 }

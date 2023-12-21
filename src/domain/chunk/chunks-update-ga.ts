@@ -1,11 +1,11 @@
-import { registerGADefinition } from "../../common/action/manager.ts";
+import { registerCADefinition } from "../../common/action/manager.ts";
 import { ChunkDTO } from "../../common/chunk/chunk.ts";
 
-export interface ChunksUpdateGA {
+export interface ChunksUpdateCA {
   chunks: ChunkDTO[];
 }
 
-export const chunksUpdateGADef = registerGADefinition({
+export const chunksUpdateCADef = registerCADefinition({
   encoding: {
     type: "json",
   },

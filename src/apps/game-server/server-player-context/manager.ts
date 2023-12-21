@@ -1,9 +1,9 @@
-import { provideScopedReceivingGABus, provideScopedSendingGABus } from "../../../common/action/bus.ts";
-import { provideGACodec } from "../../../common/action/codec.ts";
-import { provideScopedGALogger } from "../../../common/action/logger.ts";
-import { provideScopedOnlineGASender } from "../../../common/action/online-sender.ts";
-import { provideScopedGAProcessor } from "../../../common/action/processor.ts";
-import { provideScopedGAReceiver } from "../../../common/action/receiver.ts";
+import { provideScopedReceivingCABus, provideScopedSendingCABus } from "../../../common/action/bus.ts";
+import { provideCACodec } from "../../../common/action/codec.ts";
+import { provideScopedCALogger } from "../../../common/action/logger.ts";
+import { provideScopedOnlineCASender } from "../../../common/action/online-sender.ts";
+import { provideScopedCAProcessor } from "../../../common/action/processor.ts";
+import { provideScopedCAReceiver } from "../../../common/action/receiver.ts";
 import { provideScopedWebSocket } from "../../../common/action/socket.ts";
 import { provideScopedBeingManager } from "../../../common/being/manager.ts";
 import { ServiceResolver, provideMainServiceResolver, provideScopedServiceResolver } from "../../../common/dependency/service.ts";
@@ -16,7 +16,7 @@ import { Breaker } from "../../../common/utils/breaker.ts";
 import { provideScopedWebSocketChannel } from "../../../common/web-socket/web-socket-channel.ts";
 import { provideCloseServerPlayerWebSocketSubscriber } from "./close-server-player-web-socket-subscriber.ts";
 import { ServerPlayerContext, provideScopedServerPlayerContext } from "./define.ts";
-import { feedServerGAProcessor } from "./ga-processor.ts";
+import { feedServerCAProcessor } from "./ga-processor.ts";
 
 export interface ServerPlayerContextFactoryOption {
   socket: WebSocket;
@@ -44,7 +44,7 @@ export class ServerPlayerContextManager {
     resolver.inject(provideScopedServerPlayerContextServiceResolver, resolver);
     resolver.inject(provideScopedWebSocket, socket);
     this.scopedServiceResolver.transfer(provideMainServiceResolver, resolver);
-    this.scopedServiceResolver.transfer(provideGACodec, resolver);
+    this.scopedServiceResolver.transfer(provideCACodec, resolver);
     this.scopedServiceResolver.transfer(provideSpaceManager, resolver);
     this.scopedServiceResolver.transfer(provideScopedServerPlayerContextManager, resolver);
     const space = this.scopedServiceResolver.transfer(provideScopedSpace, resolver);
@@ -67,27 +67,27 @@ export class ServerPlayerContextManager {
 
     const webSocketChannel = resolver.resolve(provideScopedWebSocketChannel);
     {
-      const universalGAReceiver = resolver.resolve(provideScopedGAReceiver);
-      webSocketChannel.messageBus.subscribers.add(universalGAReceiver);
+      const universalCAReceiver = resolver.resolve(provideScopedCAReceiver);
+      webSocketChannel.messageBus.subscribers.add(universalCAReceiver);
 
       const closePlayerServerWebSocketSubscriber = resolver.resolve(provideCloseServerPlayerWebSocketSubscriber);
       webSocketChannel.closeBus.subscribers.add(closePlayerServerWebSocketSubscriber);
     }
 
-    const receivedGABus = resolver.resolve(provideScopedReceivingGABus);
+    const receivedCABus = resolver.resolve(provideScopedReceivingCABus);
     {
-      const processor = resolver.resolve(provideScopedGAProcessor);
-      feedServerGAProcessor(resolver, processor);
-      receivedGABus.subscribers.add(processor);
+      const processor = resolver.resolve(provideScopedCAProcessor);
+      feedServerCAProcessor(resolver, processor);
+      receivedCABus.subscribers.add(processor);
 
-      const logger = resolver.resolve(provideScopedGALogger);
-      receivedGABus.subscribers.add(logger);
+      const logger = resolver.resolve(provideScopedCALogger);
+      receivedCABus.subscribers.add(logger);
     }
 
-    const sendingGABus = resolver.resolve(provideScopedSendingGABus);
+    const sendingCABus = resolver.resolve(provideScopedSendingCABus);
     {
-      const onlineGASender = resolver.resolve(provideScopedOnlineGASender);
-      sendingGABus.subscribers.add(onlineGASender);
+      const onlineCASender = resolver.resolve(provideScopedOnlineCASender);
+      sendingCABus.subscribers.add(onlineCASender);
     }
 
     this.byPlayerContextId.set(playerContextId, context);

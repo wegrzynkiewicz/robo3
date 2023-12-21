@@ -1,10 +1,10 @@
-import { AnyGADefinition, GADefinition } from "./define.ts";
+import { AnyCADefinition, CADefinition } from "./define.ts";
 
-export class GAManager {
-  public readonly byKey = new Map<number, AnyGADefinition>();
-  public readonly byKind = new Map<string, AnyGADefinition>();
+export class CAManager {
+  public readonly byKey = new Map<number, AnyCADefinition>();
+  public readonly byKind = new Map<string, AnyCADefinition>();
 
-  public registerGADefinition<TInstance>(definition: GADefinition<TInstance>): GADefinition<TInstance> {
+  public registerCADefinition<TInstance>(definition: CADefinition<TInstance>): CADefinition<TInstance> {
     const { encoding, kind } = definition;
     if (encoding.type === "binary") {
       this.byKey.set(encoding.key, definition);
@@ -14,9 +14,9 @@ export class GAManager {
   }
 }
 
-const gaManager = new GAManager();
-export const registerGADefinition = gaManager.registerGADefinition.bind(gaManager);
+const gaManager = new CAManager();
+export const registerCADefinition = gaManager.registerCADefinition.bind(gaManager);
 
-export function provideGAManager() {
+export function provideCAManager() {
   return gaManager;
 }

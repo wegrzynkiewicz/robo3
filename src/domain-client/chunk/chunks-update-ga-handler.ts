@@ -1,11 +1,11 @@
-import { GAHandler } from "../../common/action/define.ts";
-import { ChunksUpdateGA } from "../../domain/chunk/chunks-update-ga.ts";
+import { CAHandler } from "../../common/action/define.ts";
+import { ChunksUpdateCA } from "../../domain/chunk/chunks-update-ga.ts";
 
-export function provideChunksUpdateGAHandler() {
-  const chunksUpdateGAHandler: GAHandler<ChunksUpdateGA, void> = {
-    async handle(_request: ChunksUpdateGA): Promise<void> {
+export function provideChunksUpdateCAHandler() {
+  const chunksUpdateCAHandler: CAHandler<ChunksUpdateCA, void> = {
+    async handle(_request: ChunksUpdateCA): Promise<void> {
       // nothing
     },
   };
-  return chunksUpdateGAHandler;
+  return chunksUpdateCAHandler;
 }

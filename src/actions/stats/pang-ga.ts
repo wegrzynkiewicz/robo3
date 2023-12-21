@@ -1,43 +1,43 @@
-import { GAHandler } from "../../common/action/define.ts";
-import { registerGADefinition } from "../../common/action/manager.ts";
+import { CAHandler } from "../../common/action/define.ts";
+import { registerCADefinition } from "../../common/action/manager.ts";
 import { Identifier } from "../../common/vars.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
 
-export interface PangGA {
+export interface PangCA {
   serverHighResTimestamp: number;
 }
 
-const codec: BinaryBYOBCodec<PangGA> = {
+const codec: BinaryBYOBCodec<PangCA> = {
   calcByteLength(): number {
     return 8;
   },
-  decode(buffer: ArrayBuffer, byteOffset: number): PangGA {
+  decode(buffer: ArrayBuffer, byteOffset: number): PangCA {
     const dv = new DataView(buffer, byteOffset);
     const serverHighResTimestamp = dv.getFloat64(0, true);
     return { serverHighResTimestamp };
   },
-  encode(buffer: ArrayBuffer, byteOffset: number, data: PangGA): void {
+  encode(buffer: ArrayBuffer, byteOffset: number, data: PangCA): void {
     const { serverHighResTimestamp } = data;
     const dv = new DataView(buffer, byteOffset);
     dv.setFloat64(0, serverHighResTimestamp, true);
   },
 };
 
-export const pangGADef = registerGADefinition({
+export const pangCADef = registerCADefinition({
   encoding: {
     codec,
-    key: Identifier.pangGA,
+    key: Identifier.pangCA,
     type: "binary",
   },
   kind: "pang",
 });
 
-export class PangGAHandler implements GAHandler<PangGA, void> {
-  async handle(request: PangGA): Promise<void> {
+export class PangCAHandler implements CAHandler<PangCA, void> {
+  async handle(request: PangCA): Promise<void> {
     // TODO: implement
   }
 }
 
-export function providePangGAHandler() {
-  return new PangGAHandler();
+export function providePangCAHandler() {
+  return new PangCAHandler();
 }
