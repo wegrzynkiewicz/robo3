@@ -1,7 +1,7 @@
 import { BeingManager, provideScopedBeingManager } from "../../common/being/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { GAHandler } from "../../common/game/actions/define.ts";
-import { registerGADefinition } from "../../common/game/actions/manager.ts";
+import { GAHandler } from "../../common/game/action/define.ts";
+import { registerGADefinition } from "../../common/game/action/manager.ts";
 import { MoveDirection } from "../player-move/me-player-move-ca.ts";
 
 export interface BeingMoveGA {

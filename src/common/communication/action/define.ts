@@ -1,4 +1,4 @@
-import { BinaryBYOBCodec } from "../../core/codec.ts";
+import { BinaryBYOBCodec } from "../../../core/codec.ts";
 
 export interface CAEnvelope<TData> {
   id: number;

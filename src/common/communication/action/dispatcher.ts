@@ -1,4 +1,4 @@
-import { ServiceResolver } from "../dependency/service.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
 import { CABus, provideMainCABus, provideScopedSendingCABus, } from "./bus.ts";
 import { CADefinition, CADispatcher, CAEnvelope } from "./define.ts";
 

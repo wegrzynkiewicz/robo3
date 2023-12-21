@@ -1,4 +1,4 @@
-import { registerCADefinition } from "../../common/action/manager.ts";
+import { registerCADefinition } from "../../common/communication/action/manager.ts";
 import { assertRequiredString } from "../../common/utils/asserts.ts";
 import { LoginResponseCA } from "./login-response-ca.ts";
 

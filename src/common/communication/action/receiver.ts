@@ -1,8 +1,8 @@
-import { Breaker } from "../utils/breaker.ts";
+import { Breaker } from "../../utils/breaker.ts";
 import { CACodec, provideCACodec } from "./codec.ts";
-import { WebSocketChannelBusSubscriber } from "../web-socket/web-socket-channel-bus.ts";
+import { WebSocketChannelBusSubscriber } from "../../web-socket/web-socket-channel-bus.ts";
 import { CABus, provideScopedReceivingCABus } from "./bus.ts";
-import { ServiceResolver } from "../dependency/service.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
 
 export class UniversalCAReceiver implements WebSocketChannelBusSubscriber<MessageEvent> {
   public constructor(

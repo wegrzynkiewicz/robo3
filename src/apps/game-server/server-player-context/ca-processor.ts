@@ -3,7 +3,7 @@ import { mePlayerMoveCADef, provideMePlayerMoveCAHandler } from "../../../action
 import { pangCADef, providePangCAHandler } from "../../../actions/stats/pang-ca.ts";
 import { pingCADef, providePingCAHandler } from "../../../actions/stats/ping-ca.ts";
 import { pongCADef } from "../../../actions/stats/pong-ca.ts";
-import { UniversalCAProcessor } from "../../../common/action/processor.ts";
+import { UniversalCAProcessor } from "../../../common/communication/action/processor.ts";
 import { loginRequestCADef, provideLoginRequestCAHandler } from "../../../actions/login/login-request-ca.ts";
 import { loginResponseCADef } from "../../../actions/login/login-response-ca.ts";
 import { meRequestCADef, provideMeRequestCAHandler } from "../../../actions/me/me-request-ca.ts";

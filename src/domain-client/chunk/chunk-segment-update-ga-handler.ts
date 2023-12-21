@@ -1,4 +1,4 @@
-import { CAHandler } from "../../common/action/define.ts";
+import { CAHandler } from "../../common/communication/action/define.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { ChunkSegmentUpdateCA } from "../../domain/chunk/chunk-segment-update-ga.ts";
 import { provideChunkManager } from "./chunk-manager.ts";

@@ -2,8 +2,8 @@ import { ServiceResolver } from "../../common/dependency/service.ts";
 import { registerUADefinition, UADefinition } from "../../apps/game-client/ua/foundation.ts";
 import { UAHandler } from "../../apps/game-client/ua/processor.ts";
 import { MoveDirection, mePlayerMoveCADef } from "./me-player-move-ca.ts";
-import { CADispatcher } from "../../common/action/define.ts";
-import { provideMainCADispatcher } from "../../common/action/dispatcher.ts";
+import { CADispatcher } from "../../common/communication/action/define.ts";
+import { provideMainCADispatcher } from "../../common/communication/action/dispatcher.ts";
 
 export const mePlayerMoveUA = registerUADefinition<MoveDirection>({
   name: "ua.me.player-move",

@@ -1,5 +1,5 @@
-import { CAHandler } from "../../common/action/define.ts";
-import { registerCADefinition } from "../../common/action/manager.ts";
+import { CAHandler } from "../../common/communication/action/define.ts";
+import { registerCADefinition } from "../../common/communication/action/manager.ts";
 import { Identifier } from "../../common/vars.ts";
 import { BinaryBYOBCodec } from "../../core/codec.ts";
 import { PongCA } from "./pong-ca.ts";

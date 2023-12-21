@@ -1,4 +1,4 @@
-import { registerCADefinition } from "../../common/action/manager.ts";
+import { registerCADefinition } from "../../common/communication/action/manager.ts";
 import { ChunkDTO } from "../../common/chunk/chunk.ts";
 
 export interface ChunksUpdateCA {

@@ -8,7 +8,7 @@ import { SpriteImageExtractor } from "../../common/sprite/sprite-image-data-extr
 import { SpriteAllocator } from "../../common/sprite/sprite-allocator.ts";
 import { SpriteImage } from "../../common/sprite/sprite.ts";
 import { provideMainUAProcessor, resolveUAProcessHandlers } from "./ua/processor.ts";
-import { provideMainCABus } from "../../common/action/bus.ts";
+import { provideMainCABus } from "../../common/communication/action/bus.ts";
 import { provideApp } from "./app.ts";
 import { feedMainLoop, provideMainLoop } from "./main-loop.ts";
 import { provideDebugInfo } from "./debug/debug-info.ts";

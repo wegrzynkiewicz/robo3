@@ -1,5 +1,5 @@
-import { CAHandler } from "../../common/action/define.ts";
-import { registerCADefinition } from "../../common/action/manager.ts";
+import { CAHandler } from "../../common/communication/action/define.ts";
+import { registerCADefinition } from "../../common/communication/action/manager.ts";
 import { BeingManager, provideScopedBeingManager } from "../../common/being/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { MePlayer, provideMePlayer } from "../me/me-player.ts";

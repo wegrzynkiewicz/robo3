@@ -1,6 +1,6 @@
-import { ServiceResolver } from "../dependency/service.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
 import { CACodec, provideCACodec } from "./codec.ts";
-import { Logger, provideScopedLogger } from "../logger/global.ts";
+import { Logger, provideScopedLogger } from "../../logger/global.ts";
 import { provideScopedWebSocket } from "./socket.ts";
 import { CADefinition, CAEnvelope } from "./define.ts";
 import { CABusSubscriber } from "./bus.ts";

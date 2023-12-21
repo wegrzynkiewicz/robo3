@@ -1,4 +1,4 @@
-import { provideScopedWebSocket } from "../action/socket.ts";
+import { provideScopedWebSocket } from "../communication/action/socket.ts";
 import { ServiceResolver } from "../dependency/service.ts";
 import { Logger, provideScopedLogger } from "../logger/global.ts";
 import { BasicWebSocketChannelBus } from "./web-socket-channel-bus.ts";

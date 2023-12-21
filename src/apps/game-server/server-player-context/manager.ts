@@ -1,10 +1,10 @@
-import { provideScopedReceivingCABus, provideScopedSendingCABus } from "../../../common/action/bus.ts";
-import { provideCACodec } from "../../../common/action/codec.ts";
-import { provideScopedCALogger } from "../../../common/action/logger.ts";
-import { provideScopedOnlineCASender } from "../../../common/action/online-sender.ts";
-import { provideScopedCAProcessor } from "../../../common/action/processor.ts";
-import { provideScopedCAReceiver } from "../../../common/action/receiver.ts";
-import { provideScopedWebSocket } from "../../../common/action/socket.ts";
+import { provideScopedReceivingCABus, provideScopedSendingCABus } from "../../../common/communication/action/bus.ts";
+import { provideCACodec } from "../../../common/communication/action/codec.ts";
+import { provideScopedCALogger } from "../../../common/communication/action/logger.ts";
+import { provideScopedOnlineCASender } from "../../../common/communication/action/online-sender.ts";
+import { provideScopedCAProcessor } from "../../../common/communication/action/processor.ts";
+import { provideScopedCAReceiver } from "../../../common/communication/action/receiver.ts";
+import { provideScopedWebSocket } from "../../../common/communication/action/socket.ts";
 import { provideScopedBeingManager } from "../../../common/being/manager.ts";
 import { ServiceResolver, provideMainServiceResolver, provideScopedServiceResolver } from "../../../common/dependency/service.ts";
 import { provideScopedLogger } from "../../../common/logger/global.ts";

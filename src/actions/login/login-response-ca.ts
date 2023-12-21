@@ -1,4 +1,4 @@
-import { registerCADefinition } from "../../common/action/manager.ts";
+import { registerCADefinition } from "../../common/communication/action/manager.ts";
 
 export interface LoginResponseCA {
   status: number;

@@ -1,5 +1,5 @@
 import { ServerPlayerContext, provideScopedServerPlayerContext } from "../../apps/game-server/server-player-context/define.ts";
-import { registerCADefinition } from "../../common/action/manager.ts";
+import { registerCADefinition } from "../../common/communication/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { EmptyObject } from "../../common/utils/useful.ts";
 import { MeResponseCA } from "./me-response-ca.ts";

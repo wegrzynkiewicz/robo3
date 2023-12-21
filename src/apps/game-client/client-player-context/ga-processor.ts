@@ -1,4 +1,4 @@
-import { UniversalCAProcessor } from "../../../common/action/processor.ts";
+import { UniversalCAProcessor } from "../../../common/communication/action/processor.ts";
 import { ServiceResolver } from "../../../common/dependency/service.ts";
 import { chunkSegmentUpdateCADef } from "../../../domain/chunk/chunk-segment-update-ga.ts";
 import { chunksUpdateCADef } from "../../../domain/chunk/chunks-update-ga.ts";

@@ -1,5 +1,5 @@
-import { ServiceResolver } from "../dependency/service.ts";
-import { Breaker } from "../utils/breaker.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
+import { Breaker } from "../../utils/breaker.ts";
 import { CABusSubscriber } from "./bus.ts";
 import { AnyCADefinition, AnyHandlerBinding, CADefinition, CADispatcher, CAEnvelope, CAHandler, HandlerBinding } from "./define.ts";
 import { provideScopedCADispatcher } from "./dispatcher.ts";

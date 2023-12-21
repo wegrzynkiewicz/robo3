@@ -1,5 +1,5 @@
-import { Deferred, deferred } from "../../deps.ts";
-import { ServiceResolver } from "../dependency/service.ts";
+import { Deferred, deferred } from "../../../deps.ts";
+import { ServiceResolver } from "../../dependency/service.ts";
 import { CABusSubscriber } from "./bus.ts";
 import { CARequestor, CASender, CADefinition, CAEnvelope } from "./define.ts";
 import { provideScopedCASender } from "./online-sender.ts";

@@ -1,4 +1,4 @@
-import { registerCADefinition } from "../../common/action/manager.ts";
+import { registerCADefinition } from "../../common/communication/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { MePlayer, provideMePlayer } from "./me-player.ts";
 
