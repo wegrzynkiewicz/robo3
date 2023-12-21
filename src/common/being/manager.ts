@@ -3,7 +3,6 @@ import { MoveDirection } from "../../actions/player-move/me-player-move-ca.ts";
 export interface Being {
   direct: MoveDirection;
   id: number;
-  wasUpdated: boolean;
   x: number;
   rx: number;
   y: number;
@@ -34,7 +33,6 @@ export class BeingManager {
     const being: Being = {
       direct: MoveDirection.S,
       id: beingId,
-      wasUpdated: true,
       rx: 0,
       x: 0,
       ry: 0,
