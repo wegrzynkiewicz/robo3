@@ -1,6 +1,6 @@
 import { provideScopedServerPlayerContextManager } from "../../apps/game-server/server-player-context/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
-import { GameSimulatorContextManager, provideGameSimulatorContextManager } from "../../common/game/context/manager.ts";
+import { GameSimulationContextManager, provideGameSimulationContextManager } from "../../common/game/context/manager.ts";
 import { assertObject, assertRequiredString } from "../../common/utils/asserts.ts";
 import { EPContext, EPHandler, EPRoute } from "../../common/web/endpoint.ts";
 
@@ -19,7 +19,7 @@ export const playerWebSocketEPRoute = new EPRoute("GET", "/player-web-socket/:to
 
 export class PlayerWebSocketEP implements EPHandler {
   public constructor(
-    protected readonly manager: GameSimulatorContextManager,
+    protected readonly manager: GameSimulationContextManager,
   ) { }
 
   public async handle({ params, request }: EPContext): Promise<Response> {
@@ -36,6 +36,6 @@ export class PlayerWebSocketEP implements EPHandler {
 
 export function providePlayerWebSocketEP(resolver: ServiceResolver) {
   return new PlayerWebSocketEP(
-    resolver.resolve(provideGameSimulatorContextManager),
+    resolver.resolve(provideGameSimulationContextManager),
   );
 }

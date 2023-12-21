@@ -3,16 +3,16 @@ import { provideScopedLogger } from "../../logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../logger/logger-factory.ts";
 import { SpaceManager, provideSpaceManager } from "../../space/space-manager.ts";
 import { provideScopedSpace } from "../../space/space.ts";
-import { feedGameSimulatorDaemon, provideScopedGameSimulatorDaemon } from "../game-daemon.ts";
-import { GameSimulatorContext } from "./define.ts";
+import { provideScopedGameSimulationDaemon, feedGameSimulationDaemon } from "../game-simulation-daemon.ts";
+import { GameSimulationContext } from "./define.ts";
 
-export interface GameSimulatorContextFactoryOption {
+export interface GameSimulationContextFactoryOption {
   spaceId: number;
 }
 
-export class GameSimulatorContextManager {
+export class GameSimulationContextManager {
 
-  public readonly bySpaceId = new Map<number, GameSimulatorContext>();
+  public readonly bySpaceId = new Map<number, GameSimulationContext>();
 
   public constructor(
     public readonly loggerFactory: LoggerFactory,
@@ -20,11 +20,11 @@ export class GameSimulatorContextManager {
     public readonly spaceManager: SpaceManager,
   ) { }
 
-  public async createGameSimulatorContext(
-    { spaceId }: GameSimulatorContextFactoryOption
-  ): Promise<GameSimulatorContext> {
+  public async createGameSimulationContext(
+    { spaceId }: GameSimulationContextFactoryOption
+  ): Promise<GameSimulationContext> {
     const resolver = new ServiceResolver();
-    resolver.inject(provideScopedGameSimulatorContextServiceResolver, resolver);
+    resolver.inject(provideScopedGameSimulationContextServiceResolver, resolver);
     this.mainServiceResolver.transfer(provideSpaceManager, resolver);
     this.mainServiceResolver.transfer(provideMainLoggerFactory, resolver);
     this.mainServiceResolver.transfer(provideMainServiceResolver, resolver);
@@ -35,10 +35,10 @@ export class GameSimulatorContextManager {
     const space = this.spaceManager.obtain(spaceId);
     resolver.inject(provideScopedSpace, space);
 
-    const simulator = resolver.resolve(provideScopedGameSimulatorDaemon);
-    feedGameSimulatorDaemon(resolver, simulator);
+    const simulator = resolver.resolve(provideScopedGameSimulationDaemon);
+    feedGameSimulationDaemon(resolver, simulator);
 
-    const gameSimulatorContext: GameSimulatorContext = {
+    const gameSimulatorContext: GameSimulationContext = {
       resolver,
       simulator,
       spaceId,
@@ -50,12 +50,12 @@ export class GameSimulatorContextManager {
   }
 }
 
-export function provideScopedGameSimulatorContextServiceResolver(): ServiceResolver {
+export function provideScopedGameSimulationContextServiceResolver(): ServiceResolver {
   throw new Error('scoped-game-simulator-context-service-resolver-must-be-injected');
 }
 
-export function provideGameSimulatorContextManager(resolver: ServiceResolver) {
-  return new GameSimulatorContextManager(
+export function provideGameSimulationContextManager(resolver: ServiceResolver) {
+  return new GameSimulationContextManager(
     resolver.resolve(provideMainLoggerFactory),
     resolver.resolve(provideMainServiceResolver),
     resolver.resolve(provideSpaceManager),

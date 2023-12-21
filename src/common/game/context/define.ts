@@ -1,13 +1,13 @@
 import { ServiceResolver } from "../../dependency/service.ts";
 import { Breaker } from "../../utils/breaker.ts";
-import { GameSimulatorDaemon } from "../game-daemon.ts";
+import { GameSimulationDaemon } from "../game-simulation-daemon.ts";
 
-export interface GameSimulatorContext {
+export interface GameSimulationContext {
   resolver: ServiceResolver;
-  simulator: GameSimulatorDaemon;
+  simulator: GameSimulationDaemon;
   spaceId: number;
 }
 
-export function provideScopedGameSimulatorContext(): GameSimulatorContext {
+export function provideScopedGameSimulationContext(): GameSimulationContext {
   throw new Breaker('game-simulator-context-must-be-injected');
 }

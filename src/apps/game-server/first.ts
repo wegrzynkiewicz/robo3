@@ -2,7 +2,7 @@ import { Application, OpenAPI, Router } from "./deps.ts";
 import { ServiceResolver, provideMainServiceResolver } from "../../common/dependency/service.ts";
 import { provideDBClient } from "./db.ts";
 import { provideWebServer } from "./main-web-server.ts";
-import { provideGameSimulatorContextManager } from "../../common/game/context/manager.ts";
+import { provideGameSimulationContextManager } from "../../common/game/context/manager.ts";
 
 const app = new Application({ logErrors: false });
 const router = new Router();
@@ -41,8 +41,8 @@ router.get("/api.json", (ctx) => {
   const db = client.db("app");
   const collection = db.collection("chunks");
 
-  const manager = resolver.resolve(provideGameSimulatorContextManager);
-  const context = await manager.createGameSimulatorContext({ spaceId: 1 });
+  const manager = resolver.resolve(provideGameSimulationContextManager);
+  const context = await manager.createGameSimulationContext({ spaceId: 1 });
   context.simulator.start();
 
   //   router.get("/wss/:token", async (ctx) => {

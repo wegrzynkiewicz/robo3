@@ -9,7 +9,7 @@ import { provideScopedBeingManager } from "../../../common/being/manager.ts";
 import { ServiceResolver, provideMainServiceResolver, provideScopedServiceResolver } from "../../../common/dependency/service.ts";
 import { provideScopedLogger } from "../../../common/logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../../common/logger/logger-factory.ts";
-import { provideScopedGameSimulatorContextServiceResolver } from "../../../common/game/context/manager.ts";
+import { provideScopedGameSimulationContextServiceResolver } from "../../../common/game/context/manager.ts";
 import { provideSpaceManager } from "../../../common/space/space-manager.ts";
 import { provideScopedSpace } from "../../../common/space/space.ts";
 import { Breaker } from "../../../common/utils/breaker.ts";
@@ -49,7 +49,7 @@ export class ServerPlayerContextManager {
     this.scopedServiceResolver.transfer(provideScopedServerPlayerContextManager, resolver);
     const space = this.scopedServiceResolver.transfer(provideScopedSpace, resolver);
     const beingManager = this.scopedServiceResolver.transfer(provideScopedBeingManager, resolver);
-    this.scopedServiceResolver.transfer(provideScopedGameSimulatorContextServiceResolver, resolver);
+    this.scopedServiceResolver.transfer(provideScopedGameSimulationContextServiceResolver, resolver);
 
     const being = beingManager.create();
     const beingId = being.id;
@@ -112,6 +112,6 @@ export function provideScopedServerPlayerContextServiceResolver(): ServiceResolv
 export function provideScopedServerPlayerContextManager(resolver: ServiceResolver) {
   return new ServerPlayerContextManager(
     resolver.resolve(provideMainLoggerFactory),
-    resolver.resolve(provideScopedGameSimulatorContextServiceResolver),
+    resolver.resolve(provideScopedGameSimulationContextServiceResolver),
   );
 }
