@@ -2,8 +2,8 @@ import { assertEquals } from "../../deps.ts";
 import { ChunkId } from "./chunk-id.ts";
 
 Deno.test("encodeChunkId", () => {
-  const chunkId = new ChunkId(1, 0x44, 0x55, 0x66);
-  assertEquals(chunkId.toHex(), "00000001006600550044");
+  const chunkId = ChunkId.fromScalars(1, 0x44, 0x55, 0x66);
+  assertEquals(chunkId.key, "00000001006600550044");
 });
 
 Deno.test("decodeChunkId", () => {
