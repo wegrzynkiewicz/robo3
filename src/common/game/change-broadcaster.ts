@@ -23,7 +23,7 @@ export class GameChangeBroadCaster implements Looper {
       };
       yield beingUpdate;
     }
-    this.updatedBeingList.clear();
+    // this.updatedBeingList.clear();
   }
 
   public loop(): void {

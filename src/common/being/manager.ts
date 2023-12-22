@@ -1,4 +1,6 @@
 import { MoveDirection } from "../../actions/player-move/me-player-move-ca.ts";
+import { ServiceResolver } from "../dependency/service.ts";
+import { provideScopedUpdatedBeingList } from "./update-list.ts";
 
 export interface Being {
   direct: MoveDirection;
@@ -14,6 +16,10 @@ let beingIdCounter = 1;
 
 export class BeingManager {
   public byId = new Map<number, Being>();
+
+  public constructor(
+    protected readonly updatedBeingList: Set<Being>,
+  ) { }
 
   public create(): Being {
     const beingId = beingIdCounter++;
@@ -41,6 +47,7 @@ export class BeingManager {
     };
     beingIdCounter = Math.max(beingIdCounter, beingId + 1);
     this.byId.set(beingId, being);
+    this.updatedBeingList.add(being);
     return being;
   }
 
@@ -49,6 +56,8 @@ export class BeingManager {
   }
 }
 
-export function provideScopedBeingManager() {
-  return new BeingManager();
+export function provideScopedBeingManager(resolver: ServiceResolver) {
+  return new BeingManager(
+    resolver.resolve(provideScopedUpdatedBeingList),
+  );
 }
