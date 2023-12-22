@@ -10,9 +10,9 @@ export class GAManager {
   }
 }
 
-const GAManager = new GAManager();
-export const registerGADefinition = GAManager.registerGADefinition.bind(GAManager);
+const gaManager = new GAManager();
+export const registerGADefinition = gaManager.registerGADefinition.bind(gaManager);
 
 export function provideGAManager() {
-  return GAManager;
+  return gaManager;
 }

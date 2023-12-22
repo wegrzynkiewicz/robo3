@@ -17,6 +17,7 @@ import { provideScopedWebSocketChannel } from "../../web-socket/web-socket-chann
 import { provideCloseServerPlayerWebSocketSubscriber } from "./close-server-player-web-socket-subscriber.ts";
 import { ServerPlayerContext, provideScopedServerPlayerContext } from "./define.ts";
 import { feedServerCAProcessor } from "./ca-processor.ts";
+import { provideScopedGADispatcher } from "../../game/action/dispatcher.ts";
 
 export interface ServerPlayerContextFactoryOption {
   socket: WebSocket;
@@ -46,6 +47,7 @@ export class ServerPlayerContextManager {
     this.scopedServiceResolver.transfer(provideMainServiceResolver, resolver);
     this.scopedServiceResolver.transfer(provideCACodec, resolver);
     this.scopedServiceResolver.transfer(provideSpaceManager, resolver);
+    this.scopedServiceResolver.transfer(provideScopedGADispatcher, resolver);
     this.scopedServiceResolver.transfer(provideScopedServerPlayerContextManager, resolver);
     const space = this.scopedServiceResolver.transfer(provideScopedSpace, resolver);
     const beingManager = this.scopedServiceResolver.transfer(provideScopedBeingManager, resolver);

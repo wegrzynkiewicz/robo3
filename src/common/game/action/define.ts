@@ -4,6 +4,14 @@ export interface GADefinition<TData> {
 
 export type AnyGADefinition = GADefinition<any>;
 
+export interface GAEnvelope<TData> {
+  id: number;
+  kind: string;
+  params: TData;
+}
+
+export type AnyGAEnvelope = GAEnvelope<any>;
+
 export interface GAHandler<TData> {
   handle(data: TData): Promise<void>;
 }

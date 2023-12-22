@@ -10,7 +10,7 @@ export interface BeingMoveGA {
   direction: MoveDirection;
 }
 
-export const beingMoveGA = registerGADefinition<BeingMoveGA>({
+export const beingMoveGADef = registerGADefinition<BeingMoveGA>({
   kind: "being-move-ga",
 });
 

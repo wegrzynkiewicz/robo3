@@ -2,7 +2,8 @@ import { registerCADefinition } from "../../common/communication/action/manager.
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { CAHandler } from "../../common/communication/action/define.ts";
 import { provideScopedServerPlayerContext, ServerPlayerContext } from "../../common/communication/context/define.ts";
-import { BeingManager, provideScopedBeingManager } from "../../common/being/manager.ts";
+import { GADispatcher, provideScopedGADispatcher } from "../../common/game/action/dispatcher.ts";
+import { beingMoveGADef } from "../being-move/being-move-ga.ts";
 
 export const enum MoveDirection {
   Q = 0b1010,
@@ -29,19 +30,21 @@ export const mePlayerMoveCADef = registerCADefinition<MePlayerMoveCA>({
 
 export class MePlayerMoveCAHandler implements CAHandler<MePlayerMoveCA, void> {
   public constructor(
-    protected readonly beingManager: BeingManager,
+    protected readonly gaDispatcher: GADispatcher,
     protected readonly playerContext: ServerPlayerContext,
   ) { }
 
   public async handle(request: MePlayerMoveCA): Promise<void> {
-    const being = this.beingManager.obtain(this.playerContext.playerContextId);
-    being.direct = request.direction;
+    const { direction } = request;
+    const { beingId } = this.playerContext;
+    // TODO: add validation
+    this.gaDispatcher.dispatch(beingMoveGADef, { beingId, direction});
   }
 }
 
 export function provideMePlayerMoveCAHandler(resolver: ServiceResolver) {
   return new MePlayerMoveCAHandler(
-    resolver.resolve(provideScopedBeingManager),
+    resolver.resolve(provideScopedGADispatcher),
     resolver.resolve(provideScopedServerPlayerContext),
   );
 }
