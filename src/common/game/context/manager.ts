@@ -3,7 +3,10 @@ import { provideScopedLogger } from "../../logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../logger/logger-factory.ts";
 import { SpaceManager, provideSpaceManager } from "../../space/space-manager.ts";
 import { provideScopedSpace } from "../../space/space.ts";
+import { provideScopedUnprocessedGABus } from "../action/bus.ts";
+import { provideScopedGAProcessor } from "../action/processor.ts";
 import { provideScopedGameSimulationDaemon, feedGameSimulationDaemon } from "../simulation-daemon.ts";
+import { feedGASimulationProcessor } from "../simulation-processor.ts";
 import { GameSimulationContext } from "./define.ts";
 
 export interface GameSimulationContextFactoryOption {
@@ -37,6 +40,13 @@ export class GameSimulationContextManager {
 
     const simulator = resolver.resolve(provideScopedGameSimulationDaemon);
     feedGameSimulationDaemon(resolver, simulator);
+
+    const unprocessedGABus = resolver.resolve(provideScopedUnprocessedGABus);
+    {
+      const processor = resolver.resolve(provideScopedGAProcessor);
+      feedGASimulationProcessor(resolver, processor);
+      unprocessedGABus.subscribers.add(processor);
+    }
 
     const gameSimulatorContext: GameSimulationContext = {
       resolver,

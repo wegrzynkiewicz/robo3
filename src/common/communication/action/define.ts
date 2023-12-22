@@ -33,13 +33,13 @@ export interface CAHandler<TRequest, TResponse> {
 
 export type AnyCAHandler = CAHandler<any, any>;
 
-export interface HandlerBinding<TRequest, TResponse> {
+export interface CAHandlerBinding<TRequest, TResponse> {
   handler: CAHandler<TRequest, TResponse>;
   request: CADefinition<TRequest>;
   response?: CADefinition<TResponse>;
 }
 
-export type AnyHandlerBinding = HandlerBinding<any, any>;
+export type AnyCAHandlerBinding = CAHandlerBinding<any, any>;
 
 export interface CADispatcher {
   send<TData>(definition: CADefinition<TData>, data: TData): void;

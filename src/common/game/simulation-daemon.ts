@@ -4,6 +4,7 @@ import { FPSCounter, provideFPSCounter } from "./fps-counter.ts";
 import { Daemon, Framer, Looper } from "./looper.ts";
 import { provideGameChangeBroadCaster } from "./change-broadcaster.ts";
 import { provideScopedBeingSimulator } from "../../actions/being-move/being-move-simulator.ts";
+import { provideScopedGAConsumer } from "./action/consumer.ts";
 
 export class GameSimulationDaemon implements Daemon, Framer {
   public loopers: Looper[] = [];
@@ -55,6 +56,7 @@ export function provideScopedGameSimulationDaemon(resolver: ServiceResolver) {
 }
 
 export function feedGameSimulationDaemon(resolver: ServiceResolver, gameSimulationDaemon: GameSimulationDaemon) {
+  gameSimulationDaemon.loopers.push(resolver.resolve(provideScopedGAConsumer));
   gameSimulationDaemon.loopers.push(resolver.resolve(provideScopedBeingSimulator));
   gameSimulationDaemon.loopers.push(resolver.resolve(provideGameChangeBroadCaster));
 }

@@ -13,7 +13,7 @@ export class GADispatcher {
     params = params ?? {} as TData;
     const id = this.id++;
     const envelope: GAEnvelope<TData> = { id, kind, params };
-    this.incomingQueue.push(envelope);
+    this.incomingQueue.push(definition, envelope);
   }
 }
 

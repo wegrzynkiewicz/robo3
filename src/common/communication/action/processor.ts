@@ -1,11 +1,11 @@
 import { ServiceResolver } from "../../dependency/service.ts";
 import { Breaker } from "../../utils/breaker.ts";
 import { CABusSubscriber } from "./bus.ts";
-import { AnyCADefinition, AnyHandlerBinding, CADefinition, CADispatcher, CAEnvelope, CAHandler, HandlerBinding } from "./define.ts";
+import { AnyCADefinition, AnyCAHandlerBinding, CADefinition, CADispatcher, CAEnvelope, CAHandler, CAHandlerBinding } from "./define.ts";
 import { provideScopedCADispatcher } from "./dispatcher.ts";
 
 export class UniversalCAProcessor implements CABusSubscriber {
-  public handlers = new Map<AnyCADefinition, AnyHandlerBinding>();
+  public handlers = new Map<AnyCADefinition, AnyCAHandlerBinding>();
 
   public constructor(
     public readonly dispatcher: CADispatcher,
@@ -16,7 +16,7 @@ export class UniversalCAProcessor implements CABusSubscriber {
     response: TResponse extends void ? undefined : CADefinition<TResponse>,
     handler: CAHandler<TRequest, TResponse>,
   ) {
-    const binding: HandlerBinding<TRequest, TResponse> = { handler, request, response };
+    const binding: CAHandlerBinding<TRequest, TResponse> = { handler, request, response };
     this.handlers.set(request, binding);
   }
 
