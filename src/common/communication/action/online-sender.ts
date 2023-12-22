@@ -1,7 +1,7 @@
 import { ServiceResolver } from "../../dependency/service.ts";
 import { CACodec, provideCACodec } from "./codec.ts";
-import { Logger, provideScopedLogger } from "../../logger/global.ts";
-import { provideScopedWebSocket } from "./socket.ts";
+import { Logger, provideLogger } from "../../logger/global.ts";
+import { provideWebSocket } from "./socket.ts";
 import { CADefinition, CAEnvelope } from "./define.ts";
 import { CABusSubscriber } from "./bus.ts";
 
@@ -29,10 +29,10 @@ export class OnlineCASender implements CABusSubscriber {
   }
 }
 
-export function provideScopedOnlineCASender(resolver: ServiceResolver) {
+export function provideOnlineCASender(resolver: ServiceResolver) {
   return new OnlineCASender(
     resolver.resolve(provideCACodec),
-    resolver.resolve(provideScopedLogger),
-    resolver.resolve(provideScopedWebSocket),
+    resolver.resolve(provideLogger),
+    resolver.resolve(provideWebSocket),
   );
 }

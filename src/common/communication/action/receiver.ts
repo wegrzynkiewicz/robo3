@@ -1,7 +1,7 @@
 import { Breaker } from "../../utils/breaker.ts";
 import { CACodec, provideCACodec } from "./codec.ts";
 import { WebSocketChannelBusSubscriber } from "../../web-socket/web-socket-channel-bus.ts";
-import { CABus, provideScopedReceivingCABus } from "./bus.ts";
+import { CABus, provideReceivingCABus } from "./bus.ts";
 import { ServiceResolver } from "../../dependency/service.ts";
 
 export class UniversalCAReceiver implements WebSocketChannelBusSubscriber<MessageEvent> {
@@ -21,9 +21,9 @@ export class UniversalCAReceiver implements WebSocketChannelBusSubscriber<Messag
   }
 }
 
-export function provideScopedCAReceiver(resolver: ServiceResolver) {
+export function provideCAReceiver(resolver: ServiceResolver) {
   return new UniversalCAReceiver(
     resolver.resolve(provideCACodec),
-    resolver.resolve(provideScopedReceivingCABus),
+    resolver.resolve(provideReceivingCABus),
   );
 }

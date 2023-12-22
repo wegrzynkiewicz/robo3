@@ -4,7 +4,7 @@ import { Chunk, ChunkManager, provideChunkManager } from "../../../../domain-cli
 import { provideSceneViewport, SceneViewport } from "./scene-viewport.ts";
 import { provideTilesCollector, TilesCollector } from "./tiles-collector.ts";
 import { ChunkId } from "../../../../common/chunk/chunk-id.ts";
-import { BeingManager, provideScopedBeingManager } from "../../../../common/being/manager.ts";
+import { BeingManager, provideBeingManager } from "../../../../common/being/manager.ts";
 
 const ter = {
   "LQ": 65,
@@ -217,7 +217,7 @@ export class TilesSceneBuilder {
 export function provideTilesSceneBuilder(resolver: ServiceResolver) {
   return new TilesSceneBuilder(
     10,
-    resolver.resolve(provideScopedBeingManager),
+    resolver.resolve(provideBeingManager),
     resolver.resolve(provideChunkManager),
     resolver.resolve(provideSceneViewport),
     resolver.resolve(provideTilesCollector),

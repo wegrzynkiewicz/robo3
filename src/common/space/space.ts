@@ -6,6 +6,6 @@ export class Space {
   ) { }
 }
 
-export function provideScopedSpace(): Space {
+export function provideSpace(): Space {
   throw new Breaker("space-must-be-injected");
 }

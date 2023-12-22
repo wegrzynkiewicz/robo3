@@ -4,7 +4,7 @@ import { pingCADef } from "./ping-ca.ts";
 import { pongCADef } from "./pong-ca.ts";
 import { Breaker } from "../../common/utils/breaker.ts";
 import { CARequestor } from "../../common/communication/action/define.ts";
-import { provideScopedCARequestor } from "../../common/communication/action/requestor.ts";
+import { provideCARequestor } from "../../common/communication/action/requestor.ts";
 
 export class NetworkLatencyDaemon {
   protected timer = 0;
@@ -36,6 +36,6 @@ export class NetworkLatencyDaemon {
 
 export function provideNetworkLatencyDaemon(resolver: ServiceResolver) {
   return new NetworkLatencyDaemon(
-    resolver.resolve(provideScopedCARequestor),
+    resolver.resolve(provideCARequestor),
   );
 }

@@ -1,4 +1,4 @@
-import { provideScopedServerPlayerContextManager } from "../../common/communication/context/manager.ts";
+import { provideServerPlayerContextManager } from "../../common/communication/context/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { GameSimulationContextManager, provideGameSimulationContextManager } from "../../common/game/context/manager.ts";
 import { assertObject, assertRequiredString } from "../../common/utils/asserts.ts";
@@ -28,7 +28,7 @@ export class PlayerWebSocketEP implements EPHandler {
     const { response, socket } = Deno.upgradeWebSocket(request);
     const gameSimulatorContext = this.manager.bySpaceId.get(spaceId);
     assertObject(gameSimulatorContext, "game-simulator-context-not-found");
-    const playerContextManager = gameSimulatorContext.resolver.resolve(provideScopedServerPlayerContextManager);
+    const playerContextManager = gameSimulatorContext.resolver.resolve(provideServerPlayerContextManager);
     playerContextManager.createServerPlayerContext({ socket });
     return response;
   }

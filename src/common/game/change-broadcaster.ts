@@ -1,8 +1,8 @@
 import { BeingUpdate, beingsUpdateCADef } from "../../actions/beings-update/beings-update-ca.ts";
 import { Being } from "../being/manager.ts";
-import { provideScopedUpdatedBeingList } from "../being/update-list.ts";
-import { provideScopedCADispatcher } from "../communication/action/dispatcher.ts";
-import { ServerPlayerContextManager, provideScopedServerPlayerContextManager } from "../communication/context/manager.ts";
+import { provideUpdatedBeingList } from "../being/update-list.ts";
+import { provideCADispatcher } from "../communication/action/dispatcher.ts";
+import { ServerPlayerContextManager, provideServerPlayerContextManager } from "../communication/context/manager.ts";
 import { ServiceResolver } from "../dependency/service.ts";
 import { Looper } from "./looper.ts";
 
@@ -32,7 +32,7 @@ export class GameChangeBroadCaster implements Looper {
       return;
     }
     for (const context of this.manager.byPlayerContextId.values()) {
-      const dispatcher = context.resolver.resolve(provideScopedCADispatcher);
+      const dispatcher = context.resolver.resolve(provideCADispatcher);
       dispatcher.send(beingsUpdateCADef, { beings });
     }
   }
@@ -40,7 +40,7 @@ export class GameChangeBroadCaster implements Looper {
 
 export function provideGameChangeBroadCaster(resolver: ServiceResolver) {
   return new GameChangeBroadCaster(
-    resolver.resolve(provideScopedServerPlayerContextManager),
-    resolver.resolve(provideScopedUpdatedBeingList),
+    resolver.resolve(provideServerPlayerContextManager),
+    resolver.resolve(provideUpdatedBeingList),
   );
 }

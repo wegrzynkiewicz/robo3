@@ -1,6 +1,6 @@
 import { MoveDirection } from "../../actions/player-move/me-player-move-ca.ts";
 import { ServiceResolver } from "../dependency/service.ts";
-import { provideScopedUpdatedBeingList } from "./update-list.ts";
+import { provideUpdatedBeingList } from "./update-list.ts";
 
 export interface Being {
   direct: MoveDirection;
@@ -56,8 +56,8 @@ export class BeingManager {
   }
 }
 
-export function provideScopedBeingManager(resolver: ServiceResolver) {
+export function provideBeingManager(resolver: ServiceResolver) {
   return new BeingManager(
-    resolver.resolve(provideScopedUpdatedBeingList),
+    resolver.resolve(provideUpdatedBeingList),
   );
 }

@@ -1,6 +1,6 @@
 import { CAHandler } from "../../common/communication/action/define.ts";
 import { registerCADefinition } from "../../common/communication/action/manager.ts";
-import { BeingManager, provideScopedBeingManager } from "../../common/being/manager.ts";
+import { BeingManager, provideBeingManager } from "../../common/being/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { MePlayer, provideMePlayer } from "../me/me-player.ts";
 import { MoveDirection } from "../player-move/me-player-move-ca.ts";
@@ -49,7 +49,7 @@ export class BeingsUpdateCAHandler implements CAHandler<BeingsUpdateCA, void> {
 
 export function provideBeingsUpdateCAHandler(resolver: ServiceResolver) {
   return new BeingsUpdateCAHandler(
-    resolver.resolve(provideScopedBeingManager),
+    resolver.resolve(provideBeingManager),
     resolver.resolve(provideMePlayer),
   );
 }

@@ -8,6 +8,6 @@ export interface GameSimulationContext {
   spaceId: number;
 }
 
-export function provideScopedGameSimulationContext(): GameSimulationContext {
+export function provideGameSimulationContext(): GameSimulationContext {
   throw new Breaker('game-simulator-context-must-be-injected');
 }

@@ -1,23 +1,23 @@
-import { provideScopedReceivingCABus, provideScopedSendingCABus } from "../action/bus.ts";
+import { provideReceivingCABus, provideSendingCABus } from "../action/bus.ts";
 import { provideCACodec } from "../action/codec.ts";
-import { provideScopedCALogger } from "../action/logger.ts";
-import { provideScopedOnlineCASender } from "../action/online-sender.ts";
-import { provideScopedCAProcessor } from "../action/processor.ts";
-import { provideScopedCAReceiver } from "../action/receiver.ts";
-import { provideScopedWebSocket } from "../action/socket.ts";
-import { provideScopedBeingManager } from "../../being/manager.ts";
+import { provideCALogger } from "../action/logger.ts";
+import { provideOnlineCASender } from "../action/online-sender.ts";
+import { provideCAProcessor } from "../action/processor.ts";
+import { provideCAReceiver } from "../action/receiver.ts";
+import { provideWebSocket } from "../action/socket.ts";
+import { provideBeingManager } from "../../being/manager.ts";
 import { ServiceResolver, provideMainServiceResolver } from "../../dependency/service.ts";
-import { provideScopedLogger } from "../../logger/global.ts";
+import { provideLogger } from "../../logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../logger/logger-factory.ts";
-import { provideScopedGameSimulationContextServiceResolver } from "../../game/context/manager.ts";
+import { provideGameSimulationContextServiceResolver } from "../../game/context/manager.ts";
 import { provideSpaceManager } from "../../space/space-manager.ts";
-import { provideScopedSpace } from "../../space/space.ts";
+import { provideSpace } from "../../space/space.ts";
 import { Breaker } from "../../utils/breaker.ts";
-import { provideScopedWebSocketChannel } from "../../web-socket/web-socket-channel.ts";
+import { provideWebSocketChannel } from "../../web-socket/web-socket-channel.ts";
 import { provideCloseServerPlayerWebSocketSubscriber } from "./close-server-player-web-socket-subscriber.ts";
-import { ServerPlayerContext, provideScopedServerPlayerContext } from "./define.ts";
+import { ServerPlayerContext, provideServerPlayerContext } from "./define.ts";
 import { feedServerCAProcessor } from "./ca-processor.ts";
-import { provideScopedGADispatcher } from "../../game/action/dispatcher.ts";
+import { provideGADispatcher } from "../../game/action/dispatcher.ts";
 
 export interface ServerPlayerContextFactoryOption {
   socket: WebSocket;
@@ -42,16 +42,16 @@ export class ServerPlayerContextManager {
     const playerContextId = playerContextIdCounter++;
 
     const resolver = new ServiceResolver();
-    resolver.inject(provideScopedServerPlayerContextServiceResolver, resolver);
-    resolver.inject(provideScopedWebSocket, socket);
+    resolver.inject(provideServerPlayerContextServiceResolver, resolver);
+    resolver.inject(provideWebSocket, socket);
     this.scopedServiceResolver.transfer(provideMainServiceResolver, resolver);
     this.scopedServiceResolver.transfer(provideCACodec, resolver);
     this.scopedServiceResolver.transfer(provideSpaceManager, resolver);
-    this.scopedServiceResolver.transfer(provideScopedGADispatcher, resolver);
-    this.scopedServiceResolver.transfer(provideScopedServerPlayerContextManager, resolver);
-    const space = this.scopedServiceResolver.transfer(provideScopedSpace, resolver);
-    const beingManager = this.scopedServiceResolver.transfer(provideScopedBeingManager, resolver);
-    this.scopedServiceResolver.transfer(provideScopedGameSimulationContextServiceResolver, resolver);
+    this.scopedServiceResolver.transfer(provideGADispatcher, resolver);
+    this.scopedServiceResolver.transfer(provideServerPlayerContextManager, resolver);
+    const space = this.scopedServiceResolver.transfer(provideSpace, resolver);
+    const beingManager = this.scopedServiceResolver.transfer(provideBeingManager, resolver);
+    this.scopedServiceResolver.transfer(provideGameSimulationContextServiceResolver, resolver);
 
     const being = beingManager.create();
     const beingId = being.id;
@@ -62,33 +62,33 @@ export class ServerPlayerContextManager {
       resolver,
       spaceId: space.spaceId,
     };
-    resolver.inject(provideScopedServerPlayerContext, context);
+    resolver.inject(provideServerPlayerContext, context);
 
     const logger = this.loggerFactory.createLogger('PLAYER', { beingId, playerContextId, spaceId });
-    resolver.inject(provideScopedLogger, logger);
+    resolver.inject(provideLogger, logger);
 
-    const webSocketChannel = resolver.resolve(provideScopedWebSocketChannel);
+    const webSocketChannel = resolver.resolve(provideWebSocketChannel);
     {
-      const universalCAReceiver = resolver.resolve(provideScopedCAReceiver);
+      const universalCAReceiver = resolver.resolve(provideCAReceiver);
       webSocketChannel.messageBus.subscribers.add(universalCAReceiver);
 
       const closePlayerServerWebSocketSubscriber = resolver.resolve(provideCloseServerPlayerWebSocketSubscriber);
       webSocketChannel.closeBus.subscribers.add(closePlayerServerWebSocketSubscriber);
     }
 
-    const receivedCABus = resolver.resolve(provideScopedReceivingCABus);
+    const receivedCABus = resolver.resolve(provideReceivingCABus);
     {
-      const processor = resolver.resolve(provideScopedCAProcessor);
+      const processor = resolver.resolve(provideCAProcessor);
       feedServerCAProcessor(resolver, processor);
       receivedCABus.subscribers.add(processor);
 
-      const logger = resolver.resolve(provideScopedCALogger);
+      const logger = resolver.resolve(provideCALogger);
       receivedCABus.subscribers.add(logger);
     }
 
-    const sendingCABus = resolver.resolve(provideScopedSendingCABus);
+    const sendingCABus = resolver.resolve(provideSendingCABus);
     {
-      const onlineCASender = resolver.resolve(provideScopedOnlineCASender);
+      const onlineCASender = resolver.resolve(provideOnlineCASender);
       sendingCABus.subscribers.add(onlineCASender);
     }
 
@@ -101,19 +101,19 @@ export class ServerPlayerContextManager {
       return;
     }
     const { beingId, resolver } = context;
-    const beingManager = resolver.resolve(provideScopedBeingManager);
+    const beingManager = resolver.resolve(provideBeingManager);
     beingManager.destroyBeing(beingId);
     this.byPlayerContextId.delete(playerContextId);
   }
 }
 
-export function provideScopedServerPlayerContextServiceResolver(): ServiceResolver {
+export function provideServerPlayerContextServiceResolver(): ServiceResolver {
   throw new Breaker('scoped-server-player-context-service-resolver-must-be-injected');
 }
 
-export function provideScopedServerPlayerContextManager(resolver: ServiceResolver) {
+export function provideServerPlayerContextManager(resolver: ServiceResolver) {
   return new ServerPlayerContextManager(
     resolver.resolve(provideMainLoggerFactory),
-    resolver.resolve(provideScopedGameSimulationContextServiceResolver),
+    resolver.resolve(provideGameSimulationContextServiceResolver),
   );
 }

@@ -2,7 +2,7 @@ import { Deferred, deferred } from "../../../deps.ts";
 import { ServiceResolver } from "../../dependency/service.ts";
 import { CABusSubscriber } from "./bus.ts";
 import { CARequestor, CADefinition, CAEnvelope, CADispatcher } from "./define.ts";
-import { provideScopedCADispatcher } from "./dispatcher.ts";
+import { provideCADispatcher } from "./dispatcher.ts";
 
 export interface CARequest<TRequest, TResponse> {
   id: number;
@@ -58,8 +58,8 @@ export class UniversalCARequestor implements CABusSubscriber, CARequestor {
   }
 }
 
-export function provideScopedCARequestor(resolver: ServiceResolver) {
+export function provideCARequestor(resolver: ServiceResolver) {
   return new UniversalCARequestor(
-    resolver.resolve(provideScopedCADispatcher),
+    resolver.resolve(provideCADispatcher),
   );
 }

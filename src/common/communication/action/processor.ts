@@ -2,7 +2,7 @@ import { ServiceResolver } from "../../dependency/service.ts";
 import { Breaker } from "../../utils/breaker.ts";
 import { CABusSubscriber } from "./bus.ts";
 import { AnyCADefinition, AnyCAHandlerBinding, CADefinition, CADispatcher, CAEnvelope, CAHandler, CAHandlerBinding } from "./define.ts";
-import { provideScopedCADispatcher } from "./dispatcher.ts";
+import { provideCADispatcher } from "./dispatcher.ts";
 
 export class UniversalCAProcessor implements CABusSubscriber {
   public handlers = new Map<AnyCADefinition, AnyCAHandlerBinding>();
@@ -40,8 +40,8 @@ export class UniversalCAProcessor implements CABusSubscriber {
   }
 }
 
-export function provideScopedCAProcessor(resolver: ServiceResolver) {
+export function provideCAProcessor(resolver: ServiceResolver) {
   return new UniversalCAProcessor(
-    resolver.resolve(provideScopedCADispatcher),
+    resolver.resolve(provideCADispatcher),
   ); 
 }

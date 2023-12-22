@@ -27,10 +27,10 @@ export function provideMainCABus() {
   return new BasicCABus();
 }
 
-export function provideScopedReceivingCABus() {
+export function provideReceivingCABus() {
   return new BasicCABus();
 }
 
-export function provideScopedSendingCABus() {
+export function provideSendingCABus() {
   return new ForwardingCABus();
 }

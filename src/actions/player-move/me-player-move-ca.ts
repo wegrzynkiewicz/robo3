@@ -1,8 +1,8 @@
 import { registerCADefinition } from "../../common/communication/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { CAHandler } from "../../common/communication/action/define.ts";
-import { provideScopedServerPlayerContext, ServerPlayerContext } from "../../common/communication/context/define.ts";
-import { GADispatcher, provideScopedGADispatcher } from "../../common/game/action/dispatcher.ts";
+import { provideServerPlayerContext, ServerPlayerContext } from "../../common/communication/context/define.ts";
+import { GADispatcher, provideGADispatcher } from "../../common/game/action/dispatcher.ts";
 import { beingMoveGADef } from "../being-move/being-move-ga.ts";
 
 export const enum MoveDirection {
@@ -44,7 +44,7 @@ export class MePlayerMoveCAHandler implements CAHandler<MePlayerMoveCA, void> {
 
 export function provideMePlayerMoveCAHandler(resolver: ServiceResolver) {
   return new MePlayerMoveCAHandler(
-    resolver.resolve(provideScopedGADispatcher),
-    resolver.resolve(provideScopedServerPlayerContext),
+    resolver.resolve(provideGADispatcher),
+    resolver.resolve(provideServerPlayerContext),
   );
 }

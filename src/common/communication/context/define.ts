@@ -8,6 +8,6 @@ export interface ServerPlayerContext {
   spaceId: number;
 }
 
-export function provideScopedServerPlayerContext(): ServerPlayerContext {
+export function provideServerPlayerContext(): ServerPlayerContext {
   throw new Breaker('server-player-context-must-be-injected');
 }

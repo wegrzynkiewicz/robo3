@@ -1,5 +1,5 @@
 import { ServiceResolver } from "../../dependency/service.ts";
-import { CABus, provideMainCABus, provideScopedSendingCABus, } from "./bus.ts";
+import { CABus, provideMainCABus, provideSendingCABus, } from "./bus.ts";
 import { CADefinition, CADispatcher, CAEnvelope } from "./define.ts";
 
 export class UniversalCADispatcher implements CADispatcher {
@@ -25,8 +25,8 @@ export function provideMainCADispatcher(resolver: ServiceResolver) {
   );
 }
 
-export function provideScopedCADispatcher(resolver: ServiceResolver) {
+export function provideCADispatcher(resolver: ServiceResolver) {
   return new UniversalCADispatcher(
-    resolver.resolve(provideScopedSendingCABus),
+    resolver.resolve(provideSendingCABus),
   );
 }

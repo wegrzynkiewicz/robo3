@@ -17,6 +17,6 @@ export class BasicGABus implements GABus {
   }
 }
 
-export function provideScopedUnprocessedGABus() {
+export function provideUnprocessedGABus() {
   return new BasicGABus();
 }

@@ -1,6 +1,6 @@
 import { ServiceResolver } from "../../dependency/service.ts";
 import { GADefinition, GAEnvelope } from "./define.ts";
-import { GAIncomingQueue, provideScopedGAIncomingQueue } from "./incoming-queue.ts";
+import { GAIncomingQueue, provideGAIncomingQueue } from "./incoming-queue.ts";
 
 export class GADispatcher {
   protected id = 1;
@@ -17,8 +17,8 @@ export class GADispatcher {
   }
 }
 
-export function provideScopedGADispatcher(resolver: ServiceResolver) {
+export function provideGADispatcher(resolver: ServiceResolver) {
   return new GADispatcher(
-    resolver.resolve(provideScopedGAIncomingQueue),
+    resolver.resolve(provideGAIncomingQueue),
   );
 }

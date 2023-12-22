@@ -1,4 +1,4 @@
-import { ServerPlayerContext, provideScopedServerPlayerContext } from "../../common/communication/context/define.ts";
+import { ServerPlayerContext, provideServerPlayerContext } from "../../common/communication/context/define.ts";
 import { registerCADefinition } from "../../common/communication/action/manager.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { EmptyObject } from "../../common/utils/useful.ts";
@@ -24,6 +24,6 @@ export class MeRequestCAHandler {
 
 export function provideMeRequestCAHandler(resolver: ServiceResolver) {
   return new MeRequestCAHandler(
-    resolver.resolve(provideScopedServerPlayerContext),
+    resolver.resolve(provideServerPlayerContext),
   );
 }

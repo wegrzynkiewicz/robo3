@@ -1,11 +1,11 @@
 import { ServiceResolver, provideMainServiceResolver } from "../../dependency/service.ts";
-import { provideScopedLogger } from "../../logger/global.ts";
+import { provideLogger } from "../../logger/global.ts";
 import { LoggerFactory, provideMainLoggerFactory } from "../../logger/logger-factory.ts";
 import { SpaceManager, provideSpaceManager } from "../../space/space-manager.ts";
-import { provideScopedSpace } from "../../space/space.ts";
-import { provideScopedUnprocessedGABus } from "../action/bus.ts";
-import { provideScopedGAProcessor } from "../action/processor.ts";
-import { provideScopedGameSimulationDaemon, feedGameSimulationDaemon } from "../simulation-daemon.ts";
+import { provideSpace } from "../../space/space.ts";
+import { provideUnprocessedGABus } from "../action/bus.ts";
+import { provideGAProcessor } from "../action/processor.ts";
+import { provideGameSimulationDaemon, feedGameSimulationDaemon } from "../simulation-daemon.ts";
 import { feedGASimulationProcessor } from "../simulation-processor.ts";
 import { GameSimulationContext } from "./define.ts";
 
@@ -27,23 +27,23 @@ export class GameSimulationContextManager {
     { spaceId }: GameSimulationContextFactoryOption
   ): Promise<GameSimulationContext> {
     const resolver = new ServiceResolver();
-    resolver.inject(provideScopedGameSimulationContextServiceResolver, resolver);
+    resolver.inject(provideGameSimulationContextServiceResolver, resolver);
     this.mainServiceResolver.transfer(provideSpaceManager, resolver);
     this.mainServiceResolver.transfer(provideMainLoggerFactory, resolver);
     this.mainServiceResolver.transfer(provideMainServiceResolver, resolver);
 
     const logger = this.loggerFactory.createLogger('CAME', { spaceId });
-    resolver.inject(provideScopedLogger, logger);
+    resolver.inject(provideLogger, logger);
 
     const space = this.spaceManager.obtain(spaceId);
-    resolver.inject(provideScopedSpace, space);
+    resolver.inject(provideSpace, space);
 
-    const simulator = resolver.resolve(provideScopedGameSimulationDaemon);
+    const simulator = resolver.resolve(provideGameSimulationDaemon);
     feedGameSimulationDaemon(resolver, simulator);
 
-    const unprocessedGABus = resolver.resolve(provideScopedUnprocessedGABus);
+    const unprocessedGABus = resolver.resolve(provideUnprocessedGABus);
     {
-      const processor = resolver.resolve(provideScopedGAProcessor);
+      const processor = resolver.resolve(provideGAProcessor);
       feedGASimulationProcessor(resolver, processor);
       unprocessedGABus.subscribers.add(processor);
     }
@@ -60,7 +60,7 @@ export class GameSimulationContextManager {
   }
 }
 
-export function provideScopedGameSimulationContextServiceResolver(): ServiceResolver {
+export function provideGameSimulationContextServiceResolver(): ServiceResolver {
   throw new Error('scoped-game-simulator-context-service-resolver-must-be-injected');
 }
 

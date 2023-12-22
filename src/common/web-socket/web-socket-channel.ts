@@ -1,6 +1,6 @@
-import { provideScopedWebSocket } from "../communication/action/socket.ts";
+import { provideWebSocket } from "../communication/action/socket.ts";
 import { ServiceResolver } from "../dependency/service.ts";
-import { Logger, provideScopedLogger } from "../logger/global.ts";
+import { Logger, provideLogger } from "../logger/global.ts";
 import { BasicWebSocketChannelBus } from "./web-socket-channel-bus.ts";
 
 export class WebSocketChannel {
@@ -52,9 +52,9 @@ export class WebSocketChannel {
   }
 }
 
-export function provideScopedWebSocketChannel(resolver: ServiceResolver) {
+export function provideWebSocketChannel(resolver: ServiceResolver) {
   return new WebSocketChannel(
-    resolver.resolve(provideScopedLogger),
-    resolver.resolve(provideScopedWebSocket),
+    resolver.resolve(provideLogger),
+    resolver.resolve(provideWebSocket),
   )
 }

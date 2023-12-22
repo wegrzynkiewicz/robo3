@@ -1,5 +1,5 @@
 import { ServiceResolver } from "../../dependency/service.ts";
-import { Logger, provideScopedLogger } from "../../logger/global.ts";
+import { Logger, provideLogger } from "../../logger/global.ts";
 import { CABusSubscriber } from "./bus.ts";
 import { CADefinition, CAEnvelope } from "./define.ts";
 
@@ -13,8 +13,8 @@ export class CALogger implements CABusSubscriber {
   }
 }
 
-export function provideScopedCALogger(resolver: ServiceResolver) {
+export function provideCALogger(resolver: ServiceResolver) {
   return new CALogger(
-    resolver.resolve(provideScopedLogger),
+    resolver.resolve(provideLogger),
   ); 
 }

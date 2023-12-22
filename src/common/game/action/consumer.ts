@@ -1,7 +1,7 @@
 import { ServiceResolver } from "../../dependency/service.ts";
 import { Looper } from "../looper.ts";
-import { GABus, provideScopedUnprocessedGABus } from "./bus.ts";
-import { GAIncomingQueue, provideScopedGAIncomingQueue } from "./incoming-queue.ts";
+import { GABus, provideUnprocessedGABus } from "./bus.ts";
+import { GAIncomingQueue, provideGAIncomingQueue } from "./incoming-queue.ts";
 
 export class GAConsumer implements Looper {
   protected batchCount = 1024;
@@ -26,9 +26,9 @@ export class GAConsumer implements Looper {
   }
 }
 
-export function provideScopedGAConsumer(resolver: ServiceResolver) {
+export function provideGAConsumer(resolver: ServiceResolver) {
   return new GAConsumer(
-    resolver.resolve(provideScopedUnprocessedGABus),
-    resolver.resolve(provideScopedGAIncomingQueue),
+    resolver.resolve(provideUnprocessedGABus),
+    resolver.resolve(provideGAIncomingQueue),
   );
 }

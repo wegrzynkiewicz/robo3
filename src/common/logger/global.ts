@@ -69,6 +69,6 @@ export function provideMainLogger(resolver: ServiceResolver) {
   );
 }
 
-export function provideScopedLogger(): Logger {
+export function provideLogger(): Logger {
   throw new Breaker("scoped-logger-must-be-injected");
 }

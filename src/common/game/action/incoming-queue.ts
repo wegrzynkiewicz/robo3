@@ -19,6 +19,6 @@ export class GAIncomingQueue {
   }
 }
 
-export function provideScopedGAIncomingQueue() {
+export function provideGAIncomingQueue() {
   return new GAIncomingQueue();
 }

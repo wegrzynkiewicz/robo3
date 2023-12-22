@@ -1,5 +1,5 @@
 import { Being } from "./manager.ts";
 
-export function provideScopedUpdatedBeingList() {
+export function provideUpdatedBeingList() {
   return new Set<Being>();
 }

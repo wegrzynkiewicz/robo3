@@ -3,8 +3,8 @@ import { ServiceResolver } from "../dependency/service.ts";
 import { FPSCounter, provideFPSCounter } from "./fps-counter.ts";
 import { Daemon, Framer, Looper } from "./looper.ts";
 import { provideGameChangeBroadCaster } from "./change-broadcaster.ts";
-import { provideScopedBeingSimulator } from "../../actions/being-move/being-move-simulator.ts";
-import { provideScopedGAConsumer } from "./action/consumer.ts";
+import { provideBeingSimulator } from "../../actions/being-move/being-move-simulator.ts";
+import { provideGAConsumer } from "./action/consumer.ts";
 
 export class GameSimulationDaemon implements Daemon, Framer {
   public loopers: Looper[] = [];
@@ -49,14 +49,14 @@ export class GameSimulationDaemon implements Daemon, Framer {
   }
 }
 
-export function provideScopedGameSimulationDaemon(resolver: ServiceResolver) {
+export function provideGameSimulationDaemon(resolver: ServiceResolver) {
   return new GameSimulationDaemon(
     resolver.resolve(provideFPSCounter),
   );
 }
 
 export function feedGameSimulationDaemon(resolver: ServiceResolver, gameSimulationDaemon: GameSimulationDaemon) {
-  gameSimulationDaemon.loopers.push(resolver.resolve(provideScopedGAConsumer));
-  gameSimulationDaemon.loopers.push(resolver.resolve(provideScopedBeingSimulator));
+  gameSimulationDaemon.loopers.push(resolver.resolve(provideGAConsumer));
+  gameSimulationDaemon.loopers.push(resolver.resolve(provideBeingSimulator));
   gameSimulationDaemon.loopers.push(resolver.resolve(provideGameChangeBroadCaster));
 }

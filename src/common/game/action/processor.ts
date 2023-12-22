@@ -30,6 +30,6 @@ export class UniversalGAProcessor implements GABusSubscriber {
   }
 }
 
-export function provideScopedGAProcessor() {
+export function provideGAProcessor() {
   return new UniversalGAProcessor(); 
 }

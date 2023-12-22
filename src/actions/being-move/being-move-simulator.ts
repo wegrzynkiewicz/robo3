@@ -1,4 +1,4 @@
-import { Being, BeingManager, provideScopedBeingManager } from "../../common/being/manager.ts";
+import { Being, BeingManager, provideBeingManager } from "../../common/being/manager.ts";
 import { Looper } from "../../common/game/looper.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 
@@ -38,8 +38,8 @@ export class BeingSimulator implements Looper {
   }
 }
 
-export function provideScopedBeingSimulator(resolver: ServiceResolver) {
+export function provideBeingSimulator(resolver: ServiceResolver) {
   return new BeingSimulator(
-    resolver.resolve(provideScopedBeingManager),
+    resolver.resolve(provideBeingManager),
   );
 }

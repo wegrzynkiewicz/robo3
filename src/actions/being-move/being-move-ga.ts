@@ -1,5 +1,5 @@
-import { Being, BeingManager, provideScopedBeingManager } from "../../common/being/manager.ts";
-import { provideScopedUpdatedBeingList } from "../../common/being/update-list.ts";
+import { Being, BeingManager, provideBeingManager } from "../../common/being/manager.ts";
+import { provideUpdatedBeingList } from "../../common/being/update-list.ts";
 import { ServiceResolver } from "../../common/dependency/service.ts";
 import { GAHandler } from "../../common/game/action/define.ts";
 import { registerGADefinition } from "../../common/game/action/manager.ts";
@@ -33,7 +33,7 @@ export class BeingMoveGAHandler implements GAHandler<BeingMoveGA>{
 
 export function provideBeingMoveGAHandler(resolver: ServiceResolver) {
   return new BeingMoveGAHandler(
-    resolver.resolve(provideScopedBeingManager),
-    resolver.resolve(provideScopedUpdatedBeingList),
+    resolver.resolve(provideBeingManager),
+    resolver.resolve(provideUpdatedBeingList),
   );
 }
