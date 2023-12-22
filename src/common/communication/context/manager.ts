@@ -14,7 +14,7 @@ import { provideSpaceManager } from "../../space/space-manager.ts";
 import { provideSpace } from "../../space/space.ts";
 import { Breaker } from "../../utils/breaker.ts";
 import { provideWebSocketChannel } from "../../web-socket/web-socket-channel.ts";
-import { provideCloseServerPlayerWebSocketSubscriber } from "./close-server-player-web-socket-subscriber.ts";
+import { provideCloseServerPlayerWebSocketSubscriber } from "./destroy-when-closed.ts";
 import { ServerPlayerContext, provideServerPlayerContext } from "./define.ts";
 import { feedServerCAProcessor } from "./ca-processor.ts";
 import { provideGADispatcher } from "../../game/action/dispatcher.ts";
