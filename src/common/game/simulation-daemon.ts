@@ -5,11 +5,13 @@ import { Daemon, Framer, Looper } from "./looper.ts";
 import { provideGameChangeBroadCaster } from "./change-broadcaster.ts";
 import { provideBeingSimulator } from "../../actions/being-move/being-move-simulator.ts";
 import { provideGAConsumer } from "./action/consumer.ts";
+import { provideJAConsumer } from "../job/consumer.ts";
 
 export class GameSimulationDaemon implements Daemon, Framer {
   public loopers: Looper[] = [];
   public name = "game";
   public frameId = 0;
+  protected refresh = false;
   protected boundFrame: (now: number) => void;
   protected fps = 0;
   protected frameDuration = 0;
@@ -28,19 +30,25 @@ export class GameSimulationDaemon implements Daemon, Framer {
   public setFPS(fps: number) {
     this.fps = fps;
     this.frameDuration = Math.floor(1000 / fps);
+    this.refresh = true;
   }
 
   public frame(now: number): void {
+    this.performance.start();
     this.frameId++;
     this.fpsCounter.frame(now);
-    this.performance.start();
     for (const looper of this.loopers) {
       looper.loop(this.fpsCounter.deltaTime / 1000);
+    }
+    if (this.refresh === true) {
+      this.stop();
+      this.start();
     }
     this.performance.stop();
   }
 
   public start() {
+    this.refresh = false;
     this.intervalId = setInterval(this.boundFrame, this.frameDuration);
   }
 
@@ -58,5 +66,6 @@ export function provideGameSimulationDaemon(resolver: ServiceResolver) {
 export function feedGameSimulationDaemon(resolver: ServiceResolver, gameSimulationDaemon: GameSimulationDaemon) {
   gameSimulationDaemon.loopers.push(resolver.resolve(provideGAConsumer));
   gameSimulationDaemon.loopers.push(resolver.resolve(provideBeingSimulator));
+  gameSimulationDaemon.loopers.push(resolver.resolve(provideJAConsumer));
   gameSimulationDaemon.loopers.push(resolver.resolve(provideGameChangeBroadCaster));
 }
