@@ -1,7 +1,7 @@
+import { provideDBClient } from "../apps/game-server/db.ts";
 import { ChunkId } from "../common/chunk/chunk-id.ts";
 import { ChunkSegment } from "../common/chunk/chunk-segment.ts";
 import { ServiceResolver } from "../common/dependency/service.ts";
-import { dbClient } from "../server/db.ts";
 import { ChunkDoc } from "../common/storage/chunk.ts";
 import { Binary, deflate } from "../common/storage/deps.ts";
 import { NoiseGenerator } from "./noise-generator.ts";
@@ -21,7 +21,7 @@ function generateChunkSegment(noise: Uint8Array, chunkId: ChunkId): ChunkSegment
 
 (async () => {
   const resolver = new ServiceResolver();
-  const client = await resolver.resolve(dbClient);
+  const client = await resolver.resolve(provideDBClient);
   const db = client.db("app");
   const collection = db.collection("chunks");
   const spaceId = 1;
