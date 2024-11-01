@@ -48,7 +48,7 @@ export class ChunkId {
 
 export const chunkIdCodec: BinaryBYOBCodec<ChunkId> = {
   calcByteLength(): number {
-    return 10;
+    return 12;
   },
   decode(buffer: ArrayBuffer, byteOffset: number): ChunkId {
     const dv = new DataView(buffer, byteOffset);

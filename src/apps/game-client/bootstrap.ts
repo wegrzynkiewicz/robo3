@@ -100,8 +100,8 @@ async function start() {
     tilesTexture2DArray.update(x++, data);
   }
 
-  allocation.bindings[74].tile.size.w = 1024 * 2;
-  allocation.bindings[74].tile.size.h = 1024 * 2;
+  allocation.bindings[74-1].tile.size.w = 1024 * 2;
+  allocation.bindings[74-1].tile.size.h = 1024 * 2;
 
   const v1 = new Float32Array(256 * 256 * 4);
   const v2 = new Float32Array(256 * 256 * 4);
@@ -129,7 +129,7 @@ async function start() {
 
   const { hostname } = window.location;
 
-  const response = await fetch('http://localhost:3088/player-channel', {
+  const response = await fetch('http://192.168.1.105:3088/player-channel', {
     method: "POST",
     headers: {
       "Authorization": "Bearer test",
@@ -140,6 +140,7 @@ async function start() {
   const { wsURL } = payload;
 
   const socket = new WebSocket(wsURL);
+  socket.binaryType = "arraybuffer";
 
   const mainCABus = resolver.resolve(provideMainCABus);
 

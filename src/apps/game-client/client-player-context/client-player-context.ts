@@ -15,6 +15,7 @@ import { provideSpaceManager } from "../../../common/space/space-manager.ts";
 import { provideOpenWebSocketSubscriber } from "../../../common/web-socket/open-subscriber.ts";
 import { provideWebSocketChannel } from "../../../common/web-socket/web-socket-channel.ts";
 import { feedClientSideCAProcess } from "./ga-processor.ts";
+import { provideChunkManager } from "../../../domain-client/chunk/chunk-manager.ts";
 
 export interface ClientPlayerContext {
   connector: CABusSubscriber;
@@ -40,6 +41,7 @@ export class ClientPlayerContextManager {
     this.mainServiceResolver.transfer(provideSpaceManager, resolver);
     this.mainServiceResolver.transfer(provideMePlayer, resolver);
     this.mainServiceResolver.transfer(provideBeingManager, resolver);
+    this.mainServiceResolver.transfer(provideChunkManager, resolver);
     
     const logger = this.loggerFactory.createLogger('CLIENT');
 

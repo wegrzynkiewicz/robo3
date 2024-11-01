@@ -34,7 +34,7 @@ export class ServerPlayerContextManager {
     public readonly scopedServiceResolver: ServiceResolver,
   ) { }
 
-  public async createServerPlayerContext(options: ServerPlayerContextFactoryOption): Promise<void> {
+  public async createServerPlayerContext(options: ServerPlayerContextFactoryOption) {
     const { socket } = options;
 
     const spaceId = 1; // TODO: from token; 
@@ -93,6 +93,8 @@ export class ServerPlayerContextManager {
     }
 
     this.byPlayerContextId.set(playerContextId, context);
+
+    return context;
   }
 
   public async destroyPlayerContext(playerContextId: number): Promise<void> {

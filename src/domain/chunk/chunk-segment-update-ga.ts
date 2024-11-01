@@ -20,14 +20,14 @@ const codec: BinaryBYOBCodec<ChunkSegmentUpdateCA> = {
   decode(buffer: ArrayBuffer, byteOffset: number): ChunkSegmentUpdateCA {
     const decoder = new BinarySequencyDecoder(buffer, byteOffset);
     const chunkId = decoder.decode(chunkIdCodec);
-    const segment = ChunkSegment.createFromBuffer(buffer, 20);
+    const segment = ChunkSegment.createFromBuffer(buffer, 16);
     return { chunkId, segment };
   },
   encode(buffer: ArrayBuffer, byteOffset: number, data: ChunkSegmentUpdateCA): void {
     const { chunkId, segment } = data;
     const encoder = new BinarySequencyEncoder(buffer, byteOffset);
     encoder.encode(chunkIdCodec, chunkId);
-    copyViewToArrayBuffer(buffer, 20, segment);
+    copyViewToArrayBuffer(buffer, 16, segment);
   },
 };
 

@@ -31,8 +31,8 @@ export class BeingSimulator implements Looper {
     if (being.direct & 0b0001) {
       x = 1;
     }
-    being.rx += x * (64 * deltaTime);
-    being.ry += y * (64 * deltaTime);
+    being.rx += x * 32;
+    being.ry += y * 32;
     being.x = Math.floor(being.rx);
     being.y = Math.floor(being.ry);
   }
